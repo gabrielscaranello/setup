@@ -1,69 +1,52 @@
-# Desktop Setup
+# 🚀 Desktop Setup
 
-Descrição
+Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Ubuntu/Debian, Fedora/RHEL, openSUSE, Arch).
+
+✨ O que é
 --------
 
-Este repositório contém scripts de configuração para ambientes desktop Linux multiplataforma. O objetivo é fornecer um conjunto único de scripts que funcionem em Ubuntu/Debian, Fedora/RHEL, openSUSE e Arch Linux, instalando e configurando utilitários como o Neovim e ajustes de terminal.
+- Scripts idempotentes em scripts/*.sh para instalar e configurar ferramentas (Neovim, terminal, etc.).
 
-Objetivo do projeto
--------------------
-
-- Automatizar a configuração de um ambiente de desenvolvimento desktop em várias distribuições Linux.
-- Manter os scripts genéricos e idempotentes, com abstração de gerenciador de pacotes.
-- Facilitar testes, reutilização e manutenção por meio de scripts modulares em scripts/*.sh.
-
-Como usar (rápido)
--------------------
-
-| action          | description                                 |
-| --------------- | ------------------------------------------- |
-| `make help`     | Mostrar ajuda dos alvos:                    |
-| `make all`      | Executar todo o setup (executa `./main.sh`) |
-| `make neovim`   | Executar apenas o setup do Neovim           |
-| `make nvm`      | Executar apenas o setup do nvm/Node         |
-| `make terminal` | Executar apenas o setup do terminal         |
-| `make clean`    | Limpar arquivos temporários:                |
-
-Makefile - Alvos e descrição
----------------------------
-
-- help
-  - Exibe a lista de alvos disponíveis e uma breve descrição.
-
-- all
-  - Executa o script principal `./main.sh`, que orquestra os demais scripts em sequência.
-
-- neovim
-  - Chama `scripts/setup-neovim.sh` para instalar o Neovim. O script garante que o `nvm` esteja instalado (é necessário pelo toolchain do Neovim); quando o gerenciador de pacotes é `dnf` ou `pacman`, usa o pacote da distro; caso contrário compila a partir da fonte.
-
-- nvm
-  - Chama `scripts/setup-nvm.sh` para instalar o nvm, Node e habilitar o corepack; no Arch é usado o pacote `nvm` do repositório.
-
-- terminal
-  - Chama `scripts/setup-terminal.sh`. Atualmente é um stub; destinado a instalar e configurar ferramentas/temas/plug-ins do terminal.
-
-- clean
-  - Remove artefatos temporários (ex.: `/tmp/neovim`) para liberar espaço e garantir builds limpos.
-
-Estrutura de diretórios
------------------------
-
-- main.sh - Orquestrador que executa os scripts em sequência
-- Makefile - Runner com alvos convenientes (make all, make neovim, ...)
-- scripts/_utils.sh - Abstração do gerenciador de pacotes e utilitários genéricos
-- scripts/setup-neovim.sh- Script para compilar/instalar Neovim
-- scripts/setup-terminal.sh - Script para ajustes de terminal (a completar)
-
-Requisitos / Pré-requisitos
---------------------------
-
-- Acesso sudo para instalar pacotes
-- Git para clonar repositórios (Neovim)
-- Shell Bash (scripts usam recursos do bash)
-
-Contribuindo
+🎯 Objetivos
 -----------
 
-- Novos recursos devem ser implementados como `scripts/setup-<nome>.sh` e adicionados em `main.sh` e ao Makefile se necessário.
-- Manter `_utils.sh` genérico — não incluir lógica específica de pacote nele.
-- Validar scripts com `shellcheck -x scripts/*.sh` e testar alvos do Makefile.
+- Automatizar a provisão de um ambiente dev desktop.
+- Manter scripts genéricos, reutilizáveis e distribuídos por gerenciador de pacotes.
+- Facilitar testes e manutenção com scripts modulares.
+
+⚡️ Começando (rápido)
+---------------------
+
+Execute os alvos do Makefile:
+
+```sh
+make help     # Ver alvos disponíveis
+make all      # Executa todo o setup (./main.sh)
+make neovim   # Só Neovim
+make nvm      # Só NVM/Node
+make terminal # Ajustes de terminal
+make clean    # Limpa artefatos temporários
+```
+
+📂 Estrutura
+-----------
+
+- main.sh — Orquestrador
+- Makefile — Runner com alvos úteis
+- scripts/_utils.sh — Abstração do gerenciador de pacotes
+- scripts/setup-neovim.sh — Instala/compila Neovim
+- scripts/setup-terminal.sh — Ajustes de terminal (em desenvolvimento)
+
+🛠 Requisitos
+------------
+
+- sudo
+- git
+- bash
+
+## 📖 Mais informações
+
+Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
+
+Made with ❤️ — happy hacking!
+
