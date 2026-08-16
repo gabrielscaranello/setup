@@ -15,11 +15,14 @@ Objetivo do projeto
 Como usar (rápido)
 -------------------
 
-- Executar todo o setup: `make all` (executa `./main.sh`)
-- Executar apenas o setup do Neovim: `make neovim`
-- Executar apenas o setup do terminal: `make terminal`
-- Mostrar ajuda dos alvos: `make help`
-- Limpar arquivos temporários: `make clean`
+| action          | description                                 |
+| --------------- | ------------------------------------------- |
+| `make help`     | Mostrar ajuda dos alvos:                    |
+| `make all`      | Executar todo o setup (executa `./main.sh`) |
+| `make neovim`   | Executar apenas o setup do Neovim           |
+| `make nvm`      | Executar apenas o setup do nvm/Node         |
+| `make terminal` | Executar apenas o setup do terminal         |
+| `make clean`    | Limpar arquivos temporários:                |
 
 Makefile - Alvos e descrição
 ---------------------------
@@ -31,7 +34,10 @@ Makefile - Alvos e descrição
   - Executa o script principal `./main.sh`, que orquestra os demais scripts em sequência.
 
 - neovim
-  - Chama `scripts/setup-neovim.sh` para instalar o Neovim (compila a partir do código-fonte e faz a instalação apropriada por distro).
+  - Chama `scripts/setup-neovim.sh` para instalar o Neovim. O script garante que o `nvm` esteja instalado (é necessário pelo toolchain do Neovim); quando o gerenciador de pacotes é `dnf` ou `pacman`, usa o pacote da distro; caso contrário compila a partir da fonte.
+
+- nvm
+  - Chama `scripts/setup-nvm.sh` para instalar o nvm, Node e habilitar o corepack; no Arch é usado o pacote `nvm` do repositório.
 
 - terminal
   - Chama `scripts/setup-terminal.sh`. Atualmente é um stub; destinado a instalar e configurar ferramentas/temas/plug-ins do terminal.
@@ -61,4 +67,3 @@ Contribuindo
 - Novos recursos devem ser implementados como `scripts/setup-<nome>.sh` e adicionados em `main.sh` e ao Makefile se necessário.
 - Manter `_utils.sh` genérico — não incluir lógica específica de pacote nele.
 - Validar scripts com `shellcheck -x scripts/*.sh` e testar alvos do Makefile.
-

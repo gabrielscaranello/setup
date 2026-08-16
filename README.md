@@ -15,11 +15,14 @@ Project purpose
 Quick usage
 -----------
 
-- Run full setup: `make all` (runs `./main.sh`)
-- Run only Neovim setup: `make neovim`
-- Run only terminal setup: `make terminal`
-- Show Makefile help: `make help`
-- Clean temporary files: `make clean`
+| action          | description                       |
+| --------------- | --------------------------------- |
+| `make help`     | Show Makefile help:               |
+| `make all`      | Run full setup (runs `./main.sh`) |
+| `make neovim`   | Run only Neovim setup             |
+| `make nvm`      | Run only NVM/Node setup           |
+| `make terminal` | Run only terminal setup           |
+| `make clean`    | Clean temporary files:            |
 
 Makefile — targets and description
 ---------------------------------
@@ -31,7 +34,10 @@ Makefile — targets and description
   - Runs the main orchestrator `./main.sh`, which executes the setup scripts in sequence.
 
 - neovim
-  - Invokes `scripts/setup-neovim.sh` to build and install Neovim from source, using distro-appropriate install steps.
+  - Invokes `scripts/setup-neovim.sh` to install Neovim. The script ensures `nvm` is installed (it's required by the Neovim toolchain); Neovim is installed from the distro repository when the package manager is `dnf` or `zypper`, otherwise it builds from source.
+
+- nvm
+  - Invokes `scripts/setup-nvm.sh` to install nvm, Node and enable corepack; on Arch the `nvm` package from the repository is used.
 
 - terminal
   - Invokes `scripts/setup-terminal.sh`. Currently a stub intended to install and configure terminal tools/themes/plugins.
@@ -61,4 +67,3 @@ Contributing
 - Add new features as `scripts/setup-<name>.sh` and register them in `main.sh` and the Makefile if needed.
 - Keep `_utils.sh` generic — do not add package-specific logic there.
 - Validate scripts with `shellcheck -x scripts/*.sh` and test Makefile targets.
-

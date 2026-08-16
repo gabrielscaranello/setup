@@ -1,6 +1,9 @@
-#! /bin/bash
+#!/bin/bash
 
 set -e
+
+# Follow repository conventions: source helpers and expose private functions
+source "$(dirname "$0")/_utils.sh"
 
 _install_neovim_from_source() {
   local git_url="https://github.com/neovim/neovim"
@@ -31,13 +34,13 @@ _install_neovim_from_source() {
   if [ "$package_manager" = "apt" ]; then
     local arch
     arch="$(uname -m)"
-    
+
     cd build || return 1
     cpack -G DEB || {
       echo "Failed to create DEB package" >&2
       return 1
     }
-    
+
     sudo dpkg -i nvim-linux-"$arch".deb || {
       echo "Failed to install DEB package" >&2
       return 1
@@ -52,10 +55,51 @@ _install_neovim_from_source() {
   echo "Neovim installed successfully at $(which nvim)"
 }
 
-source "$(dirname "$0")/_utils.sh"
+_install_neovim_from_repo() {
+  echo "Installing Neovim from distribution repository..."
+  _install_packages neovim
+}
 
-echo "Installing Neovim dependencies..."
-_install_packages build-tools ninja-build gcc-cxx cmake gettext-tools curl git
+_main_install_nvm() {
+  # Ensure nvm is installed as an indirect dependency of Neovim
+  local script_dir
+  script_dir="$(dirname "$0")"
+  if [ -x "$script_dir/setup-nvm.sh" ]; then
+    echo "Ensuring nvm is installed (required by neovim toolchain)..."
+    "$script_dir/setup-nvm.sh" || {
+      echo "setup-nvm failed" >&2
+      return 1
+    }
+  else
+    echo "setup-nvm.sh not found or not executable; attempting to run it with bash"
+    bash "$script_dir/setup-nvm.sh" || {
+      echo "setup-nvm failed" >&2
+      return 1
+    }
+  fi
+}
 
-_install_neovim_from_source
+main() {
+  local pm
+  pm="$(_get_package_manager)" || {
+    echo "Unsupported distribution" >&2
+    return 1
+  }
 
+  # nvm is a dependency of the Neovim environment; ensure it is present
+  _main_install_nvm
+
+  case "$pm" in
+  dnf | pacman)
+    echo "Using distro package manager ($pm) to install Neovim"
+    _install_neovim_from_repo
+    ;;
+  *)
+    echo "Installing build dependencies..."
+    _install_packages build-tools ninja-build gcc-cxx cmake gettext-tools curl git
+    _install_neovim_from_source
+    ;;
+  esac
+}
+
+main "$@"

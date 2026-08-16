@@ -44,11 +44,15 @@ Developer conventions (short)
 ----------------------------
 
 - scripts/_utils.sh: package-manager abstraction ONLY — no package-specific logic.
-- scripts/setup-*.sh: each script is self-contained, sources _utils.sh, and uses `_install_packages` and private `_`-prefixed helper functions.
-- Shebang: `#!/bin/bash` and `set -e` for scripts.
-- Private functions: start with `_`.
+- scripts/setup-*.sh: each script MUST be self-contained and follow this canonical structure:
+  1. Shebang and strict mode: start with `#!/bin/bash` and `set -e`.
+  2. Source helpers: `source "$(dirname "$0")/_utils.sh"` near the top.
+  3. Private helpers: implement functionality in `_`-prefixed private functions (e.g. `_install_from_repo`, `_install_from_source`, `_install_packages`).
+  4. Use `_install_packages` to install distro packages and `_get_package_manager` to branch logic by package manager.
+  5. Provide a `main()` function that orchestrates steps and finish with `main "$@"`.
+  6. Avoid global side effects; keep variables local where appropriate and export only when necessary.
 - Use `/tmp/<package>` for build dirs and ensure Makefile `clean` removes them.
-- Scripts must be idempotent and ShellCheck-clean (`shellcheck -x`).
+- Scripts must be idempotent and ShellCheck-clean (`shellcheck -x`). Aim for clear logging, graceful errors, and explicit user prompts only when needed.
 
 Reference and non-duplication
 -----------------------------
@@ -63,6 +67,7 @@ Where to look next
 - scripts/_utils.sh — package manager abstraction and mappings
 - scripts/setup-neovim.sh — example of a full setup script
 - scripts/setup-terminal.sh — template/stub for terminal setup
+- scripts/setup-nvm.sh — manages nvm/node installation (Arch uses the nvm pacman package; Debian/Fedora/openSUSE use the upstream nvm install script), enables corepack, and installs global npm packages
 
 Feedback loop
 -------------
