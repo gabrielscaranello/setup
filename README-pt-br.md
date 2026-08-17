@@ -2,6 +2,9 @@
 
 Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Ubuntu/Debian, Fedora/RHEL, openSUSE, Arch).
 
+> [!WARNING]
+> Este projeto está em fases iniciais de desenvolvimento e estudo. Ele **não está completo** e muita coisa **pode mudar**. Use por sua conta e risco.
+
 ✨ O que é
 --------
 
@@ -49,4 +52,3 @@ make clean    # Limpa artefatos temporários
 Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
 
 Made with ❤️ — happy hacking!
-

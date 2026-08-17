@@ -2,6 +2,11 @@
 
 Welcome! This repository automates provisioning a desktop development environment across multiple Linux distributions (Ubuntu/Debian, Fedora/RHEL, openSUSE, Arch).
 
+🇧🇷 **Documentação em Português (BR):** [README-pt-br.md](README-pt-br.md)
+
+> [!WARNING]
+> This project is in early stages of development and study. It is **not yet complete** and many things **may change**. Use at your own risk.
+
 ✨ What is this
 --------------
 
