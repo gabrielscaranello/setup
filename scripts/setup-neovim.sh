@@ -9,10 +9,10 @@ _install_neovim_from_source() {
   local git_url="https://github.com/neovim/neovim"
   local branch="stable"
   local work_dir="/tmp/neovim"
-  local package_manager
-  package_manager="$(_get_package_manager)"
+  local arch
+  arch="$(uname -m)"
 
-  echo "Installing Neovim from source..."
+  echo "Installing Neovim from source (DEB package)..."
 
   echo "Removing old files if exists..."
   rm -rf "$work_dir"
@@ -30,27 +30,17 @@ _install_neovim_from_source() {
     return 1
   }
 
-  echo "Installing Neovim..."
-  if [ "$package_manager" = "apt" ]; then
-    local arch
-    arch="$(uname -m)"
+  echo "Packaging and installing Neovim DEB package..."
+  cd build || return 1
+  cpack -G DEB || {
+    echo "Failed to create DEB package" >&2
+    return 1
+  }
 
-    cd build || return 1
-    cpack -G DEB || {
-      echo "Failed to create DEB package" >&2
-      return 1
-    }
-
-    sudo dpkg -i nvim-linux-"$arch".deb || {
-      echo "Failed to install DEB package" >&2
-      return 1
-    }
-  else
-    sudo make install || {
-      echo "Failed to install Neovim" >&2
-      return 1
-    }
-  fi
+  sudo dpkg -i nvim-linux-"$arch".deb || {
+    echo "Failed to install DEB package" >&2
+    return 1
+  }
 
   echo "Neovim installed successfully at $(which nvim)"
 }
@@ -94,10 +84,14 @@ main() {
     echo "Using distro package manager ($pm) to install Neovim"
     _install_neovim_from_repo
     ;;
-  *)
+  apt)
     echo "Installing build dependencies..."
     _install_packages build-tools ninja-build gcc-cxx cmake gettext-tools curl git
     _install_neovim_from_source
+    ;;
+  *)
+    echo "Unsupported package manager: $pm" >&2
+    return 1
     ;;
   esac
 }

@@ -57,7 +57,7 @@ Changes that add or modify scripts MUST include:
 - Update to main.sh if the `make all` flow should run it
 - ShellCheck output in CI or PR body
 
-Minor edits (typos/formatting) may omit AI_INSTRUCTIONS.md — document the reason in the PR.
+Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the PR.
 
 ## 📋 PR checklist (use as template)
 

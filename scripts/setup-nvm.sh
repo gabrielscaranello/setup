@@ -75,12 +75,12 @@ main() {
   pacman)
     _install_arch_nvm
     ;;
-  apt | dnf | zypper)
+  apt | dnf)
     _install_nvm_script
     ;;
   *)
-    echo "Unknown package manager; using nvm install script by default"
-    _install_nvm_script
+    echo "Unsupported package manager" >&2
+    return 1
     ;;
   esac
 

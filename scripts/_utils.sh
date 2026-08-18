@@ -5,8 +5,6 @@ _get_package_manager() {
     echo "dnf"
   elif command -v apt >/dev/null 2>&1; then
     echo "apt"
-  elif command -v zypper >/dev/null 2>&1; then
-    echo "zypper"
   elif command -v pacman >/dev/null 2>&1; then
     echo "pacman"
   else
@@ -23,7 +21,6 @@ _get_package_name() {
     case "$package_manager" in
     apt) echo "build-essential" ;;
     dnf) echo "@development-tools" ;;
-    zypper) echo "patterns-devel-base-devel_basis" ;;
     pacman) echo "base-devel" ;;
     esac
     ;;
@@ -32,7 +29,6 @@ _get_package_name() {
     case "$package_manager" in
     apt) echo "ninja-build" ;;
     dnf) echo "ninja-build" ;;
-    zypper) echo "ninja" ;;
     pacman) echo "ninja" ;;
     esac
     ;;
@@ -41,7 +37,6 @@ _get_package_name() {
     case "$package_manager" in
     apt) echo "g++" ;;
     dnf) echo "gcc-c++" ;;
-    zypper) echo "gcc-c++" ;;
     pacman) echo "gcc" ;;
     esac
     ;;
@@ -50,7 +45,6 @@ _get_package_name() {
     case "$package_manager" in
     apt) echo "gettext" ;;
     dnf) echo "gettext-devel" ;;
-    zypper) echo "gettext-tools" ;;
     pacman) echo "gettext" ;;
     esac
     ;;
@@ -72,10 +66,6 @@ _install_package_from_repository() {
 
   dnf)
     sudo dnf install -y "$package"
-    ;;
-
-  zypper)
-    sudo zypper install -y "$package"
     ;;
 
   pacman)

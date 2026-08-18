@@ -6,7 +6,7 @@ This file references the comprehensive AI instructions for this project.
 
 For complete guidance on architecture, conventions, testing, and development:
 
-**👉 See: [AI_INSTRUCTIONS.md](../AI_INSTRUCTIONS.md)**
+**👉 See: [AGENTS.md](../AGENTS.md)**
 
 That document includes:
 
@@ -27,4 +27,4 @@ That document includes:
 
 ---
 
-For all other details, refer to [AI_INSTRUCTIONS.md](../AI_INSTRUCTIONS.md).
+For all other details, refer to [AGENTS.md](../AGENTS.md).
