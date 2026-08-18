@@ -19,7 +19,7 @@ set -euo pipefail
 - Source helpers (near the top):
 
 ```bash
-source "$(dirname "$0")/_utils.sh"
+source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 ```
 
 - Private functions: prefix with _ (e.g., `_install_packages`). Keep functions small and idempotent.
@@ -72,7 +72,7 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 ```bash
 #!/bin/bash
 set -euo pipefail
-source "$(dirname "$0")/_utils.sh"
+source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 _install_packages() {
   case "$PKG" in

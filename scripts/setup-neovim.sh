@@ -3,7 +3,7 @@
 set -e
 
 # Follow repository conventions: source helpers and expose private functions
-source "$(dirname "$0")/_utils.sh"
+source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 _install_neovim_from_source() {
   local git_url="https://github.com/neovim/neovim"

@@ -30,7 +30,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 All scripts under `scripts/*.sh` must adhere to the standard pattern:
 
 1. **Strict mode**: Begin with `set -euo pipefail` (or `set -e`).
-2. **Import helpers**: Include `source "$(dirname "$0")/_utils.sh"` near the top.
+2. **Import helpers**: Include `source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"` near the top (enables LSP Go to Definition and runtime portability).
 3. **Encapsulation**: Prefix private functions with an underscore `_` (e.g. `_install_packages`).
 4. **Entrypoint**: Implement a `main()` function and invoke it at the end with `main "$@"`.
 5. **Cross-Distro**: Use `_get_package_manager` and `_utils.sh` mappings instead of hardcoded package managers.

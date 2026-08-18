@@ -3,7 +3,7 @@
 set -e
 
 # Follow project conventions: source utility helpers and use private functions
-source "$(dirname "$0")/_utils.sh"
+source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 NODE_VERSION=24
 NVM_VERSION=0.40.3
