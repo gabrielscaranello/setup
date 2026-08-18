@@ -56,20 +56,20 @@ _get_package_name() {
 }
 
 _install_package_from_repository() {
-  package="$1"
-  package_manager="$2"
+  package_manager="$1"
+  shift
 
   case "$package_manager" in
   apt)
-    sudo apt install -y "$package"
+    sudo apt install -y "$@"
     ;;
 
   dnf)
-    sudo dnf install -y "$package"
+    sudo dnf install -y "$@"
     ;;
 
   pacman)
-    sudo pacman -S --needed --noconfirm "$package"
+    sudo pacman -S --needed --noconfirm "$@"
     ;;
 
   *)
@@ -77,17 +77,6 @@ _install_package_from_repository() {
     return 1
     ;;
   esac
-}
-
-_install_package() {
-  package="$1"
-  package_manager="$2"
-
-  package_name="$(_get_package_name "$package" "$package_manager")"
-
-  _install_package_from_repository \
-    "$package_name" \
-    "$package_manager"
 }
 
 _install_packages() {
@@ -98,12 +87,12 @@ _install_packages() {
 
   echo "Using package manager: $package_manager"
 
+  local resolved_packages=()
   for package in "$@"; do
-    echo "Installing: $package"
-
-    _install_package "$package" "$package_manager" || {
-      echo "Failed to install: $package" >&2
-      return 1
-    }
+    resolved_packages+=("$(_get_package_name "$package" "$package_manager")")
   done
+
+  echo "Installing: ${resolved_packages[*]}"
+
+  _install_package_from_repository "$package_manager" "${resolved_packages[@]}"
 }
