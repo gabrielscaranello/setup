@@ -1,30 +1,7 @@
-# Copilot Instructions - Reference
+# Copilot Instructions
 
-This file references the comprehensive AI instructions for this project.
+For complete guidance on this project, refer to:
 
-## 📖 Main Documentation
+**👉 [AGENTS.md](../AGENTS.md)**
 
-For complete guidance on architecture, conventions, testing, and development:
-
-**👉 See: [AGENTS.md](../AGENTS.md)**
-
-That document includes:
-
-- Build, test & validation commands
-- Complete architecture overview
-- Code conventions and patterns
-- Step-by-step guide for adding new scripts
-- Distribution support matrix
-- Troubleshooting guide
-- Future enhancements
-
-## Quick Links
-
-- **Run setup**: `make all`
-- **Test neovim setup**: `make neovim`
-- **Validate syntax**: `shellcheck -x scripts/*.sh`
-- **Show targets**: `make help`
-
----
-
-For all other details, refer to [AGENTS.md](../AGENTS.md).
+That document is the single source of truth for architecture, conventions, script patterns, and development rules.
