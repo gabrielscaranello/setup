@@ -17,11 +17,10 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 ## 📁 Repository Architecture & Layout
 
 - **[main.sh](main.sh)**: Master orchestrator script that runs the full installation flow.
-- **[Makefile](Makefile)**: User-facing runner (`make help`, `make all`, `make neovim`, `make nvm`, `make terminal`, `make clean`).
+- **[Makefile](Makefile)**: User-facing runner (`make help`, `make all`, `make neovim`, `make nvm`, `make clean`).
 - **[scripts/\_utils.sh](scripts/_utils.sh)**: Core abstraction for package management (`_get_package_manager`, `_install_packages`, `_get_package_name`).
 - **[scripts/setup-neovim.sh](scripts/setup-neovim.sh)**: Builds/installs Neovim (from source with DEB packaging on Debian; native packages on Arch/Fedora). Ensures NVM is installed as a prerequisite.
 - **[scripts/setup-nvm.sh](scripts/setup-nvm.sh)**: Installs NVM (via upstream install script on Debian/Fedora; native package on Arch), Node.js v24, Corepack, and global npm packages (`@github/copilot`, `@styled/typescript-styled-plugin`, `yarn`).
-- **[scripts/setup-terminal.sh](scripts/setup-terminal.sh)**: Terminal customization script (WIP).
 
 ---
 
@@ -60,7 +59,7 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 ## 🛠️ Validation & Commands
 
 - **Run full setup**: `make all` (or `./main.sh`)
-- **Run individual targets**: `make neovim`, `make nvm`, `make terminal`
+- **Run individual targets**: `make neovim`, `make nvm`
 - **Clean build artifacts**: `make clean`
 - **Show available targets**: `make help`
 - **Lint / Validate syntax**: `shellcheck -x scripts/*.sh`
