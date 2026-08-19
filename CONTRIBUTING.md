@@ -5,7 +5,7 @@ This guide explains the canonical pattern for scripts in `scripts/*.sh` and the 
 
 ## 🧭 Overview
 
-This file is the reference for contributors and tools (linters, AIs). See examples in `scripts/setup-neovim.sh` and scripts/setup-nvm.sh.
+This file is the reference for contributors and tools (linters, AIs). See examples in `scripts/setup-neovim.sh` and `scripts/setup-nvm.sh`.
 
 ## 📜 Script template and rules
 
@@ -22,7 +22,7 @@ set -euo pipefail
 source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 ```
 
-- Private functions: prefix with _ (e.g., `_install_packages`). Keep functions small and idempotent.
+- Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
 
 - Entrypoint: expose `main()` and finalize with:
 
@@ -64,6 +64,8 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 - [ ] Code added to scripts/
 - [ ] Makefile updated (when applicable)
 - [ ] main.sh updated (when applicable)
+- [ ] README.md and README-pt-br.md updated (when applicable)
+- [ ] AGENTS.md updated (when applicable)
 - [ ] shellcheck OK
 - [ ] Basic manual test documented in PR
 
@@ -74,15 +76,13 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 set -euo pipefail
 source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
-_install_packages() {
-  case "$PKG" in
-    apt) sudo apt update && sudo apt install -y foo ;;
-    pacman) sudo pacman -S --noconfirm foo ;;
-  esac
+_do_something() {
+  echo "Installing foo..."
+  install_packages foo
 }
 
 main() {
-  _install_packages
+  _do_something
 }
 
 main "$@"
