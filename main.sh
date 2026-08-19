@@ -1,23 +1,32 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPTS_DIR="$SCRIPT_DIR/scripts"
+SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
 
-echo "================================"
-echo "   Desktop Setup Script"
-echo "================================"
-echo ""
+main() {
+  echo "================================"
+  echo "   Desktop Setup Script"
+  echo "================================"
+  echo ""
 
-# Run Neovim setup
-echo ">>> Running Neovim setup..."
-echo ""
-"$SCRIPTS_DIR/setup-neovim.sh"
-echo ""
-echo "✓ Neovim setup completed"
-echo ""
+  echo ">>> Running NVM/Node setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-nvm.sh"
+  echo ""
+  echo "✓ NVM/Node setup completed"
+  echo ""
 
-echo "================================"
-echo "   Setup Completed Successfully!"
-echo "================================"
+  echo ">>> Running Neovim setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-neovim.sh"
+  echo ""
+  echo "✓ Neovim setup completed"
+  echo ""
+
+  echo "================================"
+  echo "   Setup Completed Successfully!"
+  echo "================================"
+}
+
+main "$@"
