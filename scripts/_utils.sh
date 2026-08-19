@@ -13,8 +13,8 @@ _get_package_manager() {
 }
 
 _get_package_name() {
-  package="$1"
-  package_manager="$2"
+  local package="$1"
+  local package_manager="$2"
 
   case "$package" in
   build-tools)
@@ -27,9 +27,8 @@ _get_package_name() {
 
   ninja-build)
     case "$package_manager" in
-    apt) echo "ninja-build" ;;
-    dnf) echo "ninja-build" ;;
     pacman) echo "ninja" ;;
+    *) echo "ninja-build" ;;
     esac
     ;;
 
@@ -43,9 +42,8 @@ _get_package_name() {
 
   gettext-tools)
     case "$package_manager" in
-    apt) echo "gettext" ;;
     dnf) echo "gettext-devel" ;;
-    pacman) echo "gettext" ;;
+    *) echo "gettext" ;;
     esac
     ;;
 
@@ -56,7 +54,7 @@ _get_package_name() {
 }
 
 _install_package_from_repository() {
-  package_manager="$1"
+  local package_manager="$1"
   shift
 
   case "$package_manager" in
@@ -79,7 +77,8 @@ _install_package_from_repository() {
   esac
 }
 
-_install_packages() {
+install_packages() {
+  local package_manager
   package_manager="$(_get_package_manager)" || {
     echo "Unsupported distribution" >&2
     return 1
@@ -88,6 +87,7 @@ _install_packages() {
   echo "Using package manager: $package_manager"
 
   local resolved_packages=()
+  local package
   for package in "$@"; do
     resolved_packages+=("$(_get_package_name "$package" "$package_manager")")
   done
