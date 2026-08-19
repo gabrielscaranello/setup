@@ -8,7 +8,7 @@ Bem-vindo! Este repositório automatiza a configuração de um ambiente de desen
 ✨ O que é
 --------
 
-- Scripts idempotentes em scripts/*.sh para instalar e configurar ferramentas (Neovim, terminal, etc.).
+- Scripts idempotentes em scripts/*.sh para instalar e configurar ferramentas (Neovim, Node.js via NVM, etc.).
 
 🎯 Objetivos
 -----------
@@ -27,7 +27,6 @@ make help     # Ver alvos disponíveis
 make all      # Executa todo o setup (./main.sh)
 make neovim   # Só Neovim
 make nvm      # Só NVM/Node
-make terminal # Ajustes de terminal
 make clean    # Limpa artefatos temporários
 ```
 
@@ -38,7 +37,7 @@ make clean    # Limpa artefatos temporários
 - Makefile — Runner com alvos úteis
 - scripts/_utils.sh — Abstração do gerenciador de pacotes
 - scripts/setup-neovim.sh — Instala/compila Neovim
-- scripts/setup-terminal.sh — Ajustes de terminal (em desenvolvimento)
+- scripts/setup-nvm.sh — Instala NVM, Node.js e pacotes globais
 
 🛠 Requisitos
 ------------
