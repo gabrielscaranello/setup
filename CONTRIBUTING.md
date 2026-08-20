@@ -5,7 +5,25 @@ This guide explains the canonical pattern for scripts in `scripts/*.sh` and the 
 
 ## 🧭 Overview
 
-This file is the reference for contributors and tools (linters, AIs). See examples in `scripts/setup-neovim.sh` and `scripts/setup-nvm.sh`.
+This file is the reference for contributors, maintainers, and tools (linters, AIs). It defines script patterns, integration testing practices, and PR expectations.
+
+## 📁 Repository Architecture & Layout
+
+```
+.
+├── main.sh                        # Master orchestrator script (make all)
+├── Makefile                       # Convenience runner (make help, make test, etc.)
+├── AGENTS.md                      # AI instructions and rules
+├── CONTRIBUTING.md                # Developer contribution guide & architecture
+├── README.md / README-pt-br.md    # User documentation (EN / PT-BR)
+├── scripts/                       # Modular setup scripts
+│   ├── _utils.sh                  # Core abstraction (install_packages, etc.)
+│   └── setup-<feature>.sh         # Individual setup scripts (e.g. setup-neovim.sh, setup-nvm.sh)
+└── tests/                         # Integration test suite
+    ├── docker/                    # Base Dockerfiles per distro
+    ├── <feature>/                 # Integration tests per feature
+    └── run-tests.sh               # Master test runner
+```
 
 ## 📜 Script template and rules
 
@@ -46,13 +64,41 @@ shellcheck -x scripts/*.sh
 
 ## 🔁 Script dependencies
 
-If a script depends on another (e.g., neovim depends on nvm), document or install the dependency programmatically.
+if a script depends on another (e.g., neovim depends on nvm), document or install the dependency programmatically.
+
+## 🧪 Integration Tests
+
+Tests live under `tests/` and use [bats-core](https://github.com/bats-core/bats-core). Each test runs inside Docker to guarantee a clean, distro-specific environment across all supported distributions (Arch Linux, Debian, Fedora).
+
+### Directory structure pattern
+
+```
+tests/
+├── docker/                        # Generic base Dockerfiles (one per distro)
+│   ├── <distro>.Dockerfile
+│   └── ...
+├── <feature-or-script>/           # Integration tests for a given script
+│   ├── <script>-<distro>.bats
+│   └── <distro>.Dockerfile        # (Optional) Custom image extending base
+└── run-tests.sh                   # Master test orchestrator
+```
+
+### Conventions & Guidelines
+
+- **Base images** (`tests/docker/*.Dockerfile`): Install OS tools, bats-core, create the `gabriel` non-root user with passwordless `sudo`, and copy the project into `/setup`.
+- **Test files** (`tests/<script>/<script>-<distro>.bats`):
+  - Use `setup_file()` to run the script once per test file.
+  - Implement tests (`@test`) verifying that required binaries, packages, configs, or outputs exist.
+  - Always include an idempotency check (running the script a second time should exit with status 0).
+- **Test-specific Dockerfiles**: If a specific test requires extra setup, extend the base image with a custom `Dockerfile` in `tests/<script>/` (e.g. `tests/<script>/<distro>.Dockerfile`).
+- **Running tests**: Run `make test` (or `./tests/run-tests.sh`) to build all images and execute the entire test suite.
 
 ## 🧾 Documentation and Pull Requests
 
 Changes that add or modify scripts MUST include:
 
 - The scripts/file added
+- Corresponding integration tests under `tests/<script>/`
 - A Makefile target when useful (e.g., `make neovim`)
 - Update to main.sh if the `make all` flow should run it
 - ShellCheck output in CI or PR body

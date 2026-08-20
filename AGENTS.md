@@ -1,6 +1,9 @@
 # 🤖 AI Agent Guidelines & Context — Desktop Setup
 
-This file is the authoritative source of truth for AI assistants, coding agents, and maintainers regarding repository architecture, conventions, quality standards, and mandatory documentation rules.
+This file is the authoritative source of truth for AI assistants, coding agents, and maintainers regarding operational rules, AI constraints, and mandatory synchronization policies.
+
+For script conventions, repository layout, developer contribution guides, and integration test specifications, refer directly to:
+👉 **[CONTRIBUTING.md](CONTRIBUTING.md)**
 
 ---
 
@@ -11,30 +14,6 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 - **Debian** (`apt`)
 - **Fedora** (`dnf`)
 - **Arch Linux** (`pacman`)
-
----
-
-## 📁 Repository Architecture & Layout
-
-- **[main.sh](main.sh)**: Master orchestrator script that runs the full installation flow.
-- **[Makefile](Makefile)**: User-facing runner (`make help`, `make all`, `make neovim`, `make nvm`, `make clean`).
-- **[scripts/\_utils.sh](scripts/_utils.sh)**: Core abstraction for package management (`_get_package_manager`, `_install_packages`, `_get_package_name`).
-- **[scripts/setup-neovim.sh](scripts/setup-neovim.sh)**: Builds/installs Neovim (from source with DEB packaging on Debian; native packages on Arch/Fedora). Ensures NVM is installed as a prerequisite.
-- **[scripts/setup-nvm.sh](scripts/setup-nvm.sh)**: Installs NVM (via upstream install script on Debian/Fedora; native package on Arch), Node.js v24, Corepack, and global npm packages (`@github/copilot`, `@styled/typescript-styled-plugin`, `yarn`).
-
----
-
-## 📜 Script Development Conventions
-
-All scripts under `scripts/*.sh` must adhere to the standard pattern:
-
-1. **Strict mode**: Begin with `set -euo pipefail` (or `set -e`).
-2. **Import helpers**: Include `source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"` near the top (enables LSP Go to Definition and runtime portability).
-3. **Encapsulation**: Prefix private functions with an underscore `_` (e.g. `_install_packages`).
-4. **Entrypoint**: Implement a `main()` function and invoke it at the end with `main "$@"`.
-5. **Cross-Distro**: Use `_get_package_manager` and `_utils.sh` mappings instead of hardcoded package managers.
-6. **Idempotence**: Scripts must be safe to rerun multiple times without side effects.
-7. **Temporary Builds**: Use `/tmp/<package>` and ensure `make clean` removes generated artifacts.
 
 ---
 
@@ -52,7 +31,8 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 1. **[Makefile](Makefile)**: Add the target with help documentation. Targets must be ordered alphabetically with `help` and `all` at the top and `clean` at the bottom.
 2. **[README.md](README.md)**: Update the "Quick start" section maintaining the same alphabetical target order.
 3. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
-4. **[AGENTS.md](AGENTS.md)**: Update reference notes and architecture overview if orchestration or public behavior changed.
+4. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
+5. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
 
 ---
 
@@ -60,14 +40,15 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 - **Run full setup**: `make all` (or `./main.sh`)
 - **Run individual targets**: `make neovim`, `make nvm`
+- **Run integration tests**: `make test`
+- **Lint / Validate syntax**: `shellcheck -x scripts/*.sh`
 - **Clean build artifacts**: `make clean`
 - **Show available targets**: `make help`
-- **Lint / Validate syntax**: `shellcheck -x scripts/*.sh`
 
 ---
 
 ## 📖 Deep-Dive References
 
-- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Developer contribution guidelines, PR checklist, and code style.
+- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Architecture, script patterns, coding standards, test guidelines, and PR checklist.
 - **[README.md](README.md)**: Canonical user-facing documentation and quick start.
 - **[README-pt-br.md](README-pt-br.md)**: Documentação em português.
