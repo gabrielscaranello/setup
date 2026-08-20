@@ -1,22 +1,24 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all neovim nvm clean
+.PHONY: help all neovim nvm test clean
 .DEFAULT_GOAL := help
 
-SHELL := /bin/bash
+SHELL      := /bin/bash
 SCRIPTS_DIR := scripts
+TESTS_DIR   := tests
 
 help:
 	@echo "======================================="
 	@echo "   Desktop Setup - Available Targets"
 	@echo "======================================="
 	@echo ""
-	@echo "  make help             - Show this help message"
-	@echo "  make all              - Run complete setup (all scripts)"
-	@echo "  make neovim           - Install Neovim (from source or distro repo as appropriate)"
-	@echo "  make nvm              - Install nvm and Node (used by Neovim toolchain)"
-	@echo "  make clean            - Clean temporary build files"
+	@echo "  make help                  - Show this help message"
+	@echo "  make all                   - Run complete setup (all scripts)"
+	@echo "  make neovim                - Install Neovim (from source or distro repo)"
+	@echo "  make nvm                   - Install nvm, Node and global packages"
+	@echo "  make test                  - Run all integration tests (all distros)"
+	@echo "  make clean                 - Clean temporary build files"
 	@echo ""
 
 all:
@@ -27,6 +29,13 @@ neovim:
 
 nvm:
 	@./$(SCRIPTS_DIR)/setup-nvm.sh
+
+# ── Integration tests ────────────────────────────────────────────────────────
+
+test:
+	@./$(TESTS_DIR)/run-tests.sh
+
+# ── Cleanup ───────────────────────────────────────────────────────────────────
 
 clean:
 	@echo "Cleaning temporary files..."
