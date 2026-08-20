@@ -59,7 +59,8 @@ _install_package_from_repository() {
 
   case "$package_manager" in
   apt)
-    sudo apt install -y "$@"
+    sudo apt-get update -qq
+    sudo apt-get install -y "$@"
     ;;
 
   dnf)
