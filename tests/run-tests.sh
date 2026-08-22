@@ -173,7 +173,9 @@ _run_unit_tests() {
 
   # Otherwise run inside a lightweight Debian image
   local image="setup-test-debian"
-  docker build -q --build-arg USERNAME="$HOST_USER" -f tests/docker/debian.Dockerfile -t "$image" . >/dev/null
+  if ! docker image inspect "$image" >/dev/null 2>&1; then
+    docker build -q --build-arg USERNAME="$HOST_USER" -f tests/docker/debian.Dockerfile -t "$image" tests/docker >/dev/null
+  fi
   _run_bats_container "$image" "unit" "${unit_tests[@]}"
 }
 
@@ -183,7 +185,9 @@ _run_integration_distro() {
   local image="setup-test-${distro}"
 
   echo "=== Running Integration Tests on ${distro^} ==="
-  docker build -q --build-arg USERNAME="$HOST_USER" -f "$dockerfile" -t "$image" . >/dev/null
+  if ! docker image inspect "$image" >/dev/null 2>&1; then
+    docker build -q --build-arg USERNAME="$HOST_USER" -f "$dockerfile" -t "$image" tests/docker >/dev/null
+  fi
 
   local integration_tests=()
   read -r -a integration_tests <<< "$(_find_test_files tests/integration)"

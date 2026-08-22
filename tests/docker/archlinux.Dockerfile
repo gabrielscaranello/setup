@@ -19,6 +19,5 @@ RUN useradd -m -s /bin/bash "$USERNAME" \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
 
 WORKDIR /setup
-COPY --chown=${USERNAME}:${USERNAME} . .
 
 USER ${USERNAME}
