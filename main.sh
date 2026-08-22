@@ -17,6 +17,13 @@ main() {
   echo "✓ Gitflow setup completed"
   echo ""
 
+  echo ">>> Running Golang setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-go.sh"
+  echo ""
+  echo "✓ Golang setup completed"
+  echo ""
+
   echo ">>> Running NVM/Node setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-nvm.sh"

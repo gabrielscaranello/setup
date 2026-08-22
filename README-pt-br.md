@@ -26,6 +26,7 @@ Execute os alvos do Makefile:
 make help              # Ver alvos disponíveis
 make all               # Executa todo o setup (./main.sh)
 make gitflow           # Só Gitflow CJS
+make go                # Só Golang
 make neovim            # Só Neovim
 make nvm               # Só NVM/Node
 make rust              # Só Rust/Cargo
@@ -43,6 +44,7 @@ make clean             # Limpa artefatos temporários
 - Makefile — Runner com alvos úteis
 - scripts/_utils.sh — Abstração do gerenciador de pacotes
 - scripts/setup-gitflow.sh — Instala Gitflow CJS
+- scripts/setup-go.sh — Instala Golang
 - scripts/setup-neovim.sh — Instala/compila Neovim
 - scripts/setup-nvm.sh — Instala NVM, Node.js e pacotes globais
 - scripts/setup-rust.sh — Instala Rust, Cargo e ferramentas (tree-sitter-cli)

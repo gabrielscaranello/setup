@@ -55,6 +55,13 @@ _get_package_name() {
     esac
     ;;
 
+  golang)
+    case "$package_manager" in
+    pacman) echo "go" ;;
+    *) echo "golang" ;;
+    esac
+    ;;
+
   *)
     echo "$package"
     ;;

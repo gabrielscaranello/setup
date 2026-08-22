@@ -36,6 +36,12 @@ setup() {
   [ "$(_get_package_name "libclang" "pacman")" = "clang" ]
 }
 
+@test "_get_package_name resolves golang for all managers" {
+  [ "$(_get_package_name "golang" "dnf")" = "golang" ]
+  [ "$(_get_package_name "golang" "apt")" = "golang" ]
+  [ "$(_get_package_name "golang" "pacman")" = "go" ]
+}
+
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
   [ "$(_get_package_name "curl" "dnf")" = "curl" ]

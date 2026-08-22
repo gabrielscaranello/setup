@@ -1,7 +1,7 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all gitflow neovim nvm rust test test-coverage test-integration test-unit clean
+.PHONY: help all gitflow go neovim nvm rust test test-coverage test-integration test-unit clean
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -19,6 +19,7 @@ help:
 	@echo "  make help                  - Show this help message"
 	@echo "  make all                   - Run complete setup (all scripts)"
 	@echo "  make gitflow               - Install Gitflow CJS"
+	@echo "  make go                    - Install Golang (binary on Debian, repo package on others)"
 	@echo "  make neovim                - Install Neovim (from source or distro repo)"
 	@echo "  make nvm                   - Install nvm, Node and global packages"
 	@echo "  make rust                  - Install Rust, Cargo and tools (tree-sitter-cli)"
@@ -34,6 +35,9 @@ all:
 
 gitflow:
 	@./$(SCRIPTS_DIR)/setup-gitflow.sh
+
+go:
+	@./$(SCRIPTS_DIR)/setup-go.sh
 
 neovim:
 	@./$(SCRIPTS_DIR)/setup-neovim.sh
