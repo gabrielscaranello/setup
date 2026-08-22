@@ -23,11 +23,13 @@ Bem-vindo! Este repositório automatiza a configuração de um ambiente de desen
 Execute os alvos do Makefile:
 
 ```sh
-make help     # Ver alvos disponíveis
-make all      # Executa todo o setup (./main.sh)
-make neovim   # Só Neovim
-make nvm      # Só NVM/Node
-make clean    # Limpa artefatos temporários
+make help           # Ver alvos disponíveis
+make all            # Executa todo o setup (./main.sh)
+make neovim         # Só Neovim
+make nvm            # Só NVM/Node
+make test           # Executa testes de integração
+make test-coverage  # Executa testes e gera relatórios de cobertura (kcov)
+make clean          # Limpa artefatos temporários
 ```
 
 📂 Estrutura

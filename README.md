@@ -25,11 +25,13 @@ A collection of idempotent scripts (scripts/*.sh) to install and configure devel
 Run Makefile targets:
 
 ```sh
-make help     # Show available targets
-make all      # Run full setup (./main.sh)
-make neovim   # Neovim only
-make nvm      # NVM/Node only
-make clean    # Remove temporary artifacts
+make help           # Show available targets
+make all            # Run full setup (./main.sh)
+make neovim         # Neovim only
+make nvm            # NVM/Node only
+make test           # Run integration tests
+make test-coverage  # Run tests with code coverage reports (kcov)
+make clean          # Remove temporary artifacts
 ```
 
 📁 Layout

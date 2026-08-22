@@ -85,13 +85,14 @@ tests/
 
 ### Conventions & Guidelines
 
-- **Base images** (`tests/docker/*.Dockerfile`): Install OS tools, bats-core, create the `gabriel` non-root user with passwordless `sudo`, and copy the project into `/setup`.
+- **Base images** (`tests/docker/*.Dockerfile`): Install OS tools, bats-core, kcov, create the `gabriel` non-root user with passwordless `sudo`, and copy the project into `/setup`.
 - **Test files** (`tests/<script>/<script>-<distro>.bats`):
   - Use `setup_file()` to run the script once per test file.
   - Implement tests (`@test`) verifying that required binaries, packages, configs, or outputs exist.
   - Always include an idempotency check (running the script a second time should exit with status 0).
 - **Test-specific Dockerfiles**: If a specific test requires extra setup, extend the base image with a custom `Dockerfile` in `tests/<script>/` (e.g. `tests/<script>/<distro>.Dockerfile`).
 - **Running tests**: Run `make test` (or `./tests/run-tests.sh`) to build all images and execute the entire test suite.
+- **Code coverage**: Run `make test-coverage` (or `./tests/run-tests.sh --coverage`) to generate unified code coverage reports in `coverage/` using `kcov`.
 
 ## 🧾 Documentation and Pull Requests
 
