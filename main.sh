@@ -10,6 +10,13 @@ main() {
   echo "================================"
   echo ""
 
+  echo ">>> Running Fonts setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-fonts.sh"
+  echo ""
+  echo "✓ Fonts setup completed"
+  echo ""
+
   echo ">>> Running Gitflow setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-gitflow.sh"

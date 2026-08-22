@@ -25,6 +25,7 @@ Execute os alvos do Makefile:
 ```sh
 make help              # Ver alvos disponíveis
 make all               # Executa todo o setup (./main.sh)
+make fonts             # Só JetBrains Mono Nerd Font
 make gitflow           # Só Gitflow CJS
 make go                # Só Golang
 make neovim            # Só Neovim
@@ -43,6 +44,7 @@ make clean             # Limpa artefatos temporários
 - main.sh — Orquestrador
 - Makefile — Runner com alvos úteis
 - scripts/_utils.sh — Abstração do gerenciador de pacotes
+- scripts/setup-fonts.sh — Instala JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Instala Gitflow CJS
 - scripts/setup-go.sh — Instala Golang
 - scripts/setup-neovim.sh — Instala/compila Neovim

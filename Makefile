@@ -1,7 +1,7 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all gitflow go neovim nvm rust test test-coverage test-integration test-unit clean
+.PHONY: help all fonts gitflow go neovim nvm rust test test-coverage test-integration test-unit clean
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -18,6 +18,7 @@ help:
 	@echo ""
 	@echo "  make help                  - Show this help message"
 	@echo "  make all                   - Run complete setup (all scripts)"
+	@echo "  make fonts                 - Install JetBrains Mono Nerd Font"
 	@echo "  make gitflow               - Install Gitflow CJS"
 	@echo "  make go                    - Install Golang (binary on Debian, repo package on others)"
 	@echo "  make neovim                - Install Neovim (from source or distro repo)"
@@ -32,6 +33,9 @@ help:
 
 all:
 	@./main.sh
+
+fonts:
+	@./$(SCRIPTS_DIR)/setup-fonts.sh
 
 gitflow:
 	@./$(SCRIPTS_DIR)/setup-gitflow.sh
@@ -66,5 +70,5 @@ test-unit:
 
 clean:
 	@echo "Cleaning temporary files..."
-	@rm -rf /tmp/neovim /tmp/gitflow-installer coverage
+	@rm -rf /tmp/neovim /tmp/gitflow-installer /tmp/JetBrainsMono /tmp/JetBrainsMono.zip coverage
 	@echo "✓ Clean completed"

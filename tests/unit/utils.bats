@@ -42,6 +42,30 @@ setup() {
   [ "$(_get_package_name "golang" "pacman")" = "go" ]
 }
 
+@test "_get_package_name resolves font packages for distros" {
+  [ "$(_get_package_name "fonts-jetbrains-mono-nerd" "pacman")" = "ttf-jetbrains-mono-nerd" ]
+  [ "$(_get_package_name "fonts-jetbrains-mono-nerd" "apt")" = "" ]
+  [ "$(_get_package_name "fonts-jetbrains-mono-nerd" "dnf")" = "" ]
+
+  [ "$(_get_package_name "fonts-liberation" "apt")" = "fonts-liberation" ]
+  [ "$(_get_package_name "fonts-liberation" "pacman")" = "ttf-liberation" ]
+  [ "$(_get_package_name "fonts-liberation" "dnf")" = "" ]
+
+  [ "$(_get_package_name "fonts-roboto" "apt")" = "fonts-roboto" ]
+  [ "$(_get_package_name "fonts-roboto" "dnf")" = "google-roboto-fonts" ]
+  [ "$(_get_package_name "fonts-roboto" "pacman")" = "ttf-roboto" ]
+
+  [ "$(_get_package_name "fonts-carlito" "pacman")" = "ttf-carlito" ]
+  [ "$(_get_package_name "fonts-carlito" "apt")" = "" ]
+
+  [ "$(_get_package_name "fonts-noto" "pacman")" = "noto-fonts" ]
+  [ "$(_get_package_name "fonts-noto" "dnf")" = "" ]
+
+  [ "$(_get_package_name "fonts-noto-color-emoji" "apt")" = "fonts-noto-color-emoji" ]
+  [ "$(_get_package_name "fonts-noto-color-emoji" "pacman")" = "noto-fonts-emoji" ]
+  [ "$(_get_package_name "fonts-noto-color-emoji" "dnf")" = "" ]
+}
+
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
   [ "$(_get_package_name "curl" "dnf")" = "curl" ]

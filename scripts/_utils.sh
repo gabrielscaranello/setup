@@ -62,6 +62,55 @@ _get_package_name() {
     esac
     ;;
 
+  fontconfig)
+    echo "fontconfig"
+    ;;
+
+  fonts-jetbrains-mono-nerd)
+    case "$package_manager" in
+    pacman) echo "ttf-jetbrains-mono-nerd" ;;
+    *) echo "" ;;
+    esac
+    ;;
+
+  fonts-liberation)
+    case "$package_manager" in
+    apt) echo "fonts-liberation" ;;
+    pacman) echo "ttf-liberation" ;;
+    dnf) echo "" ;;
+    esac
+    ;;
+
+  fonts-roboto)
+    case "$package_manager" in
+    apt) echo "fonts-roboto" ;;
+    dnf) echo "google-roboto-fonts" ;;
+    pacman) echo "ttf-roboto" ;;
+    esac
+    ;;
+
+  fonts-carlito)
+    case "$package_manager" in
+    pacman) echo "ttf-carlito" ;;
+    *) echo "" ;;
+    esac
+    ;;
+
+  fonts-noto)
+    case "$package_manager" in
+    pacman) echo "noto-fonts" ;;
+    *) echo "" ;;
+    esac
+    ;;
+
+  fonts-noto-color-emoji)
+    case "$package_manager" in
+    apt) echo "fonts-noto-color-emoji" ;;
+    pacman) echo "noto-fonts-emoji" ;;
+    dnf) echo "" ;;
+    esac
+    ;;
+
   *)
     echo "$package"
     ;;
@@ -83,7 +132,7 @@ _install_package_from_repository() {
     ;;
 
   pacman)
-    sudo pacman -S --needed --noconfirm "$@"
+    sudo pacman -Sy --needed --noconfirm "$@"
     ;;
 
   *)
@@ -104,9 +153,18 @@ install_packages() {
 
   local resolved_packages=()
   local package
+  local resolved
   for package in "$@"; do
-    resolved_packages+=("$(_get_package_name "$package" "$package_manager")")
+    resolved="$(_get_package_name "$package" "$package_manager")"
+    if [ -n "$resolved" ]; then
+      resolved_packages+=("$resolved")
+    fi
   done
+
+  if [ ${#resolved_packages[@]} -eq 0 ]; then
+    echo "No packages to install for $package_manager"
+    return 0
+  fi
 
   echo "Installing: ${resolved_packages[*]}"
 

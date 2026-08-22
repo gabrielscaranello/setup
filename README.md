@@ -27,6 +27,7 @@ Run Makefile targets:
 ```sh
 make help              # Show available targets
 make all               # Run full setup (./main.sh)
+make fonts             # JetBrains Mono Nerd Font only
 make gitflow           # Gitflow CJS only
 make go                # Golang only
 make neovim            # Neovim only
@@ -45,6 +46,7 @@ make clean             # Remove temporary artifacts
 - main.sh — Orchestrator
 - Makefile — Convenience runner
 - scripts/_utils.sh — Package-manager abstraction
+- scripts/setup-fonts.sh — Install JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Install Gitflow CJS
 - scripts/setup-go.sh — Install Golang
 - scripts/setup-neovim.sh — Build/install Neovim
