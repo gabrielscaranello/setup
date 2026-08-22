@@ -123,6 +123,10 @@ _get_package_name() {
     esac
     ;;
 
+  chromium)
+    echo "chromium"
+    ;;
+
   docker)
     case "$package_manager" in
     apt) echo "docker.io" ;;

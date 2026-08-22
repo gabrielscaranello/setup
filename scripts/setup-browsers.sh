@@ -79,12 +79,23 @@ _install_firefox() {
   esac
 }
 
-main() {
-  echo "Setting up Firefox..."
+_install_chromium() {
+  echo "Installing Chromium from distribution repository..."
+  install_packages chromium
+}
+
+_install_browsers() {
+  _install_chromium
   _install_firefox
-  echo "setup-firefox complete"
+}
+
+main() {
+  echo "Setting up browsers..."
+  _install_browsers
+  echo "setup-browsers complete"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi
+

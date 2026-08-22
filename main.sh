@@ -17,11 +17,11 @@ main() {
   echo "✓ Docker setup completed"
   echo ""
 
-  echo ">>> Running Firefox setup..."
+  echo ">>> Running Browsers setup..."
   echo ""
-  bash "$SCRIPTS_DIR/setup-firefox.sh"
+  bash "$SCRIPTS_DIR/setup-browsers.sh"
   echo ""
-  echo "✓ Firefox setup completed"
+  echo "✓ Browsers setup completed"
   echo ""
 
   echo ">>> Running Fonts setup..."

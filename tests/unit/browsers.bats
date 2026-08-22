@@ -1,9 +1,9 @@
 #!/usr/bin/env bats
 
-# Unit tests for setup-firefox.sh logic and branches
+# Unit tests for setup-browsers.sh logic and branches
 
 @test "_install_firefox delegates to repo install on Fedora" {
-  source /setup/scripts/setup-firefox.sh
+  source /setup/scripts/setup-browsers.sh
   _get_package_manager() { echo "dnf"; }
   _install_firefox_repo() {
     echo "called repo install"
@@ -15,7 +15,7 @@
 }
 
 @test "_install_firefox delegates to repo install on Arch Linux" {
-  source /setup/scripts/setup-firefox.sh
+  source /setup/scripts/setup-browsers.sh
   _get_package_manager() { echo "pacman"; }
   _install_firefox_repo() {
     echo "called repo install"
@@ -27,7 +27,7 @@
 }
 
 @test "_install_firefox delegates to apt flow on Debian/APT" {
-  source /setup/scripts/setup-firefox.sh
+  source /setup/scripts/setup-browsers.sh
   _get_package_manager() { echo "apt"; }
   _install_prereqs() { return 0; }
   _install_firefox_apt() {
@@ -40,7 +40,7 @@
 }
 
 @test "_install_firefox fails when package manager is unsupported" {
-  source /setup/scripts/setup-firefox.sh
+  source /setup/scripts/setup-browsers.sh
   _get_package_manager() { echo "unknown-pm"; }
   run _install_firefox
   [ "$status" -eq 1 ]
@@ -48,7 +48,7 @@
 }
 
 @test "_add_mozilla_apt_repo skips when files already exist" {
-  source /setup/scripts/setup-firefox.sh
+  source /setup/scripts/setup-browsers.sh
   local test_dir="/tmp/test-firefox-repo"
   mkdir -p "$test_dir"
   touch "$test_dir/mozilla.sources" "$test_dir/packages.mozilla.org.asc"
@@ -65,3 +65,25 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ "already configured" ]]
 }
+
+@test "_install_chromium calls install_packages chromium" {
+  source /setup/scripts/setup-browsers.sh
+  install_packages() {
+    echo "installing package: $*"
+    return 0
+  }
+  run _install_chromium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing package: chromium" ]]
+}
+
+@test "_install_browsers calls both chromium and firefox installers" {
+  source /setup/scripts/setup-browsers.sh
+  _install_chromium() { echo "called chromium install"; return 0; }
+  _install_firefox() { echo "called firefox install"; return 0; }
+  run _install_browsers
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called chromium install" ]]
+  [[ "$output" =~ "called firefox install" ]]
+}
+

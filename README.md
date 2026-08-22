@@ -27,8 +27,8 @@ Run Makefile targets:
 ```sh
 make help              # Show available targets
 make all               # Run full setup (./main.sh)
+make browsers          # Browsers only (Chromium, Firefox)
 make docker            # Docker only
-make firefox           # Firefox only
 make fonts             # JetBrains Mono Nerd Font only
 make gitflow           # Gitflow CJS only
 make go                # Golang only
@@ -48,8 +48,8 @@ make clean             # Remove temporary artifacts
 - main.sh — Orchestrator
 - Makefile — Convenience runner
 - scripts/_utils.sh — Package-manager abstraction
+- scripts/setup-browsers.sh — Install Browsers (Chromium, Firefox)
 - scripts/setup-docker.sh — Install Docker and plugins
-- scripts/setup-firefox.sh — Install Firefox
 - scripts/setup-fonts.sh — Install JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Install Gitflow CJS
 - scripts/setup-go.sh — Install Golang
