@@ -88,8 +88,11 @@ setup_file() {
 @test "_enable_corepack falls back to node when corepack command is absent" {
   source /setup/scripts/setup-nvm.sh
   command() {
-    if [ "$2" = "corepack" ]; then return 1; fi
+    if [ "${2:-}" = "corepack" ]; then return 1; fi
     builtin command "$@"
+  }
+  node() {
+    return 0
   }
   run _enable_corepack
   [ "$status" -eq 0 ]

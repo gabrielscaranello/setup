@@ -29,7 +29,7 @@ make help           # Show available targets
 make all            # Run full setup (./main.sh)
 make neovim         # Neovim only
 make nvm            # NVM/Node only
-make test           # Run integration tests
+make test           # Run integration tests (e.g. DISTRO=debian FILTER=nvm)
 make test-coverage  # Run tests with code coverage reports (kcov)
 make clean          # Remove temporary artifacts
 ```

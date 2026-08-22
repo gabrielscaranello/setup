@@ -12,12 +12,13 @@ RUN git clone --depth 1 --branch "v${BATS_VERSION}" \
     && /tmp/bats-core/install.sh /usr/local \
     && rm -rf /tmp/bats-core
 
+ARG USERNAME=setupuser
+
 # Create non-root user with passwordless sudo
-RUN useradd -m -s /bin/bash gabriel \
-    && echo 'gabriel ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+RUN useradd -m -s /bin/bash "$USERNAME" \
+    && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
 
 WORKDIR /setup
-COPY . .
-RUN chown -R gabriel:gabriel /setup
+COPY --chown=${USERNAME}:${USERNAME} . .
 
-USER gabriel
+USER ${USERNAME}

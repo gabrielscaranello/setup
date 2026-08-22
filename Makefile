@@ -8,6 +8,9 @@ SHELL := /bin/bash
 SCRIPTS_DIR := scripts
 TESTS_DIR := tests
 
+DISTRO ?=
+FILTER ?=
+
 help:
 	@echo "======================================="
 	@echo "   Desktop Setup - Available Targets"
@@ -17,7 +20,7 @@ help:
 	@echo "  make all                   - Run complete setup (all scripts)"
 	@echo "  make neovim                - Install Neovim (from source or distro repo)"
 	@echo "  make nvm                   - Install nvm, Node and global packages"
-	@echo "  make test                  - Run all integration tests (all distros)"
+	@echo "  make test                  - Run integration tests (supports DISTRO=, FILTER=)"
 	@echo "  make test-coverage         - Run tests and generate code coverage reports"
 	@echo "  make clean                 - Clean temporary build files"
 	@echo ""
@@ -34,10 +37,10 @@ nvm:
 # ── Integration tests ────────────────────────────────────────────────────────
 
 test:
-	@./$(TESTS_DIR)/run-tests.sh
+	@./$(TESTS_DIR)/run-tests.sh $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER))
 
 test-coverage:
-	@./$(TESTS_DIR)/run-tests.sh --coverage
+	@./$(TESTS_DIR)/run-tests.sh --coverage $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER))
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 

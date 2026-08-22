@@ -27,7 +27,7 @@ make help           # Ver alvos disponíveis
 make all            # Executa todo o setup (./main.sh)
 make neovim         # Só Neovim
 make nvm            # Só NVM/Node
-make test           # Executa testes de integração
+make test           # Executa testes de integração (ex: DISTRO=debian FILTER=nvm)
 make test-coverage  # Executa testes e gera relatórios de cobertura (kcov)
 make clean          # Limpa artefatos temporários
 ```

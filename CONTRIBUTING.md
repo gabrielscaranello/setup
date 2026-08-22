@@ -42,10 +42,16 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
 
-- Entrypoint: expose `main()` and finalize with:
+- Entrypoint: expose `main()` and finalize with an execution guard:
 
 ```bash
 main "$@"
+```
+or (when loaded in test suites):
+```bash
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi
 ```
 
 - Branch by package manager via `_get_package_manager` from `_utils.sh` — do not hard-code.
@@ -85,13 +91,15 @@ tests/
 
 ### Conventions & Guidelines
 
-- **Base images** (`tests/docker/*.Dockerfile`): Install OS tools, bats-core, kcov, create the `gabriel` non-root user with passwordless `sudo`, and copy the project into `/setup`.
+- **Base images** (`tests/docker/*.Dockerfile`): Install OS tools, bats-core, kcov, create a non-root user matching the host username (`$USER`) with passwordless `sudo`, and configure `/setup`.
 - **Test files** (`tests/<script>/<script>-<distro>.bats`):
   - Use `setup_file()` to run the script once per test file.
   - Implement tests (`@test`) verifying that required binaries, packages, configs, or outputs exist.
   - Always include an idempotency check (running the script a second time should exit with status 0).
 - **Test-specific Dockerfiles**: If a specific test requires extra setup, extend the base image with a custom `Dockerfile` in `tests/<script>/` (e.g. `tests/<script>/<distro>.Dockerfile`).
-- **Running tests**: Run `make test` (or `./tests/run-tests.sh`) to build all images and execute the entire test suite.
+- **Running tests**: Run `make test` (or `./tests/run-tests.sh`) to execute all tests.
+  - Target a specific distro: `make test DISTRO=debian` (or `./tests/run-tests.sh --distro=debian`)
+  - Filter specific tests: `make test FILTER=nvm` (or `./tests/run-tests.sh --filter=nvm`)
 - **Code coverage**: Run `make test-coverage` (or `./tests/run-tests.sh --coverage`) to generate unified code coverage reports in `coverage/` using `kcov`.
 
 ## 🧾 Documentation and Pull Requests
