@@ -31,6 +31,8 @@ setup() {
 }
 
 @test "_get_package_name returns unmapped package as-is" {
+  [ "$(_get_package_name "curl" "apt")" = "curl" ]
+  [ "$(_get_package_name "curl" "dnf")" = "curl" ]
   [ "$(_get_package_name "curl" "pacman")" = "curl" ]
 }
 

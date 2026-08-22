@@ -40,7 +40,9 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 - **Run full setup**: `make all` (or `./main.sh`)
 - **Run individual targets**: `make neovim`, `make nvm`
-- **Run integration tests**: `make test`
+- **Run all tests**: `make test`
+- **Run unit tests only**: `make test-unit`
+- **Run integration tests**: `make test-integration`
 - **Run coverage reports**: `make test-coverage`
 - **Lint / Validate syntax**: `shellcheck -x scripts/*.sh`
 - **Clean build artifacts**: `make clean`

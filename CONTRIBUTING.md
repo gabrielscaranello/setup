@@ -83,21 +83,30 @@ tests/
 ├── docker/                        # Generic base Dockerfiles (one per distro)
 │   ├── <distro>.Dockerfile
 │   └── ...
-├── <feature-or-script>/           # Integration tests for a given script
-│   ├── <script>-<distro>.bats
-│   └── <distro>.Dockerfile        # (Optional) Custom image extending base
+├── unit/                          # Fast unit tests (mocked, testing internal functions)
+│   ├── <feature>.bats
+│   └── ...
+├── integration/                   # Cross-distro integration tests (E2E in containers)
+│   ├── <feature>.bats
+│   └── ...
 └── run-tests.sh                   # Master test orchestrator
 ```
 
 ### Conventions & Guidelines
 
 - **Base images** (`tests/docker/*.Dockerfile`): Install OS tools, bats-core, kcov, create a non-root user matching the host username (`$USER`) with passwordless `sudo`, and configure `/setup`.
-- **Test files** (`tests/<script>/<script>-<distro>.bats`):
-  - Use `setup_file()` to run the script once per test file.
+- **Unit tests** (`tests/unit/<feature>.bats`):
+  - Test pure logic, branching, error traps, and mock calls without triggering real installations or network requests.
+  - Run quickly via `make test-unit`.
+- **Integration tests** (`tests/integration/<feature>.bats`):
+  - Use `setup_file()` to run the script once per test file in a clean container.
+  - Shared across all supported distributions (Arch Linux, Debian, Fedora) to avoid duplication.
   - Implement tests (`@test`) verifying that required binaries, packages, configs, or outputs exist.
   - Always include an idempotency check (running the script a second time should exit with status 0).
-- **Test-specific Dockerfiles**: If a specific test requires extra setup, extend the base image with a custom `Dockerfile` in `tests/<script>/` (e.g. `tests/<script>/<distro>.Dockerfile`).
-- **Running tests**: Run `make test` (or `./tests/run-tests.sh`) to execute all tests.
+- **Running tests**:
+  - Run all tests: `make test` (or `./tests/run-tests.sh`)
+  - Run unit tests only: `make test-unit` (or `./tests/run-tests.sh --unit`)
+  - Run integration tests only: `make test-integration` (or `./tests/run-tests.sh --integration`)
   - Target a specific distro: `make test DISTRO=debian` (or `./tests/run-tests.sh --distro=debian`)
   - Filter specific tests: `make test FILTER=nvm` (or `./tests/run-tests.sh --filter=nvm`)
 - **Code coverage**: Run `make test-coverage` (or `./tests/run-tests.sh --coverage`) to generate unified code coverage reports in `coverage/` using `kcov`.

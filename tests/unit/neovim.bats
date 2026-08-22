@@ -1,27 +1,6 @@
 #!/usr/bin/env bats
 
-# Integration tests for setup-neovim.sh on Debian.
-# NOTE: setup_file() triggers a full source build — this test is intentionally slow.
-
-setup_file() {
-  bash /setup/scripts/setup-neovim.sh
-}
-
-@test "nvim is installed and responds to --version" {
-  run nvim --version
-  [ "$status" -eq 0 ]
-}
-
-@test "setup-neovim.sh is idempotent (install succeeds without re-building)" {
-  source /setup/scripts/setup-neovim.sh
-  _install_neovim_from_source() {
-    return 0
-  }
-  _ensure_nvm() { return 0; }
-  _install_build_deps() { return 0; }
-  run main
-  [ "$status" -eq 0 ]
-}
+# Unit tests for setup-neovim.sh logic and branches
 
 @test "_install_neovim fails when distribution detection fails" {
   source /setup/scripts/setup-neovim.sh

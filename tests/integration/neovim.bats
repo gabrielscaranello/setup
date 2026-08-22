@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-# Integration tests for setup-neovim.sh on Fedora.
+# Integration tests for setup-neovim.sh (runs across all supported distros)
 
 setup_file() {
   bash /setup/scripts/setup-neovim.sh
