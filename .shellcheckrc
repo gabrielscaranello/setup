@@ -1,0 +1,13 @@
+# ShellCheck Configuration File
+# Documentation: https://www.shellcheck.net/wiki/Directive
+
+# Search paths for dynamically sourced scripts
+source-path=scripts:.
+
+# SC2329: "This function is never invoked"
+# BATS tests frequently define mock functions and lifecycle hooks that are invoked indirectly
+# SC1091: "Not following: ... was not specified as input"
+# BATS tests source scripts using absolute paths (e.g. /setup/scripts/...) that point to container mounts
+# SC2034: "appears unused"
+# Tests override global script variables (e.g. COREPACK_PACKAGES, NPM_PACKAGES) before invoking functions
+disable=SC2329,SC1091,SC2034

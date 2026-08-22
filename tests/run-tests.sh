@@ -5,10 +5,6 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-IMAGE_ARCH="setup-test-archlinux"
-IMAGE_DEBIAN="setup-test-debian"
-IMAGE_FEDORA="setup-test-fedora"
-
 COVERAGE=0
 SELECTED_DISTRO=""
 SELECTED_FILTER=""
@@ -176,8 +172,9 @@ _run_unit_tests() {
   fi
 
   # Otherwise run inside a lightweight Debian image
-  docker build -q --build-arg USERNAME="$HOST_USER" -f tests/docker/debian.Dockerfile -t "$IMAGE_DEBIAN" . >/dev/null
-  _run_bats_container "$IMAGE_DEBIAN" "unit" "${unit_tests[@]}"
+  local image="setup-test-debian"
+  docker build -q --build-arg USERNAME="$HOST_USER" -f tests/docker/debian.Dockerfile -t "$image" . >/dev/null
+  _run_bats_container "$image" "unit" "${unit_tests[@]}"
 }
 
 _run_integration_distro() {
@@ -200,13 +197,14 @@ _merge_coverage() {
   if [[ "$COVERAGE" -eq 1 ]]; then
     echo ""
     echo "=== Unifying Code Coverage Reports ==="
+    local image="setup-test-debian"
     docker run --rm \
       --ulimit nofile=1024:1024 \
       --cap-add=SYS_PTRACE \
       --security-opt seccomp=unconfined \
       --user root \
       -v "$ROOT_DIR/coverage:/setup/coverage" \
-      "$IMAGE_DEBIAN" \
+      "$image" \
       bash -c '
         dirs_to_merge=()
         for d in unit archlinux debian fedora; do

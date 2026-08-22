@@ -2,7 +2,7 @@
 
 # Integration tests for setup-nvm.sh (runs identically across all distros)
 
-NVM_INIT='. /usr/share/nvm/init-nvm.sh 2>/dev/null || . "$HOME/.nvm/nvm.sh"'
+NVM_INIT=". /usr/share/nvm/init-nvm.sh 2>/dev/null || . \"\$HOME/.nvm/nvm.sh\""
 
 setup_file() {
   bash /setup/scripts/setup-nvm.sh
