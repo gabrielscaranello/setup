@@ -10,6 +10,13 @@ main() {
   echo "================================"
   echo ""
 
+  echo ">>> Running Gitflow setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-gitflow.sh"
+  echo ""
+  echo "✓ Gitflow setup completed"
+  echo ""
+
   echo ">>> Running NVM/Node setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-nvm.sh"

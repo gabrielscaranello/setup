@@ -27,6 +27,7 @@ Run Makefile targets:
 ```sh
 make help              # Show available targets
 make all               # Run full setup (./main.sh)
+make gitflow           # Gitflow CJS only
 make neovim            # Neovim only
 make nvm               # NVM/Node only
 make rust              # Rust/Cargo only
@@ -43,6 +44,7 @@ make clean             # Remove temporary artifacts
 - main.sh — Orchestrator
 - Makefile — Convenience runner
 - scripts/_utils.sh — Package-manager abstraction
+- scripts/setup-gitflow.sh — Install Gitflow CJS
 - scripts/setup-neovim.sh — Build/install Neovim
 - scripts/setup-nvm.sh — Install NVM, Node.js and global packages
 - scripts/setup-rust.sh — Install Rust, Cargo and tools (tree-sitter-cli)

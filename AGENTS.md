@@ -39,7 +39,7 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 ## 🛠️ Validation & Commands
 
 - **Run full setup**: `make all` (or `./main.sh`)
-- **Run individual targets**: `make neovim`, `make nvm`, `make rust`
+- **Run individual targets**: `make gitflow`, `make neovim`, `make nvm`, `make rust`
 - **Run all tests**: `make test`
 - **Run unit tests only**: `make test-unit`
 - **Run integration tests**: `make test-integration`
