@@ -10,15 +10,10 @@ NVM_VERSION=0.40.3
 NVM_INSTALL_URL="https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh"
 
 # Package managers to install globally via corepack
-COREPACK_PACKAGES=(
-  yarn@1
-)
+COREPACK_PACKAGES=("yarn@1")
 
 # Regular packages to install globally via npm
-NPM_PACKAGES=(
-  @github/copilot
-  @styled/typescript-styled-plugin
-)
+NPM_PACKAGES=("@github/copilot" "@styled/typescript-styled-plugin")
 
 _install_prereqs() {
   # ensure basic tools for fetching/installing nvm are available
