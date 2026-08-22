@@ -25,6 +25,7 @@ Execute os alvos do Makefile:
 ```sh
 make help              # Ver alvos disponíveis
 make all               # Executa todo o setup (./main.sh)
+make docker            # Só Docker
 make firefox           # Só Firefox
 make fonts             # Só JetBrains Mono Nerd Font
 make gitflow           # Só Gitflow CJS
@@ -45,6 +46,7 @@ make clean             # Limpa artefatos temporários
 - main.sh — Orquestrador
 - Makefile — Runner com alvos úteis
 - scripts/_utils.sh — Abstração do gerenciador de pacotes
+- scripts/setup-docker.sh — Instala Docker e plugins
 - scripts/setup-firefox.sh — Instala Firefox
 - scripts/setup-fonts.sh — Instala JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Instala Gitflow CJS

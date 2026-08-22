@@ -123,6 +123,37 @@ _get_package_name() {
     esac
     ;;
 
+  docker)
+    case "$package_manager" in
+    apt) echo "docker.io" ;;
+    dnf) echo "docker-ce docker-ce-cli" ;;
+    pacman) echo "docker" ;;
+    esac
+    ;;
+
+  docker-compose)
+    case "$package_manager" in
+    apt) echo "docker-compose" ;;
+    dnf) echo "docker-compose-plugin" ;;
+    pacman) echo "docker-compose" ;;
+    esac
+    ;;
+
+  docker-buildx)
+    case "$package_manager" in
+    dnf) echo "docker-buildx-plugin" ;;
+    pacman) echo "docker-buildx" ;;
+    apt) echo "" ;;
+    esac
+    ;;
+
+  containerd)
+    case "$package_manager" in
+    dnf) echo "containerd.io" ;;
+    *) echo "" ;;
+    esac
+    ;;
+
   *)
     echo "$package"
     ;;
@@ -169,7 +200,9 @@ install_packages() {
   for package in "$@"; do
     resolved="$(_get_package_name "$package" "$package_manager")"
     if [ -n "$resolved" ]; then
-      resolved_packages+=("$resolved")
+      for item in $resolved; do
+        resolved_packages+=("$item")
+      done
     fi
   done
 

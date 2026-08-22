@@ -10,6 +10,13 @@ main() {
   echo "================================"
   echo ""
 
+  echo ">>> Running Docker setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-docker.sh"
+  echo ""
+  echo "✓ Docker setup completed"
+  echo ""
+
   echo ">>> Running Firefox setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-firefox.sh"

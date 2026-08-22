@@ -66,6 +66,24 @@ setup() {
   [ "$(_get_package_name "fonts-noto-color-emoji" "dnf")" = "" ]
 }
 
+@test "_get_package_name resolves docker packages for distros" {
+  [ "$(_get_package_name "docker" "apt")" = "docker.io" ]
+  [ "$(_get_package_name "docker" "dnf")" = "docker-ce docker-ce-cli" ]
+  [ "$(_get_package_name "docker" "pacman")" = "docker" ]
+
+  [ "$(_get_package_name "docker-compose" "apt")" = "docker-compose" ]
+  [ "$(_get_package_name "docker-compose" "dnf")" = "docker-compose-plugin" ]
+  [ "$(_get_package_name "docker-compose" "pacman")" = "docker-compose" ]
+
+  [ "$(_get_package_name "docker-buildx" "apt")" = "" ]
+  [ "$(_get_package_name "docker-buildx" "dnf")" = "docker-buildx-plugin" ]
+  [ "$(_get_package_name "docker-buildx" "pacman")" = "docker-buildx" ]
+
+  [ "$(_get_package_name "containerd" "dnf")" = "containerd.io" ]
+  [ "$(_get_package_name "containerd" "apt")" = "" ]
+  [ "$(_get_package_name "containerd" "pacman")" = "" ]
+}
+
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
   [ "$(_get_package_name "curl" "dnf")" = "curl" ]
