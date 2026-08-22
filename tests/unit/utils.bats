@@ -30,6 +30,12 @@ setup() {
   [ "$(_get_package_name "gettext-tools" "pacman")" = "gettext" ]
 }
 
+@test "_get_package_name resolves libclang for all managers" {
+  [ "$(_get_package_name "libclang" "dnf")" = "clang-devel" ]
+  [ "$(_get_package_name "libclang" "apt")" = "libclang-dev" ]
+  [ "$(_get_package_name "libclang" "pacman")" = "clang" ]
+}
+
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
   [ "$(_get_package_name "curl" "dnf")" = "curl" ]

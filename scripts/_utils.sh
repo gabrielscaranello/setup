@@ -47,6 +47,14 @@ _get_package_name() {
     esac
     ;;
 
+  libclang)
+    case "$package_manager" in
+    apt) echo "libclang-dev" ;;
+    dnf) echo "clang-devel" ;;
+    pacman) echo "clang" ;;
+    esac
+    ;;
+
   *)
     echo "$package"
     ;;

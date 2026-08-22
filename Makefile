@@ -1,7 +1,7 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all neovim nvm test test-coverage test-integration test-unit clean
+.PHONY: help all neovim nvm rust test test-coverage test-integration test-unit clean
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -20,6 +20,7 @@ help:
 	@echo "  make all                   - Run complete setup (all scripts)"
 	@echo "  make neovim                - Install Neovim (from source or distro repo)"
 	@echo "  make nvm                   - Install nvm, Node and global packages"
+	@echo "  make rust                  - Install Rust, Cargo and tools (tree-sitter-cli)"
 	@echo "  make test                  - Run unit and integration tests (supports DISTRO=, FILTER=)"
 	@echo "  make test-coverage         - Run tests and generate code coverage reports"
 	@echo "  make test-integration      - Run container integration tests only"
@@ -35,6 +36,9 @@ neovim:
 
 nvm:
 	@./$(SCRIPTS_DIR)/setup-nvm.sh
+
+rust:
+	@./$(SCRIPTS_DIR)/setup-rust.sh
 
 # ── Tests ────────────────────────────────────────────────────────────────────
 

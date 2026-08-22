@@ -29,6 +29,7 @@ make help              # Show available targets
 make all               # Run full setup (./main.sh)
 make neovim            # Neovim only
 make nvm               # NVM/Node only
+make rust              # Rust/Cargo only
 make test              # Run all tests (e.g. DISTRO=debian FILTER=nvm)
 make test-coverage     # Run tests with code coverage reports (kcov)
 make test-integration  # Run container integration tests only
@@ -44,6 +45,7 @@ make clean             # Remove temporary artifacts
 - scripts/_utils.sh — Package-manager abstraction
 - scripts/setup-neovim.sh — Build/install Neovim
 - scripts/setup-nvm.sh — Install NVM, Node.js and global packages
+- scripts/setup-rust.sh — Install Rust, Cargo and tools (tree-sitter-cli)
 
 🛠 Requirements
 -------------

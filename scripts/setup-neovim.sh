@@ -53,6 +53,11 @@ _ensure_nvm() {
   bash "scripts/setup-nvm.sh" 2>/dev/null || bash "$(dirname "$0")/setup-nvm.sh"
 }
 
+_ensure_rust() {
+  echo "Ensuring rust/cargo is installed (required for tree-sitter-cli on debian)..."
+  bash "scripts/setup-rust.sh" 2>/dev/null || bash "$(dirname "$0")/setup-rust.sh"
+}
+
 _install_build_deps() {
   echo "Installing build dependencies..."
   install_packages build-tools ninja-build gcc-cxx cmake gettext-tools curl git file
@@ -70,6 +75,7 @@ _install_neovim() {
     _install_neovim_from_repo
     ;;
   apt)
+    _ensure_rust
     _install_build_deps
     _install_neovim_from_source
     ;;

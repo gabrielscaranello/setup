@@ -27,6 +27,7 @@ make help              # Ver alvos disponíveis
 make all               # Executa todo o setup (./main.sh)
 make neovim            # Só Neovim
 make nvm               # Só NVM/Node
+make rust              # Só Rust/Cargo
 make test              # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
 make test-coverage     # Executa testes e gera relatórios de cobertura (kcov)
 make test-integration  # Executa apenas testes de integração em containers
@@ -42,6 +43,7 @@ make clean             # Limpa artefatos temporários
 - scripts/_utils.sh — Abstração do gerenciador de pacotes
 - scripts/setup-neovim.sh — Instala/compila Neovim
 - scripts/setup-nvm.sh — Instala NVM, Node.js e pacotes globais
+- scripts/setup-rust.sh — Instala Rust, Cargo e ferramentas (tree-sitter-cli)
 
 🛠 Requisitos
 ------------
