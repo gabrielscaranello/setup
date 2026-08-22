@@ -62,10 +62,6 @@ _get_package_name() {
     esac
     ;;
 
-  fontconfig)
-    echo "fontconfig"
-    ;;
-
   fonts-jetbrains-mono-nerd)
     case "$package_manager" in
     pacman) echo "ttf-jetbrains-mono-nerd" ;;
@@ -111,20 +107,12 @@ _get_package_name() {
     esac
     ;;
 
-  firefox)
-    echo "firefox"
-    ;;
-
   firefox-i18n-pt-br)
     case "$package_manager" in
     apt) echo "firefox-l10n-pt-br" ;;
     pacman) echo "firefox-i18n-pt-br" ;;
     dnf) echo "" ;;
     esac
-    ;;
-
-  chromium)
-    echo "chromium"
     ;;
 
   docker)
