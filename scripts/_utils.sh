@@ -111,6 +111,18 @@ _get_package_name() {
     esac
     ;;
 
+  firefox)
+    echo "firefox"
+    ;;
+
+  firefox-i18n-pt-br)
+    case "$package_manager" in
+    apt) echo "firefox-l10n-pt-br" ;;
+    pacman) echo "firefox-i18n-pt-br" ;;
+    dnf) echo "" ;;
+    esac
+    ;;
+
   *)
     echo "$package"
     ;;

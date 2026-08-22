@@ -10,6 +10,13 @@ main() {
   echo "================================"
   echo ""
 
+  echo ">>> Running Firefox setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-firefox.sh"
+  echo ""
+  echo "✓ Firefox setup completed"
+  echo ""
+
   echo ">>> Running Fonts setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-fonts.sh"
