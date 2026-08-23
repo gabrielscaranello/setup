@@ -55,9 +55,24 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 ---
 
-## 📖 Deep-Dive References
+## 📖 Deep-Dive References & Upstream Sources
 
 - **[TODO.md](TODO.md)**: Master task list, milestone priorities, and execution roadmap.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**: Architecture, script patterns, coding standards, test guidelines, and PR checklist.
 - **[README.md](README.md)**: Canonical user-facing documentation and quick start.
 - **[README-pt-br.md](README-pt-br.md)**: Documentação em português.
+
+### 📚 Author's Reference Repositories (Implementation Inspiration)
+
+When implementing new features or migrating legacy configurations, AI agents should consult the author's previous distribution setup repositories (using `search_web`, `read_url_content`, or raw GitHub URLs) to understand exact packages, commands, PPAs, or desktop configurations used previously:
+
+- **Arch Linux**: [gabrielscaranello/arch-setup](https://github.com/gabrielscaranello/arch-setup)
+- **Debian**: [gabrielscaranello/debian](https://github.com/gabrielscaranello/debian)
+- **Fedora**: [gabrielscaranello/fedora-setup](https://github.com/gabrielscaranello/fedora-setup)
+- **Linux Mint**: [gabrielscaranello/mint-setup](https://github.com/gabrielscaranello/mint-setup)
+- **openSUSE**: [gabrielscaranello/opensuse](https://github.com/gabrielscaranello/opensuse)
+- **Zorin OS**: [gabrielscaranello/zorin-setup](https://github.com/gabrielscaranello/zorin-setup)
+- **Dotfiles**: [gabrielscaranello/dotfiles](https://github.com/gabrielscaranello/dotfiles)
+
+> [!TIP]
+> When porting features from these reference repos, always adapt them to follow this project's modular conventions (`scripts/_utils.sh`, `packages.conf`, idempotency, and unit/integration tests).

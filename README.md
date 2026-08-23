@@ -10,12 +10,33 @@ Welcome! This repository automates provisioning a desktop development environmen
 ✨ What is this
 --------------
 
-A collection of idempotent scripts (scripts/*.sh) to install and configure developer tools such as Neovim and Node.js via NVM.
+A collection of modular, idempotent bash scripts (`scripts/*.sh`) to configure developer tools, runtimes, fonts, and desktop environments across multiple Linux distributions.
+
+💡 Motivation & Context
+-----------------------
+
+This project was created to unify and centralize several standalone distribution setup repositories into a single, maintainable codebase to streamline my daily [distro-hopping](https://en.wiktionary.org/wiki/distro-hopping) workflow (the practice of frequently switching and testing different Linux distributions):
+
+- 🌀 [gabrielscaranello/debian](https://github.com/gabrielscaranello/debian)
+- 🌿 [gabrielscaranello/mint-setup](https://github.com/gabrielscaranello/mint-setup)
+- 🎩 [gabrielscaranello/fedora-setup](https://github.com/gabrielscaranello/fedora-setup)
+- 🐧 [gabrielscaranello/arch-setup](https://github.com/gabrielscaranello/arch-setup)
+- 🔷 [gabrielscaranello/zorin-setup](https://github.com/gabrielscaranello/zorin-setup)
+- 🦎 [gabrielscaranello/opensuse](https://github.com/gabrielscaranello/opensuse)
+
+---
+
+> [!NOTE]
+> **Personal Setup vs. General Utilities**: This repository is tailored specifically to my personal workflow, preferred software stack, and opinions. It is shared openly with the community in case it serves as inspiration or a reference for building modular multi-distro scripts.
+>
+> If you are looking for a comprehensive, general-purpose post-install Linux utility for the broader community, check out [Linux Toys](https://github.com/psygreg/linuxtoys).
+>
+> User configuration and dotfiles are maintained separately in [gabrielscaranello/dotfiles](https://github.com/gabrielscaranello/dotfiles) (with potential future integration planned here).
 
 🎯 Goals
 -------
 
-- Automate desktop dev environment setup across distros.
+- Centralize and automate desktop dev environment setup across distros.
 - Keep scripts generic and idempotent with a package-manager shim.
 - Make scripts modular and testable for reuse.
 

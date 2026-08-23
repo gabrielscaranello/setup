@@ -8,12 +8,33 @@ Bem-vindo! Este repositório automatiza a configuração de um ambiente de desen
 ✨ O que é
 --------
 
-- Scripts idempotentes em scripts/*.sh para instalar e configurar ferramentas (Neovim, Node.js via NVM, etc.).
+- Uma coleção de scripts modulares e idempotentes (`scripts/*.sh`) para instalar e configurar ferramentas de desenvolvimento, runtimes, fontes e ambientes gráficos em várias distribuições Linux.
+
+💡 Motivação e Contexto
+-----------------------
+
+Este projeto nasceu para unificar e centralizar diversos repositórios isolados de configuração em uma única base de código, facilitando meu fluxo diário de [distro-hopping](https://en.wiktionary.org/wiki/distro-hopping) (o hábito comum de testar e alternar frequentemente entre diferentes distribuições Linux):
+
+- 🌀 [gabrielscaranello/debian](https://github.com/gabrielscaranello/debian)
+- 🌿 [gabrielscaranello/mint-setup](https://github.com/gabrielscaranello/mint-setup)
+- 🎩 [gabrielscaranello/fedora-setup](https://github.com/gabrielscaranello/fedora-setup)
+- 🐧 [gabrielscaranello/arch-setup](https://github.com/gabrielscaranello/arch-setup)
+- 🔷 [gabrielscaranello/zorin-setup](https://github.com/gabrielscaranello/zorin-setup)
+- 🦎 [gabrielscaranello/opensuse](https://github.com/gabrielscaranello/opensuse)
+
+---
+
+> [!NOTE]
+> **Setup Pessoal vs. Utilitário Geral**: Este repositório foi construído sob medida para atender ao meu fluxo de trabalho, preferências e opiniões pessoais. Ele é compartilhado abertamente com a comunidade como referência e inspiração para scripts multi-distro modulares.
+>
+> Caso procure um utilitário pós-instalação completo e de propósito geral voltado para a comunidade em geral, confira o [Linux Toys](https://github.com/psygreg/linuxtoys).
+>
+> Minhas configurações de usuário e dotfiles são mantidas separadamente em [gabrielscaranello/dotfiles](https://github.com/gabrielscaranello/dotfiles) (com uma possível integração futura planejada por aqui).
 
 🎯 Objetivos
 -----------
 
-- Automatizar a provisão de um ambiente dev desktop.
+- Centralizar e automatizar a provisão de um ambiente dev desktop.
 - Manter scripts genéricos, reutilizáveis e distribuídos por gerenciador de pacotes.
 - Facilitar testes e manutenção com scripts modulares.
 
