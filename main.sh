@@ -59,6 +59,13 @@ main() {
   echo "✓ Kitty terminal setup completed"
   echo ""
 
+  echo ">>> Running Lazygit setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-lazygit.sh"
+  echo ""
+  echo "✓ Lazygit setup completed"
+  echo ""
+
   echo ">>> Running Neovim setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-neovim.sh"

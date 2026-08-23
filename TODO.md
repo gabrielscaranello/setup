@@ -17,7 +17,7 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 - [x] Install NVM, Node.js, and global npm packages — `scripts/setup-nvm.sh`
 - [x] Build/install Neovim — `scripts/setup-neovim.sh`
 - [x] Install Kitty terminal emulator — `scripts/setup-kitty.sh`
-- [ ] Implement Lazygit installation
+- [x] Install Lazygit — `scripts/setup-lazygit.sh`
 - [ ] Implement Lazydocker installation
 
 ## ⚙️ Phase 2: Foundation, Kernel, Drivers & Repositories
