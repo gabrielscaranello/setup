@@ -51,6 +51,7 @@ make docker            # Só Docker
 make fonts             # Só JetBrains Mono Nerd Font
 make gitflow           # Só Gitflow CJS
 make go                # Só Golang
+make kitty             # Só Kitty terminal emulator
 make neovim            # Só Neovim
 make nvm               # Só NVM/Node
 make rust              # Só Rust/Cargo
@@ -72,6 +73,7 @@ make clean             # Limpa artefatos temporários
 - scripts/setup-fonts.sh — Instala JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Instala Gitflow CJS
 - scripts/setup-go.sh — Instala Golang
+- scripts/setup-kitty.sh — Instala Kitty terminal emulator
 - scripts/setup-neovim.sh — Instala/compila Neovim
 - scripts/setup-nvm.sh — Instala NVM, Node.js e pacotes globais
 - scripts/setup-rust.sh — Instala Rust, Cargo e ferramentas (tree-sitter-cli)

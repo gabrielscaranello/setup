@@ -52,6 +52,13 @@ main() {
   echo "✓ NVM/Node setup completed"
   echo ""
 
+  echo ">>> Running Kitty terminal setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-kitty.sh"
+  echo ""
+  echo "✓ Kitty terminal setup completed"
+  echo ""
+
   echo ">>> Running Neovim setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-neovim.sh"

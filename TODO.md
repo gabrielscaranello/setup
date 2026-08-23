@@ -16,7 +16,7 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 - [x] Install Rust, Cargo, and developer tools (`tree-sitter-cli`) — `scripts/setup-rust.sh`
 - [x] Install NVM, Node.js, and global npm packages — `scripts/setup-nvm.sh`
 - [x] Build/install Neovim — `scripts/setup-neovim.sh`
-- [ ] Implement Kitty terminal emulator installation
+- [x] Install Kitty terminal emulator — `scripts/setup-kitty.sh`
 - [ ] Implement Lazygit installation
 - [ ] Implement Lazydocker installation
 
