@@ -17,6 +17,7 @@ _remove_firefox_esr_apt() {
 _add_mozilla_apt_repo() {
   local keyring_path="/etc/apt/keyrings/packages.mozilla.org.asc"
   local sources_path="/etc/apt/sources.list.d/mozilla.sources"
+  local repo_url="https://packages.mozilla.org/apt"
 
   if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
     echo "Mozilla repository already configured, skipping."
@@ -26,11 +27,11 @@ _add_mozilla_apt_repo() {
   echo "Configuring Mozilla repository for APT..."
   sudo install -d -m 0755 /etc/apt/keyrings
 
-  wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee "$keyring_path" >/dev/null
+  wget -q "${repo_url}/repo-signing-key.gpg" -O- | sudo tee "$keyring_path" >/dev/null
 
   cat <<EOF_SOURCES | sudo tee "$sources_path" >/dev/null
 Types: deb
-URIs: https://packages.mozilla.org/apt
+URIs: ${repo_url}
 Suites: mozilla
 Components: main
 Signed-By: $keyring_path

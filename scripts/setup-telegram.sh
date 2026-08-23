@@ -5,6 +5,8 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
+TELEGRAM_API_URL="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
+
 _install_prereqs() {
   install_packages curl wget tar xz-utils || true
 }
@@ -12,9 +14,9 @@ _install_prereqs() {
 _fetch_remote_version() {
   local version=""
   if command -v curl >/dev/null 2>&1; then
-    version="$(curl -s https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
+    version="$(curl -s "$TELEGRAM_API_URL" 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
   elif command -v wget >/dev/null 2>&1; then
-    version="$(wget -qO- https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
+    version="$(wget -qO- "$TELEGRAM_API_URL" 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
   fi
 
   echo "$version" | tr -d '[:space:]'
