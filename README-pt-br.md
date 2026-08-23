@@ -48,6 +48,7 @@ make help              # Ver alvos disponíveis
 make all               # Executa todo o setup (./main.sh)
 make browsers          # Só Navegadores (Chromium, Firefox)
 make docker            # Só Docker
+make flatpak           # Só Flatpak e Flathub
 make fonts             # Só JetBrains Mono Nerd Font
 make gitflow           # Só Gitflow CJS
 make go                # Só Golang
@@ -72,6 +73,7 @@ make clean             # Limpa artefatos temporários
 - scripts/_utils.sh — Abstração do gerenciador de pacotes
 - scripts/setup-browsers.sh — Instala Navegadores (Chromium, Firefox)
 - scripts/setup-docker.sh — Instala Docker e plugins
+- scripts/setup-flatpak.sh — Configura Flatpak e repositório Flathub
 - scripts/setup-fonts.sh — Instala JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Instala Gitflow CJS
 - scripts/setup-go.sh — Instala Golang

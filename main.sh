@@ -17,6 +17,13 @@ main() {
   echo "✓ Docker setup completed"
   echo ""
 
+  echo ">>> Running Flatpak setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-flatpak.sh"
+  echo ""
+  echo "✓ Flatpak setup completed"
+  echo ""
+
   echo ">>> Running Browsers setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-browsers.sh"

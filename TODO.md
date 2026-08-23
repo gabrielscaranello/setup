@@ -28,7 +28,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [ ] Configure swap settings script
 - [ ] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian)
 - [ ] Implement Debian backports kernel and driver repository setup
-- [ ] Configure Flatpak and add Flathub remote repository
+- [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
 - [ ] Implement NVIDIA graphics drivers installation (including hybrid GPU validation with `envycontrol` for laptops)
 
 ## 🔵 Phase 3: Base System Packages & Desktop Environment (DE)
