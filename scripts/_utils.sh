@@ -15,141 +15,42 @@ _get_package_manager() {
 _get_package_name() {
   local package="$1"
   local package_manager="$2"
+  local config_file=""
 
-  case "$package" in
-  build-tools)
+  if [ -f "scripts/packages.conf" ]; then
+    config_file="scripts/packages.conf"
+  elif [ -f "$(dirname "${BASH_SOURCE[0]}")/packages.conf" ]; then
+    config_file="$(dirname "${BASH_SOURCE[0]}")/packages.conf"
+  elif [ -f "/setup/scripts/packages.conf" ]; then
+    config_file="/setup/scripts/packages.conf"
+  fi
+
+  if [ -n "$config_file" ] && [ -f "$config_file" ]; then
+    local field_idx=0
     case "$package_manager" in
-    apt) echo "build-essential" ;;
-    dnf) echo "@development-tools" ;;
-    pacman) echo "base-devel" ;;
+    apt) field_idx=2 ;;
+    dnf) field_idx=3 ;;
+    pacman) field_idx=4 ;;
+    *) field_idx=0 ;;
     esac
-    ;;
 
-  ninja-build)
-    case "$package_manager" in
-    pacman) echo "ninja" ;;
-    *) echo "ninja-build" ;;
-    esac
-    ;;
+    if [ "$field_idx" -gt 0 ]; then
+      local matched_line
+      matched_line="$(awk -F' *\\| *' -v pkg="$package" '$1 == pkg { print $0; exit }' "$config_file" 2>/dev/null || true)"
+      if [ -n "$matched_line" ]; then
+        local resolved_pkg
+        resolved_pkg="$(echo "$matched_line" | awk -F' *\\| *' -v col="$field_idx" '{ print $col }')"
+        if [ "$resolved_pkg" = "-" ]; then
+          echo ""
+        else
+          echo "$resolved_pkg"
+        fi
+        return 0
+      fi
+    fi
+  fi
 
-  gcc-cxx)
-    case "$package_manager" in
-    apt) echo "g++" ;;
-    dnf) echo "gcc-c++" ;;
-    pacman) echo "gcc" ;;
-    esac
-    ;;
-
-  gettext-tools)
-    case "$package_manager" in
-    dnf) echo "gettext-devel" ;;
-    *) echo "gettext" ;;
-    esac
-    ;;
-
-  libclang)
-    case "$package_manager" in
-    apt) echo "libclang-dev" ;;
-    dnf) echo "clang-devel" ;;
-    pacman) echo "clang" ;;
-    esac
-    ;;
-
-  golang)
-    case "$package_manager" in
-    pacman) echo "go" ;;
-    *) echo "golang" ;;
-    esac
-    ;;
-
-  fonts-jetbrains-mono-nerd)
-    case "$package_manager" in
-    pacman) echo "ttf-jetbrains-mono-nerd" ;;
-    *) echo "" ;;
-    esac
-    ;;
-
-  fonts-liberation)
-    case "$package_manager" in
-    apt) echo "fonts-liberation" ;;
-    pacman) echo "ttf-liberation" ;;
-    dnf) echo "" ;;
-    esac
-    ;;
-
-  fonts-roboto)
-    case "$package_manager" in
-    apt) echo "fonts-roboto" ;;
-    dnf) echo "google-roboto-fonts" ;;
-    pacman) echo "ttf-roboto" ;;
-    esac
-    ;;
-
-  fonts-carlito)
-    case "$package_manager" in
-    pacman) echo "ttf-carlito" ;;
-    *) echo "" ;;
-    esac
-    ;;
-
-  fonts-noto)
-    case "$package_manager" in
-    pacman) echo "noto-fonts" ;;
-    *) echo "" ;;
-    esac
-    ;;
-
-  fonts-noto-color-emoji)
-    case "$package_manager" in
-    apt) echo "fonts-noto-color-emoji" ;;
-    pacman) echo "noto-fonts-emoji" ;;
-    dnf) echo "" ;;
-    esac
-    ;;
-
-  firefox-i18n-pt-br)
-    case "$package_manager" in
-    apt) echo "firefox-l10n-pt-br" ;;
-    pacman) echo "firefox-i18n-pt-br" ;;
-    dnf) echo "" ;;
-    esac
-    ;;
-
-  docker)
-    case "$package_manager" in
-    apt) echo "docker.io" ;;
-    dnf) echo "docker-ce docker-ce-cli" ;;
-    pacman) echo "docker" ;;
-    esac
-    ;;
-
-  docker-compose)
-    case "$package_manager" in
-    apt) echo "docker-compose" ;;
-    dnf) echo "docker-compose-plugin" ;;
-    pacman) echo "docker-compose" ;;
-    esac
-    ;;
-
-  docker-buildx)
-    case "$package_manager" in
-    dnf) echo "docker-buildx-plugin" ;;
-    pacman) echo "docker-buildx" ;;
-    apt) echo "" ;;
-    esac
-    ;;
-
-  containerd)
-    case "$package_manager" in
-    dnf) echo "containerd.io" ;;
-    *) echo "" ;;
-    esac
-    ;;
-
-  *)
-    echo "$package"
-    ;;
-  esac
+  echo "$package"
 }
 
 _install_package_from_repository() {

@@ -24,7 +24,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 ---
 
-## 📋 Mandatory Documentation Rules
+## 📋 Mandatory Documentation & Package Mapping Rules
 
 Whenever a new script is added or an existing script/flow is modified under `scripts/`, `main.sh`, or `Makefile`:
 
@@ -33,6 +33,10 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 3. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
 4. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
 5. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
+6. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
+   - Only add entries to `packages.conf` when the package name differs across package managers (`apt`, `dnf`, `pacman`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
+   - Maintain alphabetical order by generic package name.
+   - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
 
 ---
 

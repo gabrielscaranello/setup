@@ -18,6 +18,7 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 ├── README.md / README-pt-br.md    # User documentation (EN / PT-BR)
 ├── scripts/                       # Modular setup scripts
 │   ├── _utils.sh                  # Core abstraction (install_packages, etc.)
+│   ├── packages.conf              # Declarative cross-distro package mappings
 │   └── setup-<feature>.sh         # Individual setup scripts (e.g. setup-neovim.sh, setup-nvm.sh)
 └── tests/                         # Integration test suite
     ├── docker/                    # Base Dockerfiles per distro
@@ -67,6 +68,13 @@ fi
 ```bash
 shellcheck -x scripts/*.sh
 ```
+
+## 📦 Package Mappings (`scripts/packages.conf`)
+
+Cross-distribution package discrepancies must be registered in `scripts/packages.conf`:
+- **Format**: `GENERIC_NAME | APT_PACKAGE | DNF_PACKAGE | PACMAN_PACKAGE`
+- **Exclusivity**: Only add entries when package names differ across package managers or when unsupported (`-`) on a distro. Identical names are resolved automatically by fallback and should NOT be listed.
+- **Formatting**: Must maintain alphabetical order by generic name, preserve table column alignment, and ensure at least one space before and after every `|` separator.
 
 ## 🔁 Script dependencies
 
@@ -126,6 +134,7 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 ## 📋 PR checklist (use as template)
 
 - [ ] Code added to scripts/
+- [ ] scripts/packages.conf updated (if cross-distro package mappings needed)
 - [ ] Makefile updated (when applicable)
 - [ ] main.sh updated (when applicable)
 - [ ] README.md and README-pt-br.md updated (when applicable)
