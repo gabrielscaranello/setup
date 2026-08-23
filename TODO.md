@@ -18,7 +18,7 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 - [x] Build/install Neovim — `scripts/setup-neovim.sh`
 - [x] Install Kitty terminal emulator — `scripts/setup-kitty.sh`
 - [x] Install Lazygit — `scripts/setup-lazygit.sh`
-- [ ] Implement Lazydocker installation
+- [x] Install Lazydocker — `scripts/setup-lazydocker.sh`
 
 ## ⚙️ Phase 2: Foundation, Kernel, Drivers & Repositories
 

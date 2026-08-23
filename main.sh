@@ -66,6 +66,13 @@ main() {
   echo "✓ Lazygit setup completed"
   echo ""
 
+  echo ">>> Running Lazydocker setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-lazydocker.sh"
+  echo ""
+  echo "✓ Lazydocker setup completed"
+  echo ""
+
   echo ">>> Running Neovim setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-neovim.sh"

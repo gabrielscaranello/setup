@@ -54,6 +54,7 @@ make fonts             # JetBrains Mono Nerd Font only
 make gitflow           # Gitflow CJS only
 make go                # Golang only
 make kitty             # Kitty terminal emulator only
+make lazydocker        # Lazydocker only
 make lazygit           # Lazygit only
 make neovim            # Neovim only
 make nvm               # NVM/Node only
@@ -77,6 +78,7 @@ make clean             # Remove temporary artifacts
 - scripts/setup-gitflow.sh — Install Gitflow CJS
 - scripts/setup-go.sh — Install Golang
 - scripts/setup-kitty.sh — Install Kitty terminal emulator
+- scripts/setup-lazydocker.sh — Install Lazydocker
 - scripts/setup-lazygit.sh — Install Lazygit
 - scripts/setup-neovim.sh — Build/install Neovim
 - scripts/setup-nvm.sh — Install NVM, Node.js and global packages
