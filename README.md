@@ -66,6 +66,7 @@ make clean             # Remove temporary artifacts
 
 ## 📖 More
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical script template and developer guidelines.
+- See [TODO.md](TODO.md) for the project roadmap, implemented features, and planned tasks.
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical script template and developer guidelines.
 
 Made with ❤️ — happy hacking!

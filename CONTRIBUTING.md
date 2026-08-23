@@ -136,7 +136,8 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 - [ ] Code added to scripts/
 - [ ] scripts/packages.conf updated (if cross-distro package mappings needed)
 - [ ] Makefile updated (when applicable)
-- [ ] main.sh updated (when applicable)
+- [ ] Task checked off in TODO.md (when applicable)
+- [ ] Makefile target added (when applicable)
 - [ ] README.md and README-pt-br.md updated (when applicable)
 - [ ] AGENTS.md updated (when applicable)
 - [ ] shellcheck OK

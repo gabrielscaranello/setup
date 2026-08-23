@@ -64,6 +64,7 @@ make clean             # Limpa artefatos temporários
 
 ## 📖 Mais informações
 
-Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
+- Consulte o arquivo [TODO.md](TODO.md) para o roadmap do projeto, funcionalidades implementadas e tarefas planejadas.
+- Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
 
 Made with ❤️ — happy hacking!

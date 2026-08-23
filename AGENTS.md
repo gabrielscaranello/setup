@@ -28,12 +28,13 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 Whenever a new script is added or an existing script/flow is modified under `scripts/`, `main.sh`, or `Makefile`:
 
-1. **[Makefile](Makefile)**: Add the target with help documentation. Targets must be ordered alphabetically with `help` and `all` at the top and `clean` at the bottom.
-2. **[README.md](README.md)**: Update the "Quick start" section maintaining the same alphabetical target order.
-3. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
-4. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
-5. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
-6. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
+1. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
+2. **[Makefile](Makefile)**: Add the target with help documentation. Targets must be ordered alphabetically with `help` and `all` at the top and `clean` at the bottom.
+3. **[README.md](README.md)**: Update the "Quick start" section maintaining the same alphabetical target order.
+4. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
+5. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
+6. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
+7. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
    - Only add entries to `packages.conf` when the package name differs across package managers (`apt`, `dnf`, `pacman`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
    - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
@@ -56,6 +57,7 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 ## 📖 Deep-Dive References
 
+- **[TODO.md](TODO.md)**: Master task list, milestone priorities, and execution roadmap.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**: Architecture, script patterns, coding standards, test guidelines, and PR checklist.
 - **[README.md](README.md)**: Canonical user-facing documentation and quick start.
 - **[README-pt-br.md](README-pt-br.md)**: Documentação em português.
