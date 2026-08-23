@@ -52,6 +52,7 @@ General desktop productivity, database management, and gaming software.
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [ ] Implement MongoDB Compass installation
 - [x] Install Discord — `scripts/setup-discord.sh`
+- [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
 - [ ] Implement Steam installation (including ProtonUp-Qt / Proton manager, MangoHud, and Gamescope)
 
 ## 🎨 Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE)

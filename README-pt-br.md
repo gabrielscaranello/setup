@@ -60,6 +60,7 @@ make lazygit           # Só Lazygit
 make neovim            # Só Neovim
 make nvm               # Só NVM/Node
 make rust              # Só Rust/Cargo
+make telegram          # Só Telegram Desktop
 make test              # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
 make test-coverage     # Executa testes e gera relatórios de cobertura (kcov)
 make test-integration  # Executa apenas testes de integração em containers
@@ -87,6 +88,7 @@ make clean             # Limpa artefatos temporários
 - scripts/setup-neovim.sh — Instala/compila Neovim
 - scripts/setup-nvm.sh — Instala NVM, Node.js e pacotes globais
 - scripts/setup-rust.sh — Instala Rust, Cargo e ferramentas (tree-sitter-cli)
+- scripts/setup-telegram.sh — Instala Telegram Desktop
 
 🛠 Requisitos
 ------------

@@ -45,6 +45,13 @@ main() {
   echo "✓ Discord setup completed"
   echo ""
 
+  echo ">>> Running Telegram setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-telegram.sh"
+  echo ""
+  echo "✓ Telegram setup completed"
+  echo ""
+
   echo ">>> Running Fonts setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-fonts.sh"
