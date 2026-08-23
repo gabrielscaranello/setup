@@ -21,6 +21,10 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 - **No Automated Commits**: AI assistants and agents must **NEVER** execute `git commit`, `git push`, or alter git history directly.
 - **Developer Ownership**: All commits must be made exclusively by the human developer after reviewing and validating the changes.
+- **Mandatory Lint & Test Execution**: After creating or modifying any script (`scripts/*.sh`), configuration, or Bats test (`tests/**/*.bats`), AI agents must **ALWAYS** run and fix:
+  1. `shellcheck` across all modified scripts and test files (`shellcheck -x scripts/*.sh main.sh tests/*.sh` and `shellcheck --severity=warning tests/unit/*.bats tests/integration/*.bats`).
+  2. The unit test suite (`make test-unit` or `./tests/run-tests.sh --unit`).
+  3. The relevant integration tests if containers/Docker are available (`./tests/run-tests.sh --integration --filter=<feature>`).
 
 ---
 
