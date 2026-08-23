@@ -10,6 +10,13 @@ main() {
   echo "================================"
   echo ""
 
+  echo ">>> Running Swap and memory tuning setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-swap.sh"
+  echo ""
+  echo "✓ Swap setup completed"
+  echo ""
+
   echo ">>> Running Docker setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-docker.sh"

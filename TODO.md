@@ -25,7 +25,7 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 Prerequisites, kernel backports, graphics drivers, snapshots, and global package sources.
 
 - [x] Base package-manager abstraction (`Debian/apt`, `Fedora/dnf`, `Arch Linux/pacman`) — `scripts/_utils.sh`
-- [ ] Configure swap settings script
+- [x] Configure swap settings and memory tuning — `scripts/setup-swap.sh`
 - [ ] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian)
 - [ ] Implement Debian backports kernel and driver repository setup
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`

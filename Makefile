@@ -1,7 +1,7 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all browsers dbeaver discord docker flatpak fonts gitflow go kitty lazydocker lazygit neovim nvm rust telegram test test-coverage test-integration test-unit clean
+.PHONY: help all browsers dbeaver discord docker flatpak fonts gitflow go kitty lazydocker lazygit neovim nvm rust swap telegram test test-coverage test-integration test-unit clean
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -32,6 +32,7 @@ help:
 	@echo "  make neovim                - Install Neovim (from source or distro repo)"
 	@echo "  make nvm                   - Install nvm, Node and global packages"
 	@echo "  make rust                  - Install Rust, Cargo and tools (tree-sitter-cli)"
+	@echo "  make swap                  - Configure Swap and VM memory tuning"
 	@echo "  make telegram              - Install Telegram Desktop"
 	@echo "  make test                  - Run unit and integration tests (supports DISTRO=, FILTER=)"
 	@echo "  make test-coverage         - Run tests and generate code coverage reports"
@@ -84,6 +85,9 @@ nvm:
 
 rust:
 	@./$(SCRIPTS_DIR)/setup-rust.sh
+
+swap:
+	@./$(SCRIPTS_DIR)/setup-swap.sh
 
 telegram:
 	@./$(SCRIPTS_DIR)/setup-telegram.sh
