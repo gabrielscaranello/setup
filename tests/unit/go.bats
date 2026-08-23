@@ -1,4 +1,5 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2218
 
 # Unit tests for setup-go.sh logic and branches
 
@@ -94,5 +95,5 @@
   GO_PACKAGES=("github.com/reteps/dockerfmt@latest")
   run _install_go_packages
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Installing github.com/reteps/dockerfmt@latest" ]]
+  [[ "$output" =~ Installing\ github.com/reteps/dockerfmt@latest ]]
 }

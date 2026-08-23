@@ -9,7 +9,7 @@ setup_file() {
 @test "git-flow is installed and responds to version" {
   run git flow version
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "2.2.1" ]]
+  [[ "$output" =~ 2.2.1 ]]
 }
 
 @test "setup-gitflow.sh is idempotent (second run succeeds)" {

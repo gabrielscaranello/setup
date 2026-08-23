@@ -65,5 +65,5 @@
   sudo() { return 0; }
   USER="testuser" run _configure_docker_user_group
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "User 'testuser' added to docker group." ]]
+  [[ "$output" =~ User\ \'testuser\'\ added\ to\ docker\ group\. ]]
 }

@@ -8,11 +8,11 @@ setup_file() {
 
 @test "JetBrains Mono Nerd Font files or system font entry is present" {
   if [ -d "$HOME/.fonts" ] && ls "$HOME/.fonts"/JetBrainsMonoNerdFont*.ttf >/dev/null 2>&1; then
-    [ 0 -eq 0 ]
+    true
   elif ls /usr/share/fonts/TTF/JetBrainsMono*.ttf >/dev/null 2>&1 || ls /usr/share/fonts/*/JetBrainsMono*.ttf >/dev/null 2>&1; then
-    [ 0 -eq 0 ]
+    true
   elif command -v fc-list >/dev/null 2>&1 && fc-list : family | grep -qi "JetBrainsMono"; then
-    [ 0 -eq 0 ]
+    true
   else
     false
   fi
