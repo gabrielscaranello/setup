@@ -50,6 +50,7 @@ make help              # Show available targets
 make all               # Run full setup (./main.sh)
 make browsers          # Browsers only (Chromium, Firefox)
 make dbeaver           # DBeaver only
+make discord           # Discord only
 make docker            # Docker only
 make flatpak           # Flatpak and Flathub only
 make fonts             # JetBrains Mono Nerd Font only
@@ -76,6 +77,7 @@ make clean             # Remove temporary artifacts
 - scripts/_utils.sh — Package-manager abstraction
 - scripts/setup-browsers.sh — Install Browsers (Chromium, Firefox)
 - scripts/setup-dbeaver.sh — Install DBeaver
+- scripts/setup-discord.sh — Install Discord
 - scripts/setup-docker.sh — Install Docker and plugins
 - scripts/setup-flatpak.sh — Configure Flatpak and Flathub repository
 - scripts/setup-fonts.sh — Install JetBrains Mono Nerd Font

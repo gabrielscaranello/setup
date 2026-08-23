@@ -38,6 +38,13 @@ main() {
   echo "✓ DBeaver setup completed"
   echo ""
 
+  echo ">>> Running Discord setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-discord.sh"
+  echo ""
+  echo "✓ Discord setup completed"
+  echo ""
+
   echo ">>> Running Fonts setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-fonts.sh"
