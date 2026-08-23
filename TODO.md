@@ -49,7 +49,7 @@ Removal of unused default packages and bloatware before installing user apps.
 General desktop productivity, database management, and gaming software.
 
 - [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/setup-browsers.sh`
-- [ ] Implement DBeaver installation
+- [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [ ] Implement MongoDB Compass installation
 - [ ] Implement Discord installation
 - [ ] Implement Steam installation (including ProtonUp-Qt / Proton manager, MangoHud, and Gamescope)

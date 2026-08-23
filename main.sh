@@ -31,6 +31,13 @@ main() {
   echo "✓ Browsers setup completed"
   echo ""
 
+  echo ">>> Running DBeaver setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-dbeaver.sh"
+  echo ""
+  echo "✓ DBeaver setup completed"
+  echo ""
+
   echo ">>> Running Fonts setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-fonts.sh"
