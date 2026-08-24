@@ -13,7 +13,8 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 .
 ├── main.sh                        # Master orchestrator script (make all)
 ├── Makefile                       # Convenience runner (make help, make test, etc.)
-├── AGENTS.md                      # AI instructions and rules
+├── AGENTS.md                      # Authoritative AI instructions and rules
+├── GEMINI.md                      # Pointer to AGENTS.md for Gemini/AI assistants
 ├── CONTRIBUTING.md                # Developer contribution guide & architecture
 ├── README.md / README-pt-br.md    # User documentation (EN / PT-BR)
 ├── scripts/                       # Modular setup scripts
@@ -42,6 +43,8 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 ```
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
+- **Rule for One-Line Functions**: Do not create trivial one-line proxy functions if called in only one place. Inline the helper or command directly. Only keep one-line functions if reused across multiple locations.
+- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_root_filesystem`, `get_shell_profile`, `install_flatpak_app`, `download_file`, `fetch_url`).
 
 - Entrypoint: expose `main()` and finalize with an execution guard:
 
@@ -55,6 +58,10 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 ```
 
+- Target distributions:
+  - **Debian 13 (Trixie)** (`apt`)
+  - **Fedora 44** (`dnf`)
+  - **Arch Linux** (`pacman` / Rolling)
 - Branch by package manager via `_get_package_manager` from `_utils.sh` — do not hard-code.
 
 - Use `/tmp/<package>` for temporary builds and ensure `make clean` removes artifacts.

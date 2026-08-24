@@ -11,9 +11,29 @@ For script conventions, repository layout, developer contribution guides, and in
 
 This repository provides automated, modular, and idempotent bash setup scripts for configuring a Linux desktop development environment across supported distributions:
 
-- **Debian** (`apt`)
-- **Fedora** (`dnf`)
-- **Arch Linux** (`pacman`)
+- **Debian 13 (Trixie)** (`apt`)
+- **Fedora 44** (`dnf`)
+- **Arch Linux** (`pacman` / Rolling release)
+
+---
+
+## 📐 Architecture, Conventions & Coding Standards
+
+### 1. Modern Tooling & Package Management
+- Use `apt` (never legacy `apt-get`) on Debian.
+- Always use `install_packages <generic_pkg>` to automatically resolve package manager differences via `packages.conf`.
+
+### 2. Common Reusable Utilities (`scripts/_utils.sh`)
+Common operations must reuse helper functions from `scripts/_utils.sh`:
+- `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
+- `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+- `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
+- `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
+- `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
+
+### 3. Rule for One-Line Functions
+- **Do NOT create trivial one-line wrapper functions** if they are called in only one place and simply proxy a call. Inline the command/helper directly at the call site.
+- **Exception**: One-line functions are permitted if they are called from multiple locations or provide meaningful semantic reuse.
 
 ---
 
@@ -21,10 +41,11 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 - **No Automated Commits**: AI assistants and agents must **NEVER** execute `git commit`, `git push`, or alter git history directly.
 - **Developer Ownership**: All commits must be made exclusively by the human developer after reviewing and validating the changes.
-- **Mandatory Lint & Test Execution**: After creating or modifying any script (`scripts/*.sh`), configuration, or Bats test (`tests/**/*.bats`), AI agents must **ALWAYS** run and fix:
+- **Mandatory Lint & Test Execution**: After creating or modifying any executable script (`scripts/*.sh`), orchestration script (`main.sh`), configuration, or Bats test (`tests/**/*.bats`), AI agents must **ALWAYS** run and fix:
   1. `shellcheck` across all modified scripts and test files (`shellcheck -x scripts/*.sh main.sh tests/*.sh` and `shellcheck --severity=warning tests/unit/*.bats tests/integration/*.bats`).
   2. The unit test suite (`make test-unit` or `./tests/run-tests.sh --unit`).
   3. The relevant integration tests if containers/Docker are available (`./tests/run-tests.sh --integration --filter=<feature>`).
+- **Doc-Only Optimization**: If changes are strictly limited to documentation or markdown files (`*.md`, `TODO.md`, `README*.md`, `CONTRIBUTING.md`, `AGENTS.md`) with no changes to code, configurations, or tests, AI agents must **NOT** execute the test or lint suites.
 
 ---
 

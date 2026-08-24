@@ -1,1 +1,7 @@
-AGENTS.md
+# Gemini & AI Assistant Instructions
+
+For complete guidance on this project, refer to:
+
+**👉 [AGENTS.md](AGENTS.md)**
+
+That document is the single authoritative source of truth for architecture, conventions, operational AI rules, package mappings, script patterns, and development standards.
