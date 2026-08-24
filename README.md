@@ -56,6 +56,7 @@ make flatpak           # Flatpak and Flathub only
 make fonts             # JetBrains Mono Nerd Font only
 make gitflow           # Gitflow CJS only
 make go                # Golang only
+make kernel-debian     # Debian backports kernel and headers only
 make kitty             # Kitty terminal emulator only
 make lazydocker        # Lazydocker only
 make lazygit           # Lazygit only
@@ -78,6 +79,8 @@ make clean             # Remove temporary artifacts
 - main.sh — Orchestrator
 - Makefile — Convenience runner
 - scripts/_utils.sh — Package-manager abstraction
+- scripts/debian/_repositories.sh — Debian repository helper functions
+- scripts/debian/setup-kernel.sh — Install latest Linux kernel and headers from Debian backports
 - scripts/setup-browsers.sh — Install Browsers (Chromium, Firefox)
 - scripts/setup-dbeaver.sh — Install DBeaver
 - scripts/setup-discord.sh — Install Discord

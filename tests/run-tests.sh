@@ -111,7 +111,7 @@ _find_test_files() {
       if [[ -z "$SELECTED_FILTER" ]] || [[ "$f" =~ $SELECTED_FILTER ]]; then
         files+=("$f")
       fi
-    done < <(find "$dir" -maxdepth 1 -name "*.bats" | sort)
+    done < <(find "$dir" -name "*.bats" | sort)
   fi
   echo "${files[@]}"
 }

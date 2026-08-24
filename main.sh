@@ -24,6 +24,13 @@ main() {
   echo "✓ Timeshift setup completed"
   echo ""
 
+  echo ">>> Running Debian backports kernel setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/debian/setup-kernel.sh"
+  echo ""
+  echo "✓ Debian backports kernel setup completed"
+  echo ""
+
   echo ">>> Running Docker setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-docker.sh"

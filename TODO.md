@@ -27,7 +27,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [x] Base package-manager abstraction (`Debian/apt`, `Fedora/dnf`, `Arch Linux/pacman`) — `scripts/_utils.sh`
 - [x] Configure swap settings and memory tuning — `scripts/setup-swap.sh`
 - [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/setup-timeshift.sh`
-- [ ] Implement Debian backports kernel and driver repository setup
+- [x] Implement Debian official repositories helper (`scripts/debian/_repositories.sh`) and backports kernel installation (`scripts/debian/setup-kernel.sh`)
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
 - [ ] Implement NVIDIA graphics drivers installation (including hybrid GPU validation with `envycontrol` for laptops)
 

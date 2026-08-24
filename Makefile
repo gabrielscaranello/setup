@@ -1,7 +1,7 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all browsers dbeaver discord docker flatpak fonts gitflow go kitty lazydocker lazygit neovim nvm rust swap telegram timeshift test test-coverage test-integration test-unit clean
+.PHONY: help all browsers dbeaver discord docker flatpak fonts gitflow go kernel-debian kitty lazydocker lazygit neovim nvm rust swap telegram timeshift test test-coverage test-integration test-unit clean
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -26,6 +26,7 @@ help:
 	@echo "  make fonts                 - Install JetBrains Mono Nerd Font"
 	@echo "  make gitflow               - Install Gitflow CJS"
 	@echo "  make go                    - Install Golang (binary on Debian, repo package on others)"
+	@echo "  make kernel-debian         - Install latest Linux kernel and headers from Debian backports"
 	@echo "  make kitty                 - Install Kitty terminal emulator"
 	@echo "  make lazydocker            - Install Lazydocker (binary on Debian/Fedora, repo package on Arch)"
 	@echo "  make lazygit               - Install Lazygit (binary on Debian/Fedora, repo package on Arch)"
@@ -68,6 +69,9 @@ gitflow:
 
 go:
 	@./$(SCRIPTS_DIR)/setup-go.sh
+
+kernel-debian:
+	@./$(SCRIPTS_DIR)/debian/setup-kernel.sh
 
 kitty:
 	@./$(SCRIPTS_DIR)/setup-kitty.sh
