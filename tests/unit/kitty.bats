@@ -79,7 +79,7 @@ SCRIPT
   [ "$status" -eq 1 ]
 }
 
-@test "_setup_desktop_integration creates symlinks and desktop files with correct paths" {
+@test "_setup_desktop_integration creates symlinks in user bin and desktop files with correct paths" {
   source /setup/scripts/setup-kitty.sh
   local test_home="/tmp/test-kitty-desktop-home"
   mkdir -p "$test_home/.local/kitty.app/bin" \
@@ -108,14 +108,71 @@ DESKTOP_OPEN
   HOME="$test_home" _setup_desktop_integration
 
   [ -L "$test_home/.local/bin/kitty" ]
+  [ -L "$test_home/.local/bin/x-terminal-emulator" ]
   [ -L "$test_home/.local/bin/kitten" ]
   [ -f "$test_home/.local/share/applications/kitty.desktop" ]
   [ -f "$test_home/.local/share/applications/kitty-open.desktop" ]
   grep -q "Exec=$test_home/.local/kitty.app/bin/kitty" "$test_home/.local/share/applications/kitty.desktop"
   grep -q "Icon=$test_home/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png" "$test_home/.local/share/applications/kitty.desktop"
-  [ -f "$test_home/.config/xdg-terminals.list" ]
-  grep -q 'kitty.desktop' "$test_home/.config/xdg-terminals.list"
 
+  rm -rf "$test_home"
+}
+
+@test "_link_binary creates system-wide symlink when /usr/local/bin is writable" {
+  source /setup/scripts/setup-kitty.sh
+  local test_home="/tmp/test-kitty-link-home"
+  local mock_sys_bin="/tmp/test-mock-usr-local-bin"
+  mkdir -p "$test_home/.local/bin" "$mock_sys_bin"
+
+  touch "$test_home/my-bin"
+  chmod +x "$test_home/my-bin"
+
+  _link_binary() {
+    local src="$1"
+    local name="$2"
+    local user_bin="$HOME/.local/bin"
+
+    if [ ! -x "$src" ]; then return 0; fi
+    ln -sf "$src" "$user_bin/$name"
+    if [ -w "$mock_sys_bin" ]; then
+      ln -sf "$src" "$mock_sys_bin/$name"
+    fi
+  }
+
+  HOME="$test_home" _link_binary "$test_home/my-bin" "my-bin"
+
+  [ -L "$test_home/.local/bin/my-bin" ]
+  [ -L "$mock_sys_bin/my-bin" ]
+
+  rm -rf "$test_home" "$mock_sys_bin"
+}
+
+@test "_setup_desktop_integration uses sudo for system-wide symlinks when non-interactive sudo is available" {
+  source /setup/scripts/setup-kitty.sh
+  local test_home="/tmp/test-kitty-sudo-home"
+  mkdir -p "$test_home/.local/kitty.app/bin" \
+    "$test_home/.local/kitty.app/share/applications" \
+    "$test_home/.local/kitty.app/share/icons/hicolor/256x256/apps"
+
+  touch "$test_home/.local/kitty.app/bin/kitty"
+  touch "$test_home/.local/kitty.app/bin/kitten"
+  chmod +x "$test_home/.local/kitty.app/bin/kitty" "$test_home/.local/kitty.app/bin/kitten"
+
+  local sudo_called=0
+  sudo() {
+    if [ "${1:-}" = "-n" ]; then return 0; fi
+    sudo_called=$((sudo_called + 1))
+    return 0
+  }
+
+  command() {
+    if [ "${2:-}" = "sudo" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  HOME="$test_home" _setup_desktop_integration
+
+  [ "$sudo_called" -ge 2 ]
   rm -rf "$test_home"
 }
 

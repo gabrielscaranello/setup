@@ -34,27 +34,40 @@ _is_kitty_up_to_date() {
   return 1
 }
 
-_setup_desktop_integration() {
-  local base_dir="$HOME/.local/kitty.app"
+_link_binary() {
+  local src="$1"
+  local name="$2"
+  local user_bin="$HOME/.local/bin"
+
+  if [ ! -x "$src" ]; then
+    return 0
+  fi
+
+  ln -sf "$src" "$user_bin/$name"
+
+  if [ -w "/usr/local/bin" ]; then
+    ln -sf "$src" "/usr/local/bin/$name"
+  elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+    sudo ln -sf "$src" "/usr/local/bin/$name" 2>/dev/null || true
+  fi
+}
+
+_create_binary_symlinks() {
+  local base_dir="$1"
   local bin_kitty="$base_dir/bin/kitty"
   local bin_kitten="$base_dir/bin/kitten"
-  local user_bin="$HOME/.local/bin"
+
+  _link_binary "$bin_kitty" "kitty"
+  _link_binary "$bin_kitty" "x-terminal-emulator"
+  _link_binary "$bin_kitten" "kitten"
+}
+
+_install_desktop_entries() {
+  local base_dir="$1"
   local apps_dir="$HOME/.local/share/applications"
   local icon_path="$base_dir/share/icons/hicolor/256x256/apps/kitty.png"
+  local bin_kitty="$base_dir/bin/kitty"
 
-  echo "Setting up desktop integration and PATH symlinks for kitty..."
-
-  mkdir -p "$user_bin" "$apps_dir" "$HOME/.config"
-
-  # Create symbolic links to add kitty and kitten to PATH
-  if [ -x "$bin_kitty" ]; then
-    ln -sf "$bin_kitty" "$user_bin/kitty"
-  fi
-  if [ -x "$bin_kitten" ]; then
-    ln -sf "$bin_kitten" "$user_bin/kitten"
-  fi
-
-  # Place the kitty.desktop and kitty-open.desktop files in applications directory
   if [ -f "$base_dir/share/applications/kitty.desktop" ]; then
     cp "$base_dir/share/applications/kitty.desktop" "$apps_dir/"
   fi
@@ -62,16 +75,23 @@ _setup_desktop_integration() {
     cp "$base_dir/share/applications/kitty-open.desktop" "$apps_dir/"
   fi
 
-  # Update the paths to kitty and its icon in the desktop file(s)
   if [ -f "$icon_path" ]; then
     sed -i "s|Icon=kitty|Icon=${icon_path}|g" "$apps_dir"/kitty*.desktop 2>/dev/null || true
   fi
   if [ -x "$bin_kitty" ]; then
     sed -i "s|Exec=kitty|Exec=${bin_kitty}|g" "$apps_dir"/kitty*.desktop 2>/dev/null || true
   fi
+}
 
-  # Make xdg-terminal-exec use kitty if config file is set
-  echo 'kitty.desktop' >"$HOME/.config/xdg-terminals.list"
+_setup_desktop_integration() {
+  local base_dir="$HOME/.local/kitty.app"
+
+  echo "Setting up desktop integration and PATH symlinks for kitty..."
+
+  mkdir -p "$HOME/.local/bin" "$HOME/.local/share/applications"
+
+  _create_binary_symlinks "$base_dir"
+  _install_desktop_entries "$base_dir"
 }
 
 _install_kitty_binary() {
