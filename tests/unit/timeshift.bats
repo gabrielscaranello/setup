@@ -7,14 +7,14 @@ setup() {
   source /setup/scripts/setup-timeshift.sh
 }
 
-@test "_detect_root_filesystem detects btrfs and ext4 correctly" {
+@test "get_root_filesystem detects btrfs and ext4 correctly" {
   findmnt() { echo "btrfs"; return 0; }
-  run _detect_root_filesystem
+  run get_root_filesystem
   [ "$status" -eq 0 ]
   [ "$output" = "btrfs" ]
 
   findmnt() { echo "ext4"; return 0; }
-  run _detect_root_filesystem
+  run get_root_filesystem
   [ "$status" -eq 0 ]
   [ "$output" = "ext4" ]
 }
@@ -70,7 +70,7 @@ setup() {
 }
 
 @test "_configure_grub_btrfsd updates service with --timeshift-auto on btrfs" {
-  _detect_root_filesystem() { echo "btrfs"; }
+  get_root_filesystem() { echo "btrfs"; }
   command() { return 0; }
   local test_service="/tmp/grub-btrfsd.service"
   echo "ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots" > "$test_service"
@@ -91,7 +91,7 @@ setup() {
 }
 
 @test "_configure_grub_btrfsd is skipped on non-btrfs filesystems" {
-  _detect_root_filesystem() { echo "ext4"; }
+  get_root_filesystem() { echo "ext4"; }
   systemctl() {
     echo "systemctl should not be called"
     return 1

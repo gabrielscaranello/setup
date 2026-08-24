@@ -14,11 +14,7 @@ _install_prereqs() {
 
 _setup_shell_profile() {
   local profile
-  case "${SHELL##*/}" in
-  zsh)  profile="$HOME/.zshrc" ;;
-  bash) profile="$HOME/.bashrc" ;;
-  *)    profile="$HOME/.profile" ;;
-  esac
+  profile="$(get_shell_profile)"
 
   if grep -q '/usr/local/go/bin' "$profile" 2>/dev/null; then
     echo "Go PATH already configured in $profile, skipping"
@@ -62,11 +58,7 @@ _install_go_from_binary() {
   sudo rm -rf "$download_file" "$install_dir"
 
   echo "Downloading Golang binary..."
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$download_url" -o "$download_file"
-  else
-    wget -qO "$download_file" "$download_url"
-  fi
+  download_file "$download_url" "$download_file"
 
   echo "Extracting Golang archive..."
   sudo tar -C "$target_dir" -xzf "$download_file"

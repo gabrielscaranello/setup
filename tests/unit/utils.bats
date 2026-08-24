@@ -113,3 +113,76 @@ setup() {
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported distribution" ]]
 }
+
+@test "get_root_filesystem detects root filesystem" {
+  run get_root_filesystem
+  [ "$status" -eq 0 ]
+  [ -n "$output" ]
+}
+
+@test "get_shell_profile detects correct profile based on SHELL variable" {
+  SHELL=/bin/zsh run get_shell_profile
+  [ "$status" -eq 0 ]
+  [ "$output" = "$HOME/.zshrc" ]
+
+  SHELL=/bin/bash run get_shell_profile
+  [ "$status" -eq 0 ]
+  [ "$output" = "$HOME/.bashrc" ]
+
+  SHELL=/bin/sh run get_shell_profile
+  [ "$status" -eq 0 ]
+  [ "$output" = "$HOME/.profile" ]
+}
+
+@test "install_flatpak_app skips when already installed" {
+  flatpak() {
+    if [ "$1" = "list" ]; then
+      echo "org.example.App"
+      return 0
+    fi
+    return 1
+  }
+  run install_flatpak_app "org.example.App" "ExampleApp"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ already\ installed,\ skipping ]]
+}
+
+@test "install_flatpak_app installs app when not present" {
+  flatpak() {
+    if [ "$1" = "list" ]; then
+      echo ""
+      return 0
+    fi
+    if [ "$1" = "install" ]; then
+      echo "flatpak installed: $*"
+      return 0
+    fi
+    return 1
+  }
+  sudo() {
+    "$@"
+  }
+  run install_flatpak_app "org.example.App" "ExampleApp"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ ExampleApp\ Flatpak\ installed\ successfully ]]
+}
+
+@test "download_file downloads successfully via curl or wget" {
+  curl() {
+    echo "curl downloaded: $*"
+    return 0
+  }
+  run download_file "https://example.com/file.tar.gz" "/tmp/file.tar.gz"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ curl\ downloaded ]]
+}
+
+@test "fetch_url fetches content successfully via curl or wget" {
+  curl() {
+    echo "mocked content"
+    return 0
+  }
+  run fetch_url "https://example.com/version.txt"
+  [ "$status" -eq 0 ]
+  [ "$output" = "mocked content" ]
+}

@@ -12,13 +12,7 @@ _install_prereqs() {
 _fetch_remote_version() {
   local version_url="https://sw.kovidgoyal.net/kitty/current-version.txt"
   local version=""
-
-  if command -v curl >/dev/null 2>&1; then
-    version="$(curl -fsSL "$version_url" 2>/dev/null || true)"
-  elif command -v wget >/dev/null 2>&1; then
-    version="$(wget -qO- "$version_url" 2>/dev/null || true)"
-  fi
-
+  version="$(fetch_url "$version_url")"
   echo "$version" | tr -d '[:space:]'
 }
 

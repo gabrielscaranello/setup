@@ -43,11 +43,7 @@ _install_fonts_from_upstream() {
   mkdir -p "$work_dir" "$TARGET_DIR"
 
   echo "Downloading JetBrains Mono Nerd Font..."
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$DOWNLOAD_URL" -o "$archive_file"
-  else
-    wget -qO "$archive_file" "$DOWNLOAD_URL"
-  fi
+  download_file "$DOWNLOAD_URL" "$archive_file"
 
   echo "Extracting font files..."
   unzip -q "$archive_file" -d "$work_dir"

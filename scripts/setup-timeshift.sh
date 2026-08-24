@@ -7,12 +7,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 GRUB_BTRFS_REPO_URL="https://github.com/Antynea/grub-btrfs.git"
 
-_detect_root_filesystem() {
-  local fs_type
-  fs_type="$(findmnt -n -o FSTYPE / 2>/dev/null || df -T / 2>/dev/null | awk 'NR==2 {print $2}' || echo "unknown")"
-  echo "$fs_type"
-}
-
 _install_timeshift_packages() {
   echo "Installing Timeshift and UI dependencies..."
   install_packages timeshift || true
@@ -69,7 +63,7 @@ _write_timeshift_config() {
 
 _deploy_timeshift_config() {
   local fs_type config_content
-  fs_type="$(_detect_root_filesystem)"
+  fs_type="$(get_root_filesystem)"
 
   echo "Configuring Timeshift (mode: $([ "$fs_type" = "btrfs" ] && echo "BTRFS" || echo "RSYNC"))..."
 
@@ -176,7 +170,7 @@ _regenerate_grub_btrfs_menu() {
 
 _configure_grub_btrfsd() {
   local fs_type service_file
-  fs_type="$(_detect_root_filesystem)"
+  fs_type="$(get_root_filesystem)"
 
   if [ "$fs_type" != "btrfs" ]; then
     return 0

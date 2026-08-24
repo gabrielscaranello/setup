@@ -39,11 +39,7 @@ _install_gitflow() {
   mkdir -p "$work_dir"
 
   echo "Downloading Gitflow installer..."
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$INSTALLER_URL" -o "$installer_file"
-  else
-    wget -qO "$installer_file" "$INSTALLER_URL"
-  fi
+  download_file "$INSTALLER_URL" "$installer_file"
 
   chmod +x "$installer_file"
 

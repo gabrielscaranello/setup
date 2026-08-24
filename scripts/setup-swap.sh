@@ -22,12 +22,6 @@ _calculate_swap_size_gb() {
   echo "$mem_gb"
 }
 
-_detect_root_filesystem() {
-  local fs_type
-  fs_type="$(findmnt -n -o FSTYPE / 2>/dev/null || df -T / 2>/dev/null | awk 'NR==2 {print $2}' || echo "unknown")"
-  echo "$fs_type"
-}
-
 _configure_sysctl_vm_tuning() {
   local sysctl_file="/etc/sysctl.d/00-custom.conf"
   echo "Configuring swappiness and vfs_cache_pressure in $sysctl_file..."
@@ -168,7 +162,7 @@ _configure_swapfile() {
   fi
 
   size_gb="$(_calculate_swap_size_gb)"
-  fs_type="$(_detect_root_filesystem)"
+  fs_type="$(get_root_filesystem)"
 
   echo "Configuring swapfile of ${size_gb}G on filesystem '${fs_type}'..."
   _cleanup_old_swapfile "$swap_file"

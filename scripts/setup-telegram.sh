@@ -13,12 +13,7 @@ _install_prereqs() {
 
 _fetch_remote_version() {
   local version=""
-  if command -v curl >/dev/null 2>&1; then
-    version="$(curl -s "$TELEGRAM_API_URL" 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  elif command -v wget >/dev/null 2>&1; then
-    version="$(wget -qO- "$TELEGRAM_API_URL" 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  fi
-
+  version="$(fetch_url "$TELEGRAM_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
   echo "$version" | tr -d '[:space:]'
 }
 
@@ -113,11 +108,7 @@ _install_telegram_binary() {
   rm -rf "$output_dir" "$target_dir" "$extract_dir"
 
   echo "Downloading Telegram..."
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$download_url" -o "$output_dir"
-  else
-    wget -qO "$output_dir" "$download_url"
-  fi
+  download_file "$download_url" "$output_dir"
 
   echo "Extracting Telegram..."
   mkdir -p "$opt_dir"

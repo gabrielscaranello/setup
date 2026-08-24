@@ -24,11 +24,7 @@ _install_rustup() {
 
 _setup_shell_profile() {
   local profile
-  case "${SHELL##*/}" in
-  zsh)  profile="$HOME/.zshrc" ;;
-  bash) profile="$HOME/.bashrc" ;;
-  *)    profile="$HOME/.profile" ;;
-  esac
+  profile="$(get_shell_profile)"
 
   if grep -q 'cargo/env' "$profile" 2>/dev/null; then
     echo "Rust/cargo already configured in $profile, skipping"

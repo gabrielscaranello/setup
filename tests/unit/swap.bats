@@ -40,14 +40,14 @@ setup() {
   [ "$output" = "32" ]
 }
 
-@test "_detect_root_filesystem detects btrfs or ext4" {
+@test "get_root_filesystem detects btrfs or ext4" {
   findmnt() { echo "btrfs"; return 0; }
-  run _detect_root_filesystem
+  run get_root_filesystem
   [ "$status" -eq 0 ]
   [ "$output" = "btrfs" ]
 
   findmnt() { echo "ext4"; return 0; }
-  run _detect_root_filesystem
+  run get_root_filesystem
   [ "$status" -eq 0 ]
   [ "$output" = "ext4" ]
 }
@@ -91,7 +91,7 @@ SYSCTL
 @test "_configure_swapfile creates btrfs swapfile on btrfs filesystem" {
   swapon() { return 1; }
   _calculate_swap_size_gb() { echo "4"; }
-  _detect_root_filesystem() { echo "btrfs"; }
+  get_root_filesystem() { echo "btrfs"; }
   btrfs() {
     if [ "$1" = "filesystem" ] && [ "$2" = "mkswapfile" ]; then
       echo "btrfs mkswapfile called with size $4 for $5"
@@ -110,7 +110,7 @@ SYSCTL
 @test "_configure_swapfile creates ext4 swapfile on ext4 filesystem" {
   swapon() { return 1; }
   _calculate_swap_size_gb() { echo "4"; }
-  _detect_root_filesystem() { echo "ext4"; }
+  get_root_filesystem() { echo "ext4"; }
   fallocate() {
     echo "fallocate called with size $2 for $3"
     return 0

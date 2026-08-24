@@ -108,3 +108,61 @@ install_packages() {
 
   _install_package_from_repository "$package_manager" "${resolved_packages[@]}"
 }
+
+get_root_filesystem() {
+  findmnt -n -o FSTYPE / 2>/dev/null || df -T / 2>/dev/null | awk 'NR==2 {print $2}' || echo "unknown"
+}
+
+get_shell_profile() {
+  case "${SHELL##*/}" in
+  zsh)  echo "$HOME/.zshrc" ;;
+  bash) echo "$HOME/.bashrc" ;;
+  *)    echo "$HOME/.profile" ;;
+  esac
+}
+
+install_flatpak_app() {
+  local app_id="$1"
+  local app_name="${2:-$app_id}"
+  local script_dir
+
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  if [ -f "$script_dir/setup-flatpak.sh" ]; then
+    bash "$script_dir/setup-flatpak.sh"
+  elif [ -f "$script_dir/../setup-flatpak.sh" ]; then
+    bash "$script_dir/../setup-flatpak.sh"
+  fi
+
+  if flatpak list --app --columns=application 2>/dev/null | grep -qx "$app_id"; then
+    echo "$app_name (Flatpak) is already installed, skipping."
+    return 0
+  fi
+
+  echo "Installing $app_name via Flatpak (Flathub)..."
+  sudo flatpak install -y --noninteractive flathub "$app_id"
+  echo "$app_name Flatpak installed successfully."
+}
+
+download_file() {
+  local url="$1"
+  local dest="$2"
+
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" -o "$dest"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO "$dest" "$url"
+  else
+    echo "Error: Neither curl nor wget is available to download $url" >&2
+    return 1
+  fi
+}
+
+fetch_url() {
+  local url="$1"
+
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" 2>/dev/null || true
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO- "$url" 2>/dev/null || true
+  fi
+}

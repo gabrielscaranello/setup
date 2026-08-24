@@ -13,12 +13,7 @@ _install_prereqs() {
 
 _fetch_remote_version() {
   local version=""
-  if command -v curl >/dev/null 2>&1; then
-    version="$(curl -s "$LAZYGIT_API_URL" 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  elif command -v wget >/dev/null 2>&1; then
-    version="$(wget -qO- "$LAZYGIT_API_URL" 2>/dev/null | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  fi
-
+  version="$(fetch_url "$LAZYGIT_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
   echo "$version" | tr -d '[:space:]'
 }
 
@@ -81,11 +76,7 @@ _install_lazygit_binary() {
   rm -rf "$output_file" "$extract_dir"
 
   echo "Downloading Lazygit..."
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$download_url" -o "$output_file"
-  else
-    wget -qO "$output_file" "$download_url"
-  fi
+  download_file "$download_url" "$output_file"
 
   echo "Extracting Lazygit..."
   mkdir -p "$extract_dir"
