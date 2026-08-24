@@ -16,6 +16,8 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 - [x] Install Rust, Cargo, and developer tools (`tree-sitter-cli`) — `scripts/setup-rust.sh`
 - [x] Install NVM, Node.js, and global npm packages — `scripts/setup-nvm.sh`
 - [x] Build/install Neovim — `scripts/setup-neovim.sh`
+- [ ] Configure clipboard provider for Neovim (`wl-clipboard` on Arch, `xsel` on Fedora [auto-installed with neovim pkg], `xclip` on Debian)
+- [ ] Add additional Neovim runtime dependencies across all distros (`imagemagick`, `jd`, `tidy`, `sqlite`, `gettext`, `protobuf-compiler`, `fd` / `fd-find` — note: Fedora pulls `tree-sitter-cli`, `xsel`, `ripgrep` directly; Arch auto-installs `tree-sitter`, but requires manual install for clipboard/ripgrep/others)
 - [x] Install Kitty terminal emulator — `scripts/setup-kitty.sh`
 - [x] Install Lazygit — `scripts/setup-lazygit.sh`
 - [x] Install Lazydocker — `scripts/setup-lazydocker.sh`
@@ -29,6 +31,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/setup-timeshift.sh`
 - [x] Implement Debian official repositories helper (`scripts/debian/_repositories.sh`) and backports kernel installation (`scripts/debian/setup-kernel.sh`)
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
+- [ ] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` on GNOME, and `plasma-firewall` on Arch KDE)
 - [ ] Implement NVIDIA graphics drivers installation (including hybrid GPU validation with `envycontrol` for laptops)
 
 ## 🔵 Phase 3: Base System Packages & Desktop Environment (DE)
@@ -36,7 +39,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 Essential system utilities and base desktop environments for minimal installations.
 
 - [ ] Implement Desktop Environment (DE) installation on Arch Linux (`GNOME`, `KDE`)
-- [ ] Implement core system packages installation (`Debian`, `Arch Linux`, `Fedora`)
+- [ ] Implement core system packages installation (`Debian`, `Arch Linux`, `Fedora` — including `util-linux-user` on Fedora)
 
 ## 🔴 Phase 4: Cleanup & Debloat
 
@@ -49,8 +52,14 @@ Removal of unused default packages and bloatware before installing user apps.
 General desktop productivity, database management, and gaming software.
 
 - [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/setup-browsers.sh`
+- [ ] Implement VS Code / VSCodium installation
+- [ ] Implement OnlyOffice installation
+- [ ] Implement Obsidian installation
+- [ ] Implement GIMP installation
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [ ] Implement MongoDB Compass installation
+- [ ] Implement VirtualBox installation
+- [ ] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE)
 - [x] Install Discord — `scripts/setup-discord.sh`
 - [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
 - [ ] Implement Steam installation (including ProtonUp-Qt / Proton manager, MangoHud, and Gamescope)
