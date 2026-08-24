@@ -119,7 +119,7 @@ get_desktop_environment() {
 
   case "$de" in
   *gnome*)        echo "gnome" ;;
-  *kde*|*plasma*) echo "kde" ;;
+  *kde*|*plasma*) echo "plasma" ;;
   *)              echo "unknown" ;;
   esac
 }

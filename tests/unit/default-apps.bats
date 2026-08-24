@@ -52,7 +52,7 @@
   [ "$gsettings_called" -eq 2 ]
 }
 
-@test "_set_default_terminal_kde uses kwriteconfig6 when available" {
+@test "_set_default_terminal_plasma uses kwriteconfig6 when available" {
   source /setup/scripts/setup-default-apps.sh
   local kwrite_called=0
   kwriteconfig6() {
@@ -65,15 +65,15 @@
     builtin command "$@"
   }
 
-  local test_home="/tmp/test-default-apps-kde6-home"
+  local test_home="/tmp/test-default-apps-plasma6-home"
   mkdir -p "$test_home"
-  HOME="$test_home" _set_default_terminal_kde
+  HOME="$test_home" _set_default_terminal_plasma
 
   [ "$kwrite_called" -eq 2 ]
   rm -rf "$test_home"
 }
 
-@test "_set_default_terminal_kde uses kwriteconfig5 when kwriteconfig6 is absent" {
+@test "_set_default_terminal_plasma uses kwriteconfig5 when kwriteconfig6 is absent" {
   source /setup/scripts/setup-default-apps.sh
   local kwrite_called=0
   kwriteconfig5() {
@@ -87,24 +87,24 @@
     builtin command "$@"
   }
 
-  local test_home="/tmp/test-default-apps-kde5-home"
+  local test_home="/tmp/test-default-apps-plasma5-home"
   mkdir -p "$test_home"
-  HOME="$test_home" _set_default_terminal_kde
+  HOME="$test_home" _set_default_terminal_plasma
 
   [ "$kwrite_called" -eq 2 ]
   rm -rf "$test_home"
 }
 
-@test "_set_default_terminal_kde falls back to direct file creation when tools are missing" {
+@test "_set_default_terminal_plasma falls back to direct file creation when tools are missing" {
   source /setup/scripts/setup-default-apps.sh
   command() {
     if [ "${2:-}" = "kwriteconfig6" ] || [ "${2:-}" = "kwriteconfig5" ]; then return 1; fi
     builtin command "$@"
   }
 
-  local test_home="/tmp/test-default-apps-kde-fallback-home"
+  local test_home="/tmp/test-default-apps-plasma-fallback-home"
   mkdir -p "$test_home"
-  HOME="$test_home" _set_default_terminal_kde
+  HOME="$test_home" _set_default_terminal_plasma
 
   [ -f "$test_home/.config/kdeglobals" ]
   grep -q "TerminalApplication=kitty" "$test_home/.config/kdeglobals"
@@ -116,46 +116,46 @@
 @test "_set_default_terminal routes only to gnome when de is gnome" {
   source /setup/scripts/setup-default-apps.sh
   local gnome_called=0
-  local kde_called=0
+  local plasma_called=0
   _set_default_terminal_xdg() { return 0; }
   _set_default_terminal_gnome() { gnome_called=1; }
-  _set_default_terminal_kde() { kde_called=1; }
+  _set_default_terminal_plasma() { plasma_called=1; }
   get_desktop_environment() { echo "gnome"; }
 
   _set_default_terminal
 
   [ "$gnome_called" -eq 1 ]
-  [ "$kde_called" -eq 0 ]
+  [ "$plasma_called" -eq 0 ]
 }
 
-@test "_set_default_terminal routes only to kde when de is kde" {
+@test "_set_default_terminal routes only to plasma when de is plasma" {
   source /setup/scripts/setup-default-apps.sh
   local gnome_called=0
-  local kde_called=0
+  local plasma_called=0
   _set_default_terminal_xdg() { return 0; }
   _set_default_terminal_gnome() { gnome_called=1; }
-  _set_default_terminal_kde() { kde_called=1; }
-  get_desktop_environment() { echo "kde"; }
+  _set_default_terminal_plasma() { plasma_called=1; }
+  get_desktop_environment() { echo "plasma"; }
 
   _set_default_terminal
 
   [ "$gnome_called" -eq 0 ]
-  [ "$kde_called" -eq 1 ]
+  [ "$plasma_called" -eq 1 ]
 }
 
-@test "_set_default_terminal does not configure gnome or kde when de is unknown" {
+@test "_set_default_terminal does not configure gnome or plasma when de is unknown" {
   source /setup/scripts/setup-default-apps.sh
   local gnome_called=0
-  local kde_called=0
+  local plasma_called=0
   _set_default_terminal_xdg() { return 0; }
   _set_default_terminal_gnome() { gnome_called=1; }
-  _set_default_terminal_kde() { kde_called=1; }
+  _set_default_terminal_plasma() { plasma_called=1; }
   get_desktop_environment() { echo "unknown"; }
 
   _set_default_terminal
 
   [ "$gnome_called" -eq 0 ]
-  [ "$kde_called" -eq 0 ]
+  [ "$plasma_called" -eq 0 ]
 }
 
 @test "setup-default-apps runs _set_default_apps successfully" {

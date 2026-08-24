@@ -31,7 +31,7 @@ _set_default_terminal_gnome() {
   fi
 }
 
-_set_default_terminal_kde() {
+_set_default_terminal_plasma() {
   # KDE Plasma terminal configuration in ~/.config/kdeglobals
   local kdeglobals="$HOME/.config/kdeglobals"
 
@@ -86,8 +86,8 @@ _set_default_terminal() {
   gnome)
     _set_default_terminal_gnome
     ;;
-  kde)
-    _set_default_terminal_kde
+  plasma)
+    _set_default_terminal_plasma
     ;;
   *)
     # For unrecognized desktop environments, do not apply DE-specific configurations

@@ -25,7 +25,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 ### 2. Common Reusable Utilities (`scripts/_utils.sh`)
 Common operations must reuse helper functions from `scripts/_utils.sh`:
-- `get_desktop_environment`: Returns current desktop environment (`gnome`, `kde`, or `unknown`).
+- `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.

@@ -3,7 +3,7 @@
 This document tracks development milestones, work in progress, and planned features for the Desktop Setup project.
 
 > [!IMPORTANT]
-> **Priority Strategy**: All scripts and flows are first prioritized and stabilized for **Arch Linux**, **Fedora**, and **Debian** (fully tested across **GNOME** and **KDE**). Support for secondary distributions (Linux Mint, LMDE, Ubuntu, openSUSE, Zorin) and the **Cinnamon** desktop environment will only be introduced in Post-v1.0 milestones after the base 3 distros and GNOME/KDE are fully validated.
+> **Priority Strategy**: All scripts and flows are first prioritized and stabilized for **Arch Linux**, **Fedora**, and **Debian** (fully tested across **GNOME** and **KDE Plasma**). Support for secondary distributions (Linux Mint, LMDE, Ubuntu, openSUSE, Zorin) and the **Cinnamon** desktop environment will only be introduced in Post-v1.0 milestones after the base 3 distros and GNOME/KDE Plasma are fully validated.
 
 ## 🎯 Phase 1: Fonts, Terminal & Development / CLI Tools (Immediate Milestone)
 
@@ -31,21 +31,21 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/setup-timeshift.sh`
 - [x] Implement Debian official repositories helper (`scripts/debian/_repositories.sh`) and backports kernel installation (`scripts/debian/setup-kernel.sh`)
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
-- [ ] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` on GNOME, and `plasma-firewall` on Arch KDE)
+- [ ] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` on GNOME, and `plasma-firewall` on Arch KDE Plasma)
 - [ ] Implement NVIDIA graphics drivers installation (including hybrid GPU validation with `envycontrol` for laptops)
 
 ## 🔵 Phase 3: Base System Packages & Desktop Environment (DE)
 
 Essential system utilities and base desktop environments for minimal installations.
 
-- [ ] Implement Desktop Environment (DE) installation on Arch Linux (`GNOME`, `KDE`)
+- [ ] Implement Desktop Environment (DE) installation on Arch Linux (`GNOME`, `KDE Plasma`)
 - [ ] Implement core system packages installation (`Debian`, `Arch Linux`, `Fedora` — including `util-linux-user` on Fedora)
 
 ## 🔴 Phase 4: Cleanup & Debloat
 
 Removal of unused default packages and bloatware before installing user apps.
 
-- [ ] Implement unused packages removal / debloat script (Debian and Fedora, differentiated for GNOME and KDE)
+- [ ] Implement unused packages removal / debloat script (Debian and Fedora, differentiated for GNOME and KDE Plasma)
 
 ## 🟣 Phase 5: GUI Applications & Desktop Tools
 
@@ -59,20 +59,20 @@ General desktop productivity, database management, and gaming software.
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [ ] Implement MongoDB Compass installation
 - [ ] Implement VirtualBox installation
-- [ ] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE)
+- [ ] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma)
 - [x] Install Discord — `scripts/setup-discord.sh`
 - [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
 - [ ] Implement Steam installation (including ProtonUp-Qt / Proton manager, MangoHud, and Gamescope)
 
-## 🎨 Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE)
+## 🎨 Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE Plasma)
 
 Desktop theming, shell extensions, and interface preferences for target environments.
 
-- [ ] Implement custom cursor theme installation (`GNOME`, `KDE`)
+- [ ] Implement custom cursor theme installation (`GNOME`, `KDE Plasma`)
 - [ ] Implement GTK theme installation (`GNOME`)
 - [ ] Implement icon theme installation (`GNOME`)
 - [ ] Implement GNOME shell extensions installation
-- [ ] Implement desktop environment preferences script (`GNOME`, `KDE`)
+- [ ] Implement desktop environment preferences script (`GNOME`, `KDE Plasma`)
 - [ ] Implement GNOME extensions configuration script
 
 ## 🏁 Phase 7: Final Tweaks & Orchestration
@@ -85,7 +85,7 @@ Default application bindings, desktop menu cleanup, and end-to-end execution scr
 
 ## 🚀 Future Milestones (Post-v1.0)
 
-To be addressed only after Arch Linux, Fedora, and Debian (GNOME + KDE) are 100% complete and tested.
+To be addressed only after Arch Linux, Fedora, and Debian (GNOME + KDE Plasma) are 100% complete and tested.
 
 ### 🌐 Secondary Distributions Support
 

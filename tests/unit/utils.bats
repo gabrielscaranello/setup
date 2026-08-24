@@ -187,7 +187,7 @@ setup() {
   [ "$output" = "mocked content" ]
 }
 
-@test "get_desktop_environment detects gnome and kde correctly" {
+@test "get_desktop_environment detects gnome and plasma correctly" {
   source /setup/scripts/_utils.sh
 
   XDG_CURRENT_DESKTOP="GNOME" run get_desktop_environment
@@ -200,11 +200,11 @@ setup() {
 
   XDG_CURRENT_DESKTOP="KDE" run get_desktop_environment
   [ "$status" -eq 0 ]
-  [ "$output" = "kde" ]
+  [ "$output" = "plasma" ]
 
   XDG_CURRENT_DESKTOP="Plasma" run get_desktop_environment
   [ "$status" -eq 0 ]
-  [ "$output" = "kde" ]
+  [ "$output" = "plasma" ]
 
   XDG_CURRENT_DESKTOP="X-Cinnamon" run get_desktop_environment
   [ "$status" -eq 0 ]
