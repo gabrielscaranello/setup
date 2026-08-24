@@ -9,10 +9,6 @@ FONT_ARCHIVE="JetBrainsMono.zip"
 DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${FONT_ARCHIVE}"
 TARGET_DIR="$HOME/.fonts"
 
-_install_prereqs() {
-  install_packages curl wget unzip fontconfig || true
-}
-
 _is_font_installed() {
   if [ -d "$TARGET_DIR" ]; then
     if ls "$TARGET_DIR"/JetBrainsMonoNerdFont*.ttf >/dev/null 2>&1; then
@@ -90,7 +86,7 @@ _install_fonts() {
     _install_fonts_repo
     ;;
   apt | dnf)
-    _install_prereqs
+    install_packages curl wget unzip fontconfig || true
     _install_fonts_from_upstream
     ;;
   *)

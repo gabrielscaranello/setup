@@ -7,10 +7,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 LAZYGIT_API_URL="https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
 
-_install_prereqs() {
-  install_packages curl wget tar || true
-}
-
 _fetch_remote_version() {
   local version=""
   version="$(fetch_url "$LAZYGIT_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
@@ -53,7 +49,7 @@ _install_lazygit_binary() {
     return 0
   fi
 
-  _install_prereqs
+  install_packages curl wget tar || true
 
   # Fallback if latest_version was empty
   if [ -z "$latest_version" ]; then

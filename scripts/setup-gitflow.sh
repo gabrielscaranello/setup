@@ -8,10 +8,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 GITFLOW_VERSION="v2.2.1"
 INSTALLER_URL="https://raw.githubusercontent.com/CJ-Systems/gitflow-cjs/refs/heads/legacy-develop/contrib/gitflow-installer.sh"
 
-_install_prereqs() {
-  install_packages curl wget git || true
-}
-
 _is_gitflow_installed() {
   if command -v git-flow >/dev/null 2>&1; then
     local current_version
@@ -57,7 +53,7 @@ _install_gitflow() {
 
 main() {
   echo "Setting up Gitflow CJS..."
-  _install_prereqs
+  install_packages curl wget git || true
   _install_gitflow
   echo "setup-gitflow complete"
 }

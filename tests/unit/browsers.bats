@@ -29,7 +29,6 @@
 @test "_install_firefox delegates to apt flow on Debian/APT" {
   source /setup/scripts/setup-browsers.sh
   _get_package_manager() { echo "apt"; }
-  _install_prereqs() { return 0; }
   _install_firefox_apt() {
     echo "called apt install"
     return 0

@@ -8,10 +8,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 RUSTUP_URL="https://sh.rustup.rs"
 CARGO_PACKAGES=("tree-sitter-cli")
 
-_install_prereqs() {
-  install_packages curl build-tools libclang || true
-}
-
 _install_rustup() {
   if command -v rustup >/dev/null 2>&1; then
     echo "Rustup is already installed."
@@ -74,7 +70,7 @@ _install_cargo_packages() {
 main() {
   echo "Setting up Rust / Cargo..."
 
-  _install_prereqs
+  install_packages curl build-tools libclang || true
   _install_rustup
   _setup_shell_profile
   _source_cargo

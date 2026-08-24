@@ -7,10 +7,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 LAZYDOCKER_API_URL="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
 
-_install_prereqs() {
-  install_packages curl wget tar || true
-}
-
 _fetch_remote_version() {
   local version=""
   version="$(fetch_url "$LAZYDOCKER_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
@@ -55,7 +51,7 @@ _install_lazydocker_binary() {
     return 0
   fi
 
-  _install_prereqs
+  install_packages curl wget tar || true
 
   # Determine architecture
   local arch

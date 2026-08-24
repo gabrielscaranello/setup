@@ -15,11 +15,6 @@ COREPACK_PACKAGES=("yarn@1")
 # Regular packages to install globally via npm
 NPM_PACKAGES=("@github/copilot" "@styled/typescript-styled-plugin")
 
-_install_prereqs() {
-  # ensure basic tools for fetching/installing nvm are available
-  install_packages curl wget git || true
-}
-
 _install_nvm_script() {
   echo "Installing nvm via upstream install script..."
   # NVM_PROFILE=/dev/null prevents the installer from auto-modifying shell profile
@@ -128,9 +123,9 @@ _install_nvm() {
 }
 
 main() {
-  echo "Setting up NVM/Node (node ${NODE_VERSION})"
+  echo "Setting up NVM/Node (node ${NODE_VERSION}, nvm ${NVM_VERSION})..."
 
-  _install_prereqs
+  install_packages curl wget git || true
   _install_nvm
   _setup_shell_profile
   _source_nvm

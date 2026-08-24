@@ -7,10 +7,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
 TELEGRAM_API_URL="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
 
-_install_prereqs() {
-  install_packages curl wget tar xz-utils || true
-}
-
 _fetch_remote_version() {
   local version=""
   version="$(fetch_url "$TELEGRAM_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
@@ -84,7 +80,7 @@ _install_telegram_binary() {
     return 0
   fi
 
-  _install_prereqs
+  install_packages curl wget tar xz-utils || true
 
   # Fallback if latest_version was empty
   if [ -z "$latest_version" ]; then

@@ -5,10 +5,6 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
-_install_prereqs() {
-  install_packages wget || true
-}
-
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
   sudo apt remove -y firefox-esr firefox-esr-l10n-pt-br 2>/dev/null || true
@@ -70,7 +66,7 @@ _install_firefox() {
     _install_firefox_repo
     ;;
   apt)
-    _install_prereqs
+    install_packages wget || true
     _install_firefox_apt
     ;;
   *)

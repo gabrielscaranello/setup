@@ -5,10 +5,6 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 
-_install_prereqs() {
-  install_packages curl wget tar xz-utils || true
-}
-
 _fetch_remote_version() {
   local version_url="https://sw.kovidgoyal.net/kitty/current-version.txt"
   local version=""
@@ -88,7 +84,7 @@ _install_kitty_binary() {
   fi
 
   echo "Installing/updating kitty from upstream binary installer..."
-  _install_prereqs
+  install_packages curl wget tar xz-utils || true
 
   local installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
 

@@ -8,10 +8,6 @@ source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
 GO_VERSION="1.24.0"
 GO_PACKAGES=("github.com/reteps/dockerfmt@latest")
 
-_install_prereqs() {
-  install_packages curl wget tar git || true
-}
-
 _setup_shell_profile() {
   local profile
   profile="$(get_shell_profile)"
@@ -109,7 +105,7 @@ _install_go() {
     _install_go_repo
     ;;
   apt)
-    _install_prereqs
+    install_packages curl wget tar git || true
     _install_go_from_binary
     ;;
   *)
