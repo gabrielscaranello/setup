@@ -48,6 +48,7 @@ make help              # Ver alvos disponíveis
 make all               # Executa todo o setup (./main.sh)
 make browsers          # Só Navegadores (Chromium, Firefox)
 make dbeaver           # Só DBeaver
+make default-apps      # Só Aplicativos padrão (Terminal Kitty, MIME)
 make discord           # Só Discord
 make docker            # Só Docker
 make flatpak           # Só Flatpak e Flathub
@@ -81,6 +82,7 @@ make clean             # Limpa artefatos temporários
 - scripts/debian/setup-kernel.sh — Instala kernel Linux e headers mais recentes do Debian backports
 - scripts/setup-browsers.sh — Instala Navegadores (Chromium, Firefox)
 - scripts/setup-dbeaver.sh — Instala DBeaver
+- scripts/setup-default-apps.sh — Configura aplicativos padrão (Terminal Kitty, MIME)
 - scripts/setup-discord.sh — Instala Discord
 - scripts/setup-docker.sh — Instala Docker e plugins
 - scripts/setup-flatpak.sh — Configura Flatpak e repositório Flathub

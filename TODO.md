@@ -79,7 +79,7 @@ Desktop theming, shell extensions, and interface preferences for target environm
 
 Default application bindings, desktop menu cleanup, and end-to-end execution scripts.
 
-- [ ] Implement default applications configuration script (MIME types / protocol handlers)
+- [-] Implement default applications configuration script (MIME types / protocol handlers) — partially implemented (Kitty terminal emulator) in `scripts/setup-default-apps.sh`
 - [ ] Implement script to hide unwanted applications from application menus (`.desktop` files)
 - [ ] Create orchestrator scripts (`all.sh` / distro-tailored entrypoints) to run all scripts sequentially
 

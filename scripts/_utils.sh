@@ -113,6 +113,17 @@ get_root_filesystem() {
   findmnt -n -o FSTYPE / 2>/dev/null || df -T / 2>/dev/null | awk 'NR==2 {print $2}' || echo "unknown"
 }
 
+get_desktop_environment() {
+  local de="${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION:-}}"
+  de="$(echo "$de" | tr '[:upper:]' '[:lower:]')"
+
+  case "$de" in
+  *gnome*)        echo "gnome" ;;
+  *kde*|*plasma*) echo "kde" ;;
+  *)              echo "unknown" ;;
+  esac
+}
+
 get_shell_profile() {
   case "${SHELL##*/}" in
   zsh)  echo "$HOME/.zshrc" ;;
@@ -166,3 +177,4 @@ fetch_url() {
     wget -qO- "$url" 2>/dev/null || true
   fi
 }
+

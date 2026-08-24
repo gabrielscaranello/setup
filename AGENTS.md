@@ -25,6 +25,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 ### 2. Common Reusable Utilities (`scripts/_utils.sh`)
 Common operations must reuse helper functions from `scripts/_utils.sh`:
+- `get_desktop_environment`: Returns current desktop environment (`gnome`, `kde`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
@@ -34,6 +35,10 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 ### 3. Rule for One-Line Functions
 - **Do NOT create trivial one-line wrapper functions** if they are called in only one place and simply proxy a call. Inline the command/helper directly at the call site.
 - **Exception**: One-line functions are permitted if they are called from multiple locations or provide meaningful semantic reuse.
+
+### 4. Desktop Environment (DE) Handling Policy
+- Whenever a script or configuration step depends on a specific Desktop Environment (GNOME, KDE Plasma), it must detect the active environment using `get_desktop_environment`.
+- **Default to doing nothing**: When the Desktop Environment is not recognized (`unknown` or unsupported), the script must **NOT** execute environment-specific actions or guess configurations. Agnóstic/generic configurations (like standard XDG specifications) may still proceed.
 
 ---
 

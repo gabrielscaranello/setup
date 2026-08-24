@@ -129,6 +129,13 @@ main() {
   echo "✓ Neovim setup completed"
   echo ""
 
+  echo ">>> Running Default applications setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-default-apps.sh"
+  echo ""
+  echo "✓ Default applications setup completed"
+  echo ""
+
   echo "================================"
   echo "   Setup Completed Successfully!"
   echo "================================"

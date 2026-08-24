@@ -186,3 +186,31 @@ setup() {
   [ "$status" -eq 0 ]
   [ "$output" = "mocked content" ]
 }
+
+@test "get_desktop_environment detects gnome and kde correctly" {
+  source /setup/scripts/_utils.sh
+
+  XDG_CURRENT_DESKTOP="GNOME" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "gnome" ]
+
+  XDG_CURRENT_DESKTOP="ubuntu:GNOME" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "gnome" ]
+
+  XDG_CURRENT_DESKTOP="KDE" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "kde" ]
+
+  XDG_CURRENT_DESKTOP="Plasma" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "kde" ]
+
+  XDG_CURRENT_DESKTOP="X-Cinnamon" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "unknown" ]
+
+  XDG_CURRENT_DESKTOP="" DESKTOP_SESSION="" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "unknown" ]
+}

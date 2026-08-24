@@ -50,6 +50,7 @@ make help              # Show available targets
 make all               # Run full setup (./main.sh)
 make browsers          # Browsers only (Chromium, Firefox)
 make dbeaver           # DBeaver only
+make default-apps      # Default applications only (Kitty terminal, MIME)
 make discord           # Discord only
 make docker            # Docker only
 make flatpak           # Flatpak and Flathub only
@@ -83,6 +84,7 @@ make clean             # Remove temporary artifacts
 - scripts/debian/setup-kernel.sh — Install latest Linux kernel and headers from Debian backports
 - scripts/setup-browsers.sh — Install Browsers (Chromium, Firefox)
 - scripts/setup-dbeaver.sh — Install DBeaver
+- scripts/setup-default-apps.sh — Configure default desktop applications (Kitty terminal, MIME)
 - scripts/setup-discord.sh — Install Discord
 - scripts/setup-docker.sh — Install Docker and plugins
 - scripts/setup-flatpak.sh — Configure Flatpak and Flathub repository
