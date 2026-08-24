@@ -12,14 +12,14 @@ setup_file() {
 }
 
 @test "backports repository is configured on Debian" {
-  if command -v apt-get >/dev/null 2>&1; then
+  if command -v apt >/dev/null 2>&1; then
     run bash -c "grep -Er 'backports' /etc/apt/sources.list* 2>/dev/null"
     [ "$status" -eq 0 ]
   fi
 }
 
 @test "installed kernel packages correspond to the latest backports version rather than base LTS" {
-  if command -v apt-get >/dev/null 2>&1; then
+  if command -v apt >/dev/null 2>&1; then
     # Verify package is installed
     run dpkg -s linux-image-amd64
     [ "$status" -eq 0 ]

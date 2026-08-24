@@ -99,7 +99,7 @@ EOF
     echo "bookworm"
   }
   sudo() {
-    if [ "$1" = "mkdir" ] || [ "$1" = "tee" ] || [ "$1" = "apt-get" ]; then
+    if [ "$1" = "mkdir" ] || [ "$1" = "tee" ] || [ "$1" = "apt" ]; then
       return 0
     fi
     "$@"

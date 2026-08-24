@@ -35,7 +35,7 @@ setup() {
     return 0
   }
   sudo() {
-    if [ "$1" = "apt-get" ] && [ "$2" = "install" ]; then
+    if [ "$1" = "apt" ] && [ "$2" = "install" ]; then
       # Validate that -t bookworm-backports target suite is supplied
       local has_target_suite=0
       local i

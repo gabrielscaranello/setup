@@ -60,5 +60,5 @@ deb http://deb.debian.org/debian ${codename}-backports main contrib non-free non
 EOF
 
   echo "Updating APT package cache..."
-  sudo apt-get update -qq
+  sudo apt update -qq
 }

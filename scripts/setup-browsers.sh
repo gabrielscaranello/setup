@@ -11,7 +11,7 @@ _install_prereqs() {
 
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
-  sudo apt-get remove -y firefox-esr firefox-esr-l10n-pt-br 2>/dev/null || true
+  sudo apt remove -y firefox-esr firefox-esr-l10n-pt-br 2>/dev/null || true
 }
 
 _add_mozilla_apt_repo() {
@@ -44,7 +44,7 @@ Pin: origin packages.mozilla.org
 Pin-Priority: 1000
 EOF_PIN
 
-  sudo apt-get update -qq
+  sudo apt update -qq
 }
 
 _install_firefox_apt() {

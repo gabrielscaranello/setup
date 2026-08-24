@@ -13,7 +13,7 @@ _install_backports_kernel_apt() {
   add_debian_backports_repo
 
   echo "Installing latest Linux kernel and headers from ${codename}-backports..."
-  sudo apt-get install -y -t "${codename}-backports" linux-image-amd64 linux-headers-amd64
+  sudo apt install -y -t "${codename}-backports" linux-image-amd64 linux-headers-amd64
 }
 
 _setup_debian_kernel() {
