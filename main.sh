@@ -17,6 +17,13 @@ main() {
   echo "✓ Swap setup completed"
   echo ""
 
+  echo ">>> Running Timeshift setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-timeshift.sh"
+  echo ""
+  echo "✓ Timeshift setup completed"
+  echo ""
+
   echo ">>> Running Docker setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-docker.sh"

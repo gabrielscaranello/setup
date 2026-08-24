@@ -64,6 +64,7 @@ make nvm               # NVM/Node only
 make rust              # Rust/Cargo only
 make swap              # Swap and VM tuning only
 make telegram          # Telegram Desktop only
+make timeshift         # Timeshift only
 make test              # Run all tests (e.g. DISTRO=debian FILTER=nvm)
 make test-coverage     # Run tests with code coverage reports (kcov)
 make test-integration  # Run container integration tests only
@@ -93,6 +94,7 @@ make clean             # Remove temporary artifacts
 - scripts/setup-rust.sh — Install Rust, Cargo and tools (tree-sitter-cli)
 - scripts/setup-swap.sh — Configure Swap and VM memory tuning
 - scripts/setup-telegram.sh — Install Telegram Desktop
+- scripts/setup-timeshift.sh — Install and configure Timeshift
 
 🛠 Requirements
 -------------

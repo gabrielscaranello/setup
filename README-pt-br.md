@@ -62,6 +62,7 @@ make nvm               # Só NVM/Node
 make rust              # Só Rust/Cargo
 make swap              # Só Swap e otimização de memória
 make telegram          # Só Telegram Desktop
+make timeshift         # Só Timeshift
 make test              # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
 make test-coverage     # Executa testes e gera relatórios de cobertura (kcov)
 make test-integration  # Executa apenas testes de integração em containers
@@ -91,6 +92,7 @@ make clean             # Limpa artefatos temporários
 - scripts/setup-rust.sh — Instala Rust, Cargo e ferramentas (tree-sitter-cli)
 - scripts/setup-swap.sh — Configura Swap e otimização de memória
 - scripts/setup-telegram.sh — Instala Telegram Desktop
+- scripts/setup-timeshift.sh — Instala e configura Timeshift
 
 🛠 Requisitos
 ------------
