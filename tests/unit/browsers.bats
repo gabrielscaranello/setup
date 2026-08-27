@@ -65,8 +65,9 @@
   [[ "$output" =~ "already configured" ]]
 }
 
-@test "_install_chromium calls install_packages chromium" {
+@test "_install_chromium calls install_packages chromium on Fedora/dnf" {
   source /setup/scripts/setup-browsers.sh
+  _get_package_manager() { echo "dnf"; }
   install_packages() {
     echo "installing package: $*"
     return 0
@@ -74,6 +75,30 @@
   run _install_chromium
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installing package: chromium" ]]
+}
+
+@test "_install_chromium calls install_packages chromium on Arch/pacman" {
+  source /setup/scripts/setup-browsers.sh
+  _get_package_manager() { echo "pacman"; }
+  install_packages() {
+    echo "installing package: $*"
+    return 0
+  }
+  run _install_chromium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing package: chromium" ]]
+}
+
+@test "_install_chromium calls install_flatpak_app on Debian/apt" {
+  source /setup/scripts/setup-browsers.sh
+  _get_package_manager() { echo "apt"; }
+  install_flatpak_app() {
+    echo "installing flatpak app: $*"
+    return 0
+  }
+  run _install_chromium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing flatpak app: org.chromium.Chromium Chromium" ]]
 }
 
 @test "_install_browsers calls both chromium and firefox installers" {

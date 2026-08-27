@@ -1,19 +1,28 @@
 # Specification: Web Browsers (`scripts/setup-browsers.sh`)
 
 ## Purpose
-Installs Chromium and official Mozilla Firefox browsers across all supported distributions, removing legacy ESR variants on Debian and configuring the official Mozilla APT repository.
+Installs Chromium and official Mozilla Firefox browsers across all supported distributions, removing legacy ESR variants on Debian, configuring the official Mozilla APT repository, and using Flatpak for Chromium on Debian.
 
 ---
 
 ## Requirements
 
-### Requirement: Chromium Installation
-The script SHALL install `chromium` across all supported distributions via `install_packages chromium`.
+### Requirement: Chromium Distribution Packaging Strategy
+The script SHALL determine the installation mechanism for Chromium based on the active package manager:
+- **Arch Linux (`pacman`) & Fedora (`dnf`)**: SHALL install `chromium` directly from official repositories via `install_packages chromium`.
+- **Debian (`apt`)**: SHALL install the official Flatpak package `org.chromium.Chromium` via Flathub (`install_flatpak_app "org.chromium.Chromium" "Chromium"`).
 
-#### Scenario: Installing Chromium
-- **GIVEN** a supported distribution (Debian, Fedora, or Arch Linux)
+#### Scenario: Running on Fedora or Arch Linux
+- **GIVEN** a Fedora or Arch Linux system
 - **WHEN** `scripts/setup-browsers.sh` runs
-- **THEN** `chromium` SHALL be installed from repositories
+- **THEN** `chromium` SHALL be installed from native repositories
+
+#### Scenario: Running on Debian
+- **GIVEN** a Debian system
+- **WHEN** `scripts/setup-browsers.sh` runs
+- **THEN** `install_flatpak_app "org.chromium.Chromium" "Chromium"` SHALL be called
+
+---
 
 ### Requirement: Firefox Distribution Packaging Strategy
 The script SHALL install modern Firefox using distribution-native packaging on Arch Linux and Fedora, and official Mozilla APT repository on Debian:

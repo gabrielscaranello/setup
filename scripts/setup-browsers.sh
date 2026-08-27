@@ -77,8 +77,26 @@ _install_firefox() {
 }
 
 _install_chromium() {
-  echo "Installing Chromium from distribution repository..."
-  install_packages chromium
+  local pm
+  pm="$(_get_package_manager)" || {
+    echo "Unsupported distribution" >&2
+    return 1
+  }
+
+  case "$pm" in
+  dnf | pacman)
+    echo "Installing Chromium from distribution repository..."
+    install_packages chromium
+    ;;
+  apt)
+    echo "Installing Chromium with flatpak..."
+    install_flatpak_app "org.chromium.Chromium" "Chromium"
+    ;;
+  *)
+    echo "Unsupported package manager: $pm" >&2
+    return 1
+    ;;
+  esac
 }
 
 _install_browsers() {
