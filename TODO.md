@@ -16,8 +16,8 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 - [x] Install Rust, Cargo, and developer tools (`tree-sitter-cli`) — `scripts/setup-rust.sh`
 - [x] Install NVM, Node.js, and global npm packages — `scripts/setup-nvm.sh`
 - [x] Build/install Neovim — `scripts/setup-neovim.sh`
-- [ ] Configure clipboard provider for Neovim (`wl-clipboard` on Arch, `xsel` on Fedora [auto-installed with neovim pkg], `xclip` on Debian)
-- [ ] Add additional Neovim runtime dependencies across all distros (`imagemagick`, `jd`, `tidy`, `sqlite`, `gettext`, `protobuf-compiler`, `fd` / `fd-find` — note: Fedora pulls `tree-sitter-cli`, `xsel`, `ripgrep` directly; Arch auto-installs `tree-sitter`, but requires manual install for clipboard/ripgrep/others)
+- [x] Configure clipboard provider for Neovim (`wl-clipboard` on Arch, `xsel` on Fedora, `xclip` on Debian) — `scripts/setup-neovim.sh`
+- [x] Add additional Neovim runtime dependencies across all distros (`imagemagick`, `jq`, `tidy`, `sqlite`, `gettext`, `protobuf-compiler`, `fd` / `fd-find`) — `scripts/setup-neovim.sh`
 - [x] Install Kitty terminal emulator — `scripts/setup-kitty.sh`
 - [x] Install Lazygit — `scripts/setup-lazygit.sh`
 - [x] Install Lazydocker — `scripts/setup-lazydocker.sh`

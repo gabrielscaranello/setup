@@ -53,6 +53,11 @@ _ensure_nvm() {
   bash "scripts/setup-nvm.sh" 2>/dev/null || bash "$(dirname "$0")/setup-nvm.sh"
 }
 
+_ensure_go() {
+  echo "Ensuring go is installed (required by neovim toolchain)..."
+  bash "scripts/setup-go.sh" 2>/dev/null || bash "$(dirname "$0")/setup-go.sh"
+}
+
 _ensure_rust() {
   echo "Ensuring rust/cargo is installed (required for tree-sitter-cli on debian)..."
   bash "scripts/setup-rust.sh" 2>/dev/null || bash "$(dirname "$0")/setup-rust.sh"
@@ -64,11 +69,7 @@ _install_build_deps() {
 }
 
 _install_neovim() {
-  local pm
-  pm="$(_get_package_manager)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  local pm="$1"
 
   case "$pm" in
   dnf | pacman)
@@ -86,9 +87,38 @@ _install_neovim() {
   esac
 }
 
+_install_runtime_deps() {
+  local pm="$1"
+  echo "Installing Neovim runtime dependencies and tools..."
+
+  # Common dependencies across all distributions (resolved via packages.conf or identical package names)
+  install_packages jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip
+
+  # Distro-specific independent dependencies
+  case "$pm" in
+  apt)
+    install_packages luarocks python3 python-venv
+    ;;
+  dnf)
+    install_packages luarocks cargo lua-5.1
+    ;;
+  pacman)
+    install_packages build-tools rust tree-sitter-cli luarocks
+    ;;
+  esac
+}
+
 main() {
+  local pm
+  pm="$(_get_package_manager)" || {
+    echo "Unsupported distribution" >&2
+    return 1
+  }
+
   _ensure_nvm
-  _install_neovim
+  _ensure_go
+  _install_runtime_deps "$pm"
+  _install_neovim "$pm"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

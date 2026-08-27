@@ -83,6 +83,35 @@ setup() {
   [ "$(_get_package_name "containerd" "apt")" = "" ]
   [ "$(_get_package_name "containerd" "pacman")" = "" ]
 }
+@test "_get_package_name resolves neovim runtime dependencies for distros" {
+  [ "$(_get_package_name "clipboard" "apt")" = "xclip" ]
+  [ "$(_get_package_name "clipboard" "dnf")" = "xsel" ]
+  [ "$(_get_package_name "clipboard" "pacman")" = "wl-clipboard" ]
+
+  [ "$(_get_package_name "fd-find" "apt")" = "fd-find" ]
+  [ "$(_get_package_name "fd-find" "dnf")" = "fd-find" ]
+  [ "$(_get_package_name "fd-find" "pacman")" = "fd" ]
+
+  [ "$(_get_package_name "imagemagick" "apt")" = "imagemagick" ]
+  [ "$(_get_package_name "imagemagick" "dnf")" = "ImageMagick" ]
+  [ "$(_get_package_name "imagemagick" "pacman")" = "imagemagick" ]
+
+  [ "$(_get_package_name "protobuf-compiler" "apt")" = "protobuf-compiler" ]
+  [ "$(_get_package_name "protobuf-compiler" "dnf")" = "protobuf-compiler" ]
+  [ "$(_get_package_name "protobuf-compiler" "pacman")" = "protobuf" ]
+
+  [ "$(_get_package_name "python-venv" "apt")" = "python3-venv" ]
+  [ "$(_get_package_name "python-venv" "dnf")" = "" ]
+  [ "$(_get_package_name "python-venv" "pacman")" = "" ]
+
+  [ "$(_get_package_name "sqlite" "apt")" = "sqlite3 libsqlite3-dev" ]
+  [ "$(_get_package_name "sqlite" "dnf")" = "sqlite sqlite-devel" ]
+  [ "$(_get_package_name "sqlite" "pacman")" = "sqlite" ]
+
+  [ "$(_get_package_name "tidy" "apt")" = "tidy" ]
+  [ "$(_get_package_name "tidy" "dnf")" = "libtidy" ]
+  [ "$(_get_package_name "tidy" "pacman")" = "tidy" ]
+}
 
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
