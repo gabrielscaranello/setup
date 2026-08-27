@@ -1,0 +1,5 @@
+# OpenSpec Configuration
+version: 1.0.0
+project: desktop-setup
+specs_dir: openspec/specs
+changes_dir: openspec/changes

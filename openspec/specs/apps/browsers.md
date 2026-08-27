@@ -1,0 +1,41 @@
+# Specification: Web Browsers (`scripts/setup-browsers.sh`)
+
+## Purpose
+Installs Chromium and official Mozilla Firefox browsers across all supported distributions, removing legacy ESR variants on Debian and configuring the official Mozilla APT repository.
+
+---
+
+## Requirements
+
+### Requirement: Chromium Installation
+The script SHALL install `chromium` across all supported distributions via `install_packages chromium`.
+
+#### Scenario: Installing Chromium
+- **GIVEN** a supported distribution (Debian, Fedora, or Arch Linux)
+- **WHEN** `scripts/setup-browsers.sh` runs
+- **THEN** `chromium` SHALL be installed from repositories
+
+### Requirement: Firefox Distribution Packaging Strategy
+The script SHALL install modern Firefox using distribution-native packaging on Arch Linux and Fedora, and official Mozilla APT repository on Debian:
+- **Arch Linux (`pacman`) & Fedora (`dnf`)**: SHALL install `firefox` and `firefox-i18n-pt-br` directly from repositories.
+- **Debian (`apt`)**: SHALL purge `firefox-esr`, configure the official `packages.mozilla.org` APT repository with keyring and pinning priority 1000, and install `firefox` and `firefox-i18n-pt-br`.
+
+#### Scenario: Running on Fedora or Arch Linux
+- **GIVEN** a Fedora or Arch Linux system
+- **WHEN** `scripts/setup-browsers.sh` runs
+- **THEN** `firefox` and `firefox-i18n-pt-br` SHALL be installed directly via `install_packages`
+
+#### Scenario: Running on Debian
+- **GIVEN** a Debian system
+- **WHEN** `scripts/setup-browsers.sh` runs
+- **THEN** `firefox-esr` and `firefox-esr-l10n-pt-br` SHALL be removed if present
+- **AND** Mozilla signing key SHALL be downloaded to `/etc/apt/keyrings/packages.mozilla.org.asc`
+- **AND** `/etc/apt/sources.list.d/mozilla.sources` SHALL be created pointing to `https://packages.mozilla.org/apt`
+- **AND** APT pinning priority 1000 SHALL be applied in `/etc/apt/preferences.d/mozilla`
+- **AND** `firefox` and `firefox-i18n-pt-br` SHALL be installed from Mozilla APT
+- **AND** subsequent runs SHALL skip Mozilla repository configuration idempotently
+
+#### Scenario: Running on an unsupported distribution
+- **GIVEN** an unsupported distribution
+- **WHEN** `scripts/setup-browsers.sh` runs
+- **THEN** it SHALL exit with code 1 and display an error message

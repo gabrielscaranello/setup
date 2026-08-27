@@ -1,0 +1,24 @@
+# Specification: Debian Backports Kernel (`scripts/debian/setup-kernel.sh`)
+
+## Purpose
+Installs the latest modern Linux kernel and headers from Debian Backports on Debian installations, bypassing execution on non-APT systems.
+
+---
+
+## Requirements
+
+### Requirement: Distribution Guard
+The script SHALL check the active package manager and exit cleanly with code 0 if run on non-Debian distributions (`dnf` or `pacman`).
+
+### Requirement: Backports Kernel Installation
+The script SHALL ensure backports repository is configured via `add_debian_backports_repo` and install `linux-image-amd64` and `linux-headers-amd64` targeted to `${codename}-backports`.
+
+#### Scenario: Execution on Debian
+- **GIVEN** a Debian installation
+- **WHEN** `scripts/debian/setup-kernel.sh` is executed
+- **THEN** `sudo apt install -y -t "<codename>-backports" linux-image-amd64 linux-headers-amd64` SHALL be executed
+
+#### Scenario: Execution on Fedora or Arch
+- **GIVEN** a Fedora or Arch Linux system
+- **WHEN** `scripts/debian/setup-kernel.sh` is executed
+- **THEN** it SHALL output a skip notice and exit with status 0

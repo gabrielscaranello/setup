@@ -54,17 +54,18 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 
 ---
 
-## 📋 Mandatory Documentation & Package Mapping Rules
+## 📋 Mandatory Documentation, OpenSpec & Package Mapping Rules
 
 Whenever a new script is added or an existing script/flow is modified under `scripts/`, `main.sh`, or `Makefile`:
 
-1. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
-2. **[Makefile](Makefile)**: Add the target with help documentation. Targets must be ordered alphabetically with `help` and `all` at the top and `clean` at the bottom.
-3. **[README.md](README.md)**: Update the "Quick start" section maintaining the same alphabetical target order.
-4. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
-5. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
-6. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
-7. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
+1. **[OpenSpec](openspec/)**: Follow Spec-Driven Development (SDD). Ensure the corresponding capability spec under `openspec/specs/<domain>/<feature>.md` is created or updated with requirements and GIVEN/WHEN/THEN scenarios BEFORE implementing or modifying code.
+2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
+3. **[Makefile](Makefile)**: Add the target with help documentation. Targets must be ordered alphabetically with `help` and `all` at the top and `clean` at the bottom.
+4. **[README.md](README.md)**: Update the "Quick start" section maintaining the same alphabetical target order.
+5. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
+6. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
+7. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
+8. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
    - Only add entries to `packages.conf` when the package name differs across package managers (`apt`, `dnf`, `pacman`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
    - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
