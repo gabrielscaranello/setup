@@ -62,7 +62,7 @@ make clean             # Remove temporary artifacts
 - `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
 - `runners/` — Distro-specific setup pipeline runners (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`)
 - `Makefile` — Convenience wrapper for `./main.sh` and test runners
-- `scripts/` — Modular and idempotent setup scripts (`setup-*.sh`)
+- `scripts/` — Modular setup scripts organized by domain (`system/`, `security/`, `toolchain/`, `terminal/`, `apps/`)
 - `scripts/_utils.sh` — Package manager and system helper abstractions
 - `scripts/packages.conf` — Cross-distro package mappings
 - `tests/` — Bats unit and Docker multi-distro integration tests

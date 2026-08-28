@@ -11,7 +11,7 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 
 ```
 .
-├── main.sh                        # CLI entrypoint forwarder (calls runners/main.sh)
+├── main.sh                        # Master CLI entrypoint forwarder (calls runners/main.sh)
 ├── Makefile                       # Convenience runner (make help, make test, etc.)
 ├── AGENTS.md                      # Authoritative AI instructions and rules
 ├── GEMINI.md                      # Pointer to AGENTS.md for Gemini/AI assistants
@@ -23,15 +23,19 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 │   ├── debian.sh                  # Debian setup pipeline
 │   ├── fedora.sh                  # Fedora setup pipeline
 │   └── main.sh                    # Central CLI dispatcher and module runner
-├── scripts/                       # Modular setup scripts
+├── scripts/                       # Modular setup scripts (organized by domain)
 │   ├── _utils.sh                  # Core abstraction (install_packages, etc.)
 │   ├── packages.conf              # Declarative cross-distro package mappings
-│   └── setup-<feature>.sh         # Individual setup scripts (e.g. setup-neovim.sh, setup-nvm.sh)
+│   ├── apps/                      # Application setup scripts
+│   ├── security/                  # Security setup scripts
+│   ├── system/                    # System & OS setup scripts
+│   ├── terminal/                  # Terminal tools & fonts setup scripts
+│   └── toolchain/                 # Dev runtimes & toolchains
 └── tests/                         # Test suite
     ├── docker/                    # Base Dockerfiles per distro
-    ├── integration/               # Integration tests per feature
-    ├── unit/                      # Fast Bats unit tests
-    └── run-tests.sh               # Master test runner
+    ├── integration/               # Integration tests per domain/feature
+    ├── unit/                      # Fast Bats unit tests per domain/feature
+    └── run-tests.sh               # Master test orchestrator
 ```
 
 ## 📜 Script template and rules
@@ -46,7 +50,7 @@ set -euo pipefail
 - Source helpers (near the top):
 
 ```bash
-source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
+source "scripts/_utils.sh" 2>/dev/null || true
 ```
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
@@ -163,7 +167,7 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 ```bash
 #!/bin/bash
 set -euo pipefail
-source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
+source "scripts/_utils.sh" 2>/dev/null || true
 
 _do_something() {
   echo "Installing foo..."

@@ -57,7 +57,7 @@ Before drafting any specification or script, consult the author's previous distr
 
 ### Step 3: Implementation & Package Mapping
 
-#### A. Script Implementation (`scripts/setup-<feature>.sh`)
+#### A. Script Implementation (`scripts/<domain>/setup-<feature>.sh`)
 
 Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
 
@@ -70,7 +70,7 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   - Do not suppress errors blindly (e.g. avoid unchecked `|| true` unless an operation is explicitly optional and its failure is safely handled).
 - **Helper Sourcing**:
   ```bash
-  source "scripts/_utils.sh" 2>/dev/null || source "$(dirname "$0")/_utils.sh"
+  source "scripts/_utils.sh" 2>/dev/null || true
   ```
 - **Public Utilities & Helper Catalog (`scripts/_utils.sh`)**:
   Always reuse existing helpers from `scripts/_utils.sh` instead of reimplementing or calling raw tools directly:
@@ -114,11 +114,11 @@ If package names differ across distributions or are unavailable in one:
 
 All code paths and conditional branches must be thoroughly tested:
 
-1. **Unit Tests (`tests/unit/<feature>.bats`)**:
+1. **Unit Tests (`tests/unit/<domain>/<feature>.bats`)**:
    - **100% Branch Coverage**: Test all `if`/`elif`/`else` branches, error cases, and distro branches (`apt`, `dnf`, `pacman`, unsupported distro).
    - Test Desktop Environment conditionals (`gnome`, `plasma`, `unknown`).
    - Mock external utilities and verify flag logic, package manager resolution, and fail-fast/exit-code behavior on errors.
-2. **Integration Tests (`tests/integration/<feature>.bats`)**:
+2. **Integration Tests (`tests/integration/<domain>/<feature>.bats`)**:
    - Test end-to-end execution inside clean containers across all supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**).
    - Validate idempotency: running the script a second time must succeed without errors or redundant modifications.
 

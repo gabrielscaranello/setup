@@ -60,7 +60,7 @@ make clean             # Limpa artefatos temporários
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
 - `runners/` — Runners de pipelines específicos por distribuição (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`)
 - `Makefile` — Runner e alias de conveniência para `./main.sh` e testes
-- `scripts/` — Scripts modulares e idempotentes (`setup-*.sh`)
+- `scripts/` — Scripts modulares organizados por domínios (`system/`, `security/`, `toolchain/`, `terminal/`, `apps/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes
 - `scripts/packages.conf` — Mapeamento declarativo de pacotes entre distros
 - `tests/` — Testes unitários (Bats) e de integração multi-distro (Docker)

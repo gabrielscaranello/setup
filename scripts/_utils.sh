@@ -138,7 +138,9 @@ install_flatpak_app() {
   local script_dir
 
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  if [ -f "$script_dir/setup-flatpak.sh" ]; then
+  if [ -f "$script_dir/system/setup-flatpak.sh" ]; then
+    bash "$script_dir/system/setup-flatpak.sh"
+  elif [ -f "$script_dir/setup-flatpak.sh" ]; then
     bash "$script_dir/setup-flatpak.sh"
   elif [ -f "$script_dir/../setup-flatpak.sh" ]; then
     bash "$script_dir/../setup-flatpak.sh"

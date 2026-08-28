@@ -4,7 +4,7 @@
 # Unit tests for all runner scripts (arch.sh, debian.sh, fedora.sh, _utils.sh)
 
 @test "runners/_utils.sh run_pipeline executes list of steps and completes" {
-  source /setup/runners/_utils.sh 2>/dev/null || source runners/_utils.sh
+  source /setup/runners/_utils.sh 2>/dev/null || source runners/_utils.sh 2>/dev/null
   bash() {
     echo "called: $*"
     return 0

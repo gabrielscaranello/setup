@@ -86,83 +86,83 @@ run_module() {
     ;;
 
   browsers)
-    bash "$SCRIPTS_DIR/setup-browsers.sh"
+    bash "$SCRIPTS_DIR/apps/setup-browsers.sh"
     ;;
 
   dbeaver)
-    bash "$SCRIPTS_DIR/setup-dbeaver.sh"
+    bash "$SCRIPTS_DIR/apps/setup-dbeaver.sh"
     ;;
 
   default-apps)
-    bash "$SCRIPTS_DIR/setup-default-apps.sh"
+    bash "$SCRIPTS_DIR/apps/setup-default-apps.sh"
     ;;
 
   discord)
-    bash "$SCRIPTS_DIR/setup-discord.sh"
+    bash "$SCRIPTS_DIR/apps/setup-discord.sh"
     ;;
 
   docker)
-    bash "$SCRIPTS_DIR/setup-docker.sh"
+    bash "$SCRIPTS_DIR/toolchain/setup-docker.sh"
     ;;
 
   firewall)
-    bash "$SCRIPTS_DIR/setup-firewall.sh"
+    bash "$SCRIPTS_DIR/security/setup-firewall.sh"
     ;;
 
   flatpak)
-    bash "$SCRIPTS_DIR/setup-flatpak.sh"
+    bash "$SCRIPTS_DIR/system/setup-flatpak.sh"
     ;;
 
   fonts)
-    bash "$SCRIPTS_DIR/setup-fonts.sh"
+    bash "$SCRIPTS_DIR/terminal/setup-fonts.sh"
     ;;
 
   gitflow)
-    bash "$SCRIPTS_DIR/setup-gitflow.sh"
+    bash "$SCRIPTS_DIR/toolchain/setup-gitflow.sh"
     ;;
 
   go)
-    bash "$SCRIPTS_DIR/setup-go.sh"
+    bash "$SCRIPTS_DIR/toolchain/setup-go.sh"
     ;;
 
   kernel-debian)
-    bash "$SCRIPTS_DIR/debian/setup-kernel.sh"
+    bash "$SCRIPTS_DIR/system/debian/setup-kernel.sh"
     ;;
 
   kitty)
-    bash "$SCRIPTS_DIR/setup-kitty.sh"
+    bash "$SCRIPTS_DIR/terminal/setup-kitty.sh"
     ;;
 
   lazydocker)
-    bash "$SCRIPTS_DIR/setup-lazydocker.sh"
+    bash "$SCRIPTS_DIR/terminal/setup-lazydocker.sh"
     ;;
 
   lazygit)
-    bash "$SCRIPTS_DIR/setup-lazygit.sh"
+    bash "$SCRIPTS_DIR/terminal/setup-lazygit.sh"
     ;;
 
   neovim)
-    bash "$SCRIPTS_DIR/setup-neovim.sh"
+    bash "$SCRIPTS_DIR/toolchain/setup-neovim.sh"
     ;;
 
   nvm)
-    bash "$SCRIPTS_DIR/setup-nvm.sh"
+    bash "$SCRIPTS_DIR/toolchain/setup-nvm.sh"
     ;;
 
   rust)
-    bash "$SCRIPTS_DIR/setup-rust.sh"
+    bash "$SCRIPTS_DIR/toolchain/setup-rust.sh"
     ;;
 
   swap)
-    bash "$SCRIPTS_DIR/setup-swap.sh"
+    bash "$SCRIPTS_DIR/system/setup-swap.sh"
     ;;
 
   telegram)
-    bash "$SCRIPTS_DIR/setup-telegram.sh"
+    bash "$SCRIPTS_DIR/apps/setup-telegram.sh"
     ;;
 
   timeshift)
-    bash "$SCRIPTS_DIR/setup-timeshift.sh"
+    bash "$SCRIPTS_DIR/system/setup-timeshift.sh"
     ;;
 
   *)
