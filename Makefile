@@ -1,7 +1,7 @@
 # Makefile targets ordering rule:
 # - New script targets MUST be added here and in [README.md](README.md) / [README-pt-br.md](README-pt-br.md)
 # - Order runtime targets alphabetically, but ensure 'help' and 'all' are first and 'clean' is last.
-.PHONY: help all browsers dbeaver default-apps discord docker flatpak fonts gitflow go kernel-debian kitty lazydocker lazygit neovim nvm rust swap telegram timeshift test test-coverage test-integration test-unit clean
+.PHONY: help all browsers dbeaver default-apps discord docker firewall flatpak fonts gitflow go kernel-debian kitty lazydocker lazygit neovim nvm rust swap telegram timeshift test test-coverage test-integration test-unit clean
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -23,6 +23,7 @@ help:
 	@echo "  make default-apps          - Configure default desktop applications (MIME / terminal)"
 	@echo "  make discord               - Install Discord (Flatpak on Debian/Fedora, repo on Arch)"
 	@echo "  make docker                - Install Docker and plugins"
+	@echo "  make firewall              - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI"
 	@echo "  make flatpak               - Configure Flatpak and Flathub repository"
 	@echo "  make fonts                 - Install JetBrains Mono Nerd Font"
 	@echo "  make gitflow               - Install Gitflow CJS"
@@ -61,6 +62,9 @@ discord:
 
 docker:
 	@./$(SCRIPTS_DIR)/setup-docker.sh
+
+firewall:
+	@./$(SCRIPTS_DIR)/setup-firewall.sh
 
 flatpak:
 	@./$(SCRIPTS_DIR)/setup-flatpak.sh

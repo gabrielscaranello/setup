@@ -45,6 +45,13 @@ main() {
   echo "✓ Flatpak setup completed"
   echo ""
 
+  echo ">>> Running Firewall setup..."
+  echo ""
+  bash "$SCRIPTS_DIR/setup-firewall.sh"
+  echo ""
+  echo "✓ Firewall setup completed"
+  echo ""
+
   echo ">>> Running Browsers setup..."
   echo ""
   bash "$SCRIPTS_DIR/setup-browsers.sh"

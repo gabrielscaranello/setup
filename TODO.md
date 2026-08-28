@@ -31,7 +31,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/setup-timeshift.sh`
 - [x] Implement Debian official repositories helper (`scripts/debian/_repositories.sh`) and backports kernel installation (`scripts/debian/setup-kernel.sh`)
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
-- [ ] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` on GNOME, and `plasma-firewall` on Arch KDE Plasma)
+- [x] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` / `firewall-config` on GNOME, and `plasma-firewall` on KDE Plasma) — `scripts/setup-firewall.sh`
 - [ ] Implement NVIDIA graphics drivers installation (including hybrid GPU validation with `envycontrol` for laptops)
 
 ## 🔵 Phase 3: Base System Packages & Desktop Environment (DE)

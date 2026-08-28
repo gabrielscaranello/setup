@@ -53,6 +53,7 @@ make dbeaver           # DBeaver only
 make default-apps      # Default applications only (Kitty terminal, MIME)
 make discord           # Discord only
 make docker            # Docker only
+make firewall          # Firewall and GUI frontend only
 make flatpak           # Flatpak and Flathub only
 make fonts             # JetBrains Mono Nerd Font only
 make gitflow           # Gitflow CJS only
@@ -87,6 +88,7 @@ make clean             # Remove temporary artifacts
 - scripts/setup-default-apps.sh — Configure default desktop applications (Kitty terminal, MIME)
 - scripts/setup-discord.sh — Install Discord
 - scripts/setup-docker.sh — Install Docker and plugins
+- scripts/setup-firewall.sh — Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
 - scripts/setup-flatpak.sh — Configure Flatpak and Flathub repository
 - scripts/setup-fonts.sh — Install JetBrains Mono Nerd Font
 - scripts/setup-gitflow.sh — Install Gitflow CJS
