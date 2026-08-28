@@ -37,14 +37,13 @@ setup() {
 }
 
 @test "_get_local_version parses version correctly from telegram-desktop" {
+  HOME="/tmp/nonexistent-home"
   telegram-desktop() {
     echo "Telegram Desktop 5.9.0"
     return 0
   }
-  command() {
-    if [ "${2:-}" = "telegram-desktop" ]; then return 0; fi
-    builtin command "$@"
-  }
+  export -f telegram-desktop 2>/dev/null || true
+
   run _get_local_version
   [ "$status" -eq 0 ]
   [ "$output" = "5.9.0" ]

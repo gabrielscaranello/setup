@@ -11,19 +11,26 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 
 ```
 .
-├── main.sh                        # Master orchestrator script (make all)
+├── main.sh                        # CLI entrypoint forwarder (calls runners/main.sh)
 ├── Makefile                       # Convenience runner (make help, make test, etc.)
 ├── AGENTS.md                      # Authoritative AI instructions and rules
 ├── GEMINI.md                      # Pointer to AGENTS.md for Gemini/AI assistants
 ├── CONTRIBUTING.md                # Developer contribution guide & architecture
 ├── README.md / README-pt-br.md    # User documentation (EN / PT-BR)
+├── runners/                       # Distro-specific orchestration pipelines
+│   ├── _utils.sh                  # Runner helper (run_pipeline)
+│   ├── arch.sh                    # Arch Linux setup pipeline
+│   ├── debian.sh                  # Debian setup pipeline
+│   ├── fedora.sh                  # Fedora setup pipeline
+│   └── main.sh                    # Central CLI dispatcher and module runner
 ├── scripts/                       # Modular setup scripts
 │   ├── _utils.sh                  # Core abstraction (install_packages, etc.)
 │   ├── packages.conf              # Declarative cross-distro package mappings
 │   └── setup-<feature>.sh         # Individual setup scripts (e.g. setup-neovim.sh, setup-nvm.sh)
-└── tests/                         # Integration test suite
+└── tests/                         # Test suite
     ├── docker/                    # Base Dockerfiles per distro
-    ├── <feature>/                 # Integration tests per feature
+    ├── integration/               # Integration tests per feature
+    ├── unit/                      # Fast Bats unit tests
     └── run-tests.sh               # Master test runner
 ```
 

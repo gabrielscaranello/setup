@@ -60,12 +60,8 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 1. **[OpenSpec](openspec/)**: Follow Spec-Driven Development (SDD). Ensure the corresponding capability spec under `openspec/specs/<domain>/<feature>.md` is created or updated with requirements and GIVEN/WHEN/THEN scenarios BEFORE implementing or modifying code.
 2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
-3. **[Makefile](Makefile)**: Add the target with help documentation. Targets must be ordered alphabetically with `help` and `all` at the top and `clean` at the bottom.
-4. **[README.md](README.md)**: Update the "Quick start" section maintaining the same alphabetical target order.
-5. **[README-pt-br.md](README-pt-br.md)**: Update the "Como usar (rápido)" section matching the English README.
-6. **[CONTRIBUTING.md](CONTRIBUTING.md)**: Ensure architecture, guidelines, or checklists are updated when appropriate.
-7. **[AGENTS.md](AGENTS.md)**: Update reference notes if public behavior or AI rules changed.
-8. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
+3. **[main.sh](main.sh)**: Register the new module in `run_module()`, `run_all()` steps, and the `show_help()` documentation. The CLI help in `main.sh` is the single source of truth for available setup commands.
+4. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
    - Only add entries to `packages.conf` when the package name differs across package managers (`apt`, `dnf`, `pacman`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
    - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
@@ -74,15 +70,14 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 ## 🛠️ Validation & Commands
 
-- **Run full setup**: `make all` (or `./main.sh`)
-- **Run individual targets**: `make browsers`, `make docker`, `make fonts`, `make gitflow`, `make go`, `make neovim`, `make nvm`, `make rust`
+- **Run full setup**: `make all` (or `./main.sh all` / `./main.sh`)
+- **Run individual targets**: `make <module>` (e.g. `make neovim`, `make docker`, `make firewall` or `./main.sh <module>`)
+- **Show available targets & modules**: `make help` (or `./main.sh help`)
 - **Run all tests**: `make test`
 - **Run unit tests only**: `make test-unit`
 - **Run integration tests**: `make test-integration`
 - **Run coverage reports**: `make test-coverage`
-- **Lint / Validate syntax**: `shellcheck -x scripts/*.sh`
 - **Clean build artifacts**: `make clean`
-- **Show available targets**: `make help`
 
 ---
 

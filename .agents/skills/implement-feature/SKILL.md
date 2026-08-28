@@ -124,19 +124,16 @@ All code paths and conditional branches must be thoroughly tested:
 
 ---
 
-### Step 5: Orchestration, Makefile & Documentation
+### Step 5: Orchestration, CLI Registration & Documentation
 
-1. **Orchestrator (`main.sh`)**:
-   - Add the script invocation into `main.sh` if it is part of the standard complete setup (`make all`).
-2. **Makefile**:
-   - Add a dedicated target (e.g., `<feature>:`) with inline help comment (`## Description`).
-   - Maintain alphabetical order of targets (keeping `help` / `all` at the top and `clean` at the bottom).
-3. **Documentation & Skill Synchronization**:
-   - **`README.md`**: Add the new target in the "Quick start" section maintaining alphabetical order.
-   - **`README-pt-br.md`**: Add the target in the "Como usar (rápido)" section matching the English README.
-   - **`TODO.md`**: Mark corresponding task items as done `[x]` with script references.
-   - **`.agents/skills/implement-feature/SKILL.md`**: **Mandatory Update**: If any new reusable helper or utility is added to `scripts/_utils.sh`, it must be immediately documented in this skill under _Step 3: Public Utilities & Helper Catalog_ with its signature and purpose.
-   - **`AGENTS.md` & `CONTRIBUTING.md`**: Update common helper listings if applicable.
+1. **Master CLI & Orchestrator (`runners/main.sh` / `main.sh`)**:
+   - Register the module invocation in the appropriate distro runner(s) under `runners/` (`arch.sh`, `debian.sh`, `fedora.sh`) if it belongs to the automated complete setup.
+   - Register the module in `run_module()` case statement in `runners/main.sh` for standalone execution (e.g. `./main.sh <feature>` and `make <feature>`).
+   - Add the command description in `show_help()` in `runners/main.sh`. **The help in `runners/main.sh` is the single source of truth for all available setup commands.**
+2. **Roadmap & Tracking (`TODO.md`)**:
+   - Mark the corresponding task item as done `[x]` with script references.
+3. **Skill Synchronization**:
+   - **`.agents/skills/implement-feature/SKILL.md`**: **Mandatory Update**: If any new reusable helper or utility is added to `scripts/_utils.sh` or `runners/_utils.sh`, it must be immediately documented in this skill with its signature and purpose.
 
 ---
 

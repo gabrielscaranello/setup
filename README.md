@@ -43,65 +43,29 @@ This project was created to unify and centralize several standalone distribution
 ⚡ Quick start
 -------------
 
-Run Makefile targets:
+Run full setup or inspect available module commands:
 
 ```sh
-make help              # Show available targets
-make all               # Run full setup (./main.sh)
-make browsers          # Browsers only (Chromium, Firefox)
-make dbeaver           # DBeaver only
-make default-apps      # Default applications only (Kitty terminal, MIME)
-make discord           # Discord only
-make docker            # Docker only
-make firewall          # Firewall and GUI frontend only
-make flatpak           # Flatpak and Flathub only
-make fonts             # JetBrains Mono Nerd Font only
-make gitflow           # Gitflow CJS only
-make go                # Golang only
-make kernel-debian     # Debian backports kernel and headers only
-make kitty             # Kitty terminal emulator only
-make lazydocker        # Lazydocker only
-make lazygit           # Lazygit only
-make neovim            # Neovim only
-make nvm               # NVM/Node only
-make rust              # Rust/Cargo only
-make swap              # Swap and VM tuning only
-make telegram          # Telegram Desktop only
-make timeshift         # Timeshift only
+make help              # Show all available setup commands and modules (./main.sh help)
+make all               # Run full desktop setup (./main.sh)
+make <module>          # Run a specific module (e.g. make neovim, make docker, make firewall)
 make test              # Run all tests (e.g. DISTRO=debian FILTER=nvm)
-make test-coverage     # Run tests with code coverage reports (kcov)
-make test-integration  # Run container integration tests only
 make test-unit         # Run fast unit tests only
+make test-integration  # Run container integration tests only
+make test-coverage     # Run tests with code coverage reports (kcov)
 make clean             # Remove temporary artifacts
 ```
 
-📁 Layout
--------
+📁 Architecture & Directory Structure
+------------------------------------
 
-- main.sh — Orchestrator
-- Makefile — Convenience runner
-- scripts/_utils.sh — Package-manager abstraction
-- scripts/debian/_repositories.sh — Debian repository helper functions
-- scripts/debian/setup-kernel.sh — Install latest Linux kernel and headers from Debian backports
-- scripts/setup-browsers.sh — Install Browsers (Chromium, Firefox)
-- scripts/setup-dbeaver.sh — Install DBeaver
-- scripts/setup-default-apps.sh — Configure default desktop applications (Kitty terminal, MIME)
-- scripts/setup-discord.sh — Install Discord
-- scripts/setup-docker.sh — Install Docker and plugins
-- scripts/setup-firewall.sh — Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
-- scripts/setup-flatpak.sh — Configure Flatpak and Flathub repository
-- scripts/setup-fonts.sh — Install JetBrains Mono Nerd Font
-- scripts/setup-gitflow.sh — Install Gitflow CJS
-- scripts/setup-go.sh — Install Golang
-- scripts/setup-kitty.sh — Install Kitty terminal emulator
-- scripts/setup-lazydocker.sh — Install Lazydocker
-- scripts/setup-lazygit.sh — Install Lazygit
-- scripts/setup-neovim.sh — Build/install Neovim
-- scripts/setup-nvm.sh — Install NVM, Node.js and global packages
-- scripts/setup-rust.sh — Install Rust, Cargo and tools (tree-sitter-cli)
-- scripts/setup-swap.sh — Configure Swap and VM memory tuning
-- scripts/setup-telegram.sh — Install Telegram Desktop
-- scripts/setup-timeshift.sh — Install and configure Timeshift
+- `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
+- `runners/` — Distro-specific setup pipeline runners (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`)
+- `Makefile` — Convenience wrapper for `./main.sh` and test runners
+- `scripts/` — Modular and idempotent setup scripts (`setup-*.sh`)
+- `scripts/_utils.sh` — Package manager and system helper abstractions
+- `scripts/packages.conf` — Cross-distro package mappings
+- `tests/` — Bats unit and Docker multi-distro integration tests
 
 🛠 Requirements
 -------------

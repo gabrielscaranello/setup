@@ -41,65 +41,29 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 ⚡️ Começando (rápido)
 ---------------------
 
-Execute os alvos do Makefile:
+Execute o setup completo ou consulte os módulos disponíveis:
 
 ```sh
-make help              # Ver alvos disponíveis
+make help              # Ver todos os comandos e módulos disponíveis (./main.sh help)
 make all               # Executa todo o setup (./main.sh)
-make browsers          # Só Navegadores (Chromium, Firefox)
-make dbeaver           # Só DBeaver
-make default-apps      # Só Aplicativos padrão (Terminal Kitty, MIME)
-make discord           # Só Discord
-make docker            # Só Docker
-make firewall          # Só Firewall e interface gráfica
-make flatpak           # Só Flatpak e Flathub
-make fonts             # Só JetBrains Mono Nerd Font
-make gitflow           # Só Gitflow CJS
-make go                # Só Golang
-make kernel-debian     # Só Kernel e headers do Debian backports
-make kitty             # Só Kitty terminal emulator
-make lazydocker        # Só Lazydocker
-make lazygit           # Só Lazygit
-make neovim            # Só Neovim
-make nvm               # Só NVM/Node
-make rust              # Só Rust/Cargo
-make swap              # Só Swap e otimização de memória
-make telegram          # Só Telegram Desktop
-make timeshift         # Só Timeshift
+make <modulo>          # Executa um módulo específico (ex: make neovim, make docker, make firewall)
 make test              # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
-make test-coverage     # Executa testes e gera relatórios de cobertura (kcov)
-make test-integration  # Executa apenas testes de integração em containers
 make test-unit         # Executa apenas testes unitários rápidos
+make test-integration  # Executa apenas testes de integração em containers
+make test-coverage     # Executa testes e gera relatórios de cobertura (kcov)
 make clean             # Limpa artefatos temporários
 ```
 
-📂 Estrutura
------------
+📂 Arquitetura & Estrutura de Diretórios
+---------------------------------------
 
-- main.sh — Orquestrador
-- Makefile — Runner com alvos úteis
-- scripts/_utils.sh — Abstração do gerenciador de pacotes
-- scripts/debian/_repositories.sh — Funções auxiliares para repositórios Debian
-- scripts/debian/setup-kernel.sh — Instala kernel Linux e headers mais recentes do Debian backports
-- scripts/setup-browsers.sh — Instala Navegadores (Chromium, Firefox)
-- scripts/setup-dbeaver.sh — Instala DBeaver
-- scripts/setup-default-apps.sh — Configura aplicativos padrão (Terminal Kitty, MIME)
-- scripts/setup-discord.sh — Instala Discord
-- scripts/setup-docker.sh — Instala Docker e plugins
-- scripts/setup-firewall.sh — Configura Firewall (firewalld no Fedora, UFW no Debian/Arch) e GUI
-- scripts/setup-flatpak.sh — Configura Flatpak e repositório Flathub
-- scripts/setup-fonts.sh — Instala JetBrains Mono Nerd Font
-- scripts/setup-gitflow.sh — Instala Gitflow CJS
-- scripts/setup-go.sh — Instala Golang
-- scripts/setup-kitty.sh — Instala Kitty terminal emulator
-- scripts/setup-lazydocker.sh — Instala Lazydocker
-- scripts/setup-lazygit.sh — Instala Lazygit
-- scripts/setup-neovim.sh — Instala/compila Neovim
-- scripts/setup-nvm.sh — Instala NVM, Node.js e pacotes globais
-- scripts/setup-rust.sh — Instala Rust, Cargo e ferramentas (tree-sitter-cli)
-- scripts/setup-swap.sh — Configura Swap e otimização de memória
-- scripts/setup-telegram.sh — Instala Telegram Desktop
-- scripts/setup-timeshift.sh — Instala e configura Timeshift
+- `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
+- `runners/` — Runners de pipelines específicos por distribuição (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`)
+- `Makefile` — Runner e alias de conveniência para `./main.sh` e testes
+- `scripts/` — Scripts modulares e idempotentes (`setup-*.sh`)
+- `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes
+- `scripts/packages.conf` — Mapeamento declarativo de pacotes entre distros
+- `tests/` — Testes unitários (Bats) e de integração multi-distro (Docker)
 
 🛠 Requisitos
 ------------
