@@ -51,8 +51,8 @@ Removal of unused default packages and bloatware before installing user apps.
 
 General desktop productivity, database management, and gaming software.
 
-- [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/setup-browsers.sh`
-- [ ] Implement VS Code / VSCodium installation
+- [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/apps/setup-browsers.sh`
+- [x] Install VSCodium — `scripts/apps/setup-vscodium.sh`
 - [ ] Implement OnlyOffice installation
 - [ ] Implement Obsidian installation
 - [ ] Implement GIMP installation

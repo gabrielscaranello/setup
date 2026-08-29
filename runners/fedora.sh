@@ -14,6 +14,7 @@ run_all() {
     "apps/setup-dbeaver.sh:DBeaver setup"
     "apps/setup-discord.sh:Discord setup"
     "apps/setup-telegram.sh:Telegram setup"
+    "apps/setup-vscodium.sh:VSCodium setup"
     "terminal/setup-fonts.sh:Fonts setup"
     "toolchain/setup-gitflow.sh:Gitflow setup"
     "toolchain/setup-go.sh:Golang setup"
