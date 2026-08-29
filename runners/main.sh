@@ -35,6 +35,7 @@ Available Commands:
   kitty                 - Install Kitty terminal emulator
   lazydocker            - Install Lazydocker
   lazygit               - Install Lazygit
+  mongodb-compass       - Install MongoDB Compass (Flatpak)
   neovim                - Install Neovim and build runtime dependencies
   nvm                   - Install NVM, Node.js and global packages
   onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
@@ -146,6 +147,10 @@ run_module() {
 
   lazygit)
     bash "$SCRIPTS_DIR/terminal/setup-lazygit.sh"
+    ;;
+
+  mongodb-compass)
+    bash "$SCRIPTS_DIR/apps/setup-mongodb-compass.sh"
     ;;
 
   neovim)

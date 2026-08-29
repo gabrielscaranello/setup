@@ -14,6 +14,7 @@ run_all() {
     "apps/setup-dbeaver.sh:DBeaver setup"
     "apps/setup-gimp.sh:GIMP setup"
     "apps/setup-onlyoffice.sh:ONLYOFFICE setup"
+    "apps/setup-mongodb-compass.sh:MongoDB Compass setup"
     "apps/setup-discord.sh:Discord setup"
     "apps/setup-telegram.sh:Telegram setup"
     "apps/setup-vscodium.sh:VSCodium setup"

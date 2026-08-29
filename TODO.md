@@ -57,7 +57,7 @@ General desktop productivity, database management, and gaming software.
 - [ ] Implement Obsidian installation
 - [x] Install GIMP — `scripts/apps/setup-gimp.sh`
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
-- [ ] Implement MongoDB Compass installation
+- [x] Install MongoDB Compass — `scripts/apps/setup-mongodb-compass.sh`
 - [ ] Implement VirtualBox installation
 - [ ] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma)
 - [x] Install Discord — `scripts/setup-discord.sh`
