@@ -38,6 +38,7 @@ Available Commands:
   mongodb-compass       - Install MongoDB Compass (Flatpak)
   neovim                - Install Neovim and build runtime dependencies
   nvm                   - Install NVM, Node.js and global packages
+  obsidian              - Install Obsidian Knowledge Base
   onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
   rust                  - Install Rust, Cargo and tools (tree-sitter-cli)
   swap                  - Configure Swap and VM memory tuning
@@ -159,6 +160,10 @@ run_module() {
 
   nvm)
     bash "$SCRIPTS_DIR/toolchain/setup-nvm.sh"
+    ;;
+
+  obsidian)
+    bash "$SCRIPTS_DIR/apps/setup-obsidian.sh"
     ;;
 
   onlyoffice)
