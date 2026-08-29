@@ -37,6 +37,7 @@ Available Commands:
   lazygit               - Install Lazygit
   neovim                - Install Neovim and build runtime dependencies
   nvm                   - Install NVM, Node.js and global packages
+  onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
   rust                  - Install Rust, Cargo and tools (tree-sitter-cli)
   swap                  - Configure Swap and VM memory tuning
   telegram              - Install Telegram Desktop
@@ -153,6 +154,10 @@ run_module() {
 
   nvm)
     bash "$SCRIPTS_DIR/toolchain/setup-nvm.sh"
+    ;;
+
+  onlyoffice)
+    bash "$SCRIPTS_DIR/apps/setup-onlyoffice.sh"
     ;;
 
   rust)

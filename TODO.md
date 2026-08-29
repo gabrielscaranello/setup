@@ -53,7 +53,7 @@ General desktop productivity, database management, and gaming software.
 
 - [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/apps/setup-browsers.sh`
 - [x] Install VSCodium — `scripts/apps/setup-vscodium.sh`
-- [ ] Implement OnlyOffice installation
+- [x] Install ONLYOFFICE — `scripts/apps/setup-onlyoffice.sh`
 - [ ] Implement Obsidian installation
 - [x] Install GIMP — `scripts/apps/setup-gimp.sh`
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
