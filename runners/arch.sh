@@ -16,6 +16,7 @@ run_all() {
     "apps/setup-onlyoffice.sh:ONLYOFFICE setup"
     "apps/setup-obsidian.sh:Obsidian setup"
     "apps/setup-mongodb-compass.sh:MongoDB Compass setup"
+    "apps/setup-screenshot-tool.sh:Screenshot tool setup"
     "apps/setup-discord.sh:Discord setup"
     "apps/setup-telegram.sh:Telegram setup"
     "apps/setup-vscodium.sh:VSCodium setup"

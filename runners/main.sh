@@ -41,6 +41,7 @@ Available Commands:
   obsidian              - Install Obsidian Knowledge Base
   onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
   rust                  - Install Rust, Cargo and tools (tree-sitter-cli)
+  screenshot            - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
   swap                  - Configure Swap and VM memory tuning
   telegram              - Install Telegram Desktop
   timeshift             - Install and configure Timeshift (Btrfs / Rsync)
@@ -172,6 +173,10 @@ run_module() {
 
   rust)
     bash "$SCRIPTS_DIR/toolchain/setup-rust.sh"
+    ;;
+
+  screenshot)
+    bash "$SCRIPTS_DIR/apps/setup-screenshot-tool.sh"
     ;;
 
   swap)

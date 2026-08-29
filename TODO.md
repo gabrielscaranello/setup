@@ -59,7 +59,7 @@ General desktop productivity, database management, and gaming software.
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [x] Install MongoDB Compass — `scripts/apps/setup-mongodb-compass.sh`
 - [ ] Implement VirtualBox installation
-- [ ] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma)
+- [x] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
 - [x] Install Discord — `scripts/setup-discord.sh`
 - [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
 - [ ] Implement Steam installation (including ProtonUp-Qt / Proton manager, MangoHud, and Gamescope)
