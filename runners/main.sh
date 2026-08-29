@@ -28,6 +28,7 @@ Available Commands:
   firewall              - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
   flatpak               - Configure Flatpak and Flathub repository
   fonts                 - Install JetBrains Mono Nerd Font
+  gimp                  - Install GIMP image editor
   gitflow               - Install Gitflow CJS
   go                    - Install Golang programming language
   kernel-debian         - Install latest Linux kernel and headers from Debian backports
@@ -116,6 +117,10 @@ run_module() {
 
   fonts)
     bash "$SCRIPTS_DIR/terminal/setup-fonts.sh"
+    ;;
+
+  gimp)
+    bash "$SCRIPTS_DIR/apps/setup-gimp.sh"
     ;;
 
   gitflow)

@@ -55,7 +55,7 @@ General desktop productivity, database management, and gaming software.
 - [x] Install VSCodium — `scripts/apps/setup-vscodium.sh`
 - [ ] Implement OnlyOffice installation
 - [ ] Implement Obsidian installation
-- [ ] Implement GIMP installation
+- [x] Install GIMP — `scripts/apps/setup-gimp.sh`
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [ ] Implement MongoDB Compass installation
 - [ ] Implement VirtualBox installation

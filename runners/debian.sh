@@ -13,6 +13,7 @@ run_all() {
     "security/setup-firewall.sh:Firewall setup"
     "apps/setup-browsers.sh:Browsers setup"
     "apps/setup-dbeaver.sh:DBeaver setup"
+    "apps/setup-gimp.sh:GIMP setup"
     "apps/setup-discord.sh:Discord setup"
     "apps/setup-telegram.sh:Telegram setup"
     "apps/setup-vscodium.sh:VSCodium setup"
