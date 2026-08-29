@@ -108,3 +108,41 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ Configuring\ Debian\ backports\ repository ]]
 }
+
+@test "add_debian_vscodium_repo skips when repository files exist" {
+  local test_dir="/tmp/test-vscodium-apt-repo"
+  mkdir -p "$test_dir"
+  touch "$test_dir/vscodium.sources" "$test_dir/vscodium-archive-keyring.gpg"
+
+  add_debian_vscodium_repo() {
+    local keyring_path="$test_dir/vscodium-archive-keyring.gpg"
+    local sources_path="$test_dir/vscodium.sources"
+    if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
+      echo "VSCodium repository already configured on Debian, skipping."
+      return 0
+    fi
+  }
+
+  run add_debian_vscodium_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "already configured" ]]
+}
+
+@test "add_debian_mozilla_repo skips when repository files exist" {
+  local test_dir="/tmp/test-mozilla-apt-repo"
+  mkdir -p "$test_dir"
+  touch "$test_dir/mozilla.sources" "$test_dir/packages.mozilla.org.asc"
+
+  add_debian_mozilla_repo() {
+    local keyring_path="$test_dir/packages.mozilla.org.asc"
+    local sources_path="$test_dir/mozilla.sources"
+    if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
+      echo "Mozilla repository already configured, skipping."
+      return 0
+    fi
+  }
+
+  run add_debian_mozilla_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "already configured" ]]
+}

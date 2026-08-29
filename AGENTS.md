@@ -32,11 +32,22 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 - `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
 
-### 3. Rule for One-Line Functions
+### 3. Distribution-Specific Repository Utilities
+Third-party repository configurations must reside in their respective distro helper modules:
+- **Debian (`scripts/system/debian/_repositories.sh`)**:
+  - `_get_debian_codename`: Resolves Debian release codename (`trixie`, `bookworm`, etc.).
+  - `add_debian_backports_repo`: Idempotently configures Debian Backports.
+  - `add_debian_vscodium_repo`: Idempotently imports GPG key and adds VSCodium APT source.
+  - `add_debian_mozilla_repo`: Idempotently imports Mozilla GPG key, adds source, and sets APT pinning priority.
+- **Fedora (`scripts/system/fedora/_repositories.sh`)**:
+  - `add_fedora_docker_repo`: Idempotently adds Docker CE DNF repository.
+  - `add_fedora_vscodium_repo`: Idempotently adds VSCodium DNF repository.
+
+### 4. Rule for One-Line Functions
 - **Do NOT create trivial one-line wrapper functions** if they are called in only one place and simply proxy a call. Inline the command/helper directly at the call site.
 - **Exception**: One-line functions are permitted if they are called from multiple locations or provide meaningful semantic reuse.
 
-### 4. Desktop Environment (DE) Handling Policy
+### 5. Desktop Environment (DE) Handling Policy
 - Whenever a script or configuration step depends on a specific Desktop Environment (GNOME, KDE Plasma), it must detect the active environment using `get_desktop_environment`.
 - **Default to doing nothing**: When the Desktop Environment is not recognized (`unknown` or unsupported), the script must **NOT** execute environment-specific actions or guess configurations. Agnóstic/generic configurations (like standard XDG specifications) may still proceed.
 

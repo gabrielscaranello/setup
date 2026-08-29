@@ -38,31 +38,29 @@
   [[ "$output" =~ "called apt install" ]]
 }
 
+@test "_install_firefox_apt calls add_debian_mozilla_repo and installs firefox" {
+  source /setup/scripts/apps/setup-browsers.sh
+  _remove_firefox_esr_apt() { return 0; }
+  add_debian_mozilla_repo() {
+    echo "called add_debian_mozilla_repo"
+    return 0
+  }
+  install_packages() {
+    echo "installing packages: $*"
+    return 0
+  }
+  run _install_firefox_apt
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called add_debian_mozilla_repo" ]]
+  [[ "$output" =~ "installing packages: firefox firefox-i18n-pt-br" ]]
+}
+
 @test "_install_firefox fails when package manager is unsupported" {
   source /setup/scripts/apps/setup-browsers.sh
   _get_package_manager() { echo "unknown-pm"; }
   run _install_firefox
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported package manager" ]]
-}
-
-@test "_add_mozilla_apt_repo skips when files already exist" {
-  source /setup/scripts/apps/setup-browsers.sh
-  local test_dir="/tmp/test-firefox-repo"
-  mkdir -p "$test_dir"
-  touch "$test_dir/mozilla.sources" "$test_dir/packages.mozilla.org.asc"
-
-  _add_mozilla_apt_repo() {
-    local keyring_path="$test_dir/packages.mozilla.org.asc"
-    local sources_path="$test_dir/mozilla.sources"
-    if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
-      echo "Mozilla repository already configured, skipping."
-      return 0
-    fi
-  }
-  run _add_mozilla_apt_repo
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "already configured" ]]
 }
 
 @test "_install_chromium calls install_packages chromium on Fedora/dnf" {
@@ -110,4 +108,3 @@
   [[ "$output" =~ "called chromium install" ]]
   [[ "$output" =~ "called firefox install" ]]
 }
-

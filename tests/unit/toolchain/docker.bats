@@ -2,68 +2,63 @@
 
 # Unit tests for setup-docker.sh logic and branches
 
-@test "_install_docker_packages calls install_packages with unified docker package list" {
+setup() {
   source /setup/scripts/toolchain/setup-docker.sh
+}
+
+@test "_install_docker_packages calls install_packages with unified docker package list" {
   install_packages() {
-    echo "packages: $*"
+    echo "installed packages: $*"
     return 0
   }
   run _install_docker_packages "apt"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "docker docker-compose docker-buildx containerd" ]]
+  [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
 }
 
-@test "_install_docker_packages calls _add_docker_repo_fedora on Fedora" {
-  source /setup/scripts/toolchain/setup-docker.sh
-  _add_docker_repo_fedora() {
-    echo "added fedora repo"
+@test "_install_docker_packages calls add_fedora_docker_repo on Fedora" {
+  add_fedora_docker_repo() {
+    echo "called add_fedora_docker_repo"
     return 0
   }
-  install_packages() { return 0; }
+  install_packages() {
+    return 0
+  }
   run _install_docker_packages "dnf"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "added fedora repo" ]]
+  [[ "$output" =~ "called add_fedora_docker_repo" ]]
 }
 
 @test "_install_docker fails when package manager is unsupported" {
-  source /setup/scripts/toolchain/setup-docker.sh
-  _get_package_manager() { echo "unknown-pm"; }
+  _get_package_manager() {
+    echo "unsupported_pm"
+  }
   run _install_docker
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
-}
-
-@test "_add_docker_repo_fedora skips when repo file exists" {
-  source /setup/scripts/toolchain/setup-docker.sh
-  local test_repo="/tmp/test-docker-ce.repo"
-  touch "$test_repo"
-  _add_docker_repo_fedora() {
-    if [ -f "$test_repo" ]; then
-      echo "Docker CE repository already configured on Fedora, skipping."
-      return 0
-    fi
-  }
-  run _add_docker_repo_fedora
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "already configured" ]]
+  [[ "$output" =~ "Unsupported package manager: unsupported_pm" ]]
 }
 
 @test "_enable_docker_service handles presence or absence of systemctl" {
-  source /setup/scripts/toolchain/setup-docker.sh
   command() {
-    if [ "${2:-}" = "systemctl" ]; then return 1; fi
+    if [ "$2" = "systemctl" ]; then
+      return 1
+    fi
     builtin command "$@"
   }
   run _enable_docker_service
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "systemctl not found" ]]
+  [[ "$output" =~ "systemctl not found, skipping service enablement." ]]
 }
 
 @test "_configure_docker_user_group adds user to docker group" {
-  source /setup/scripts/toolchain/setup-docker.sh
-  getent() { return 0; }
-  sudo() { return 0; }
-  USER="testuser" run _configure_docker_user_group
+  export USER="testuser"
+  getent() { return 1; }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+  run _configure_docker_user_group
   [ "$status" -eq 0 ]
-  [[ "$output" =~ User\ \'testuser\'\ added\ to\ docker\ group\. ]]
+  [[ "$output" =~ "Adding user 'testuser' to the docker group..." ]]
+  [[ "$output" =~ "User 'testuser' added to docker group." ]]
 }

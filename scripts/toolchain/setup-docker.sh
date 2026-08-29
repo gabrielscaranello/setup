@@ -4,24 +4,14 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || true
-
-_add_docker_repo_fedora() {
-  local repo_file="/etc/yum.repos.d/docker-ce.repo"
-  if [ -f "$repo_file" ]; then
-    echo "Docker CE repository already configured on Fedora, skipping."
-    return 0
-  fi
-
-  echo "Configuring Docker CE repository for Fedora..."
-  sudo dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
-}
+source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 
 _install_docker_packages() {
   local pm="$1"
   echo "Installing Docker packages..."
 
   if [ "$pm" = "dnf" ]; then
-    _add_docker_repo_fedora
+    add_fedora_docker_repo
   fi
 
   install_packages docker docker-compose docker-buildx containerd

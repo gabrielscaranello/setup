@@ -4,48 +4,16 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/system/debian/_repositories.sh" 2>/dev/null || true
 
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
   sudo apt remove -y firefox-esr firefox-esr-l10n-pt-br 2>/dev/null || true
 }
 
-_add_mozilla_apt_repo() {
-  local keyring_path="/etc/apt/keyrings/packages.mozilla.org.asc"
-  local sources_path="/etc/apt/sources.list.d/mozilla.sources"
-  local repo_url="https://packages.mozilla.org/apt"
-
-  if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
-    echo "Mozilla repository already configured, skipping."
-    return 0
-  fi
-
-  echo "Configuring Mozilla repository for APT..."
-  sudo install -d -m 0755 /etc/apt/keyrings
-
-  wget -q "${repo_url}/repo-signing-key.gpg" -O- | sudo tee "$keyring_path" >/dev/null
-
-  cat <<EOF_SOURCES | sudo tee "$sources_path" >/dev/null
-Types: deb
-URIs: ${repo_url}
-Suites: mozilla
-Components: main
-Signed-By: $keyring_path
-EOF_SOURCES
-
-  echo "Setting APT pinning priority for Mozilla repository..."
-  cat <<EOF_PIN | sudo tee /etc/apt/preferences.d/mozilla >/dev/null
-Package: *
-Pin: origin packages.mozilla.org
-Pin-Priority: 1000
-EOF_PIN
-
-  sudo apt update -qq
-}
-
 _install_firefox_apt() {
   _remove_firefox_esr_apt
-  _add_mozilla_apt_repo
+  add_debian_mozilla_repo
   install_packages firefox firefox-i18n-pt-br
 }
 
@@ -113,4 +81,3 @@ main() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi
-

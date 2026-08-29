@@ -81,6 +81,10 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   5. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
   6. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
   7. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+- **Distribution-Specific Repository Utilities**:
+  When configuring third-party or upstream repositories, reuse or register functions in:
+  - **Debian (`scripts/system/debian/_repositories.sh`)**: `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`.
+  - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
