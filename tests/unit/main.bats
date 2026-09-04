@@ -45,6 +45,10 @@ setup() {
   run run_module "firewall"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-firewall.sh" ]]
+
+  run run_module "steam"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "setup-steam.sh" ]]
 }
 
 @test "run_all dispatches to debian runner when package manager is apt" {

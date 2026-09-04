@@ -22,6 +22,7 @@ run_all() {
     "apps/setup-telegram.sh:Telegram setup"
     "apps/setup-virtualbox.sh:VirtualBox setup"
     "apps/setup-vscodium.sh:VSCodium setup"
+    "apps/setup-steam.sh:Steam and gaming tools setup"
     "terminal/setup-fonts.sh:Fonts setup"
     "toolchain/setup-gitflow.sh:Gitflow setup"
     "toolchain/setup-go.sh:Golang setup"

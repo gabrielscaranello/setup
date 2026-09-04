@@ -62,7 +62,7 @@ General desktop productivity, database management, and gaming software.
 - [x] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
 - [x] Install Discord — `scripts/setup-discord.sh`
 - [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
-- [ ] Implement Steam installation (including ProtonUp-Qt / Proton manager, MangoHud, and Gamescope)
+- [x] Install Steam and gaming tools (`ProtonPlus` on GNOME, `ProtonUp-Qt` on KDE Plasma, `MangoHud`, `MangoJuice`, `Gamescope`, `GameMode`) — `scripts/apps/setup-steam.sh`
 
 ## 🎨 Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE Plasma)
 

@@ -113,6 +113,20 @@ setup() {
   [ "$(_get_package_name "tidy" "pacman")" = "tidy" ]
 }
 
+@test "_get_package_name resolves gaming packages for distros" {
+  [ "$(_get_package_name "gamemode" "apt")" = "gamemode" ]
+  [ "$(_get_package_name "gamemode" "dnf")" = "gamemode" ]
+  [ "$(_get_package_name "gamemode" "pacman")" = "gamemode lib32-gamemode" ]
+
+  [ "$(_get_package_name "mangohud" "apt")" = "" ]
+  [ "$(_get_package_name "mangohud" "dnf")" = "mangohud mangohud.i686" ]
+  [ "$(_get_package_name "mangohud" "pacman")" = "mangohud lib32-mangohud" ]
+
+  [ "$(_get_package_name "steam" "apt")" = "" ]
+  [ "$(_get_package_name "steam" "dnf")" = "steam" ]
+  [ "$(_get_package_name "steam" "pacman")" = "steam" ]
+}
+
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
   [ "$(_get_package_name "curl" "dnf")" = "curl" ]

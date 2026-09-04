@@ -42,6 +42,7 @@ Available Commands:
   onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
   rust                  - Install Rust, Cargo and tools (tree-sitter-cli)
   screenshot            - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
+  steam                 - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
   swap                  - Configure Swap and VM memory tuning
   telegram              - Install Telegram Desktop
   timeshift             - Install and configure Timeshift (Btrfs / Rsync)
@@ -178,6 +179,10 @@ run_module() {
 
   screenshot)
     bash "$SCRIPTS_DIR/apps/setup-screenshot-tool.sh"
+    ;;
+
+  steam)
+    bash "$SCRIPTS_DIR/apps/setup-steam.sh"
     ;;
 
   swap)
