@@ -37,6 +37,7 @@ Available Commands:
   lazygit               - Install Lazygit
   mongodb-compass       - Install MongoDB Compass (Flatpak)
   neovim                - Install Neovim and build runtime dependencies
+  nvidia                - Install NVIDIA drivers and hybrid GPU tools (switcheroo-control & prime-run)
   nvm                   - Install NVM, Node.js and global packages
   obsidian              - Install Obsidian Knowledge Base
   onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
@@ -159,6 +160,10 @@ run_module() {
 
   neovim)
     bash "$SCRIPTS_DIR/toolchain/setup-neovim.sh"
+    ;;
+
+  nvidia)
+    bash "$SCRIPTS_DIR/system/setup-nvidia.sh"
     ;;
 
   nvm)

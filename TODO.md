@@ -32,7 +32,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [x] Implement distribution repository helpers (`scripts/system/debian/_repositories.sh`, `scripts/system/fedora/_repositories.sh`) and backports kernel installation (`scripts/system/debian/setup-kernel.sh`)
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
 - [x] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` / `firewall-config` on GNOME, and `plasma-firewall` on KDE Plasma) — `scripts/setup-firewall.sh`
-- [ ] Implement NVIDIA graphics drivers installation (including hybrid GPU validation with `envycontrol` for laptops)
+- [x] Install NVIDIA graphics drivers and hybrid GPU tools (Debian backports, `switcheroo-control` & `prime-run`) — `scripts/system/setup-nvidia.sh` _(verified via container test suite; pending bare-metal hardware validation)_
 
 ## 🔵 Phase 3: Base System Packages & Desktop Environment (DE)
 

@@ -23,8 +23,8 @@ _get_debian_codename() {
     lsb_release -cs 2>/dev/null && return 0
   fi
 
-  # Fallback to bookworm if detection fails
-  echo "bookworm"
+  # Fallback to trixie if detection fails
+  echo "trixie"
 }
 
 _is_debian_backports_configured() {

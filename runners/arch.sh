@@ -7,6 +7,7 @@ run_all() {
   local steps=(
     "system/setup-swap.sh:Swap and memory tuning setup"
     "system/setup-timeshift.sh:Timeshift setup"
+    "system/setup-nvidia.sh:NVIDIA graphics drivers setup"
     "toolchain/setup-docker.sh:Docker setup"
     "system/setup-flatpak.sh:Flatpak setup"
     "security/setup-firewall.sh:Firewall setup"

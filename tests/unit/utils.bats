@@ -127,6 +127,12 @@ setup() {
   [ "$(_get_package_name "steam" "pacman")" = "steam" ]
 }
 
+@test "_get_package_name resolves nvidia driver package for distros" {
+  [ "$(_get_package_name "nvidia-driver" "apt")" = "nvidia-driver" ]
+  [ "$(_get_package_name "nvidia-driver" "dnf")" = "akmod-nvidia" ]
+  [ "$(_get_package_name "nvidia-driver" "pacman")" = "nvidia-open-dkms nvidia-utils" ]
+}
+
 @test "_get_package_name returns unmapped package as-is" {
   [ "$(_get_package_name "curl" "apt")" = "curl" ]
   [ "$(_get_package_name "curl" "dnf")" = "curl" ]
