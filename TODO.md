@@ -58,7 +58,7 @@ General desktop productivity, database management, and gaming software.
 - [x] Install GIMP — `scripts/apps/setup-gimp.sh`
 - [x] Install DBeaver — `scripts/setup-dbeaver.sh`
 - [x] Install MongoDB Compass — `scripts/apps/setup-mongodb-compass.sh`
-- [ ] Implement VirtualBox installation
+- [x] Install VirtualBox — `scripts/apps/setup-virtualbox.sh`
 - [x] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
 - [x] Install Discord — `scripts/setup-discord.sh`
 - [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
