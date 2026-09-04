@@ -136,3 +136,39 @@ EOF_PIN
 
   sudo apt update -qq
 }
+
+add_debian_virtualbox_repo() {
+  local keyring_path="/etc/apt/keyrings/oracle-virtualbox-2016.asc"
+  local sources_path="/etc/apt/sources.list.d/virtualbox.sources"
+  local gpg_key_url="https://www.virtualbox.org/download/oracle_vbox_2016.asc"
+  local codename
+  codename="$(_get_debian_codename)"
+
+  if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
+    echo "VirtualBox repository already configured on Debian, skipping."
+    return 0
+  fi
+
+  echo "Configuring Oracle VirtualBox repository for APT..."
+  sudo install -d -m 0755 /etc/apt/keyrings /etc/apt/sources.list.d
+
+  if command -v wget >/dev/null 2>&1; then
+    wget -qO- "$gpg_key_url" | sudo tee "$keyring_path" >/dev/null
+  elif command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$gpg_key_url" | sudo tee "$keyring_path" >/dev/null
+  else
+    echo "Error: Neither wget nor curl is available to download VirtualBox GPG key" >&2
+    return 1
+  fi
+
+  cat <<EOF_SOURCES | sudo tee "$sources_path" >/dev/null
+Types: deb
+URIs: https://download.virtualbox.org/virtualbox/debian
+Suites: ${codename}
+Components: contrib
+Architectures: amd64
+Signed-By: $keyring_path
+EOF_SOURCES
+
+  sudo apt update -qq
+}
