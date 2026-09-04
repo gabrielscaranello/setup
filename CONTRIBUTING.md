@@ -151,6 +151,9 @@ Changes that add or modify scripts MUST include:
 - Update to main.sh if the `make all` flow should run it
 - ShellCheck output in CI or PR body
 
+> [!IMPORTANT]
+> **Protected Core Governance Files**: AI agents have permission to modify code, configs, tests, specs, and docs autonomously without requesting confirmation, with the strict exception of `AGENTS.md`, `CONTRIBUTING.md`, and `.agents/skills/**`. Any changes to these three protected files/directories strictly require explicit prior user approval.
+
 Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the PR.
 
 ## 📋 PR checklist (use as template)
@@ -162,6 +165,7 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 - [ ] Makefile target added (when applicable)
 - [ ] README.md and README-pt-br.md updated (when applicable)
 - [ ] AGENTS.md updated (when applicable)
+- [ ] Commit messages follow strictly the [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) specification
 - [ ] shellcheck OK
 - [ ] Basic manual test documented in PR
 

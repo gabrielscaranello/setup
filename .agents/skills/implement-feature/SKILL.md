@@ -19,7 +19,7 @@ This skill defines the canonical step-by-step procedure for introducing new conf
 ## 📋 End-to-End Implementation Lifecycle
 
 ```
-[1. Study Upstream Repos] ──▶ [2. Draft Spec] ──▶ 🛑 [3. USER REVIEW & APPROVAL] ──▶ [4. Script & Packages] ──▶ [5. Bats Tests] ──▶ [6. Orchestration & Docs] ──▶ [7. Mandatory Validation (Unit + Integration)]
+[1. Study Upstream Repos] ──▶ [2. Draft Spec] ──▶ [3. Script & Packages] ──▶ [4. Bats Tests] ──▶ [5. Orchestration & Docs] ──▶ [6. Mandatory Validation (Unit + Integration)]
 ```
 
 ---
@@ -41,17 +41,16 @@ Before drafting any specification or script, consult the author's previous distr
 
 ---
 
-### Step 2: Spec-Driven Development & User Approval Gate (MANDATORY)
+### Step 2: Spec-Driven Development (Autonomous Drafting)
 
 1. **Target Identification from TODO.md**:
    - Identify the specific target task/feature requested from [TODO.md](../../../TODO.md) along with its phase, dependencies, and requirements.
 2. **Draft Specification**:
    - Create or update the feature specification file under `openspec/specs/<domain>/<feature>.md` based directly on the requested item in `TODO.md` and the findings from reference repos.
    - Document the requirements, constraints, package dependencies, and testable scenarios using the **GIVEN / WHEN / THEN** syntax across supported distros (Debian, Fedora, Arch Linux).
-3. 🛑 **User Spec Review Gate (DO NOT PROCEED WITHOUT APPROVAL)**:
-   - Present the drafted specification to the user.
-   - **STOP execution and explicitly ask the user for feedback/approval** before writing any script code (`scripts/*.sh`) or modifying tests/configurations.
-   - Proceed to implementation ONLY after the user approves the specification.
+3. **Autonomous Implementation**:
+   - Per `AGENTS.md`, AI agents have permission to proceed directly with script implementation, package mapping, tests, and documentation autonomously without waiting for explicit approval.
+   - **Exception**: Any modifications to **Protected Core Governance Files** (`AGENTS.md`, `CONTRIBUTING.md`, `.agents/skills/**`) strictly require explicit prior user confirmation.
 
 ---
 
@@ -141,27 +140,27 @@ All code paths and conditional branches must be thoroughly tested:
 
 ---
 
-### Step 6: Mandatory Validation Execution (MANDATORY GATE)
+### Step 6: Mandatory Validation Execution (MANDATORY GATE BEFORE COMPLETION)
 
-At the conclusion of the implementation, the agent **MUST ALWAYS** run the unit and integration test suites specifically targeting the newly implemented feature:
+Before marking any implementation as finished or reporting completion to the user, the AI agent **MUST ALWAYS execute and pass all tests related to the feature**, without exceptions:
 
-1. **Unit Tests for the Feature**:
+1. **Unit Tests for the Feature & Modified Modules**:
    ```bash
    ./tests/run-tests.sh --unit --filter=<feature>
    ```
-   *Verify that all unit test cases for the feature pass.*
+   *Verify that all unit test cases for the feature pass with 100% branch coverage.*
 
-2. **Full Unit Test Suite (Regression Prevention)**:
+2. **Integration Tests for the Feature (Multi-Distro Validation)**:
+   ```bash
+   ./tests/run-tests.sh --integration --filter=<feature>
+   ```
+   *Validate execution inside Debian 13, Fedora 44, and Arch Linux containers. All distro containers must succeed.*
+
+3. **Full Unit Test Suite (Regression Prevention)**:
    ```bash
    make test-unit
    ```
    *Ensure no regressions were introduced to other modules.*
-
-3. **Integration Tests for the Feature (Multi-Distro Validation)**:
-   ```bash
-   ./tests/run-tests.sh --integration --filter=<feature>
-   ```
-   *Validate execution inside Debian, Fedora, and Arch Linux containers.*
 
 4. **Linting (when shellcheck is available)**:
    ```bash
@@ -169,4 +168,5 @@ At the conclusion of the implementation, the agent **MUST ALWAYS** run the unit 
    ```
 
 > [!IMPORTANT]
-> Never execute `git commit` or `git push`. All git commits must be made exclusively by the user.
+> **Completion Invariant**: An implementation is strictly considered **INCOMPLETE** until all relevant unit and multi-distro integration tests have been actively run, verified green, and reported.
+> AI agents may execute `git commit` only when explicitly requested or authorized by the user, adhering strictly to the Conventional Commits v1.0.0 specification. Do not execute `git push` unless explicitly requested.

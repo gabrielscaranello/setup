@@ -20,11 +20,14 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 ## 📐 Architecture, Conventions & Coding Standards
 
 ### 1. Modern Tooling & Package Management
+
 - Use `apt` (never legacy `apt-get`) on Debian.
 - Always use `install_packages <generic_pkg>` to automatically resolve package manager differences via `packages.conf`.
 
 ### 2. Common Reusable Utilities (`scripts/_utils.sh`)
+
 Common operations must reuse helper functions from `scripts/_utils.sh`:
+
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
@@ -33,7 +36,9 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
 
 ### 3. Distribution-Specific Repository Utilities
+
 Third-party repository configurations must reside in their respective distro helper modules:
+
 - **Debian (`scripts/system/debian/_repositories.sh`)**:
   - `_get_debian_codename`: Resolves Debian release codename (`trixie`, `bookworm`, etc.).
   - `add_debian_backports_repo`: Idempotently configures Debian Backports.
@@ -44,10 +49,12 @@ Third-party repository configurations must reside in their respective distro hel
   - `add_fedora_vscodium_repo`: Idempotently adds VSCodium DNF repository.
 
 ### 4. Rule for One-Line Functions
+
 - **Do NOT create trivial one-line wrapper functions** if they are called in only one place and simply proxy a call. Inline the command/helper directly at the call site.
 - **Exception**: One-line functions are permitted if they are called from multiple locations or provide meaningful semantic reuse.
 
 ### 5. Desktop Environment (DE) Handling Policy
+
 - Whenever a script or configuration step depends on a specific Desktop Environment (GNOME, KDE Plasma), it must detect the active environment using `get_desktop_environment`.
 - **Default to doing nothing**: When the Desktop Environment is not recognized (`unknown` or unsupported), the script must **NOT** execute environment-specific actions or guess configurations. Agnóstic/generic configurations (like standard XDG specifications) may still proceed.
 
@@ -55,8 +62,13 @@ Third-party repository configurations must reside in their respective distro hel
 
 ## 🚫 AI Operational Rules & Commit Policy
 
-- **No Automated Commits**: AI assistants and agents must **NEVER** execute `git commit`, `git push`, or alter git history directly.
-- **Developer Ownership**: All commits must be made exclusively by the human developer after reviewing and validating the changes.
+- **Autonomous File Edits & Protected Core Files**: AI agents have full permission to create and modify codebase files, scripts, configurations, tests, OpenSpec specs, and documentation autonomously **without requesting confirmation**, with the strict exception of **Protected Core Governance Files**:
+  - `AGENTS.md`
+  - `CONTRIBUTING.md`
+  - `.agents/skills/**`
+    Modifying any of these three protected files/directories strictly requires explicit prior approval from the human developer.
+- **Commit Policy & Standards (Conventional Commits v1.0.0)**: AI assistants and agents may execute `git commit` **only when explicitly requested or authorized by the human developer**. All commit messages must strictly adhere to the [Conventional Commits v1.0.0 specification](https://www.conventionalcommits.org/en/v1.0.0/) (`<type>[optional scope]: <description>`, followed by optional body and footers). Autonomous or unsolicited commits and `git push` operations remain strictly prohibited without explicit developer approval.
+- **Developer Oversight**: Commits performed by AI agents must strictly reflect the requested changes, follow clean semantic messages conforming to Conventional Commits, and leave push/remote operations under developer discretion unless explicitly instructed.
 - **Mandatory Lint & Test Execution**: After creating or modifying any executable script (`scripts/*.sh`), orchestration script (`main.sh`), configuration, or Bats test (`tests/**/*.bats`), AI agents must **ALWAYS** run and fix:
   1. `shellcheck` across all modified scripts and test files (`shellcheck -x scripts/*.sh main.sh tests/*.sh` and `shellcheck --severity=warning tests/unit/*.bats tests/integration/*.bats`).
   2. The unit test suite (`make test-unit` or `./tests/run-tests.sh --unit`).
