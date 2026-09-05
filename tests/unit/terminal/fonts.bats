@@ -60,12 +60,12 @@
   [ "$status" -eq 0 ]
 }
 
-@test "_install_fonts fails when package manager is unsupported" {
+@test "_install_fonts fails when distribution is unsupported" {
   source /setup/scripts/terminal/setup-fonts.sh
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_fonts
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
 @test "_copy_jetbrains_mono_fonts copies ttf files to target directory" {

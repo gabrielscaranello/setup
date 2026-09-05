@@ -83,24 +83,24 @@ _install_distro_fonts() {
 }
 
 _install_fonts() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
   _install_distro_fonts
 
-  case "$pm" in
-  pacman)
+  case "$distro" in
+  arch)
     _install_fonts_repo
     ;;
-  apt | dnf)
+  debian | fedora)
     install_packages curl wget unzip fontconfig || true
     _install_fonts_from_upstream
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

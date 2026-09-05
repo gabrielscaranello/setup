@@ -94,41 +94,41 @@ setup() {
 }
 
 @test "_install_lazygit fails when distribution is unsupported" {
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_lazygit
   [ "$status" -eq 1 ]
-  [[ "$output" =~ Unsupported\ package\ manager ]]
+  [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_lazygit delegates to repo on pacman" {
-  _get_package_manager() { echo "pacman"; }
+@test "_install_lazygit delegates to repo on arch" {
+  get_distro_id() { echo "arch"; }
   _install_lazygit_repo() {
-    echo "installed from pacman"
+    echo "installed from arch"
     return 0
   }
   run _install_lazygit
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ pacman ]]
+  [[ "$output" =~ installed\ from\ arch ]]
 }
 
-@test "_install_lazygit delegates to binary on apt and dnf" {
-  _get_package_manager() { echo "apt"; }
+@test "_install_lazygit delegates to binary on debian and fedora" {
+  get_distro_id() { echo "debian"; }
   _install_lazygit_binary() {
-    echo "installed from binary apt"
+    echo "installed from binary debian"
     return 0
   }
   run _install_lazygit
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ binary\ apt ]]
+  [[ "$output" =~ installed\ from\ binary\ debian ]]
 
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _install_lazygit_binary() {
-    echo "installed from binary dnf"
+    echo "installed from binary fedora"
     return 0
   }
   run _install_lazygit
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ binary\ dnf ]]
+  [[ "$output" =~ installed\ from\ binary\ fedora ]]
 }
 
 @test "_resolve_lazygit_arch returns correct architecture string" {

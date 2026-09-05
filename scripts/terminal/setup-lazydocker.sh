@@ -108,21 +108,21 @@ _install_lazydocker_repo() {
 }
 
 _install_lazydocker() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  pacman)
+  case "$distro" in
+  arch)
     _install_lazydocker_repo
     ;;
-  apt | dnf)
+  debian | fedora)
     _install_lazydocker_binary
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

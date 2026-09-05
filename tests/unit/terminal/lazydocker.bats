@@ -94,41 +94,41 @@ setup() {
 }
 
 @test "_install_lazydocker fails when distribution is unsupported" {
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_lazydocker
   [ "$status" -eq 1 ]
-  [[ "$output" =~ Unsupported\ package\ manager ]]
+  [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_lazydocker delegates to repo on pacman" {
-  _get_package_manager() { echo "pacman"; }
+@test "_install_lazydocker delegates to repo on arch" {
+  get_distro_id() { echo "arch"; }
   _install_lazydocker_repo() {
-    echo "installed from pacman"
+    echo "installed from arch"
     return 0
   }
   run _install_lazydocker
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ pacman ]]
+  [[ "$output" =~ installed\ from\ arch ]]
 }
 
-@test "_install_lazydocker delegates to binary on apt and dnf" {
-  _get_package_manager() { echo "apt"; }
+@test "_install_lazydocker delegates to binary on debian and fedora" {
+  get_distro_id() { echo "debian"; }
   _install_lazydocker_binary() {
-    echo "installed from binary apt"
+    echo "installed from binary debian"
     return 0
   }
   run _install_lazydocker
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ binary\ apt ]]
+  [[ "$output" =~ installed\ from\ binary\ debian ]]
 
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _install_lazydocker_binary() {
-    echo "installed from binary dnf"
+    echo "installed from binary fedora"
     return 0
   }
   run _install_lazydocker
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ binary\ dnf ]]
+  [[ "$output" =~ installed\ from\ binary\ fedora ]]
 }
 
 @test "_resolve_lazydocker_arch maps x86 and arm64 architectures" {

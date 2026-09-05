@@ -188,36 +188,36 @@ DESKTOP_OPEN
 
 @test "_install_kitty fails when distribution is unsupported" {
   source /setup/scripts/terminal/setup-kitty.sh
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_kitty
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
-@test "_install_kitty delegates to repo on dnf and pacman" {
+@test "_install_kitty delegates to repo on fedora and arch" {
   source /setup/scripts/terminal/setup-kitty.sh
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _install_kitty_repo() {
-    echo "installed from dnf"
+    echo "installed from fedora"
     return 0
   }
   run _install_kitty
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed from dnf" ]]
+  [[ "$output" =~ "installed from fedora" ]]
 
-  _get_package_manager() { echo "pacman"; }
+  get_distro_id() { echo "arch"; }
   _install_kitty_repo() {
-    echo "installed from pacman"
+    echo "installed from arch"
     return 0
   }
   run _install_kitty
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed from pacman" ]]
+  [[ "$output" =~ "installed from arch" ]]
 }
 
-@test "_install_kitty delegates to binary on apt" {
+@test "_install_kitty delegates to binary on debian" {
   source /setup/scripts/terminal/setup-kitty.sh
-  _get_package_manager() { echo "apt"; }
+  get_distro_id() { echo "debian"; }
   _install_kitty_binary() {
     echo "installed from binary"
     return 0
