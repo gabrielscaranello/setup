@@ -97,17 +97,16 @@ setup() {
   [[ "$output" =~ already\ up\ to\ date ]]
 }
 
-@test "_add_rpmfusion_free_repo skips when already configured" {
-  dnf() {
-    if [ "$1" = "repolist" ]; then
-      echo "rpmfusion-free-updates  RPM Fusion for Fedora 41 - Free"
-      return 0
-    fi
-    return 1
+@test "_install_telegram_repo calls add_fedora_rpmfusion_repo on fedora" {
+  add_fedora_rpmfusion_repo() {
+    echo "called add_fedora_rpmfusion_repo"
+    return 0
   }
-  run _add_rpmfusion_free_repo
+  install_packages() { return 0; }
+
+  run _install_telegram_repo "fedora"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ already\ configured,\ skipping ]]
+  [[ "$output" =~ called\ add_fedora_rpmfusion_repo ]]
 }
 
 @test "_install_telegram fails when distribution is unsupported" {

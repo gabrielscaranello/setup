@@ -4,6 +4,7 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 
 TELEGRAM_API_URL="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
 
@@ -118,26 +119,10 @@ _install_telegram_binary() {
   echo "Telegram installed into $target_dir."
 }
 
-_add_rpmfusion_free_repo() {
-  if dnf repolist 2>/dev/null | grep -qi "rpmfusion-free"; then
-    echo "RPM Fusion Free repository is already configured, skipping."
-    return 0
-  fi
-
-  echo "Adding RPM Fusion Free repository..."
-  local fedora_version
-  fedora_version="$(rpm -E %fedora 2>/dev/null || echo "")"
-  if [ -z "$fedora_version" ] || [ "$fedora_version" = "%fedora" ]; then
-    fedora_version="41"
-  fi
-
-  sudo dnf install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || true
-}
-
 _install_telegram_repo() {
   local distro="$1"
   if [ "$distro" = "fedora" ] || [ "$distro" = "dnf" ]; then
-    _add_rpmfusion_free_repo
+    add_fedora_rpmfusion_repo
   fi
 
   echo "Installing telegram-desktop package..."
