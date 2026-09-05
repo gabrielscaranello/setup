@@ -3,6 +3,11 @@
 
 setup() {
   source /setup/scripts/desktop/setup-gtk-theme.sh
+  sudo rm -rf /usr/share/themes/adw-gtk3 /usr/share/themes/adw-gtk3-dark 2> /dev/null || true
+}
+
+teardown() {
+  sudo rm -rf /usr/share/themes/adw-gtk3 /usr/share/themes/adw-gtk3-dark 2> /dev/null || true
 }
 
 @test "main skips when desktop environment is unknown" {
@@ -133,6 +138,7 @@ setup() {
   HOME="$mock_home"
 
   install_packages() { return 0; }
+  sudo() { :; }
   fetch_url() { echo '{"tag_name": "v6.5"}'; }
   download_file() { touch "$2"; }
   tar() {

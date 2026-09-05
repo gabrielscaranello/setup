@@ -6,7 +6,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 
 CURSOR_NAME="Bibata-Modern-Ice"
 CURSOR_ARCHIVE="${CURSOR_NAME}.tar.xz"
-DOWNLOAD_URL="https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/${CURSOR_ARCHIVE}"
+UPSTREAM_REPO="ful1e5/Bibata_Cursor"
+DEFAULT_VERSION="v2.0.7"
 CURSOR_SIZE=20
 
 _is_cursor_installed() {
@@ -18,25 +19,50 @@ _is_cursor_installed() {
   return 1
 }
 
+_get_local_version() {
+  if [ -f "$HOME/.local/share/icons/$CURSOR_NAME/.version" ]; then
+    cat "$HOME/.local/share/icons/$CURSOR_NAME/.version"
+  elif [ -f "/usr/share/icons/$CURSOR_NAME/.version" ]; then
+    cat "/usr/share/icons/$CURSOR_NAME/.version"
+  else
+    echo ""
+  fi
+}
+
+_fetch_remote_version() {
+  fetch_url "https://api.github.com/repos/${UPSTREAM_REPO}/releases/latest" 2> /dev/null \
+    | grep '"tag_name"' \
+    | head -n 1 \
+    | cut -d '"' -f 4 || echo ""
+}
+
 _install_cursor_files() {
-  if _is_cursor_installed; then
-    echo "Cursor theme '$CURSOR_NAME' is already installed. Skipping download."
-    return 0
+  local version="${1:-}"
+  if [ -z "$version" ]; then
+    version="$(_fetch_remote_version)"
+    if [ -z "$version" ]; then
+      version="$DEFAULT_VERSION"
+    fi
   fi
 
+  local download_url="https://github.com/${UPSTREAM_REPO}/releases/download/${version}/${CURSOR_ARCHIVE}"
   local tmp_dir="/tmp/bibata_cursor_$$"
   local archive_path="/tmp/${CURSOR_ARCHIVE}"
 
   rm -rf "$tmp_dir" "$archive_path"
   mkdir -p "$tmp_dir"
 
-  install_packages tar xz-utils || true
+  install_packages curl wget tar xz-utils || true
 
-  echo "Downloading $CURSOR_NAME cursor theme..."
-  download_file "$DOWNLOAD_URL" "$archive_path"
+  echo "Downloading $CURSOR_NAME cursor theme ($version)..."
+  download_file "$download_url" "$archive_path" || download_file "https://github.com/${UPSTREAM_REPO}/releases/latest/download/${CURSOR_ARCHIVE}" "$archive_path"
 
   echo "Extracting cursor archive..."
   tar -xf "$archive_path" -C "$tmp_dir"
+
+  if [ -d "$tmp_dir/$CURSOR_NAME" ]; then
+    echo "$version" > "$tmp_dir/$CURSOR_NAME/.version"
+  fi
 
   local user_icons_dir="$HOME/.local/share/icons"
   mkdir -p "$user_icons_dir" "$HOME/.icons"
@@ -51,6 +77,23 @@ _install_cursor_files() {
   fi
 
   rm -rf "$tmp_dir" "$archive_path"
+}
+
+_ensure_cursor_theme() {
+  if ! _is_cursor_installed; then
+    _install_cursor_files
+  else
+    local local_version remote_version
+    local_version="$(_get_local_version)"
+    remote_version="$(_fetch_remote_version)"
+
+    if [ -n "$remote_version" ] && [ "$local_version" != "$remote_version" ]; then
+      echo "Updating $CURSOR_NAME cursor theme from GitHub (${local_version:-unknown} -> $remote_version)..."
+      _install_cursor_files "$remote_version"
+    else
+      echo "Cursor theme '$CURSOR_NAME' is up to date (${local_version:-latest})."
+    fi
+  fi
 }
 
 _configure_gnome_cursor() {
@@ -114,7 +157,7 @@ main() {
   fi
 
   echo "Setting up $CURSOR_NAME cursor theme for $de..."
-  _install_cursor_files
+  _ensure_cursor_theme
   _configure_cursor_theme "$de"
   echo "Cursor theme setup completed successfully."
 }

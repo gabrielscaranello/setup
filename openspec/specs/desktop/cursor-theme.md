@@ -18,7 +18,8 @@ Automate installation and configuration of the modern `Bibata-Modern-Ice` cursor
 - **Target Directories**:
   - System-wide: `/usr/share/icons/Bibata-Modern-Ice` (when running as root or with `sudo`).
   - User-level fallback: `$HOME/.local/share/icons/Bibata-Modern-Ice` and `$HOME/.icons/Bibata-Modern-Ice`.
-- **Idempotency**: If the cursor files are already extracted and installed, skips re-downloading and only ensures settings are applied.
+- **Idempotency & Version Tracking**: Saves version metadata (`.version`) upon extraction. If cursor files are already installed and match the latest GitHub release, skips re-downloading.
+- **Upstream Update Check**: When the cursor theme is already installed, checks GitHub API for the latest release tag. If a newer version is available, downloads and updates the theme.
 
 ## Test Scenarios
 
@@ -50,7 +51,15 @@ Automate installation and configuration of the modern `Bibata-Modern-Ice` cursor
 
 **Scenario: Idempotent Execution**
 
-- **GIVEN** `Bibata-Modern-Ice` is already present in target directory
+- **GIVEN** `Bibata-Modern-Ice` is already installed and up to date
 - **WHEN** `setup-cursor-theme.sh` is executed again
 - **THEN** it should skip re-downloading the archive
 - **AND** complete with exit code 0
+
+**Scenario: Upstream Cursor Theme Update Available**
+
+- **GIVEN** `Bibata-Modern-Ice` is installed with an older version
+- **AND** a newer release is detected from GitHub API
+- **WHEN** `setup-cursor-theme.sh` is executed
+- **THEN** it should download and install the newer version
+- **AND** update the stored version metadata

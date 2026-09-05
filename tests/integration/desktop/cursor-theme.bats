@@ -14,10 +14,10 @@
   [[ "$output" =~ "Setting up Bibata-Modern-Ice cursor theme for gnome..." ]]
   [[ "$output" =~ "Cursor theme setup completed successfully." ]]
 
-  # Idempotency: second run should skip download
+  # Idempotency: second run should detect up to date
   run bash /setup/scripts/desktop/setup-cursor-theme.sh
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "is already installed. Skipping download." ]]
+  [[ "$output" =~ "is up to date" || "$output" =~ "already installed" ]]
 }
 
 @test "setup-cursor-theme.sh configures XDG default cursor when DE is Plasma" {
