@@ -8,7 +8,7 @@ setup() {
 }
 
 @test "_install_backports_kernel_apt calls add_debian_backports_repo and installs kernel with -t <codename>-backports" {
-  _get_debian_codename() {
+  get_debian_codename() {
     echo "bookworm"
   }
   add_debian_backports_repo() {
@@ -28,7 +28,7 @@ setup() {
 }
 
 @test "_install_backports_kernel_apt installs newer backports version than default suite candidate" {
-  _get_debian_codename() {
+  get_debian_codename() {
     echo "bookworm"
   }
   add_debian_backports_repo() {
@@ -61,17 +61,17 @@ setup() {
   [[ "$output" =~ Installed\ backport\ kernel ]]
 }
 
-@test "_setup_debian_kernel skips on non-apt distributions" {
-  _get_package_manager() {
-    echo "pacman"
+@test "_setup_debian_kernel skips on non-debian distributions" {
+  get_distro_id() {
+    echo "arch"
   }
   run _setup_debian_kernel
   [ "$status" -eq 0 ]
-  [[ "$output" =~ Skipping\ on\ \'pacman\' ]]
+  [[ "$output" =~ Skipping\ on\ \'arch\' ]]
 }
 
-@test "_setup_debian_kernel fails when package manager detection fails" {
-  _get_package_manager() {
+@test "_setup_debian_kernel fails when distribution detection fails" {
+  get_distro_id() {
     return 1
   }
   run _setup_debian_kernel
@@ -79,9 +79,9 @@ setup() {
   [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_setup_debian_kernel executes kernel installation on APT" {
-  _get_package_manager() {
-    echo "apt"
+@test "_setup_debian_kernel executes kernel installation on debian" {
+  get_distro_id() {
+    echo "debian"
   }
   _install_backports_kernel_apt() {
     echo "called _install_backports_kernel_apt"
@@ -90,4 +90,11 @@ setup() {
   run _setup_debian_kernel
   [ "$status" -eq 0 ]
   [[ "$output" =~ called\ _install_backports_kernel_apt ]]
+}
+
+@test "_setup_debian_kernel skips on Debian derivatives like Ubuntu" {
+  get_distro_id() { echo "ubuntu"; }
+  run _setup_debian_kernel
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ Skipping\ on\ \'ubuntu\' ]]
 }

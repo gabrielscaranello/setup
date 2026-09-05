@@ -1,4 +1,4 @@
-# Specification: Swap, ZRAM & Memory Tuning (`scripts/setup-swap.sh`)
+# Specification: Swap, ZRAM & Memory Tuning (`scripts/system/setup-swap.sh`)
 
 ## Purpose
 Optimizes Linux memory management for interactive desktop performance by tuning virtual memory sysctl parameters, configuring compressed RAM swap (ZRAM) dynamically per distribution, and safely provisioning a root filesystem-aware persistent swapfile (Btrfs vs. standard filesystems) with fallback mechanisms.
@@ -15,25 +15,25 @@ The script SHALL create `/etc/sysctl.d/00-custom.conf` and apply VM parameters i
 
 #### Scenario: Applying sysctl configuration
 - **GIVEN** a Linux system
-- **WHEN** `scripts/setup-swap.sh` is executed
+- **WHEN** `scripts/system/setup-swap.sh` is executed
 - **THEN** `/etc/sysctl.d/00-custom.conf` SHALL contain swappiness and cache pressure settings
 - **AND** settings SHALL be loaded into the running kernel without requiring a reboot
 
 ---
 
 ### Requirement: ZRAM Configuration by Distribution
-The script SHALL install the appropriate `zram` package and configure compressed RAM swap equal to half of total RAM (`RAM / 2`, compression `zstd`, priority `100`):
-- **Debian (`apt`)**: SHALL configure `/etc/default/zramswap` with `ALGO=zstd`, `PERCENT=50`, `PRIORITY=100`, and restart `zramswap.service`.
-- **Fedora (`dnf`) & Arch Linux (`pacman`)**: SHALL configure `/etc/systemd/zram-generator.conf` under `[zram0]` (`zram-size = ram / 2`, `compression-algorithm = zstd`, `swap-priority = 100`), reload systemd daemon, and restart `systemd-zram-setup@zram0.service` / start `/dev/zram0`.
+The script SHALL install the appropriate `zram` package and configure compressed RAM swap equal to half of total RAM (`RAM / 2`, compression `zstd`, priority `100`) based on `get_distro_id`:
+- **Debian (`debian`)**: SHALL configure `/etc/default/zramswap` with `ALGO=zstd`, `PERCENT=50`, `PRIORITY=100`, and restart `zramswap.service`.
+- **Fedora (`fedora`) & Arch Linux (`arch`)**: SHALL configure `/etc/systemd/zram-generator.conf` under `[zram0]` (`zram-size = ram / 2`, `compression-algorithm = zstd`, `swap-priority = 100`), reload systemd daemon, and restart `systemd-zram-setup@zram0.service` / start `/dev/zram0`.
 
 #### Scenario: Running on Debian
-- **GIVEN** a Debian system with `apt`
-- **WHEN** `scripts/setup-swap.sh` runs
+- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
+- **WHEN** `scripts/system/setup-swap.sh` runs
 - **THEN** `zram-tools` is configured via `/etc/default/zramswap` and service restarted
 
 #### Scenario: Running on Fedora or Arch Linux
-- **GIVEN** a Fedora or Arch Linux system with `dnf` or `pacman`
-- **WHEN** `scripts/setup-swap.sh` runs
+- **GIVEN** a Fedora or Arch Linux system (`get_distro_id` returns `fedora` or `arch`)
+- **WHEN** `scripts/system/setup-swap.sh` runs
 - **THEN** `/etc/systemd/zram-generator.conf` is written and zram generator service triggered
 
 ---

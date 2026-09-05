@@ -7,7 +7,7 @@ setup() {
   source /setup/scripts/system/debian/_repositories.sh
 }
 
-@test "_get_debian_codename retrieves DEBIAN_CODENAME when available (e.g. LMDE)" {
+@test "get_debian_codename retrieves DEBIAN_CODENAME when available (e.g. LMDE)" {
   local os_release_file
   os_release_file="$(mktemp)"
   cat << 'EOF' > "$os_release_file"
@@ -16,7 +16,7 @@ VERSION_CODENAME=faye
 DEBIAN_CODENAME=bookworm
 EOF
 
-  _get_debian_codename_mock() {
+  get_debian_codename_mock() {
     local debian_codename version_codename
     debian_codename="$(grep '^DEBIAN_CODENAME=' "$os_release_file" 2>/dev/null | cut -d= -f2 | tr -d '"' || true)"
     if [ -n "$debian_codename" ]; then
@@ -31,13 +31,13 @@ EOF
     echo "bookworm"
   }
 
-  run _get_debian_codename_mock
+  run get_debian_codename_mock
   rm -f "$os_release_file"
   [ "$status" -eq 0 ]
   [ "$output" = "bookworm" ]
 }
 
-@test "_get_debian_codename retrieves VERSION_CODENAME on pure Debian" {
+@test "get_debian_codename retrieves VERSION_CODENAME on pure Debian" {
   local os_release_file
   os_release_file="$(mktemp)"
   cat << 'EOF' > "$os_release_file"
@@ -45,7 +45,7 @@ NAME="Debian GNU/Linux"
 VERSION_CODENAME=trixie
 EOF
 
-  _get_debian_codename_mock() {
+  get_debian_codename_mock() {
     local debian_codename version_codename
     debian_codename="$(grep '^DEBIAN_CODENAME=' "$os_release_file" 2>/dev/null | cut -d= -f2 | tr -d '"' || true)"
     if [ -n "$debian_codename" ]; then
@@ -60,7 +60,7 @@ EOF
     echo "bookworm"
   }
 
-  run _get_debian_codename_mock
+  run get_debian_codename_mock
   rm -f "$os_release_file"
   [ "$status" -eq 0 ]
   [ "$output" = "trixie" ]
@@ -95,7 +95,7 @@ EOF
   _is_debian_backports_configured() {
     return 1
   }
-  _get_debian_codename() {
+  get_debian_codename() {
     echo "bookworm"
   }
   sudo() {
@@ -174,7 +174,7 @@ EOF
   sudo() {
     return 0
   }
-  _get_debian_codename() {
+  get_debian_codename() {
     echo "trixie"
   }
   command() {

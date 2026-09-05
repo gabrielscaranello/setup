@@ -7,17 +7,17 @@ setup() {
   source /setup/scripts/system/setup-nvidia.sh
 }
 
-@test "_setup_nvidia fails when package manager is unsupported" {
-  _get_package_manager() {
-    echo "unsupported_pm"
+@test "_setup_nvidia fails when distribution is unsupported" {
+  get_distro_id() {
+    echo "unsupported_distro"
   }
   run _setup_nvidia
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager: unsupported_pm" ]]
+  [[ "$output" =~ "Unsupported distribution: unsupported_distro" ]]
 }
 
 @test "_setup_nvidia skips and exits 0 when no NVIDIA GPU is detected" {
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _detect_nvidia_gpu() { return 1; }
 
   run _setup_nvidia
@@ -64,7 +64,7 @@ setup() {
     echo "called add_fedora_rpmfusion_repo"
     return 0
   }
-  run _configure_repositories "dnf"
+  run _configure_repositories "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_fedora_rpmfusion_repo" ]]
 }
@@ -74,7 +74,7 @@ setup() {
     echo "called add_arch_multilib_repo"
     return 0
   }
-  run _configure_repositories "pacman"
+  run _configure_repositories "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_arch_multilib_repo" ]]
 }
@@ -95,7 +95,7 @@ EOF
     return 0
   }
 
-  run _configure_repositories "apt"
+  run _configure_repositories "debian"
   [ "$status" -eq 0 ]
   grep -q "contrib non-free" "$APT_DEBIAN_SOURCES"
   [[ "$output" =~ "called add_debian_backports_repo" ]]
@@ -104,7 +104,7 @@ EOF
 
 @test "_install_driver_packages skips when NVIDIA_SKIP_KERNEL_BUILD is active" {
   export NVIDIA_SKIP_KERNEL_BUILD=1
-  run _install_driver_packages "pacman"
+  run _install_driver_packages "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "NVIDIA_SKIP_KERNEL_BUILD is active. Skipping kernel module compilation step." ]]
 }
@@ -117,21 +117,21 @@ EOF
   }
   sudo() { "$@"; }
   akmods() { return 0; }
-  _get_debian_codename() { echo "trixie"; }
+  get_debian_codename() { echo "trixie"; }
   apt() {
     echo "apt called: $*"
     return 0
   }
 
-  run _install_driver_packages "dnf"
+  run _install_driver_packages "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-power" ]]
 
-  run _install_driver_packages "pacman"
+  run _install_driver_packages "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: nvidia-open-dkms nvidia-utils nvidia-settings lib32-nvidia-utils" ]]
 
-  run _install_driver_packages "apt"
+  run _install_driver_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "apt called: install -y -t trixie-backports nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings" ]]
 }
@@ -279,7 +279,7 @@ EOF
 }
 
 @test "setup-nvidia main executes full flow when GPU is present" {
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _detect_nvidia_gpu() { return 0; }
   _detect_hybrid_gpu() { return 0; }
   _configure_repositories() { return 0; }

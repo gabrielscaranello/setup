@@ -7,17 +7,17 @@ setup() {
   source /setup/scripts/system/setup-amd.sh
 }
 
-@test "_setup_amd fails when package manager is unsupported" {
-  _get_package_manager() {
-    echo "unsupported_pm"
+@test "_setup_amd fails when distribution is unsupported" {
+  get_distro_id() {
+    echo "unsupported_distro"
   }
   run _setup_amd
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager: unsupported_pm" ]]
+  [[ "$output" =~ "Unsupported distribution: unsupported_distro" ]]
 }
 
 @test "_setup_amd skips and exits 0 when no AMD GPU is detected" {
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _detect_amd_gpu() { return 1; }
 
   run _setup_amd
@@ -49,16 +49,16 @@ setup() {
   add_fedora_rpmfusion_repo() { echo "called rpmfusion"; }
   add_arch_multilib_repo() { echo "called multilib"; }
 
-  run _configure_repositories "apt"
+  run _configure_repositories "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called nonfree" ]]
   [[ "$output" =~ "called backports" ]]
 
-  run _configure_repositories "dnf"
+  run _configure_repositories "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called rpmfusion" ]]
 
-  run _configure_repositories "pacman"
+  run _configure_repositories "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called multilib" ]]
 }
@@ -95,7 +95,7 @@ setup() {
     echo "installed: $*"
     return 0
   }
-  _get_debian_codename() { echo "trixie"; }
+  get_debian_codename() { echo "trixie"; }
   sudo() { echo "sudo: $*"; return 0; }
   apt() { echo "apt: $*"; return 0; }
 
@@ -138,7 +138,7 @@ setup() {
 }
 
 @test "_install_debian_backports_stack installs backports packages with fallback" {
-  _get_debian_codename() { echo "trixie"; }
+  get_debian_codename() { echo "trixie"; }
   sudo() { echo "sudo: $*"; return 0; }
   install_packages() { echo "fallback: $*"; return 0; }
 
@@ -148,7 +148,7 @@ setup() {
 }
 
 @test "_install_debian_32bit_packages installs i386 graphics when multiarch enabled" {
-  _get_debian_codename() { echo "trixie"; }
+  get_debian_codename() { echo "trixie"; }
   command() { return 0; }
   dpkg() { echo "i386"; return 0; }
   sudo() { echo "sudo: $*"; return 0; }
@@ -160,13 +160,13 @@ setup() {
 
 @test "_install_amd_packages skips when AMD_SKIP_PACKAGE_INSTALL is active" {
   export AMD_SKIP_PACKAGE_INSTALL=1
-  run _install_amd_packages "pacman"
+  run _install_amd_packages "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "AMD_SKIP_PACKAGE_INSTALL is active. Skipping package installation step." ]]
 }
 
 @test "setup-amd main executes full flow when GPU is present" {
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _detect_amd_gpu() { return 0; }
   _configure_repositories() { return 0; }
   _install_amd_packages() { echo "amd packages installed"; return 0; }

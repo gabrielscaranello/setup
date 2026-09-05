@@ -1,4 +1,4 @@
-# Specification: Timeshift Snapshot Provisioning & Boot Integration (`scripts/setup-timeshift.sh`)
+# Specification: Timeshift Snapshot Provisioning & Boot Integration (`scripts/system/setup-timeshift.sh`)
 
 ## Purpose
 Installs and configures Timeshift for automated and on-demand desktop backup snapshots, dynamically generating configuration files based on the root filesystem type (Btrfs vs. RSYNC), integrating `grub-btrfs` / `grub-btrfsd` bootloader menus on Btrfs systems, and creating an initial baseline snapshot.
@@ -12,7 +12,7 @@ The script SHALL install the `timeshift` package across supported distributions 
 
 #### Scenario: Installing package
 - **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
-- **WHEN** `scripts/setup-timeshift.sh` runs
+- **WHEN** `scripts/system/setup-timeshift.sh` runs
 - **THEN** `timeshift` package SHALL be installed
 
 ---
@@ -35,18 +35,18 @@ The script SHALL inspect the root partition (`/`) filesystem type using `get_roo
 ---
 
 ### Requirement: `grub-btrfs` Installation & Bootloader Integration (Btrfs Only)
-When the root filesystem is `btrfs`, the script SHALL configure GRUB bootloader snapshot integration:
+When the root filesystem is `btrfs`, the script SHALL configure GRUB bootloader snapshot integration based on `get_distro_id`:
 - **Dependencies**: SHALL install `btrfs-progs`, `gawk`, and `inotify-tools`.
-- **Arch Linux (`pacman`)**: SHALL install `grub-btrfs` directly via package manager.
-- **Fedora (`dnf`) & Debian (`apt`)**: SHALL clone `https://github.com/Antynea/grub-btrfs.git` to `/tmp/grub-btrfs`, configure Fedora-specific GRUB paths (`GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig`, `GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"`, `GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check`) when running on `dnf`, run `make install`, clean up `/tmp/grub-btrfs`, and execute `systemctl daemon-reload`.
+- **Arch Linux (`arch`)**: SHALL install `grub-btrfs` directly via package manager (`install_packages`).
+- **Fedora (`fedora`) & Debian (`debian`)**: SHALL clone `https://github.com/Antynea/grub-btrfs.git` to `/tmp/grub-btrfs`, configure Fedora-specific GRUB paths (`GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig`, `GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"`, `GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check`) when running on `fedora`, run `make install`, clean up `/tmp/grub-btrfs`, and execute `systemctl daemon-reload`.
 
 #### Scenario: Running on Btrfs on Arch Linux
-- **GIVEN** Arch Linux with Btrfs root
+- **GIVEN** Arch Linux with Btrfs root (`get_distro_id` returns `arch`)
 - **WHEN** boot integration executes
 - **THEN** `grub-btrfs` package is installed from repository
 
 #### Scenario: Running on Btrfs on Fedora or Debian
-- **GIVEN** Fedora or Debian with Btrfs root
+- **GIVEN** Fedora or Debian with Btrfs root (`get_distro_id` returns `fedora` or `debian`)
 - **WHEN** boot integration executes
 - **THEN** `grub-btrfs` is built and installed from upstream Git repository with paths tailored to the active distribution
 

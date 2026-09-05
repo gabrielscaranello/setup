@@ -8,7 +8,7 @@ source "scripts/system/debian/_repositories.sh" 2>/dev/null || true
 
 _install_backports_kernel_apt() {
   local codename
-  codename="$(_get_debian_codename)"
+  codename="$(get_debian_codename)"
 
   add_debian_backports_repo
 
@@ -17,14 +17,14 @@ _install_backports_kernel_apt() {
 }
 
 _setup_debian_kernel() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  if [ "$pm" != "apt" ]; then
-    echo "Debian backports kernel is only applicable to Debian/APT-based systems. Skipping on '$pm'."
+  if [ "$distro" != "debian" ]; then
+    echo "Debian backports kernel is only applicable to Debian. Skipping on '$distro'."
     return 0
   fi
 

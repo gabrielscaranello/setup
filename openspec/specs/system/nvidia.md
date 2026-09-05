@@ -17,23 +17,26 @@ The script SHALL strictly inspect hardware before attempting any driver installa
 - **Hybrid GPU Detection**: The script SHALL detect whether the system is a hybrid/laptop configuration (presence of an integrated GPU from Intel or AMD alongside the discrete NVIDIA GPU) to configure `switcheroo-control`, `prime-run`, and RTD3 power rules.
 
 ### Requirement: Distribution Packaging Strategy & Debian Backports
-When an NVIDIA GPU is confirmed, the script SHALL configure native repositories and install packages per distribution:
+When an NVIDIA GPU is confirmed, the script SHALL configure native repositories and install packages per distribution based on `get_distro_id`:
 
-1. **Debian 13 (Trixie) (`apt`)**:
+1. **Debian 13 (Trixie) (`debian`)**:
    - SHALL ensure `contrib`, `non-free`, and `non-free-firmware` are enabled in APT sources.
    - SHALL configure Debian backports repository via `add_debian_backports_repo`.
    - Driver, firmware, and headers SHALL be installed targeting backports (`-t "${codename}-backports"`): `nvidia-driver`, `firmware-misc-nonfree`, `linux-headers-amd64`, `nvidia-smi`, `nvidia-settings`.
    - In case backports installation encounters missing packages for a specific codename, SHALL fallback to standard package installation.
 
-2. **Fedora 44 (`dnf`)**:
+2. **Fedora 44 (`fedora`)**:
    - SHALL ensure the RPM Fusion Nonfree repository is configured via `add_fedora_rpmfusion_repo`.
    - Driver package: `akmod-nvidia`, `xorg-x11-drv-nvidia-cuda`.
    - Complementary packages: `xorg-x11-drv-nvidia-power` (for systemd suspend/resume integration).
 
-3. **Arch Linux (`pacman`)**:
+3. **Arch Linux (`arch`)**:
    - SHALL ensure multilib repository is active for 32-bit compatibility (`lib32-nvidia-utils`).
    - Driver package: `nvidia-open-dkms` (or `nvidia` for standard linux kernel).
    - Complementary packages: `nvidia-utils`, `nvidia-settings`.
+
+4. **Unsupported Distros / Derivatives**:
+   - SHALL exit with code 1 and write an error message to `stderr`.
 
 ### Requirement: Modern Hybrid GPU Architecture (`switcheroo-control` & `prime-run`)
 For laptops with hybrid graphics (Intel/AMD iGPU + NVIDIA dGPU), the script SHALL configure the modern Freedesktop-standard PRIME offload stack:
@@ -72,7 +75,7 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL NOT install driver packages or modify repository sources
 
 ### Scenario: Running on Debian 13 with an NVIDIA GPU
-- **GIVEN** a Debian 13 system with an NVIDIA GPU detected
+- **GIVEN** a Debian 13 system with an NVIDIA GPU detected (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL ensure `contrib`, `non-free`, and `non-free-firmware` are enabled
 - **AND** it SHALL configure `trixie-backports` repository
@@ -80,14 +83,14 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL configure `nvidia-drm modeset=1` and RTD3 dynamic power management
 
 ### Scenario: Running on Fedora 44 with an NVIDIA GPU
-- **GIVEN** a Fedora 44 system with an NVIDIA GPU detected
+- **GIVEN** a Fedora 44 system with an NVIDIA GPU detected (`get_distro_id` returns `fedora`)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL call `add_fedora_rpmfusion_repo`
 - **AND** it SHALL install `akmod-nvidia`, `xorg-x11-drv-nvidia-cuda`, and `xorg-x11-drv-nvidia-power`
 - **AND** it SHALL configure `nvidia-drm modeset=1` and RTD3 dynamic power management
 
 ### Scenario: Running on Arch Linux with an NVIDIA GPU
-- **GIVEN** an Arch Linux system with an NVIDIA GPU detected
+- **GIVEN** an Arch Linux system with an NVIDIA GPU detected (`get_distro_id` returns `arch`)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled
 - **AND** it SHALL install `nvidia-open-dkms` and `nvidia-utils`
@@ -99,6 +102,11 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **THEN** it SHALL install and configure `prime-run`
 - **AND** it SHALL install `switcheroo-control`
 - **AND** it SHALL enable `switcheroo-control.service`
+
+### Scenario: Running on an unsupported distribution
+- **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
+- **WHEN** `scripts/system/setup-nvidia.sh` is executed
+- **THEN** it SHALL exit with code 1 and write an error to `stderr`
 
 ### Scenario: Running in automated test mode without host hardware
 - **GIVEN** a headless testing container or CI environment with `NVIDIA_SKIP_KERNEL_BUILD=1`

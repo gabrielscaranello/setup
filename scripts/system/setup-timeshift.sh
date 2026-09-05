@@ -95,9 +95,9 @@ _install_grub_btrfs_arch() {
 
 _configure_grub_btrfs_source_config() {
   local target_dir="$1"
-  local pm="$2"
+  local distro="$2"
 
-  if [ "$pm" = "dnf" ]; then
+  if [ "$distro" = "fedora" ]; then
     sed -i 's|^#GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig|GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig|' "$target_dir/config" 2>/dev/null || true
     sed -i 's|^#GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|' "$target_dir/config" 2>/dev/null || true
     sed -i 's|^#GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|' "$target_dir/config" 2>/dev/null || true
@@ -105,7 +105,7 @@ _configure_grub_btrfs_source_config() {
 }
 
 _install_grub_btrfs_from_source() {
-  local pm="$1"
+  local distro="$1"
   local build_dir="/tmp/grub-btrfs"
 
   _install_grub_btrfs_dependencies
@@ -114,7 +114,7 @@ _install_grub_btrfs_from_source() {
   rm -rf "$build_dir"
   git clone --depth=1 "$GRUB_BTRFS_REPO_URL" "$build_dir"
 
-  _configure_grub_btrfs_source_config "$build_dir" "$pm"
+  _configure_grub_btrfs_source_config "$build_dir" "$distro"
 
   (cd "$build_dir" && sudo make install)
   rm -rf "$build_dir"
@@ -125,13 +125,13 @@ _install_grub_btrfs_from_source() {
 }
 
 _install_grub_btrfs() {
-  local pm
-  pm="$(_get_package_manager)" || return 0
+  local distro
+  distro="$(get_distro_id)" || return 0
 
-  if [ "$pm" = "pacman" ]; then
+  if [ "$distro" = "arch" ]; then
     _install_grub_btrfs_arch
   else
-    _install_grub_btrfs_from_source "$pm"
+    _install_grub_btrfs_from_source "$distro"
   fi
 }
 

@@ -40,17 +40,17 @@ _detect_hybrid_gpu() {
 }
 
 _configure_repositories() {
-  local pm="$1"
+  local distro="$1"
 
-  case "$pm" in
-  apt)
+  case "$distro" in
+  debian)
     add_debian_nonfree_repo
     add_debian_backports_repo
     ;;
-  dnf)
+  fedora)
     add_fedora_rpmfusion_repo
     ;;
-  pacman)
+  arch)
     add_arch_multilib_repo
     ;;
   esac
@@ -58,7 +58,7 @@ _configure_repositories() {
 
 _install_debian_driver() {
   local codename
-  codename="$(_get_debian_codename)"
+  codename="$(get_debian_codename)"
   echo "Installing kernel headers, firmware, and NVIDIA driver on Debian from backports (${codename}-backports)..."
   sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings 2>/dev/null || \
     sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 2>/dev/null || \
@@ -78,17 +78,17 @@ _install_arch_driver() {
 }
 
 _install_driver_packages() {
-  local pm="$1"
+  local distro="$1"
 
   if [ "${NVIDIA_SKIP_KERNEL_BUILD:-0}" = "1" ]; then
     echo "NVIDIA_SKIP_KERNEL_BUILD is active. Skipping kernel module compilation step."
     return 0
   fi
 
-  case "$pm" in
-  apt) _install_debian_driver ;;
-  dnf) _install_fedora_driver ;;
-  pacman) _install_arch_driver ;;
+  case "$distro" in
+  debian) _install_debian_driver ;;
+  fedora) _install_fedora_driver ;;
+  arch) _install_arch_driver ;;
   esac
 }
 
@@ -193,16 +193,16 @@ _setup_hybrid_tools() {
 }
 
 _setup_nvidia() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  apt | dnf | pacman) ;;
+  case "$distro" in
+  debian | fedora | arch) ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
@@ -212,9 +212,9 @@ _setup_nvidia() {
     return 0
   fi
 
-  echo "NVIDIA GPU detected. Configuring drivers for '$pm'..."
-  _configure_repositories "$pm"
-  _install_driver_packages "$pm"
+  echo "NVIDIA GPU detected. Configuring drivers for '$distro'..."
+  _configure_repositories "$distro"
+  _install_driver_packages "$distro"
   _configure_power_and_modeset
 
   if _detect_hybrid_gpu; then

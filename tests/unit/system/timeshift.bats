@@ -169,7 +169,7 @@ setup() {
 #GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check
 CONF
 
-  run _configure_grub_btrfs_source_config "$test_config_dir" "dnf"
+  run _configure_grub_btrfs_source_config "$test_config_dir" "fedora"
   [ "$status" -eq 0 ]
   grep -q "GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig" "$test_config_dir/config"
   grep -q 'GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"' "$test_config_dir/config"
@@ -177,8 +177,8 @@ CONF
   rm -rf "$test_config_dir"
 }
 
-@test "_install_grub_btrfs delegates to pacman or source install" {
-  _get_package_manager() { echo "pacman"; }
+@test "_install_grub_btrfs delegates to arch or source install" {
+  get_distro_id() { echo "arch"; }
   _install_grub_btrfs_arch() { echo "arch-grub-btrfs"; return 0; }
   _install_grub_btrfs_from_source() { echo "source-grub-btrfs-$1"; return 0; }
 
@@ -186,15 +186,15 @@ CONF
   [ "$status" -eq 0 ]
   [ "$output" = "arch-grub-btrfs" ]
 
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   run _install_grub_btrfs
   [ "$status" -eq 0 ]
-  [ "$output" = "source-grub-btrfs-dnf" ]
+  [ "$output" = "source-grub-btrfs-fedora" ]
 
-  _get_package_manager() { echo "apt"; }
+  get_distro_id() { echo "debian"; }
   run _install_grub_btrfs
   [ "$status" -eq 0 ]
-  [ "$output" = "source-grub-btrfs-apt" ]
+  [ "$output" = "source-grub-btrfs-debian" ]
 }
 
 @test "_create_initial_snapshot calls timeshift --create" {

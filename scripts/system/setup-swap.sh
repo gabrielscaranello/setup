@@ -84,16 +84,16 @@ EOF
 }
 
 _configure_zram() {
-  local pm
-  pm="$(_get_package_manager)" || return 0
+  local distro
+  distro="$(get_distro_id)" || return 0
 
   _install_zram_packages
 
-  case "$pm" in
-  apt)
+  case "$distro" in
+  debian)
     _configure_zram_tools
     ;;
-  dnf | pacman)
+  fedora | arch)
     _configure_zram_generator
     ;;
   esac

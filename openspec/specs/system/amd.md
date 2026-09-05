@@ -37,12 +37,12 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
 
 ### Requirement: Distribution Packaging Strategy
 
-1. **Arch Linux (`pacman`)**:
+1. **Arch Linux (`arch`)**:
    - SHALL ensure the `[multilib]` repository is active in `/etc/pacman.conf`.
    - SHALL install 64-bit packages: `mesa`, `vulkan-radeon`, `libva-utils`, `vulkan-tools`.
    - SHALL install 32-bit packages for gaming: `lib32-mesa`, `lib32-vulkan-radeon`.
 
-2. **Fedora 44 (`dnf`)**:
+2. **Fedora 44 (`fedora`)**:
    - SHALL ensure RPM Fusion Free is configured.
    - SHALL perform package swap from restricted Mesa drivers to freeworld drivers with full codecs:
      - `sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld`
@@ -52,12 +52,14 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
      - `sudo dnf swap -y mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686`
    - SHALL ensure `mesa-vulkan-drivers`, `vulkan-loader`, `libva-utils`, and `vulkan-tools` are installed.
 
-3. **Debian 13 (Trixie) (`apt`)**:
+3. **Debian 13 (Trixie) (`debian`)**:
    - SHALL ensure `non-free-firmware` component is enabled in APT sources.
    - SHALL ensure Debian backports repository is configured.
    - SHALL install `firmware-amd-graphics` and Mesa drivers (`mesa-va-drivers`, `mesa-vdpau-drivers`, `mesa-vulkan-drivers`, `libgl1-mesa-dri`, `libglx-mesa0`, `libegl-mesa0`, `libgbm1`) from backports if available, falling back to main release.
    - SHALL install diagnostic and utility tools: `libvulkan1`, `vainfo`, `vulkan-tools`.
    - On systems with `i386` multiarch enabled: install `mesa-vulkan-drivers:i386`, `libgl1-mesa-dri:i386` (from backports if available).
+
+---
 
 ### Requirement: Hardware Acceleration Validation
 
@@ -84,7 +86,7 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
 
 ### Scenario: Running on Fedora with AMD GPU
 
-- **GIVEN** a Fedora system with an AMD GPU or APU
+- **GIVEN** a Fedora system with an AMD GPU or APU (`get_distro_id` returns `fedora`)
 - **WHEN** `scripts/system/setup-amd.sh` is executed
 - **THEN** it SHALL ensure RPM Fusion Free is active
 - **AND** it SHALL swap `mesa-va-drivers` to `mesa-va-drivers-freeworld`
@@ -92,7 +94,7 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
 
 ### Scenario: Running on Debian with AMD GPU
 
-- **GIVEN** a Debian 13 system with an AMD GPU or APU
+- **GIVEN** a Debian 13 system with an AMD GPU or APU (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/system/setup-amd.sh` is executed
 - **THEN** it SHALL ensure `non-free-firmware` is enabled
 - **AND** it SHALL install `firmware-amd-graphics`
@@ -100,7 +102,13 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
 
 ### Scenario: Running on Arch Linux with AMD GPU
 
-- **GIVEN** an Arch Linux system with an AMD GPU or APU
+- **GIVEN** an Arch Linux system with an AMD GPU or APU (`get_distro_id` returns `arch`)
 - **WHEN** `scripts/system/setup-amd.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled
 - **AND** it SHALL install `vulkan-radeon` and `lib32-vulkan-radeon`
+
+### Scenario: Running on an unsupported distribution
+
+- **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
+- **WHEN** `scripts/system/setup-amd.sh` is executed
+- **THEN** it SHALL exit with code 1 and write an error message to `stderr`

@@ -220,22 +220,22 @@ CONF
   rm -f "$test_default"
 }
 
-@test "_configure_zram routes appropriately per package manager" {
+@test "_configure_zram routes appropriately per distribution" {
   _install_zram_packages() { return 0; }
   _configure_zram_tools() { echo "tools-zram"; return 0; }
   _configure_zram_generator() { echo "generator-zram"; return 0; }
 
-  _get_package_manager() { echo "apt"; }
+  get_distro_id() { echo "debian"; }
   run _configure_zram
   [ "$status" -eq 0 ]
   [ "$output" = "tools-zram" ]
 
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   run _configure_zram
   [ "$status" -eq 0 ]
   [ "$output" = "generator-zram" ]
 
-  _get_package_manager() { echo "pacman"; }
+  get_distro_id() { echo "arch"; }
   run _configure_zram
   [ "$status" -eq 0 ]
   [ "$output" = "generator-zram" ]

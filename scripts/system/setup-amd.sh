@@ -25,17 +25,17 @@ _detect_amd_gpu() {
 }
 
 _configure_repositories() {
-  local pm="$1"
+  local distro="$1"
 
-  case "$pm" in
-  apt)
+  case "$distro" in
+  debian)
     add_debian_nonfree_repo
     add_debian_backports_repo
     ;;
-  dnf)
+  fedora)
     add_fedora_rpmfusion_repo
     ;;
-  pacman)
+  arch)
     add_arch_multilib_repo
     ;;
   esac
@@ -83,7 +83,7 @@ _install_fedora_amd_packages() {
 
 _install_debian_backports_stack() {
   local codename
-  codename="$(_get_debian_codename)"
+  codename="$(get_debian_codename)"
   echo "Installing AMD GPU firmware and Mesa graphics stack from Debian backports (${codename}-backports)..."
   sudo apt install -y -t "${codename}-backports" \
     firmware-amd-graphics \
@@ -99,7 +99,7 @@ _install_debian_backports_stack() {
 
 _install_debian_32bit_packages() {
   local codename
-  codename="$(_get_debian_codename)"
+  codename="$(get_debian_codename)"
   if command -v dpkg >/dev/null 2>&1 && dpkg --print-foreign-architectures 2>/dev/null | grep -q "i386"; then
     echo "Configuring 32-bit AMD graphics libraries on Debian..."
     sudo apt install -y -t "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2>/dev/null ||
@@ -115,31 +115,31 @@ _install_debian_amd_packages() {
 }
 
 _install_amd_packages() {
-  local pm="$1"
+  local distro="$1"
 
   if [ "${AMD_SKIP_PACKAGE_INSTALL:-0}" = "1" ]; then
     echo "AMD_SKIP_PACKAGE_INSTALL is active. Skipping package installation step."
     return 0
   fi
 
-  case "$pm" in
-  apt) _install_debian_amd_packages ;;
-  dnf) _install_fedora_amd_packages ;;
-  pacman) _install_arch_amd_packages ;;
+  case "$distro" in
+  debian) _install_debian_amd_packages ;;
+  fedora) _install_fedora_amd_packages ;;
+  arch) _install_arch_amd_packages ;;
   esac
 }
 
 _setup_amd() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  apt | dnf | pacman) ;;
+  case "$distro" in
+  debian | fedora | arch) ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
@@ -149,9 +149,9 @@ _setup_amd() {
     return 0
   fi
 
-  echo "AMD GPU detected. Configuring drivers and codecs for '$pm'..."
-  _configure_repositories "$pm"
-  _install_amd_packages "$pm"
+  echo "AMD GPU detected. Configuring drivers and codecs for '$distro'..."
+  _configure_repositories "$distro"
+  _install_amd_packages "$distro"
 }
 
 main() {

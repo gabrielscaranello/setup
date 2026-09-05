@@ -2,7 +2,7 @@
 
 # Debian-specific repository helper functions (sourced as utility, not executed directly)
 
-_get_debian_codename() {
+get_debian_codename() {
   if [ -f /etc/os-release ]; then
     # shellcheck source=/dev/null
     local debian_codename version_codename
@@ -27,8 +27,12 @@ _get_debian_codename() {
   echo "trixie"
 }
 
+_get_debian_codename() {
+  get_debian_codename "$@"
+}
+
 _is_debian_backports_configured() {
-  local codename="${1:-$(_get_debian_codename)}"
+  local codename="${1:-$(get_debian_codename)}"
   local sources_list="/etc/apt/sources.list"
   local sources_d="/etc/apt/sources.list.d"
 
@@ -45,7 +49,7 @@ _is_debian_backports_configured() {
 
 add_debian_backports_repo() {
   local codename
-  codename="$(_get_debian_codename)"
+  codename="$(get_debian_codename)"
   local backports_file="/etc/apt/sources.list.d/backports.list"
 
   if _is_debian_backports_configured "$codename"; then
@@ -142,7 +146,7 @@ add_debian_virtualbox_repo() {
   local sources_path="/etc/apt/sources.list.d/virtualbox.sources"
   local gpg_key_url="https://www.virtualbox.org/download/oracle_vbox_2016.asc"
   local codename
-  codename="$(_get_debian_codename)"
+  codename="$(get_debian_codename)"
 
   if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
     echo "VirtualBox repository already configured on Debian, skipping."
