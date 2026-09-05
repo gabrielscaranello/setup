@@ -10,7 +10,7 @@ Welcome! This repository automates provisioning a desktop development environmen
 ✨ What is this
 --------------
 
-A collection of modular, idempotent bash scripts (`scripts/*.sh`) to configure developer tools, runtimes, fonts, and desktop environments across multiple Linux distributions.
+A collection of modular, idempotent bash scripts (`scripts/**/*.sh`) organized by domain to configure developer tools, runtimes, fonts, and desktop environments across multiple Linux distributions.
 
 💡 Motivation & Context
 -----------------------
@@ -60,23 +60,25 @@ make clean             # Remove temporary artifacts
 ------------------------------------
 
 - `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
-- `runners/` — Distro-specific setup pipeline runners (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`)
+- `runners/` — Distro-specific setup pipelines and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
 - `Makefile` — Convenience wrapper for `./main.sh` and test runners
-- `scripts/` — Modular setup scripts organized by domain (`system/`, `security/`, `toolchain/`, `terminal/`, `apps/`)
+- `scripts/` — Modular setup scripts organized by domain (`apps/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Package manager and system helper abstractions
 - `scripts/packages.conf` — Cross-distro package mappings
+- `openspec/` — Spec-Driven Development (SDD) capability specifications
 - `tests/` — Bats unit and Docker multi-distro integration tests
 
 🛠 Requirements
 -------------
 
-- sudo
-- git
-- bash
+- **System Setup**: `sudo`, `git`, `bash`
+- **Testing Suite** (optional): `docker` (to run `make test` inside isolated distro containers)
 
 ## 📖 More
 
 - See [TODO.md](TODO.md) for the project roadmap, implemented features, and planned tasks.
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical script template and developer guidelines.
+- See [AGENTS.md](AGENTS.md) for operational AI rules and architectural governance standards.
 
 Made with ❤️ — happy hacking!
+

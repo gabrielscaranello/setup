@@ -2,13 +2,15 @@
 
 Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux).
 
+🇺🇸 **English Documentation:** [README.md](README.md)
+
 > [!WARNING]
 > Este projeto está em fases iniciais de desenvolvimento e estudo. Ele **não está completo** e muita coisa **pode mudar**. Use por sua conta e risco.
 
 ✨ O que é
 --------
 
-- Uma coleção de scripts modulares e idempotentes (`scripts/*.sh`) para instalar e configurar ferramentas de desenvolvimento, runtimes, fontes e ambientes gráficos em várias distribuições Linux.
+Uma coleção de scripts modulares e idempotentes (`scripts/**/*.sh`) organizados por domínios para instalar e configurar ferramentas de desenvolvimento, runtimes, fontes e ambientes gráficos em várias distribuições Linux.
 
 💡 Motivação e Contexto
 -----------------------
@@ -58,23 +60,24 @@ make clean             # Limpa artefatos temporários
 ---------------------------------------
 
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
-- `runners/` — Runners de pipelines específicos por distribuição (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`)
+- `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
 - `Makefile` — Runner e alias de conveniência para `./main.sh` e testes
-- `scripts/` — Scripts modulares organizados por domínios (`system/`, `security/`, `toolchain/`, `terminal/`, `apps/`)
+- `scripts/` — Scripts modulares organizados por domínios (`apps/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes
 - `scripts/packages.conf` — Mapeamento declarativo de pacotes entre distros
+- `openspec/` — Especificações de capacidades orientadas a testes (Spec-Driven Development / SDD)
 - `tests/` — Testes unitários (Bats) e de integração multi-distro (Docker)
 
 🛠 Requisitos
 ------------
 
-- sudo
-- git
-- bash
+- **Setup do Sistema**: `sudo`, `git`, `bash`
+- **Suíte de Testes** (opcional): `docker` (para executar `make test` em containers isolados de cada distro)
 
 ## 📖 Mais informações
 
 - Consulte o arquivo [TODO.md](TODO.md) para o roadmap do projeto, funcionalidades implementadas e tarefas planejadas.
 - Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
+- Consulte o arquivo [AGENTS.md](AGENTS.md) para regras operacionais de IA e governança de arquitetura.
 
 Made with ❤️ — happy hacking!
