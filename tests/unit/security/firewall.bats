@@ -47,28 +47,28 @@ setup() {
   [[ "$output" =~ "sudo: systemctl enable --now firewalld.service" ]]
 }
 
-@test "_configure_gui_frontend handles GNOME on apt/pacman with gufw" {
+@test "_configure_gui_frontend handles GNOME on debian/arch with gufw" {
   install_packages() {
     echo "installed: $*"
     return 0
   }
 
-  run _configure_gui_frontend "apt" "gnome"
+  run _configure_gui_frontend "debian" "gnome"
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed:\ gufw ]]
 
-  run _configure_gui_frontend "pacman" "gnome"
+  run _configure_gui_frontend "arch" "gnome"
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed:\ gufw ]]
 }
 
-@test "_configure_gui_frontend handles GNOME on dnf with firewall-config" {
+@test "_configure_gui_frontend handles GNOME on fedora with firewall-config" {
   install_packages() {
     echo "installed: $*"
     return 0
   }
 
-  run _configure_gui_frontend "dnf" "gnome"
+  run _configure_gui_frontend "fedora" "gnome"
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed:\ firewall-config ]]
 }
@@ -105,7 +105,7 @@ setup() {
 }
 
 @test "main fails on unsupported distribution" {
-  _get_package_manager() {
+  get_distro_id() {
     return 1
   }
 
@@ -114,8 +114,8 @@ setup() {
   [[ "$output" =~ "Unsupported distribution" ]]
 }
 
-@test "main configures ufw and gnome GUI on debian/apt" {
-  _get_package_manager() { echo "apt"; }
+@test "main configures ufw and gnome GUI on debian" {
+  get_distro_id() { echo "debian"; }
   get_desktop_environment() { echo "gnome"; }
   install_packages() { echo "installed: $*"; }
   sudo() { echo "sudo: $*"; }
@@ -128,8 +128,8 @@ setup() {
   [[ "$output" =~ "Firewall setup completed successfully." ]]
 }
 
-@test "main configures firewalld and plasma GUI on fedora/dnf" {
-  _get_package_manager() { echo "dnf"; }
+@test "main configures firewalld and plasma GUI on fedora" {
+  get_distro_id() { echo "fedora"; }
   get_desktop_environment() { echo "plasma"; }
   install_packages() { echo "installed: $*"; }
   sudo() { echo "sudo: $*"; }
@@ -142,8 +142,8 @@ setup() {
   [[ "$output" =~ "Firewall setup completed successfully." ]]
 }
 
-@test "main configures ufw and plasma GUI on archlinux/pacman" {
-  _get_package_manager() { echo "pacman"; }
+@test "main configures ufw and plasma GUI on arch" {
+  get_distro_id() { echo "arch"; }
   get_desktop_environment() { echo "plasma"; }
   install_packages() { echo "installed: $*"; }
   sudo() { echo "sudo: $*"; }
@@ -156,8 +156,8 @@ setup() {
   [[ "$output" =~ "Firewall setup completed successfully." ]]
 }
 
-@test "main configures ufw without GUI on headless archlinux/pacman" {
-  _get_package_manager() { echo "pacman"; }
+@test "main configures ufw without GUI on headless arch" {
+  get_distro_id() { echo "arch"; }
   get_desktop_environment() { echo "unknown"; }
   install_packages() { echo "installed: $*"; }
   sudo() { echo "sudo: $*"; }

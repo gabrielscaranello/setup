@@ -54,30 +54,31 @@ HELP_EOF
 }
 
 run_all() {
-  local package_manager
-  package_manager="$(_get_package_manager)" || {
-    echo "Unsupported distribution: Unable to detect package manager" >&2
-    return 1
-  }
+  local distro
+  distro="$(get_distro_id 2>/dev/null || true)"
 
-  case "$package_manager" in
-  apt)
+  case "$distro" in
+  debian)
     echo "Delegating complete setup to Debian runner..."
     bash "$RUNNERS_DIR/debian.sh"
     ;;
 
-  dnf)
+  fedora)
     echo "Delegating complete setup to Fedora runner..."
     bash "$RUNNERS_DIR/fedora.sh"
     ;;
 
-  pacman)
+  arch)
     echo "Delegating complete setup to Arch Linux runner..."
     bash "$RUNNERS_DIR/arch.sh"
     ;;
 
   *)
-    echo "Unsupported package manager for runner dispatch: $package_manager" >&2
+    if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
+      echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', and 'arch' are currently supported." >&2
+    else
+      echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch)." >&2
+    fi
     return 1
     ;;
   esac

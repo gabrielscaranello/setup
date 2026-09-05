@@ -30,15 +30,15 @@ _configure_firewalld() {
 }
 
 _configure_gui_frontend() {
-  local pm="$1"
+  local distro="$1"
   local de="$2"
 
   case "$de" in
   gnome)
-    if [ "$pm" = "apt" ] || [ "$pm" = "pacman" ]; then
+    if [ "$distro" = "debian" ] || [ "$distro" = "arch" ]; then
       echo "Installing GUFW for GNOME..."
       install_packages gufw
-    elif [ "$pm" = "dnf" ]; then
+    elif [ "$distro" = "fedora" ]; then
       echo "Installing firewall-config for GNOME..."
       install_packages firewall-config
     fi
@@ -56,30 +56,30 @@ _configure_gui_frontend() {
 }
 
 main() {
-  local package_manager
-  package_manager="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$package_manager" in
-  apt | pacman)
+  case "$distro" in
+  debian | arch)
     _configure_ufw
     ;;
 
-  dnf)
+  fedora)
     _configure_firewalld
     ;;
 
   *)
-    echo "Unsupported package manager: $package_manager" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
 
   local de
   de="$(get_desktop_environment)"
-  _configure_gui_frontend "$package_manager" "$de"
+  _configure_gui_frontend "$distro" "$de"
 
   echo "Firewall setup completed successfully."
 }

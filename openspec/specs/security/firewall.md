@@ -1,4 +1,4 @@
-# Capability Spec: Firewall Setup (`setup-firewall.sh`)
+# Capability Spec: Firewall Setup (`scripts/security/setup-firewall.sh`)
 
 ## 📌 Feature Overview
 
@@ -20,9 +20,11 @@ _Note: Headless or unknown desktop environments configure only the CLI backend s
 
 ## 📐 Requirements & Behavioral Rules
 
-1. **Backend Installation**:
-   - On **Debian** & **Arch Linux**: Install `ufw` via `install_packages ufw`.
-   - On **Fedora**: Install `firewalld` via `install_packages firewalld`.
+1. **Distribution Dispatch & Backend Installation**:
+   - Detect target distribution via `get_distro_id`.
+   - On **Debian (`debian`)** & **Arch Linux (`arch`)**: Install `ufw` via `install_packages ufw`.
+   - On **Fedora (`fedora`)**: Install `firewalld` via `install_packages firewalld`.
+   - On **Unsupported Distros / Derivatives**: Exit with code 1 and write error to `stderr`.
 2. **Service Enablement & Fail-Safe Configuration**:
    - On **Arch Linux**:
      - Enable and start `ufw.service` explicitly via systemd (`sudo systemctl enable --now ufw.service` or `sudo systemctl enable ufw.service`).
@@ -53,55 +55,61 @@ _Note: Headless or unknown desktop environments configure only the CLI backend s
 
 ### Scenario 1: Setup on Debian 13 with GNOME
 
-- **GIVEN** a Debian 13 system with `XDG_CURRENT_DESKTOP=GNOME` (`get_desktop_environment` returns `gnome`)
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** a Debian 13 system (`get_distro_id` returns `debian`) with `XDG_CURRENT_DESKTOP=GNOME` (`get_desktop_environment` returns `gnome`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** `ufw` and `gufw` packages are installed
 - **AND** `ufw` is enabled with default incoming deny and outgoing allow rules.
 
 ### Scenario 2: Setup on Debian 13 with KDE Plasma
 
-- **GIVEN** a Debian 13 system with `XDG_CURRENT_DESKTOP=KDE` (`get_desktop_environment` returns `plasma`)
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** a Debian 13 system (`get_distro_id` returns `debian`) with `XDG_CURRENT_DESKTOP=KDE` (`get_desktop_environment` returns `plasma`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** `ufw` and `plasma-firewall` packages are installed
 - **AND** `ufw` is enabled and running.
 
 ### Scenario 3: Setup on Fedora 44 with GNOME
 
-- **GIVEN** a Fedora 44 system with `XDG_CURRENT_DESKTOP=GNOME` (`get_desktop_environment` returns `gnome`)
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** a Fedora 44 system (`get_distro_id` returns `fedora`) with `XDG_CURRENT_DESKTOP=GNOME` (`get_desktop_environment` returns `gnome`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** `firewalld` and `firewall-config` packages are installed
 - **AND** `firewalld.service` is enabled.
 
 ### Scenario 4: Setup on Fedora 44 with KDE Plasma
 
-- **GIVEN** a Fedora 44 system with `XDG_CURRENT_DESKTOP=KDE` (`get_desktop_environment` returns `plasma`)
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** a Fedora 44 system (`get_distro_id` returns `fedora`) with `XDG_CURRENT_DESKTOP=KDE` (`get_desktop_environment` returns `plasma`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** `firewalld` and `plasma-firewall` packages are installed
 - **AND** `firewalld.service` is enabled.
 
 ### Scenario 5: Setup on Arch Linux with GNOME
 
-- **GIVEN** an Arch Linux system with `XDG_CURRENT_DESKTOP=GNOME` (`get_desktop_environment` returns `gnome`)
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** an Arch Linux system (`get_distro_id` returns `arch`) with `XDG_CURRENT_DESKTOP=GNOME` (`get_desktop_environment` returns `gnome`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** `ufw` and `gufw` packages are installed
 - **AND** `ufw.service` is enabled and started.
 
 ### Scenario 6: Setup on Arch Linux with KDE Plasma
 
-- **GIVEN** an Arch Linux system with `XDG_CURRENT_DESKTOP=KDE` (`get_desktop_environment` returns `plasma`)
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** an Arch Linux system (`get_distro_id` returns `arch`) with `XDG_CURRENT_DESKTOP=KDE` (`get_desktop_environment` returns `plasma`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** `ufw` and `plasma-firewall` packages are installed
 - **AND** `ufw.service` is enabled and started.
 
 ### Scenario 7: Setup on Headless / CLI environment (Debian / Fedora / Arch)
 
-- **GIVEN** any supported system with `get_desktop_environment` returning `unknown`
-- **WHEN** `scripts/setup-firewall.sh` is executed
+- **GIVEN** any supported system (`get_distro_id` returns `debian`, `fedora`, or `arch`) with `get_desktop_environment` returning `unknown`
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** the appropriate CLI firewall backend (`ufw` or `firewalld`) is installed and configured
 - **AND** no GUI frontends (`gufw` / `firewall-config` / `plasma-firewall`) are installed.
 
-### Scenario 8: Idempotent Execution
+### Scenario 8: Running on an unsupported distribution
+
+- **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
+- **THEN** it SHALL exit with code 1 and write an error message to `stderr`
+
+### Scenario 9: Idempotent Execution
 
 - **GIVEN** any supported system where firewall is already configured
-- **WHEN** `scripts/setup-firewall.sh` is executed a second time
+- **WHEN** `scripts/security/setup-firewall.sh` is executed a second time
 - **THEN** execution completes with exit code 0 and no error logs.

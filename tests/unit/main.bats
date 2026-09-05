@@ -59,8 +59,8 @@ setup() {
   [[ "$output" =~ "setup-amd.sh" ]]
 }
 
-@test "run_all dispatches to debian runner when package manager is apt" {
-  _get_package_manager() { echo "apt"; }
+@test "run_all dispatches to debian runner when distribution is debian" {
+  get_distro_id() { echo "debian"; }
   bash() { echo "executed: $*"; return 0; }
 
   run run_all
@@ -69,8 +69,8 @@ setup() {
   [[ "$output" =~ "debian.sh" ]]
 }
 
-@test "run_all dispatches to fedora runner when package manager is dnf" {
-  _get_package_manager() { echo "dnf"; }
+@test "run_all dispatches to fedora runner when distribution is fedora" {
+  get_distro_id() { echo "fedora"; }
   bash() { echo "executed: $*"; return 0; }
 
   run run_all
@@ -79,8 +79,8 @@ setup() {
   [[ "$output" =~ "fedora.sh" ]]
 }
 
-@test "run_all dispatches to arch runner when package manager is pacman" {
-  _get_package_manager() { echo "pacman"; }
+@test "run_all dispatches to arch runner when distribution is arch" {
+  get_distro_id() { echo "arch"; }
   bash() { echo "executed: $*"; return 0; }
 
   run run_all
@@ -89,8 +89,16 @@ setup() {
   [[ "$output" =~ "arch.sh" ]]
 }
 
+@test "run_all fails when distribution is an unsupported derivative like ubuntu" {
+  get_distro_id() { echo "ubuntu"; }
+
+  run run_all
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported distribution: 'ubuntu'" ]]
+}
+
 @test "run_all fails when distribution detection fails" {
-  _get_package_manager() { return 1; }
+  get_distro_id() { return 1; }
 
   run run_all
   [ "$status" -eq 1 ]
