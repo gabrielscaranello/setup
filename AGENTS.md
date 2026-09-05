@@ -46,9 +46,12 @@ Third-party repository configurations must reside in their respective distro hel
   - `add_debian_backports_repo`: Idempotently configures Debian Backports.
   - `add_debian_vscodium_repo`: Idempotently imports GPG key and adds VSCodium APT source.
   - `add_debian_mozilla_repo`: Idempotently imports Mozilla GPG key, adds source, and sets APT pinning priority.
+  - `add_debian_virtualbox_repo`: Idempotently imports Oracle GPG key and adds VirtualBox APT source.
+  - `add_debian_nonfree_repo`: Idempotently enables contrib, non-free, and non-free-firmware components.
 - **Fedora (`scripts/system/fedora/_repositories.sh`)**:
   - `add_fedora_docker_repo`: Idempotently adds Docker CE DNF repository.
   - `add_fedora_vscodium_repo`: Idempotently adds VSCodium DNF repository.
+  - `add_fedora_rpmfusion_repo`: Idempotently adds RPM Fusion Free and Non-Free DNF repositories.
 
 ### 4. Rule for One-Line Functions
 
@@ -102,7 +105,7 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 1. **[OpenSpec](openspec/)**: Follow Spec-Driven Development (SDD). Ensure the corresponding capability spec under `openspec/specs/<domain>/<feature>.md` is created or updated with requirements and GIVEN/WHEN/THEN scenarios BEFORE implementing or modifying code.
 2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
-3. **[main.sh](main.sh)**: Register the new module in `run_module()`, `run_all()` steps, and the `show_help()` documentation. The CLI help in `main.sh` is the single source of truth for available setup commands.
+3. **[runners/main.sh](runners/main.sh)**: Register the new module in `run_module()`, `run_all()` steps, and the `show_help()` documentation. The CLI help in `runners/main.sh` is the single source of truth for available setup commands.
 4. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
    - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.

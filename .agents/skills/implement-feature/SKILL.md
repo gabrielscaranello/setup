@@ -26,18 +26,7 @@ This skill defines the canonical step-by-step procedure for introducing new conf
 
 ### Step 1: Reference Repositories & Implementation Inspiration (MANDATORY)
 
-Before drafting any specification or script, consult the author's previous distribution setup repositories (using `search_web`, `read_url_content`, or raw GitHub URLs) to understand exact packages, PPAs, dependencies, installation methods, and configurations used previously:
-
-- **Arch Linux**: [gabrielscaranello/arch-setup](https://github.com/gabrielscaranello/arch-setup)
-- **Debian**: [gabrielscaranello/debian](https://github.com/gabrielscaranello/debian)
-- **Fedora**: [gabrielscaranello/fedora-setup](https://github.com/gabrielscaranello/fedora-setup)
-- **Linux Mint**: [gabrielscaranello/mint-setup](https://github.com/gabrielscaranello/mint-setup)
-- **openSUSE**: [gabrielscaranello/opensuse](https://github.com/gabrielscaranello/opensuse)
-- **Zorin OS**: [gabrielscaranello/zorin-setup](https://github.com/gabrielscaranello/zorin-setup)
-- **Dotfiles**: [gabrielscaranello/dotfiles](https://github.com/gabrielscaranello/dotfiles)
-
-> [!TIP]
-> Always adapt the findings from these reference repos to conform to this project's modular conventions (`scripts/_utils.sh`, `packages.conf`, idempotency, and automated tests).
+Before drafting any specification or script, consult the author's previous distribution setup repositories listed in [AGENTS.md — Reference Repositories](../../../AGENTS.md) (using `search_web`, `read_url_content`, or raw GitHub URLs) to understand exact packages, PPAs, dependencies, installation methods, and configurations used previously. Always adapt findings to conform to this project's modular conventions (`scripts/_utils.sh`, `packages.conf`, idempotency, and automated tests).
 
 ---
 
@@ -60,17 +49,8 @@ Before drafting any specification or script, consult the author's previous distr
 
 Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
 
-- **Shebang, Strict Mode & Fail-Fast Behavior**:
-  ```bash
-  #!/bin/bash
-  set -euo pipefail
-  ```
-  - Scripts must **fail-fast**: If any command or step fails, execution must halt immediately without leaving incomplete or unhandled states.
-  - Do not suppress errors blindly (e.g. avoid unchecked `|| true` unless an operation is explicitly optional and its failure is safely handled).
-- **Helper Sourcing**:
-  ```bash
-  source "scripts/_utils.sh" 2>/dev/null || true
-  ```
+- **Shebang, Strict Mode & Fail-Fast**: Start with `#!/bin/bash` and `set -euo pipefail`. Scripts must **fail-fast** — any failure halts execution immediately. Do not suppress errors blindly (avoid unchecked `|| true` unless the failure is explicitly optional and safely handled).
+- **Helper Sourcing**: Source helpers near the top: `source "scripts/_utils.sh" 2>/dev/null || true`.
 - **Public Utilities & Helper Catalog (`scripts/_utils.sh`)**:
   Always reuse existing helpers from `scripts/_utils.sh` instead of reimplementing or calling raw tools directly:
   1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
@@ -85,34 +65,17 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
 - **Distribution-Specific Repository Utilities**:
   When configuring third-party or upstream repositories, reuse or register functions in:
   - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_virtualbox_repo`, `add_debian_nonfree_repo`.
-  - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`.
+  - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
   - **Desktop Environment Handling**: When a step depends on DE, check `get_desktop_environment`. If `unknown`, do not execute DE-specific actions.
   - **SOLID Principles**: All scripts must strictly apply SOLID (Single Responsibility per function, Open/Closed via packages.conf and `get_distro_id` dispatch, Liskov Substitution across distros, Interface Segregation via granular repo helpers, and Dependency Inversion via `_utils.sh` abstractions).
-- **Entrypoint & Execution Guard**:
-  ```bash
-  main() {
-    # setup logic
-  }
-
-  if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "$@"
-  fi
-  ```
+- **Entrypoint & Execution Guard**: Expose `main()` and guard direct execution with `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`.
 
 #### B. Cross-Distro Package Mapping (`scripts/packages.conf`)
 
-If package names differ across distributions or are unavailable in one:
-
-- Add an entry to `scripts/packages.conf`:
-  ```text
-  GENERIC_NAME | DEBIAN | FEDORA | ARCH
-  ```
-- Use `-` when a package is unsupported on a specific distro.
-- Keep strictly **alphabetical order** by generic name, preserve table column alignment, and ensure at least one space before and after every `|`.
-- **Do not add** packages that share the exact same name across all three distributions (`debian`, `fedora`, `arch`).
+Add an entry to `scripts/packages.conf` when package names differ across distributions or a package is unsupported on a specific distro. Follow the format and rules defined in [CONTRIBUTING.md § Package Mappings](../../../CONTRIBUTING.md#-package-mappings-scriptspackagesconf): format is `GENERIC_NAME | DEBIAN | FEDORA | ARCH`, use `-` for unsupported distros, maintain alphabetical order and column alignment, do **not** add packages with identical names across all three distributions.
 
 ---
 
@@ -172,4 +135,4 @@ Before marking any implementation as finished or reporting completion to the use
 
 > [!IMPORTANT]
 > **Completion Invariant**: An implementation is strictly considered **INCOMPLETE** until all relevant unit and multi-distro integration tests have been actively run, verified green, and reported.
-> AI agents may execute `git commit` only when explicitly requested or authorized by the user, adhering strictly to the Conventional Commits v1.0.0 specification. Do not execute `git push` unless explicitly requested.
+> For commit and push policies, see [AGENTS.md — Commit Policy](../../../AGENTS.md).
