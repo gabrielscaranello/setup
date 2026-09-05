@@ -97,3 +97,43 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ Installing\ github.com/reteps/dockerfmt@latest ]]
 }
+
+@test "_resolve_go_arch resolves machine architectures correctly" {
+  source /setup/scripts/toolchain/setup-go.sh
+  uname() { echo "x86_64"; }
+  run _resolve_go_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "amd64" ]
+
+  uname() { echo "aarch64"; }
+  run _resolve_go_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "arm64" ]
+
+  uname() { echo "arm64"; }
+  run _resolve_go_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "arm64" ]
+
+  uname() { echo "armv6l"; }
+  run _resolve_go_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "armv6l" ]
+
+  uname() { echo "i686"; }
+  run _resolve_go_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "386" ]
+}
+
+@test "_extract_go_archive invokes tar with correct arguments" {
+  source /setup/scripts/toolchain/setup-go.sh
+  tar() {
+    echo "tar $*"
+    return 0
+  }
+  sudo() { "$@"; }
+  run _extract_go_archive "/tmp/test.tar.gz" "/usr/local"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "tar -C /usr/local -xzf /tmp/test.tar.gz" ]]
+}

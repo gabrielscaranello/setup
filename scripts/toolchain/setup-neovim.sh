@@ -5,12 +5,10 @@ set -euo pipefail
 # Follow repository conventions: source helpers and expose private functions
 source "scripts/_utils.sh" 2>/dev/null || true
 
-_install_neovim_from_source() {
+_clone_neovim_source() {
   local git_url="https://github.com/neovim/neovim"
   local branch="stable"
-  local work_dir="/tmp/neovim"
-
-  echo "Installing Neovim from source (DEB package)..."
+  local work_dir="$1"
 
   echo "Removing old build directory if it exists..."
   rm -rf "$work_dir"
@@ -20,25 +18,43 @@ _install_neovim_from_source() {
     echo "Failed to clone Neovim repository" >&2
     return 1
   }
+}
 
+_build_neovim_source() {
+  local work_dir="$1"
   echo "Building Neovim..."
-  cd "$work_dir" || return 1
-  make -j"$(nproc)" CMAKE_BUILD_TYPE=RelWithDebInfo || {
+  (
+    cd "$work_dir" || return 1
+    make -j"$(nproc)" CMAKE_BUILD_TYPE=RelWithDebInfo
+  ) || {
     echo "Failed to build Neovim" >&2
     return 1
   }
+}
 
+_package_and_install_neovim_deb() {
+  local work_dir="$1"
   echo "Packaging and installing Neovim DEB package..."
-  cd build || return 1
-  cpack -G DEB || {
-    echo "Failed to create DEB package" >&2
-    return 1
-  }
+  (
+    cd "$work_dir/build" || return 1
+    cpack -G DEB || {
+      echo "Failed to create DEB package" >&2
+      return 1
+    }
+    sudo dpkg -i nvim-linux*.deb || {
+      echo "Failed to install DEB package" >&2
+      return 1
+    }
+  )
+}
 
-  sudo dpkg -i nvim-linux*.deb || {
-    echo "Failed to install DEB package" >&2
-    return 1
-  }
+_install_neovim_from_source() {
+  local work_dir="/tmp/neovim"
+
+  echo "Installing Neovim from source (DEB package)..."
+  _clone_neovim_source "$work_dir" || return 1
+  _build_neovim_source "$work_dir" || return 1
+  _package_and_install_neovim_deb "$work_dir" || return 1
 
   echo "Neovim installed successfully at $(command -v nvim)"
 }

@@ -43,47 +43,11 @@ setup() {
   [ "$status" -eq 1 ]
 }
 
-@test "_enable_arch_multilib enables multilib in pacman.conf" {
-  export PACMAN_CONF="/tmp/test_pacman_amd_$$.conf"
-  cat << 'EOF' > "$PACMAN_CONF"
-[core]
-Include = /etc/pacman.d/mirrorlist
-
-#[multilib]
-#Include = /etc/pacman.d/mirrorlist
-EOF
-  sudo() { "$@"; }
-  pacman() { return 0; }
-
-  run _enable_arch_multilib
-  [ "$status" -eq 0 ]
-  grep -q "^\[multilib\]" "$PACMAN_CONF"
-  rm -f "$PACMAN_CONF"
-}
-
-@test "_enable_debian_nonfree_firmware ensures non-free-firmware on deb822 sources" {
-  export APT_DEBIAN_SOURCES="/tmp/test_debian_amd_$$.sources"
-  cat << 'EOF' > "$APT_DEBIAN_SOURCES"
-Types: deb
-URIs: http://deb.debian.org/debian
-Suites: trixie
-Components: main
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-  sudo() { "$@"; }
-  apt() { return 0; }
-
-  run _enable_debian_nonfree_firmware
-  [ "$status" -eq 0 ]
-  grep -q "non-free-firmware" "$APT_DEBIAN_SOURCES"
-  rm -f "$APT_DEBIAN_SOURCES"
-}
-
 @test "_configure_repositories calls appropriate repo helper per distro" {
-  _enable_debian_nonfree_firmware() { echo "called nonfree"; }
+  add_debian_nonfree_repo() { echo "called nonfree"; }
   add_debian_backports_repo() { echo "called backports"; }
   add_fedora_rpmfusion_repo() { echo "called rpmfusion"; }
-  _enable_arch_multilib() { echo "called multilib"; }
+  add_arch_multilib_repo() { echo "called multilib"; }
 
   run _configure_repositories "apt"
   [ "$status" -eq 0 ]

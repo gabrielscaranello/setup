@@ -58,6 +58,23 @@ Third-party repository configurations must reside in their respective distro hel
 - Whenever a script or configuration step depends on a specific Desktop Environment (GNOME, KDE Plasma), it must detect the active environment using `get_desktop_environment`.
 - **Default to doing nothing**: When the Desktop Environment is not recognized (`unknown` or unsupported), the script must **NOT** execute environment-specific actions or guess configurations. Agnóstic/generic configurations (like standard XDG specifications) may still proceed.
 
+### 6. SOLID Principles in Bash Scripts & Helpers
+
+All setup scripts, helpers, and orchestrators must strictly adhere to the **SOLID** design principles adapted for Bash:
+
+- **S — Single Responsibility Principle (SRP)**:
+  - Each script must focus on one explicit setup domain, tool, or subsystem.
+  - Each internal function must have one, and only one, reason to change. Separate distinct concerns (hardware/environment detection, repository configuration, package installation, 32-bit/multilib compatibility, and service configuration) into dedicated private functions (`_`). Avoid monolithic functions that mix detection, downloading, compiling, configuration, and service enablement.
+- **O — Open/Closed Principle (OCP)**:
+  - Scripts and runners must be open for extension, but closed for modification.
+  - Distribution variations and new tools should be added through declarative configuration (`scripts/packages.conf`) and extensible dispatch mechanisms (`case "$pm" in ...`), avoiding modifications to core installer functions.
+- **L — Liskov Substitution Principle (LSP)**:
+  - Distribution-specific helper and installation functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`) must adhere to a consistent contract: identical expected inputs, standard return codes (0 for success or expected graceful skip, non-zero for fatal failure), idempotency, and honoring execution control flags (such as `*_SKIP_PACKAGE_INSTALL` or `*_FORCE_*`).
+- **I — Interface Segregation Principle (ISP)**:
+  - Avoid monolithic interfaces. Distro helper modules (e.g., `_repositories.sh`) should expose fine-grained, dedicated functions for individual repositories rather than huge, all-in-one setup functions. Sourced modules must only expose utilities relevant to their domain.
+- **D — Dependency Inversion Principle (DIP)**:
+  - High-level setup scripts and orchestrators must depend upon abstractions provided by `scripts/_utils.sh` (`install_packages`, `download_file`, `get_desktop_environment`, `get_package_manager`, `packages.conf`) rather than binding directly to low-level package manager primitives (`apt-get`, `dnf`, `pacman`).
+
 ---
 
 ## 🚫 AI Operational Rules & Commit Policy

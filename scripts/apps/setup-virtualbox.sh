@@ -21,16 +21,22 @@ _configure_virtualbox_user_group() {
   fi
 }
 
-_install_virtualbox_packages() {
+_configure_virtualbox_repositories() {
   local pm="$1"
-  echo "Installing VirtualBox packages..."
-
   if [ "$pm" = "apt" ]; then
     add_debian_virtualbox_repo
   elif [ "$pm" = "dnf" ]; then
     add_fedora_rpmfusion_repo
   fi
+}
 
+_install_virtualbox_packages() {
+  local pm="${1:-}"
+  if [ -n "$pm" ]; then
+    _configure_virtualbox_repositories "$pm"
+  fi
+
+  echo "Installing VirtualBox packages..."
   install_packages virtualbox virtualbox-host-modules
 }
 

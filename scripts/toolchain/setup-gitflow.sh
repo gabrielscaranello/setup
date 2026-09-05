@@ -19,6 +19,27 @@ _is_gitflow_installed() {
   return 1
 }
 
+_download_gitflow_installer() {
+  local installer_url="$1"
+  local installer_file="$2"
+
+  echo "Downloading Gitflow installer..."
+  download_file "$installer_url" "$installer_file"
+  chmod +x "$installer_file"
+}
+
+_run_gitflow_installer() {
+  local work_dir="$1"
+  local installer_file="$2"
+  local version="$3"
+
+  echo "Running installer..."
+  (
+    cd "$work_dir"
+    sudo bash "$installer_file" install version "$version"
+  )
+}
+
 _install_gitflow() {
   if _is_gitflow_installed; then
     echo "Gitflow CJS ($GITFLOW_VERSION) is already installed, skipping."
@@ -34,16 +55,8 @@ _install_gitflow() {
   sudo rm -rf "$work_dir"
   mkdir -p "$work_dir"
 
-  echo "Downloading Gitflow installer..."
-  download_file "$INSTALLER_URL" "$installer_file"
-
-  chmod +x "$installer_file"
-
-  echo "Running installer..."
-  (
-    cd "$work_dir"
-    sudo bash "$installer_file" install version "$GITFLOW_VERSION"
-  )
+  _download_gitflow_installer "$INSTALLER_URL" "$installer_file"
+  _run_gitflow_installer "$work_dir" "$installer_file" "$GITFLOW_VERSION"
 
   echo "Cleaning up installer temporary files..."
   sudo rm -rf "$work_dir"

@@ -4,32 +4,9 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/system/arch/_repositories.sh" 2>/dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 
-_enable_arch_multilib() {
-  local conf="${PACMAN_CONF:-/etc/pacman.conf}"
-  if [ ! -f "$conf" ]; then
-    return 0
-  fi
-
-  if grep -q "^\[multilib\]" "$conf" 2>/dev/null; then
-    return 0
-  fi
-
-  echo "Enabling multilib repository in $conf..."
-  if grep -q "^#[[:space:]]*\[multilib\]" "$conf" 2>/dev/null; then
-    sudo sed -i '/^#[[:space:]]*\[multilib\]/{s/^#[[:space:]]*//;n;s/^#[[:space:]]*//}' "$conf"
-  else
-    cat <<'EOF' | sudo tee -a "$conf" >/dev/null
-
-[multilib]
-Include = /etc/pacman.d/mirrorlist
-EOF
-  fi
-
-  echo "Updating pacman database..."
-  sudo pacman -Sy --noconfirm 2>/dev/null || sudo pacman -Sy
-}
 
 _install_proton_manager() {
   local de
@@ -50,26 +27,32 @@ _install_proton_manager() {
   esac
 }
 
+_install_debian_steam() {
+  echo "Installing Steam, MangoHud, and Gamescope via Flatpak on Debian..."
+  install_flatpak_app "com.valvesoftware.Steam" "Steam"
+  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
+  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
+}
+
+_install_fedora_steam() {
+  echo "Configuring repositories and installing Steam, MangoHud, Gamescope, and GameMode on Fedora..."
+  add_fedora_rpmfusion_repo
+  install_packages steam mangohud gamescope gamemode
+}
+
+_install_arch_steam() {
+  echo "Configuring repositories and installing Steam, MangoHud, Gamescope, GameMode, and fonts on Arch Linux..."
+  add_arch_multilib_repo
+  install_packages steam mangohud gamescope gamemode fonts-liberation
+}
+
 _install_steam_packages() {
   local pm="$1"
 
   case "$pm" in
-  apt)
-    echo "Installing Steam, MangoHud, and Gamescope via Flatpak on Debian..."
-    install_flatpak_app "com.valvesoftware.Steam" "Steam"
-    install_flatpak_app "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
-    install_flatpak_app "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
-    ;;
-  dnf)
-    echo "Configuring repositories and installing Steam, MangoHud, Gamescope, and GameMode on Fedora..."
-    add_fedora_rpmfusion_repo
-    install_packages steam mangohud gamescope gamemode
-    ;;
-  pacman)
-    echo "Configuring repositories and installing Steam, MangoHud, Gamescope, GameMode, and fonts on Arch Linux..."
-    _enable_arch_multilib
-    install_packages steam mangohud gamescope gamemode fonts-liberation
-    ;;
+  apt) _install_debian_steam ;;
+  dnf) _install_fedora_steam ;;
+  pacman) _install_arch_steam ;;
   esac
 }
 

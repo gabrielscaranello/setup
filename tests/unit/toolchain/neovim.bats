@@ -124,3 +124,35 @@
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported distribution" ]]
 }
+
+@test "_clone_neovim_source invokes git clone with stable branch" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  git() { echo "git: $*"; return 0; }
+  run _clone_neovim_source "/tmp/test_nvim"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "git: clone --depth 1 -b stable" ]]
+}
+
+@test "_build_neovim_source executes make with RelWithDebInfo" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  mkdir -p /tmp/test_nvim_build
+  make() { echo "make: $*"; return 0; }
+  run _build_neovim_source "/tmp/test_nvim_build"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "make: -j" ]]
+  [[ "$output" =~ "CMAKE_BUILD_TYPE=RelWithDebInfo" ]]
+  rm -rf /tmp/test_nvim_build
+}
+
+@test "_package_and_install_neovim_deb executes cpack and dpkg" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  mkdir -p /tmp/test_nvim_deb/build
+  cpack() { echo "cpack: $*"; return 0; }
+  sudo() { echo "sudo: $*"; return 0; }
+  run _package_and_install_neovim_deb "/tmp/test_nvim_deb"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "cpack: -G DEB" ]]
+  [[ "$output" =~ "sudo: dpkg -i" ]]
+  rm -rf /tmp/test_nvim_deb
+}
+

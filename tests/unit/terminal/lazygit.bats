@@ -130,3 +130,25 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary\ dnf ]]
 }
+
+@test "_resolve_lazygit_arch returns correct architecture string" {
+  uname() { echo "x86_64"; }
+  run _resolve_lazygit_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "x86_64" ]
+
+  uname() { echo "aarch64"; }
+  run _resolve_lazygit_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "arm64" ]
+
+  uname() { echo "arm64"; }
+  run _resolve_lazygit_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "arm64" ]
+
+  uname() { echo "i686"; }
+  run _resolve_lazygit_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "32-bit" ]
+}

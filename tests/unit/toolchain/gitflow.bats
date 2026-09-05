@@ -72,3 +72,29 @@
   run _install_gitflow
   [ "$status" -eq 0 ]
 }
+
+@test "_download_gitflow_installer downloads and sets executable bit" {
+  source /setup/scripts/toolchain/setup-gitflow.sh
+  download_file() {
+    touch "$2"
+    return 0
+  }
+  chmod() {
+    echo "chmod $1 $2"
+    return 0
+  }
+  run _download_gitflow_installer "http://example.com/installer.sh" "/tmp/test.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "chmod +x /tmp/test.sh" ]]
+}
+
+@test "_run_gitflow_installer executes installer with correct version" {
+  source /setup/scripts/toolchain/setup-gitflow.sh
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+  run _run_gitflow_installer "/tmp/test-dir" "/tmp/test-dir/installer.sh" "v2.2.1"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo bash /tmp/test-dir/installer.sh install version v2.2.1" ]]
+}

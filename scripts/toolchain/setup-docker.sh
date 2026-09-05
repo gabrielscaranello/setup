@@ -6,14 +6,20 @@ set -euo pipefail
 source "scripts/_utils.sh" 2>/dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 
-_install_docker_packages() {
+_configure_docker_repositories() {
   local pm="$1"
-  echo "Installing Docker packages..."
-
   if [ "$pm" = "dnf" ]; then
     add_fedora_docker_repo
   fi
+}
 
+_install_docker_packages() {
+  local pm="${1:-}"
+  if [ -n "$pm" ]; then
+    _configure_docker_repositories "$pm"
+  fi
+
+  echo "Installing Docker packages..."
   install_packages docker docker-compose docker-buildx containerd
 }
 

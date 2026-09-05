@@ -7,6 +7,7 @@ set -euo pipefail
 # container integration tests. Bare-metal validation on physical NVIDIA/hybrid hardware
 # is pending and will be performed to verify real-world edge cases.
 source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/system/arch/_repositories.sh" 2>/dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 source "scripts/system/debian/_repositories.sh" 2>/dev/null || true
 
@@ -38,61 +39,19 @@ _detect_hybrid_gpu() {
   [ -n "$other_gpus" ]
 }
 
-_enable_arch_multilib() {
-  local conf="${PACMAN_CONF:-/etc/pacman.conf}"
-  if [ ! -f "$conf" ]; then
-    return 0
-  fi
-
-  if grep -q "^\[multilib\]" "$conf" 2>/dev/null; then
-    return 0
-  fi
-
-  echo "Enabling multilib repository in $conf..."
-  if grep -q "^#[[:space:]]*\[multilib\]" "$conf" 2>/dev/null; then
-    sudo sed -i '/^#[[:space:]]*\[multilib\]/{s/^#[[:space:]]*//;n;s/^#[[:space:]]*//}' "$conf"
-  else
-    cat <<'EOF' | sudo tee -a "$conf" >/dev/null
-
-[multilib]
-Include = /etc/pacman.d/mirrorlist
-EOF
-  fi
-
-  echo "Updating pacman database..."
-  sudo pacman -Sy --noconfirm 2>/dev/null || sudo pacman -Sy
-}
-
-_enable_debian_nonfree_components() {
-  echo "Ensuring Debian contrib and non-free components are accessible..."
-  local sources_list="${APT_SOURCES_LIST:-/etc/apt/sources.list}"
-  local debian_sources="${APT_DEBIAN_SOURCES:-/etc/apt/sources.list.d/debian.sources}"
-  if [ -f "$debian_sources" ]; then
-    if ! grep -Eq "^Components:.*contrib" "$debian_sources" 2>/dev/null; then
-      sudo sed -i '/^Components:/ s/$/ contrib non-free non-free-firmware/' "$debian_sources" 2>/dev/null || true
-      sudo apt update -qq 2>/dev/null || true
-    fi
-  elif [ -f "$sources_list" ]; then
-    if ! grep -Eq "^deb[[:space:]]+.*contrib" "$sources_list" 2>/dev/null; then
-      sudo sed -i '/^deb[[:space:]]/ s/$/ contrib non-free non-free-firmware/' "$sources_list" 2>/dev/null || true
-      sudo apt update -qq 2>/dev/null || true
-    fi
-  fi
-}
-
 _configure_repositories() {
   local pm="$1"
 
   case "$pm" in
   apt)
-    _enable_debian_nonfree_components
+    add_debian_nonfree_repo
     add_debian_backports_repo
     ;;
   dnf)
     add_fedora_rpmfusion_repo
     ;;
   pacman)
-    _enable_arch_multilib
+    add_arch_multilib_repo
     ;;
   esac
 }
@@ -140,17 +99,20 @@ _configure_drm_modeset() {
   echo "options nvidia-drm modeset=1" | sudo tee "$modprobe_dir/nvidia-modeset.conf" >/dev/null
 }
 
-_configure_power_management() {
+_configure_power_management_modprobe() {
   local modprobe_dir="${MODPROBE_D_DIR:-/etc/modprobe.d}"
-  local udev_dir="${UDEV_RULES_DIR:-/etc/udev/rules.d}"
+  sudo mkdir -p "$modprobe_dir"
 
-  sudo mkdir -p "$modprobe_dir" "$udev_dir"
-
-  echo "Configuring NVIDIA power management and PCIe RTD3 dynamic rules..."
+  echo "Configuring NVIDIA power management modprobe options..."
   echo "options nvidia NVreg_PreserveVideoMemoryAllocations=1" | sudo tee "$modprobe_dir/nvidia-power-management.conf" >/dev/null
   echo 'options nvidia "NVreg_DynamicPowerManagement=0x02"' | sudo tee "$modprobe_dir/nvidia-pm.conf" >/dev/null
+}
 
-  # RTD3 PCIe dynamic power management udev rules
+_configure_power_management_udev() {
+  local udev_dir="${UDEV_RULES_DIR:-/etc/udev/rules.d}"
+  sudo mkdir -p "$udev_dir"
+
+  echo "Configuring NVIDIA PCIe RTD3 dynamic power management udev rules..."
   cat <<'EOF' | sudo tee "$udev_dir/80-nvidia-pm.rules" >/dev/null
 # Enable runtime PM for NVIDIA VGA/3D controller devices on Driver binds
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="0"
@@ -161,11 +123,20 @@ ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330"
 # Enable runtime PM for NVIDIA USB Type-C UCSI devices on Driver binds
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="0"
 EOF
+}
 
+_enable_nvidia_systemd_services() {
   if command -v systemctl >/dev/null 2>&1; then
+    echo "Enabling NVIDIA power management and persistence services..."
     sudo systemctl enable nvidia-suspend.service nvidia-hibernate.service nvidia-resume.service 2>/dev/null || true
     sudo systemctl enable nvidia-persistenced.service 2>/dev/null || true
   fi
+}
+
+_configure_power_management() {
+  _configure_power_management_modprobe
+  _configure_power_management_udev
+  _enable_nvidia_systemd_services
 }
 
 _configure_early_kms() {

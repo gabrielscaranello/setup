@@ -88,6 +88,7 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
   - **Desktop Environment Handling**: When a step depends on DE, check `get_desktop_environment`. If `unknown`, do not execute DE-specific actions.
+  - **SOLID Principles**: All scripts must strictly apply SOLID (Single Responsibility per function, Open/Closed via packages.conf, Liskov Substitution across distros, Interface Segregation via granular repo helpers, and Dependency Inversion via `_utils.sh` abstractions).
 - **Entrypoint & Execution Guard**:
   ```bash
   main() {

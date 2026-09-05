@@ -36,13 +36,35 @@ _is_go_installed_from_binary() {
   return 1
 }
 
+_resolve_go_arch() {
+  local arch
+  arch="$(uname -m)"
+  case "$arch" in
+  x86_64) echo "amd64" ;;
+  aarch64 | arm64) echo "arm64" ;;
+  armv6l) echo "armv6l" ;;
+  i386 | i686) echo "386" ;;
+  *) echo "$arch" ;;
+  esac
+}
+
+_extract_go_archive() {
+  local archive_path="$1"
+  local target_dir="$2"
+
+  echo "Extracting Golang archive..."
+  sudo tar -C "$target_dir" -xzf "$archive_path"
+}
+
 _install_go_from_binary() {
   if _is_go_installed_from_binary; then
     echo "Golang ($GO_VERSION) is already installed in /usr/local/go, skipping."
     return 0
   fi
 
-  local filename="go${GO_VERSION}.linux-amd64.tar.gz"
+  local arch
+  arch="$(_resolve_go_arch)"
+  local filename="go${GO_VERSION}.linux-${arch}.tar.gz"
   local download_url="https://go.dev/dl/${filename}"
   local archive_path="/tmp/${filename}"
   local target_dir="/usr/local"
@@ -56,8 +78,7 @@ _install_go_from_binary() {
   echo "Downloading Golang binary..."
   download_file "$download_url" "$archive_path"
 
-  echo "Extracting Golang archive..."
-  sudo tar -C "$target_dir" -xzf "$archive_path"
+  _extract_go_archive "$archive_path" "$target_dir"
 
   echo "Cleaning up download archive..."
   sudo rm -rf "$archive_path"

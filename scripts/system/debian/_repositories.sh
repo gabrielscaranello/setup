@@ -172,3 +172,21 @@ EOF_SOURCES
 
   sudo apt update -qq
 }
+
+add_debian_nonfree_repo() {
+  local sources_list="${APT_SOURCES_LIST:-/etc/apt/sources.list}"
+  local debian_sources="${APT_DEBIAN_SOURCES:-/etc/apt/sources.list.d/debian.sources}"
+
+  echo "Ensuring Debian contrib, non-free, and non-free-firmware components are accessible..."
+  if [ -f "$debian_sources" ]; then
+    if ! grep -Eq "^Components:.*contrib" "$debian_sources" 2>/dev/null || ! grep -Eq "^Components:.*non-free-firmware" "$debian_sources" 2>/dev/null; then
+      sudo sed -i '/^Components:/ s/$/ contrib non-free non-free-firmware/' "$debian_sources" 2>/dev/null || true
+      sudo apt update -qq 2>/dev/null || true
+    fi
+  elif [ -f "$sources_list" ]; then
+    if ! grep -Eq "^deb[[:space:]]+.*contrib" "$sources_list" 2>/dev/null || ! grep -Eq "^deb[[:space:]]+.*non-free-firmware" "$sources_list" 2>/dev/null; then
+      sudo sed -i '/^deb[[:space:]]/ s/$/ contrib non-free non-free-firmware/' "$sources_list" 2>/dev/null || true
+      sudo apt update -qq 2>/dev/null || true
+    fi
+  fi
+}

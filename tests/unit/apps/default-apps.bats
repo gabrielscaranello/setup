@@ -158,9 +158,10 @@
   [ "$plasma_called" -eq 0 ]
 }
 
-@test "setup-default-apps runs _set_default_apps successfully" {
+@test "setup-default-apps main runs _set_default_terminal successfully" {
   source /setup/scripts/apps/setup-default-apps.sh
   _set_default_terminal() { return 0; }
-  run _set_default_apps
+  run main
   [ "$status" -eq 0 ]
+  [[ "$output" =~ "setup-default-apps complete" ]]
 }

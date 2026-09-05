@@ -97,13 +97,9 @@ _set_default_terminal() {
   echo "Default terminal emulator configured successfully."
 }
 
-_set_default_apps() {
-  _set_default_terminal
-}
-
 main() {
   echo "Configuring default desktop applications..."
-  _set_default_apps
+  _set_default_terminal
   echo "setup-default-apps complete"
 }
 

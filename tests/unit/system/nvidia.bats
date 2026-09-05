@@ -69,14 +69,14 @@ setup() {
   [[ "$output" =~ "called add_fedora_rpmfusion_repo" ]]
 }
 
-@test "_configure_repositories calls _enable_arch_multilib on Arch Linux" {
-  _enable_arch_multilib() {
-    echo "called _enable_arch_multilib"
+@test "_configure_repositories calls add_arch_multilib_repo on Arch Linux" {
+  add_arch_multilib_repo() {
+    echo "called add_arch_multilib_repo"
     return 0
   }
   run _configure_repositories "pacman"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _enable_arch_multilib" ]]
+  [[ "$output" =~ "called add_arch_multilib_repo" ]]
 }
 
 @test "_configure_repositories ensures contrib, non-free and backports on Debian" {
@@ -165,6 +165,34 @@ EOF
   rm -rf "$MODPROBE_D_DIR" "$UDEV_RULES_DIR" "$MKINITCPIO_CONF"
 }
 
+@test "_configure_power_management_modprobe writes modprobe conf files" {
+  export MODPROBE_D_DIR="/tmp/test_modprobe_srp_$$.d"
+  sudo() { "$@"; }
+  run _configure_power_management_modprobe
+  [ "$status" -eq 0 ]
+  [ -f "$MODPROBE_D_DIR/nvidia-power-management.conf" ]
+  [ -f "$MODPROBE_D_DIR/nvidia-pm.conf" ]
+  rm -rf "$MODPROBE_D_DIR"
+}
+
+@test "_configure_power_management_udev creates 80-nvidia-pm.rules" {
+  export UDEV_RULES_DIR="/tmp/test_udev_srp_$$.d"
+  sudo() { "$@"; }
+  run _configure_power_management_udev
+  [ "$status" -eq 0 ]
+  [ -f "$UDEV_RULES_DIR/80-nvidia-pm.rules" ]
+  rm -rf "$UDEV_RULES_DIR"
+}
+
+@test "_enable_nvidia_systemd_services enables systemd units" {
+  sudo() { echo "sudo: $*"; return 0; }
+  systemctl() { echo "systemctl: $*"; return 0; }
+  run _enable_nvidia_systemd_services
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "nvidia-suspend.service" ]]
+  [[ "$output" =~ "nvidia-persistenced.service" ]]
+}
+
 @test "_setup_hybrid_tools configures switcheroo-control and prime-run" {
   _setup_prime_run() {
     echo "called _setup_prime_run"
@@ -205,23 +233,6 @@ EOF
   rm -f "$PRIME_RUN_PATH"
 }
 
-@test "_enable_debian_nonfree_components appends nonfree components" {
-  export APT_DEBIAN_SOURCES="/tmp/test_debian_srp_$$.sources"
-  cat << 'EOF' > "$APT_DEBIAN_SOURCES"
-Types: deb
-URIs: http://deb.debian.org/debian
-Suites: trixie
-Components: main
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-  sudo() { "$@"; }
-  apt() { return 0; }
-
-  run _enable_debian_nonfree_components
-  [ "$status" -eq 0 ]
-  grep -q "contrib non-free non-free-firmware" "$APT_DEBIAN_SOURCES"
-  rm -f "$APT_DEBIAN_SOURCES"
-}
 
 @test "_configure_drm_modeset writes nvidia-modeset.conf" {
   export MODPROBE_D_DIR="/tmp/test_modeset_$$.d"

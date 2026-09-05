@@ -36,6 +36,17 @@ _is_lazygit_up_to_date() {
   return 1
 }
 
+_resolve_lazygit_arch() {
+  local arch
+  arch="$(uname -m)"
+  case "$arch" in
+  x86_64) echo "x86_64" ;;
+  aarch64 | arm64) echo "arm64" ;;
+  i386 | i686) echo "32-bit" ;;
+  *) echo "$arch" ;;
+  esac
+}
+
 _install_lazygit_binary() {
   local latest_version
   latest_version="$(_fetch_remote_version)"
@@ -60,7 +71,9 @@ _install_lazygit_binary() {
     fi
   fi
 
-  local file_name="lazygit_${latest_version}_Linux_x86_64.tar.gz"
+  local arch
+  arch="$(_resolve_lazygit_arch)"
+  local file_name="lazygit_${latest_version}_Linux_${arch}.tar.gz"
   local download_url="https://github.com/jesseduffield/lazygit/releases/download/v${latest_version}/${file_name}"
   local output_file="/tmp/${file_name}"
   local extract_dir="/tmp/lazygit-extract"

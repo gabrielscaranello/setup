@@ -38,6 +38,16 @@ _is_lazydocker_up_to_date() {
   return 1
 }
 
+_resolve_lazydocker_arch() {
+  local arch
+  arch="$(uname -m)"
+  case "$arch" in
+  i386 | i686) echo "x86" ;;
+  aarch64 | arm64) echo "arm64" ;;
+  *) echo "$arch" ;;
+  esac
+}
+
 _install_lazydocker_binary() {
   local latest_version
   latest_version="$(_fetch_remote_version)"
@@ -53,14 +63,8 @@ _install_lazydocker_binary() {
 
   install_packages curl wget tar || true
 
-  # Determine architecture
   local arch
-  arch="$(uname -m)"
-  case "$arch" in
-  i386 | i686) arch="x86" ;;
-  aarch64 | arm64) arch="arm64" ;;
-  *) ;;
-  esac
+  arch="$(_resolve_lazydocker_arch)"
 
   # Fallback if latest_version was empty
   if [ -z "$latest_version" ]; then

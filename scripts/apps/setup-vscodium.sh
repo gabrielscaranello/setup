@@ -7,6 +7,31 @@ source "scripts/_utils.sh" 2>/dev/null || true
 source "scripts/system/debian/_repositories.sh" 2>/dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 
+_configure_vscodium_repo() {
+  local pm="$1"
+  case "$pm" in
+  apt)
+    add_debian_vscodium_repo
+    ;;
+  dnf)
+    add_fedora_vscodium_repo
+    ;;
+  esac
+}
+
+_install_vscodium_packages() {
+  local pm="$1"
+  case "$pm" in
+  apt | dnf)
+    install_packages codium
+    ;;
+  pacman)
+    echo "Installing Code (OSS) from Arch repositories..."
+    install_packages code
+    ;;
+  esac
+}
+
 _install_vscodium() {
   local pm
   pm="$(_get_package_manager)" || {
@@ -15,17 +40,9 @@ _install_vscodium() {
   }
 
   case "$pm" in
-  apt)
-    add_debian_vscodium_repo
-    install_packages codium
-    ;;
-  dnf)
-    add_fedora_vscodium_repo
-    install_packages codium
-    ;;
-  pacman)
-    echo "Installing Code (OSS) from Arch repositories..."
-    install_packages code
+  apt | dnf | pacman)
+    _configure_vscodium_repo "$pm"
+    _install_vscodium_packages "$pm"
     ;;
   *)
     echo "Unsupported package manager: $pm" >&2

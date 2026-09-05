@@ -130,3 +130,20 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary\ dnf ]]
 }
+
+@test "_resolve_lazydocker_arch maps x86 and arm64 architectures" {
+  uname() { echo "x86_64"; }
+  run _resolve_lazydocker_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "x86_64" ]
+
+  uname() { echo "aarch64"; }
+  run _resolve_lazydocker_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "arm64" ]
+
+  uname() { echo "i686"; }
+  run _resolve_lazydocker_arch
+  [ "$status" -eq 0 ]
+  [ "$output" = "x86" ]
+}

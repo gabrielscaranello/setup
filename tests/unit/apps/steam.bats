@@ -44,9 +44,9 @@ setup() {
   [[ "$output" =~ "installed packages: steam mangohud gamescope gamemode" ]]
 }
 
-@test "_install_steam_packages calls _enable_arch_multilib and installs packages on Arch Linux" {
-  _enable_arch_multilib() {
-    echo "called _enable_arch_multilib"
+@test "_install_steam_packages calls add_arch_multilib_repo and installs packages on Arch Linux" {
+  add_arch_multilib_repo() {
+    echo "called add_arch_multilib_repo"
     return 0
   }
   install_packages() {
@@ -55,76 +55,36 @@ setup() {
   }
   run _install_steam_packages "pacman"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _enable_arch_multilib" ]]
+  [[ "$output" =~ "called add_arch_multilib_repo" ]]
   [[ "$output" =~ "installed packages: steam mangohud gamescope gamemode fonts-liberation" ]]
 }
 
-@test "_enable_arch_multilib skips when pacman.conf does not exist" {
-  export PACMAN_CONF="/tmp/nonexistent-pacman-$$.conf"
-  run _enable_arch_multilib
-  [ "$status" -eq 0 ]
-}
-
-@test "_enable_arch_multilib skips when [multilib] is already enabled" {
-  export PACMAN_CONF="/tmp/pacman-multilib-$$.conf"
-  cat << 'EOF' > "$PACMAN_CONF"
-[core]
-Include = /etc/pacman.d/mirrorlist
-
-[multilib]
-Include = /etc/pacman.d/mirrorlist
-EOF
-  run _enable_arch_multilib
-  rm -f "$PACMAN_CONF"
-  [ "$status" -eq 0 ]
-  [[ ! "$output" =~ "Enabling multilib repository" ]]
-}
-
-@test "_enable_arch_multilib uncomments [multilib] and updates pacman database" {
-  export PACMAN_CONF="/tmp/pacman-commented-$$.conf"
-  cat << 'EOF' > "$PACMAN_CONF"
-[core]
-Include = /etc/pacman.d/mirrorlist
-
-#[multilib]
-#Include = /etc/pacman.d/mirrorlist
-EOF
-  sudo() {
-    "$@"
-  }
-  pacman() {
-    echo "called pacman with: $*"
+@test "_install_debian_steam installs Steam flatpaks" {
+  install_flatpak_app() {
+    echo "flatpak: $1"
     return 0
   }
-  run _enable_arch_multilib
+  run _install_debian_steam
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Enabling multilib repository" ]]
-  [[ "$output" =~ "called pacman with: -Sy" ]]
-  grep -q "^\[multilib\]" "$PACMAN_CONF"
-  grep -q "^Include = /etc/pacman.d/mirrorlist" "$PACMAN_CONF"
-  rm -f "$PACMAN_CONF"
+  [[ "$output" =~ "flatpak: com.valvesoftware.Steam" ]]
 }
 
-@test "_enable_arch_multilib appends [multilib] when section is missing from pacman.conf" {
-  export PACMAN_CONF="/tmp/pacman-missing-$$.conf"
-  cat << 'EOF' > "$PACMAN_CONF"
-[core]
-Include = /etc/pacman.d/mirrorlist
-EOF
-  sudo() {
-    "$@"
-  }
-  pacman() {
-    echo "called pacman with: $*"
-    return 0
-  }
-  run _enable_arch_multilib
+@test "_install_fedora_steam calls add_fedora_rpmfusion_repo and installs packages" {
+  add_fedora_rpmfusion_repo() { echo "called rpmfusion"; }
+  install_packages() { echo "packages: $*"; }
+  run _install_fedora_steam
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Enabling multilib repository" ]]
-  [[ "$output" =~ "called pacman with: -Sy" ]]
-  grep -q "^\[multilib\]" "$PACMAN_CONF"
-  grep -q "^Include = /etc/pacman.d/mirrorlist" "$PACMAN_CONF"
-  rm -f "$PACMAN_CONF"
+  [[ "$output" =~ "called rpmfusion" ]]
+  [[ "$output" =~ "packages: steam mangohud gamescope gamemode" ]]
+}
+
+@test "_install_arch_steam calls add_arch_multilib_repo and installs packages" {
+  add_arch_multilib_repo() { echo "called multilib"; }
+  install_packages() { echo "packages: $*"; }
+  run _install_arch_steam
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called multilib" ]]
+  [[ "$output" =~ "packages: steam mangohud gamescope gamemode fonts-liberation" ]]
 }
 
 @test "_install_proton_manager installs ProtonPlus on GNOME" {

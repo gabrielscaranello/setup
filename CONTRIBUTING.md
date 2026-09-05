@@ -60,6 +60,12 @@ source "scripts/_utils.sh" 2>/dev/null || true
   - Debian (`scripts/system/debian/_repositories.sh`): `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`.
 - **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps. When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
+- **SOLID Design Principles**: All scripts and helpers must adhere to SOLID principles:
+  - **S (Single Responsibility)**: Small, cohesive private functions (`_`) where each function has one reason to change (decouple detection, repos, installation, 32-bit compatibility, service management).
+  - **O (Open/Closed)**: Open for extension via `packages.conf` and clean dispatchers without modifying core logic.
+  - **L (Liskov Substitution)**: Consistent contract across distro functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`) with matching signatures, exit codes, and flag handling.
+  - **I (Interface Segregation)**: Granular, focused repository and utility helpers instead of monolithic all-in-one functions.
+  - **D (Dependency Inversion)**: Rely on `scripts/_utils.sh` abstractions (`install_packages`, `download_file`, `get_package_manager`) rather than invoking raw package managers directly.
 
 - Entrypoint: expose `main()` and finalize with an execution guard:
 

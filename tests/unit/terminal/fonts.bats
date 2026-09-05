@@ -67,3 +67,33 @@
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported package manager" ]]
 }
+
+@test "_copy_jetbrains_mono_fonts copies ttf files to target directory" {
+  source /setup/scripts/terminal/setup-fonts.sh
+  local test_work="/tmp/test_work_fonts_$$"
+  local test_target="/tmp/test_target_fonts_$$"
+  mkdir -p "$test_work"
+  touch "$test_work/JetBrainsMonoNerdFont-Regular.ttf"
+  touch "$test_work/JetBrainsMonoNerdFont-Bold.ttf"
+
+  TARGET_DIR="$test_target" run _copy_jetbrains_mono_fonts "$test_work"
+  [ "$status" -eq 0 ]
+  [ -f "$test_target/JetBrainsMonoNerdFont-Regular.ttf" ]
+  [ -f "$test_target/JetBrainsMonoNerdFont-Bold.ttf" ]
+
+  rm -rf "$test_work" "$test_target"
+}
+
+@test "_update_font_cache calls fc-cache when available" {
+  source /setup/scripts/terminal/setup-fonts.sh
+  fc-cache() {
+    echo "called fc-cache with: $*"
+    return 0
+  }
+  command() { return 0; }
+
+  TARGET_DIR="/tmp/fonts" run _update_font_cache
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Updating font cache" ]]
+}
+

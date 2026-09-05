@@ -195,3 +195,37 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Configuring Oracle VirtualBox repository for APT" ]]
 }
+
+@test "add_debian_nonfree_repo ensures contrib, non-free and non-free-firmware on deb822 sources" {
+  export APT_DEBIAN_SOURCES="/tmp/test_debian_nonfree_$$.sources"
+  cat << 'EOF' > "$APT_DEBIAN_SOURCES"
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: trixie
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+  sudo() { "$@"; }
+  apt() { return 0; }
+
+  run add_debian_nonfree_repo
+  [ "$status" -eq 0 ]
+  grep -q "contrib non-free non-free-firmware" "$APT_DEBIAN_SOURCES"
+  rm -f "$APT_DEBIAN_SOURCES"
+}
+
+@test "add_debian_nonfree_repo ensures contrib, non-free and non-free-firmware on sources.list" {
+  export APT_DEBIAN_SOURCES="/tmp/nonexistent_$$.sources"
+  export APT_SOURCES_LIST="/tmp/test_sources_list_$$"
+  cat << 'EOF' > "$APT_SOURCES_LIST"
+deb http://deb.debian.org/debian trixie main
+EOF
+  sudo() { "$@"; }
+  apt() { return 0; }
+
+  run add_debian_nonfree_repo
+  [ "$status" -eq 0 ]
+  grep -q "contrib non-free non-free-firmware" "$APT_SOURCES_LIST"
+  rm -f "$APT_SOURCES_LIST"
+}
+
