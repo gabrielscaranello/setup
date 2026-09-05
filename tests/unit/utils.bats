@@ -263,3 +263,64 @@ setup() {
   [ "$status" -eq 0 ]
   [ "$output" = "unknown" ]
 }
+
+@test "get_distro_id detects distribution from os-release" {
+  local test_os_release="/tmp/test-os-release-$$"
+  echo 'ID=debian' > "$test_os_release"
+
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "debian" ]
+
+  echo 'ID="Fedora"' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "fedora" ]
+
+  echo 'ID=arch' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "arch" ]
+
+  echo 'ID=ubuntu' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "ubuntu" ]
+
+  rm -f "$test_os_release"
+}
+
+@test "get_distro_id returns unknown when os-release has no ID" {
+  local test_os_release="/tmp/test-empty-os-release-$$"
+  echo 'NAME="Linux"' > "$test_os_release"
+
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 1 ]
+  [ "$output" = "unknown" ]
+
+  rm -f "$test_os_release"
+}
+
+
+@test "is_distro matches current distribution correctly" {
+  get_distro_id() { echo "debian"; }
+  run is_distro "debian"
+  [ "$status" -eq 0 ]
+
+  run is_distro "arch"
+  [ "$status" -eq 1 ]
+}
+
+@test "_get_package_name resolves packages using distro names" {
+  [ "$(_get_package_name "golang" "debian")" = "golang" ]
+  [ "$(_get_package_name "golang" "fedora")" = "golang" ]
+  [ "$(_get_package_name "golang" "arch")" = "go" ]
+
+  [ "$(_get_package_name "build-tools" "debian")" = "build-essential" ]
+  [ "$(_get_package_name "build-tools" "fedora")" = "@development-tools" ]
+  [ "$(_get_package_name "build-tools" "arch")" = "base-devel" ]
+
+  [ "$(_get_package_name "nvidia-driver" "debian")" = "nvidia-driver" ]
+  [ "$(_get_package_name "nvidia-driver" "fedora")" = "akmod-nvidia" ]
+  [ "$(_get_package_name "nvidia-driver" "arch")" = "nvidia-open-dkms nvidia-utils" ]
+}

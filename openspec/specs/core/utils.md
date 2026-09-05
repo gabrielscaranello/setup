@@ -10,20 +10,26 @@ Provides reusable, distribution-agnostic helper functions for system detection, 
 
 ### Requirement: Distribution & Package Manager Detection
 
-The utility library SHALL detect the operating system distribution and expose the corresponding package manager (`apt` for Debian, `dnf` for Fedora, `pacman` for Arch Linux).
+The utility library SHALL detect the operating system distribution via `/etc/os-release` (with fallback to `/usr/lib/os-release` and configurable via `OS_RELEASE_PATH` for testing), exposing:
+- `get_distro_id`: returns the exact distribution identifier (`debian`, `fedora`, `arch`, or derivative/unsupported IDs)
+- `is_distro <id>`: returns 0 if the current distribution matches the specified ID
+- `_get_package_manager`: internal helper resolving the package manager command (`apt`, `dnf`, `pacman`) for package execution
+
+All setup scripts and runners SHALL use `get_distro_id` for distribution branching and decision-making, keeping `_get_package_manager` strictly internal to package execution.
 
 #### Scenario: Running on supported distributions
 
 - **GIVEN** `/etc/os-release` indicates `debian`, `fedora`, or `arch`
-- **WHEN** `detect_distro` or package management helpers are invoked
-- **THEN** `DISTRO` is correctly assigned to `debian`, `fedora`, or `arch`
-- **AND** `PKG_MANAGER` is resolved to `apt`, `dnf`, or `pacman`
+- **WHEN** `get_distro_id` is invoked
+- **THEN** it returns `debian`, `fedora`, or `arch` respectively
+- **AND** `_get_package_manager` resolves to `apt`, `dnf`, or `pacman`
 
-#### Scenario: Running on an unsupported distribution
+#### Scenario: Running on a derivative or unsupported distribution
 
-- **GIVEN** `/etc/os-release` does not match supported distributions
-- **WHEN** `detect_distro` is invoked
-- **THEN** it SHALL exit with an error code and display a helpful message
+- **GIVEN** `/etc/os-release` indicates a derivative (e.g., `ubuntu`, `linuxmint`, `manjaro`, `nobara`)
+- **WHEN** `get_distro_id` is invoked
+- **THEN** it returns the exact identifier (`ubuntu`, `linuxmint`, etc.)
+- **AND** setup scripts and runners SHALL fail-fast or bypass foreign actions since they only target `debian`, `fedora`, and `arch`
 
 ---
 

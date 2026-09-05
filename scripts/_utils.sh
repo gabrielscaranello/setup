@@ -1,6 +1,58 @@
 #!/bin/bash
 
+get_distro_id() {
+  local os_release_file="${OS_RELEASE_PATH:-/etc/os-release}"
+  if [ ! -f "$os_release_file" ] && [ -f /usr/lib/os-release ]; then
+    os_release_file="/usr/lib/os-release"
+  fi
+
+  if [ -f "$os_release_file" ]; then
+    local distro_id
+    distro_id="$(grep '^ID=' "$os_release_file" 2>/dev/null | head -n 1 | cut -d= -f2 | tr -d '"'\'' ' | tr '[:upper:]' '[:lower:]' || true)"
+    if [ -n "$distro_id" ]; then
+      echo "$distro_id"
+      return 0
+    fi
+  fi
+
+  if command -v lsb_release >/dev/null 2>&1; then
+    local lsb_id
+    lsb_id="$(lsb_release -si 2>/dev/null | tr '[:upper:]' '[:lower:]' || true)"
+    if [ -n "$lsb_id" ]; then
+      echo "$lsb_id"
+      return 0
+    fi
+  fi
+
+  echo "unknown"
+  return 1
+}
+
+is_distro() {
+  local target="$1"
+  local current
+  current="$(get_distro_id 2>/dev/null || echo "unknown")"
+  [ "$current" = "$target" ]
+}
+
 _get_package_manager() {
+  local distro
+  distro="$(get_distro_id 2>/dev/null || true)"
+  case "$distro" in
+  debian)
+    echo "apt"
+    return 0
+    ;;
+  fedora)
+    echo "dnf"
+    return 0
+    ;;
+  arch)
+    echo "pacman"
+    return 0
+    ;;
+  esac
+
   if command -v dnf >/dev/null 2>&1; then
     echo "dnf"
   elif command -v apt >/dev/null 2>&1; then
@@ -14,7 +66,10 @@ _get_package_manager() {
 
 _get_package_name() {
   local package="$1"
-  local package_manager="$2"
+  local target="${2:-}"
+  if [ -z "$target" ]; then
+    target="$(get_distro_id 2>/dev/null || _get_package_manager 2>/dev/null || true)"
+  fi
   local config_file=""
 
   if [ -f "scripts/packages.conf" ]; then
@@ -27,10 +82,10 @@ _get_package_name() {
 
   if [ -n "$config_file" ] && [ -f "$config_file" ]; then
     local field_idx=0
-    case "$package_manager" in
-    apt) field_idx=2 ;;
-    dnf) field_idx=3 ;;
-    pacman) field_idx=4 ;;
+    case "$target" in
+    debian | apt) field_idx=2 ;;
+    fedora | dnf) field_idx=3 ;;
+    arch | pacman) field_idx=4 ;;
     *) field_idx=0 ;;
     esac
 
@@ -79,19 +134,20 @@ _install_package_from_repository() {
 }
 
 install_packages() {
-  local package_manager
+  local package_manager distro
+  distro="$(get_distro_id 2>/dev/null || echo "unknown")"
   package_manager="$(_get_package_manager)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  echo "Using package manager: $package_manager"
+  echo "Using package manager: $package_manager (distribution: $distro)"
 
   local resolved_packages=()
   local package
   local resolved
   for package in "$@"; do
-    resolved="$(_get_package_name "$package" "$package_manager")"
+    resolved="$(_get_package_name "$package" "$distro")"
     if [ -n "$resolved" ]; then
       for item in $resolved; do
         resolved_packages+=("$item")
