@@ -26,6 +26,16 @@ setup_file() {
   getent group vboxusers
 }
 
+@test "vbox.cfg delegates signature verification to kernel" {
+  [ -f /etc/vbox/vbox.cfg ]
+  grep -q "^VBOX_BYPASS_MODULES_SIGNATURE_CHECK=1" /etc/vbox/vbox.cfg
+}
+
+@test "virtualbox-kvm.conf configures enable_virt_at_load=0" {
+  [ -f /etc/modprobe.d/virtualbox-kvm.conf ]
+  grep -q "options kvm enable_virt_at_load=0" /etc/modprobe.d/virtualbox-kvm.conf
+}
+
 @test "setup-virtualbox.sh is idempotent (second run succeeds)" {
   run bash /setup/scripts/apps/setup-virtualbox.sh
   [ "$status" -eq 0 ]
