@@ -89,15 +89,15 @@ fi
 
 - Use `/tmp/<package>` for temporary builds and ensure `make clean` removes artifacts.
 
-## ✅ Idempotence and quality
+## ✅ Idempotence, Code Quality & Formatting
 
 - Scripts must be able to rerun without side effects.
 - Clear logging and friendly error messages.
-- Validate with:
-
-```bash
-shellcheck -x scripts/*.sh
-```
+- Code style and static analysis are enforced via **Husky**, **lint-staged**, **Prettier**, and **ShellCheck**:
+  - Run linters: `make lint` (or `yarn lint:sh` and `yarn lint:bats`)
+  - Run auto-formatter: `make format` (or `yarn format`)
+  - Pre-commit Git hooks automatically format and lint staged `.sh`, `.bats`, `.md`, and `.json` files.
+  - Commit messages are automatically validated against the [Conventional Commits](https://www.conventionalcommits.org/) standard via `git-commit-msg-linter`.
 
 ## 📦 Package Mappings (`scripts/packages.conf`)
 
@@ -175,7 +175,7 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 - [ ] README.md and README-pt-br.md updated (when applicable)
 - [ ] AGENTS.md updated (when applicable)
 - [ ] Commit messages follow strictly the [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) specification
-- [ ] shellcheck OK
+- [ ] make lint and make format OK
 - [ ] Basic manual test documented in PR
 
 ## 🧩 Quick script example

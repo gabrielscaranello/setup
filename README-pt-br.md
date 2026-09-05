@@ -49,6 +49,8 @@ Execute o setup completo ou consulte os módulos disponíveis:
 make help              # Ver todos os comandos e módulos disponíveis (./main.sh help)
 make all               # Executa todo o setup (./main.sh)
 make <modulo>          # Executa um módulo específico (ex: make neovim, make docker, make firewall)
+make lint              # Executa shellcheck nos scripts e testes bats (yarn lint:sh & yarn lint:bats)
+make format            # Formata markdown e shell scripts via Prettier (yarn format)
 make test              # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
 make test-unit         # Executa apenas testes unitários rápidos
 make test-integration  # Executa apenas testes de integração em containers
@@ -61,17 +63,19 @@ make clean             # Limpa artefatos temporários
 
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
 - `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
-- `Makefile` — Runner e alias de conveniência para `./main.sh` e testes
-- `scripts/` — Scripts modulares organizados por domínios (`apps/`, `security/`, `system/`, `terminal/`, `toolchain/`)
+- `Makefile` — Runner e alias de conveniência para `./main.sh`, testes e ferramentas de qualidade de código
+- `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes
 - `scripts/packages.conf` — Mapeamento declarativo de pacotes entre distros
 - `openspec/` — Especificações de capacidades orientadas a testes (Spec-Driven Development / SDD)
 - `tests/` — Testes unitários (Bats) e de integração multi-distro (Docker)
+- `.husky/` — Git hooks (`pre-commit` executando `lint-staged`, `commit-msg` validando Conventional Commits)
 
 🛠 Requisitos
 ------------
 
 - **Setup do Sistema**: `sudo`, `git`, `bash`
+- **Desenvolvimento & Qualidade de Código** (opcional): `node` e `yarn` (`corepack enable && yarn install` para habilitar hooks do Husky, Prettier e ShellCheck)
 - **Suíte de Testes** (opcional): `docker` (para executar `make test` em containers isolados de cada distro)
 
 ## 📖 Mais informações

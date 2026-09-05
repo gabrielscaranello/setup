@@ -92,7 +92,7 @@ All setup scripts, helpers, and orchestrators must strictly adhere to the **SOLI
 - **Commit Policy & Standards (Conventional Commits v1.0.0)**: AI assistants and agents may execute `git commit` **only when explicitly requested or authorized by the human developer**. All commit messages must strictly adhere to the [Conventional Commits v1.0.0 specification](https://www.conventionalcommits.org/en/v1.0.0/) (`<type>[optional scope]: <description>`, followed by optional body and footers). Autonomous or unsolicited commits and `git push` operations remain strictly prohibited without explicit developer approval.
 - **Developer Oversight**: Commits performed by AI agents must strictly reflect the requested changes, follow clean semantic messages conforming to Conventional Commits, and leave push/remote operations under developer discretion unless explicitly instructed.
 - **Mandatory Lint & Test Execution**: After creating or modifying any executable script (`scripts/*.sh`), orchestration script (`main.sh`), configuration, or Bats test (`tests/**/*.bats`), AI agents must **ALWAYS** run and fix:
-  1. `shellcheck` across all modified scripts and test files (`shellcheck -x scripts/*.sh main.sh tests/*.sh` and `shellcheck --severity=warning tests/unit/*.bats tests/integration/*.bats`).
+  1. Linters and formatters: `make lint` (or `yarn lint:sh` and `yarn lint:bats`) and format with `make format` (or `yarn format`).
   2. The unit test suite (`make test-unit` or `./tests/run-tests.sh --unit`).
   3. The relevant integration tests if containers/Docker are available (`./tests/run-tests.sh --integration --filter=<feature>`).
 - **Doc-Only Optimization**: If changes are strictly limited to documentation or markdown files (`*.md`, `TODO.md`, `README*.md`, `CONTRIBUTING.md`, `AGENTS.md`) with no changes to code, configurations, or tests, AI agents must **NOT** execute the test or lint suites.
@@ -118,6 +118,8 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 - **Run full setup**: `make all` (or `./main.sh all` / `./main.sh`)
 - **Run individual targets**: `make <module>` (e.g. `make neovim`, `make docker`, `make firewall` or `./main.sh <module>`)
 - **Show available targets & modules**: `make help` (or `./main.sh help`)
+- **Run linters**: `make lint` (or `yarn lint:sh` and `yarn lint:bats`)
+- **Run auto-formatter**: `make format` (or `yarn format`)
 - **Run all tests**: `make test`
 - **Run unit tests only**: `make test-unit`
 - **Run integration tests**: `make test-integration`

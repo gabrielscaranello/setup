@@ -49,6 +49,8 @@ Run full setup or inspect available module commands:
 make help              # Show all available setup commands and modules (./main.sh help)
 make all               # Run full desktop setup (./main.sh)
 make <module>          # Run a specific module (e.g. make neovim, make docker, make firewall)
+make lint              # Run shellcheck on scripts and bats tests (yarn lint:sh & yarn lint:bats)
+make format            # Format markdown and shell scripts via Prettier (yarn format)
 make test              # Run all tests (e.g. DISTRO=debian FILTER=nvm)
 make test-unit         # Run fast unit tests only
 make test-integration  # Run container integration tests only
@@ -61,17 +63,19 @@ make clean             # Remove temporary artifacts
 
 - `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
 - `runners/` — Distro-specific setup pipelines and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
-- `Makefile` — Convenience wrapper for `./main.sh` and test runners
-- `scripts/` — Modular setup scripts organized by domain (`apps/`, `security/`, `system/`, `terminal/`, `toolchain/`)
+- `Makefile` — Convenience wrapper for `./main.sh`, test runners, and code quality tools
+- `scripts/` — Modular setup scripts organized by domain (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Package manager and system helper abstractions
 - `scripts/packages.conf` — Cross-distro package mappings
 - `openspec/` — Spec-Driven Development (SDD) capability specifications
 - `tests/` — Bats unit and Docker multi-distro integration tests
+- `.husky/` — Git hooks (`pre-commit` running `lint-staged`, `commit-msg` checking Conventional Commits)
 
 🛠 Requirements
 -------------
 
 - **System Setup**: `sudo`, `git`, `bash`
+- **Development & Code Quality** (optional): `node` and `yarn` (`corepack enable && yarn install` to enable Husky pre-commit hooks, Prettier, and ShellCheck)
 - **Testing Suite** (optional): `docker` (to run `make test` inside isolated distro containers)
 
 ## 📖 More

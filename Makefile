@@ -1,5 +1,5 @@
 # Makefile — Light wrapper around ./main.sh and ./tests/run-tests.sh
-.PHONY: help all test test-coverage test-integration test-unit clean
+.PHONY: help all test test-coverage test-integration test-unit clean lint format
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -27,6 +27,15 @@ test-integration:
 
 test-unit:
 	@./$(TESTS_DIR)/run-tests.sh --unit $(if $(FILTER),--filter=$(FILTER))
+
+# ── Code Quality ─────────────────────────────────────────────────────────────
+
+lint:
+	@yarn lint:sh
+	@yarn lint:bats
+
+format:
+	@yarn format
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 
