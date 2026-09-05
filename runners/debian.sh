@@ -35,6 +35,7 @@ run_all() {
     "terminal/setup-lazydocker.sh:Lazydocker setup"
     "toolchain/setup-neovim.sh:Neovim setup"
     "apps/setup-default-apps.sh:Default applications setup"
+    "desktop/setup-cursor-theme.sh:Cursor theme setup"
   )
 
   run_pipeline "Debian Desktop Setup" "${steps[@]}"

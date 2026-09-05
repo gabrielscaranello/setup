@@ -23,6 +23,7 @@ Available Commands:
   amd                   - Install AMD GPU drivers, firmware and codecs
   browsers              - Install Web Browsers (Chromium, Firefox)
   codecs                - Install Multimedia Codecs and A/V Plugins
+  cursor                - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver               - Install DBeaver
   default-apps          - Configure default desktop applications (MIME / Kitty terminal)
   discord               - Install Discord
@@ -107,6 +108,10 @@ run_module() {
 
     codecs)
       bash "$SCRIPTS_DIR/system/setup-codecs.sh"
+      ;;
+
+    cursor)
+      bash "$SCRIPTS_DIR/desktop/setup-cursor-theme.sh"
       ;;
 
     dbeaver)
