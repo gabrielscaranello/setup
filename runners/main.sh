@@ -35,6 +35,7 @@ Available Commands:
   gitflow               - Install Gitflow CJS
   go                    - Install Golang programming language
   gtk-theme             - Install and configure adw-gtk3-dark GTK theme (GNOME)
+  icon-theme            - Install and configure Papirus-Dark icon theme (GNOME)
   kernel-debian         - Install latest Linux kernel and headers from Debian backports
   kitty                 - Install Kitty terminal emulator
   lazydocker            - Install Lazydocker
@@ -157,6 +158,10 @@ run_module() {
 
     gtk-theme)
       bash "$SCRIPTS_DIR/desktop/setup-gtk-theme.sh"
+      ;;
+
+    icon-theme)
+      bash "$SCRIPTS_DIR/desktop/setup-icon-theme.sh"
       ;;
 
     kernel-debian)
