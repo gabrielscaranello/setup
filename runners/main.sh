@@ -22,6 +22,7 @@ Available Commands:
   all                   - Run complete desktop setup pipeline for current distribution
   amd                   - Install AMD GPU drivers, firmware and codecs
   browsers              - Install Web Browsers (Chromium, Firefox)
+  codecs                - Install Multimedia Codecs and A/V Plugins
   dbeaver               - Install DBeaver
   default-apps          - Configure default desktop applications (MIME / Kitty terminal)
   discord               - Install Discord
@@ -102,6 +103,10 @@ run_module() {
 
   browsers)
     bash "$SCRIPTS_DIR/apps/setup-browsers.sh"
+    ;;
+
+  codecs)
+    bash "$SCRIPTS_DIR/system/setup-codecs.sh"
     ;;
 
   dbeaver)
