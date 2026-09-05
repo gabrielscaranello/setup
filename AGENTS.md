@@ -22,12 +22,14 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 ### 1. Modern Tooling & Package Management
 
 - Use `apt` (never legacy `apt-get`) on Debian.
-- Always use `install_packages <generic_pkg>` to automatically resolve package manager differences via `packages.conf`.
+- Always use `install_packages <generic_pkg>` to automatically resolve distribution package differences via `packages.conf`.
 
 ### 2. Common Reusable Utilities (`scripts/_utils.sh`)
 
 Common operations must reuse helper functions from `scripts/_utils.sh`:
 
+- `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
+- `is_distro <distro>`: Checks whether current system matches target distribution.
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
@@ -40,7 +42,7 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 Third-party repository configurations must reside in their respective distro helper modules:
 
 - **Debian (`scripts/system/debian/_repositories.sh`)**:
-  - `_get_debian_codename`: Resolves Debian release codename (`trixie`, `bookworm`, etc.).
+  - `get_debian_codename`: Resolves Debian release codename (`trixie`, `bookworm`, etc.).
   - `add_debian_backports_repo`: Idempotently configures Debian Backports.
   - `add_debian_vscodium_repo`: Idempotently imports GPG key and adds VSCodium APT source.
   - `add_debian_mozilla_repo`: Idempotently imports Mozilla GPG key, adds source, and sets APT pinning priority.
@@ -67,13 +69,13 @@ All setup scripts, helpers, and orchestrators must strictly adhere to the **SOLI
   - Each internal function must have one, and only one, reason to change. Separate distinct concerns (hardware/environment detection, repository configuration, package installation, 32-bit/multilib compatibility, and service configuration) into dedicated private functions (`_`). Avoid monolithic functions that mix detection, downloading, compiling, configuration, and service enablement.
 - **O — Open/Closed Principle (OCP)**:
   - Scripts and runners must be open for extension, but closed for modification.
-  - Distribution variations and new tools should be added through declarative configuration (`scripts/packages.conf`) and extensible dispatch mechanisms (`case "$pm" in ...`), avoiding modifications to core installer functions.
+  - Distribution variations and new tools should be added through declarative configuration (`scripts/packages.conf`) and extensible dispatch mechanisms (`case "$(get_distro_id)" in ...`), avoiding modifications to core installer functions.
 - **L — Liskov Substitution Principle (LSP)**:
   - Distribution-specific helper and installation functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`) must adhere to a consistent contract: identical expected inputs, standard return codes (0 for success or expected graceful skip, non-zero for fatal failure), idempotency, and honoring execution control flags (such as `*_SKIP_PACKAGE_INSTALL` or `*_FORCE_*`).
 - **I — Interface Segregation Principle (ISP)**:
   - Avoid monolithic interfaces. Distro helper modules (e.g., `_repositories.sh`) should expose fine-grained, dedicated functions for individual repositories rather than huge, all-in-one setup functions. Sourced modules must only expose utilities relevant to their domain.
 - **D — Dependency Inversion Principle (DIP)**:
-  - High-level setup scripts and orchestrators must depend upon abstractions provided by `scripts/_utils.sh` (`install_packages`, `download_file`, `get_desktop_environment`, `get_package_manager`, `packages.conf`) rather than binding directly to low-level package manager primitives (`apt-get`, `dnf`, `pacman`).
+  - High-level setup scripts and orchestrators must depend upon abstractions provided by `scripts/_utils.sh` (`install_packages`, `download_file`, `get_desktop_environment`, `get_distro_id`, `packages.conf`) rather than binding directly to low-level package manager primitives (`apt`, `dnf`, `pacman`).
 
 ---
 
@@ -102,7 +104,7 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
 3. **[main.sh](main.sh)**: Register the new module in `run_module()`, `run_all()` steps, and the `show_help()` documentation. The CLI help in `main.sh` is the single source of truth for available setup commands.
 4. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
-   - Only add entries to `packages.conf` when the package name differs across package managers (`apt`, `dnf`, `pacman`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
+   - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
    - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
 

@@ -26,7 +26,7 @@ Developer runtimes, CLI utilities, and developer fonts (closing the core develop
 
 Prerequisites, kernel backports, graphics drivers, snapshots, and global package sources.
 
-- [x] Base package-manager abstraction (`Debian/apt`, `Fedora/dnf`, `Arch Linux/pacman`) — `scripts/_utils.sh`
+- [x] Base distribution and package-manager abstraction (`get_distro_id`, `packages.conf`) — `scripts/_utils.sh`
 - [x] Configure swap settings and memory tuning — `scripts/setup-swap.sh`
 - [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/setup-timeshift.sh`
 - [x] Implement distribution repository helpers (`scripts/system/debian/_repositories.sh`, `scripts/system/fedora/_repositories.sh`) and backports kernel installation (`scripts/system/debian/setup-kernel.sh`)

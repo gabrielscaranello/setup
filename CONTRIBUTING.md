@@ -55,17 +55,17 @@ source "scripts/_utils.sh" 2>/dev/null || true
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
 - **Rule for One-Line Functions**: Do not create trivial one-line proxy functions if called in only one place. Inline the helper or command directly. Only keep one-line functions if reused across multiple locations.
-- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_desktop_environment`, `get_root_filesystem`, `get_shell_profile`, `install_flatpak_app`, `download_file`, `fetch_url`).
+- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_distro_id`, `is_distro`, `get_desktop_environment`, `get_root_filesystem`, `get_shell_profile`, `install_flatpak_app`, `download_file`, `fetch_url`).
 - **Distribution Repository Helpers**: Reuse distro repository utilities for adding upstream or third-party repositories:
-  - Debian (`scripts/system/debian/_repositories.sh`): `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`.
+  - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`.
 - **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps. When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
 - **SOLID Design Principles**: All scripts and helpers must adhere to SOLID principles:
   - **S (Single Responsibility)**: Small, cohesive private functions (`_`) where each function has one reason to change (decouple detection, repos, installation, 32-bit compatibility, service management).
-  - **O (Open/Closed)**: Open for extension via `packages.conf` and clean dispatchers without modifying core logic.
+  - **O (Open/Closed)**: Open for extension via `packages.conf` and clean dispatchers (`case "$(get_distro_id)" in ...`) without modifying core logic.
   - **L (Liskov Substitution)**: Consistent contract across distro functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`) with matching signatures, exit codes, and flag handling.
   - **I (Interface Segregation)**: Granular, focused repository and utility helpers instead of monolithic all-in-one functions.
-  - **D (Dependency Inversion)**: Rely on `scripts/_utils.sh` abstractions (`install_packages`, `download_file`, `get_package_manager`) rather than invoking raw package managers directly.
+  - **D (Dependency Inversion)**: Rely on `scripts/_utils.sh` abstractions (`install_packages`, `download_file`, `get_distro_id`) rather than invoking raw package managers directly.
 
 - Entrypoint: expose `main()` and finalize with an execution guard:
 
@@ -83,7 +83,7 @@ fi
   - **Debian 13 (Trixie)** (`apt`)
   - **Fedora 44** (`dnf`)
   - **Arch Linux** (`pacman` / Rolling)
-- Branch by package manager via `_get_package_manager` from `_utils.sh` — do not hard-code.
+- Branch by distribution ID via `get_distro_id` from `_utils.sh` — do not hard-code.
 
 - Use `/tmp/<package>` for temporary builds and ensure `make clean` removes artifacts.
 
@@ -100,8 +100,8 @@ shellcheck -x scripts/*.sh
 ## 📦 Package Mappings (`scripts/packages.conf`)
 
 Cross-distribution package discrepancies must be registered in `scripts/packages.conf`:
-- **Format**: `GENERIC_NAME | APT_PACKAGE | DNF_PACKAGE | PACMAN_PACKAGE`
-- **Exclusivity**: Only add entries when package names differ across package managers or when unsupported (`-`) on a distro. Identical names are resolved automatically by fallback and should NOT be listed.
+- **Format**: `GENERIC_NAME | DEBIAN | FEDORA | ARCH`
+- **Exclusivity**: Only add entries when package names differ across distributions or when unsupported (`-`) on a distro. Identical names are resolved automatically by fallback and should NOT be listed.
 - **Formatting**: Must maintain alphabetical order by generic name, preserve table column alignment, and ensure at least one space before and after every `|` separator.
 
 ## 🔁 Script dependencies

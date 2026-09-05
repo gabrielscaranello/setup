@@ -73,22 +73,24 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   ```
 - **Public Utilities & Helper Catalog (`scripts/_utils.sh`)**:
   Always reuse existing helpers from `scripts/_utils.sh` instead of reimplementing or calling raw tools directly:
-  1. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across `apt`, `dnf`, and `pacman` and installs them idempotently.
-  2. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
-  3. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
-  4. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
-  5. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
-  6. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
-  7. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+  1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
+  2. [`is_distro <distro>`](../../../scripts/_utils.sh): Checks whether current system matches target distribution.
+  3. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`) and installs them idempotently.
+  4. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
+  5. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
+  6. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
+  7. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
+  8. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
+  9. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - **Distribution-Specific Repository Utilities**:
   When configuring third-party or upstream repositories, reuse or register functions in:
-  - **Debian (`scripts/system/debian/_repositories.sh`)**: `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`.
+  - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_virtualbox_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
   - **Desktop Environment Handling**: When a step depends on DE, check `get_desktop_environment`. If `unknown`, do not execute DE-specific actions.
-  - **SOLID Principles**: All scripts must strictly apply SOLID (Single Responsibility per function, Open/Closed via packages.conf, Liskov Substitution across distros, Interface Segregation via granular repo helpers, and Dependency Inversion via `_utils.sh` abstractions).
+  - **SOLID Principles**: All scripts must strictly apply SOLID (Single Responsibility per function, Open/Closed via packages.conf and `get_distro_id` dispatch, Liskov Substitution across distros, Interface Segregation via granular repo helpers, and Dependency Inversion via `_utils.sh` abstractions).
 - **Entrypoint & Execution Guard**:
   ```bash
   main() {
@@ -106,11 +108,11 @@ If package names differ across distributions or are unavailable in one:
 
 - Add an entry to `scripts/packages.conf`:
   ```text
-  GENERIC_NAME | APT_PACKAGE | DNF_PACKAGE | PACMAN_PACKAGE
+  GENERIC_NAME | DEBIAN | FEDORA | ARCH
   ```
 - Use `-` when a package is unsupported on a specific distro.
 - Keep strictly **alphabetical order** by generic name, preserve table column alignment, and ensure at least one space before and after every `|`.
-- **Do not add** packages that share the exact same name across all three package managers (`apt`, `dnf`, `pacman`).
+- **Do not add** packages that share the exact same name across all three distributions (`debian`, `fedora`, `arch`).
 
 ---
 
@@ -119,7 +121,7 @@ If package names differ across distributions or are unavailable in one:
 All code paths and conditional branches must be thoroughly tested:
 
 1. **Unit Tests (`tests/unit/<domain>/<feature>.bats`)**:
-   - **100% Branch Coverage**: Test all `if`/`elif`/`else` branches, error cases, and distro branches (`apt`, `dnf`, `pacman`, unsupported distro).
+   - **100% Branch Coverage**: Test all `if`/`elif`/`else` branches, error cases, and distro branches (`debian`, `fedora`, `arch`, unsupported distro).
    - Test Desktop Environment conditionals (`gnome`, `plasma`, `unknown`).
    - Mock external utilities and verify flag logic, package manager resolution, and fail-fast/exit-code behavior on errors.
 2. **Integration Tests (`tests/integration/<domain>/<feature>.bats`)**:
