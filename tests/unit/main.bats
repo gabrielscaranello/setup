@@ -53,6 +53,10 @@ setup() {
   run run_module "nvidia"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-nvidia.sh" ]]
+
+  run run_module "amd"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "setup-amd.sh" ]]
 }
 
 @test "run_all dispatches to debian runner when package manager is apt" {

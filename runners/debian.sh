@@ -9,6 +9,7 @@ run_all() {
     "system/setup-timeshift.sh:Timeshift setup"
     "system/debian/setup-kernel.sh:Debian backports kernel setup"
     "system/setup-nvidia.sh:NVIDIA graphics drivers setup"
+    "system/setup-amd.sh:AMD graphics drivers and codecs setup"
     "toolchain/setup-docker.sh:Docker setup"
     "system/setup-flatpak.sh:Flatpak setup"
     "security/setup-firewall.sh:Firewall setup"

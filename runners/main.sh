@@ -20,6 +20,7 @@ Usage:
 Available Commands:
   help                  - Show this help message
   all                   - Run complete desktop setup pipeline for current distribution
+  amd                   - Install AMD GPU drivers, firmware and codecs
   browsers              - Install Web Browsers (Chromium, Firefox)
   dbeaver               - Install DBeaver
   default-apps          - Configure default desktop applications (MIME / Kitty terminal)
@@ -92,6 +93,10 @@ run_module() {
 
   all)
     run_all
+    ;;
+
+  amd)
+    bash "$SCRIPTS_DIR/system/setup-amd.sh"
     ;;
 
   browsers)

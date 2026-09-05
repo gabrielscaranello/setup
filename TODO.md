@@ -33,7 +33,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 - [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
 - [x] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` / `firewall-config` on GNOME, and `plasma-firewall` on KDE Plasma) — `scripts/setup-firewall.sh`
 - [x] Install NVIDIA graphics drivers and hybrid GPU tools (Debian backports, `switcheroo-control` & `prime-run`) — `scripts/system/setup-nvidia.sh` _(verified via container test suite; pending bare-metal hardware validation)_
-- [ ] Configure AMD graphics packages, firmware and codecs (`firmware-amd-graphics` on Debian, `mesa-va-drivers-freeworld` on Fedora, `vulkan-radeon` on Arch Linux) — `scripts/system/setup-amd.sh`
+- [x] Configure AMD graphics packages, firmware and codecs (`firmware-amd-graphics` on Debian, `mesa-va-drivers-freeworld` on Fedora, `vulkan-radeon` on Arch Linux) — `scripts/system/setup-amd.sh`
 - [ ] Install multimedia codecs and audio/video plugins across all distros (`Debian`, `Fedora`, `Arch Linux` — `FFmpeg`, `GStreamer` good/bad/ugly/libav, `libavcodec`) — `scripts/setup-codecs.sh`
 
 ## 🔵 Phase 3: Base System Packages & Desktop Environment (DE)
