@@ -36,6 +36,7 @@ run_all() {
     "toolchain/setup-neovim.sh:Neovim setup"
     "apps/setup-default-apps.sh:Default applications setup"
     "desktop/setup-cursor-theme.sh:Cursor theme setup"
+    "desktop/setup-gtk-theme.sh:GTK theme setup"
   )
 
   run_pipeline "Debian Desktop Setup" "${steps[@]}"

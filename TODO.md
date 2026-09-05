@@ -71,7 +71,7 @@ General desktop productivity, database management, and gaming software.
 Desktop theming, shell extensions, and interface preferences for target environments.
 
 - [x] Implement custom cursor theme installation (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-cursor-theme.sh`
-- [ ] Implement GTK theme installation (`GNOME`)
+- [x] Implement GTK theme installation (`GNOME`) — `scripts/desktop/setup-gtk-theme.sh`
 - [ ] Implement icon theme installation (`GNOME`)
 - [ ] Implement GNOME shell extensions installation
 - [ ] Implement desktop environment preferences script (`GNOME`, `KDE Plasma`)

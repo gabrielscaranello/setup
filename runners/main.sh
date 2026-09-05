@@ -34,6 +34,7 @@ Available Commands:
   gimp                  - Install GIMP image editor
   gitflow               - Install Gitflow CJS
   go                    - Install Golang programming language
+  gtk-theme             - Install and configure adw-gtk3-dark GTK theme (GNOME)
   kernel-debian         - Install latest Linux kernel and headers from Debian backports
   kitty                 - Install Kitty terminal emulator
   lazydocker            - Install Lazydocker
@@ -152,6 +153,10 @@ run_module() {
 
     go)
       bash "$SCRIPTS_DIR/toolchain/setup-go.sh"
+      ;;
+
+    gtk-theme)
+      bash "$SCRIPTS_DIR/desktop/setup-gtk-theme.sh"
       ;;
 
     kernel-debian)
