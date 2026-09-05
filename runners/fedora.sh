@@ -37,6 +37,7 @@ run_all() {
     "desktop/setup-cursor-theme.sh:Cursor theme setup"
     "desktop/setup-gtk-theme.sh:GTK theme setup"
     "desktop/setup-icon-theme.sh:Icon theme setup"
+    "desktop/setup-gnome-extensions.sh:GNOME extensions setup"
   )
 
   run_pipeline "Fedora Desktop Setup" "${steps[@]}"

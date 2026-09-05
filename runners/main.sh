@@ -33,6 +33,7 @@ Available Commands:
   fonts                 - Install JetBrains Mono Nerd Font
   gimp                  - Install GIMP image editor
   gitflow               - Install Gitflow CJS
+  gnome-extensions      - Install and enable GNOME Shell extensions
   go                    - Install Golang programming language
   gtk-theme             - Install and configure adw-gtk3-dark GTK theme (GNOME)
   icon-theme            - Install and configure Papirus-Dark icon theme (GNOME)
@@ -150,6 +151,10 @@ run_module() {
 
     gitflow)
       bash "$SCRIPTS_DIR/toolchain/setup-gitflow.sh"
+      ;;
+
+    gnome-extensions)
+      bash "$SCRIPTS_DIR/desktop/setup-gnome-extensions.sh"
       ;;
 
     go)

@@ -73,7 +73,7 @@ Desktop theming, shell extensions, and interface preferences for target environm
 - [x] Implement custom cursor theme installation (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-cursor-theme.sh`
 - [x] Implement GTK theme installation (`GNOME`) — `scripts/desktop/setup-gtk-theme.sh`
 - [x] Implement icon theme installation (`GNOME`) — `scripts/desktop/setup-icon-theme.sh`
-- [ ] Implement GNOME shell extensions installation
+- [x] Implement GNOME shell extensions installation — `scripts/desktop/setup-gnome-extensions.sh`
 - [ ] Implement desktop environment preferences script (`GNOME`, `KDE Plasma`)
 - [ ] Implement GNOME extensions configuration script
 
