@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
-source "scripts/system/debian/_repositories.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
+source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
 
 _install_backports_kernel_apt() {
   local codename

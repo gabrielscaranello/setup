@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow repository conventions: source helpers and expose private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 _clone_neovim_source() {
   local git_url="https://github.com/neovim/neovim"
@@ -88,18 +88,18 @@ _install_neovim() {
   local distro="$1"
 
   case "$distro" in
-  fedora | arch)
-    _install_neovim_from_repo
-    ;;
-  debian)
-    _ensure_rust
-    _install_build_deps
-    _install_neovim_from_source
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    fedora | arch)
+      _install_neovim_from_repo
+      ;;
+    debian)
+      _ensure_rust
+      _install_build_deps
+      _install_neovim_from_source
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 
@@ -112,15 +112,15 @@ _install_runtime_deps() {
 
   # Distro-specific independent dependencies
   case "$distro" in
-  debian)
-    install_packages luarocks python3 python-venv
-    ;;
-  fedora)
-    install_packages luarocks cargo lua-5.1
-    ;;
-  arch)
-    install_packages build-tools rust tree-sitter-cli luarocks
-    ;;
+    debian)
+      install_packages luarocks python3 python-venv
+      ;;
+    fedora)
+      install_packages luarocks cargo lua-5.1
+      ;;
+    arch)
+      install_packages build-tools rust tree-sitter-cli luarocks
+      ;;
   esac
 }
 

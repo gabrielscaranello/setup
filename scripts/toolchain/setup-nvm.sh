@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 NODE_VERSION=24
 NVM_VERSION=0.40.3
@@ -19,7 +19,7 @@ _install_nvm_script() {
   echo "Installing nvm via upstream install script..."
   # NVM_PROFILE=/dev/null prevents the installer from auto-modifying shell profile
   # files — we handle that ourselves idempotently in _setup_shell_profile
-  if command -v curl >/dev/null 2>&1; then
+  if command -v curl > /dev/null 2>&1; then
     curl -fsSL "$NVM_INSTALL_URL" | NVM_PROFILE=/dev/null bash
   else
     wget -qO- "$NVM_INSTALL_URL" | NVM_PROFILE=/dev/null bash
@@ -30,7 +30,7 @@ _setup_shell_profile() {
   local profile
   profile="$(get_shell_profile)"
 
-  if grep -q 'NVM_DIR' "$profile" 2>/dev/null; then
+  if grep -q 'NVM_DIR' "$profile" 2> /dev/null; then
     echo "nvm already configured in $profile, skipping"
     return 0
   fi
@@ -72,9 +72,9 @@ _install_arch_nvm() {
 
 _enable_corepack() {
   echo "Enabling corepack"
-  if command -v corepack >/dev/null 2>&1; then
+  if command -v corepack > /dev/null 2>&1; then
     corepack enable
-  elif command -v node >/dev/null 2>&1; then
+  elif command -v node > /dev/null 2>&1; then
     node -e "try{require('child_process').execSync('corepack enable',{stdio:'inherit'})}catch(e){}"
   fi
 }
@@ -115,16 +115,16 @@ _install_nvm() {
   }
 
   case "$distro" in
-  arch)
-    _install_arch_nvm
-    ;;
-  debian | fedora)
-    _install_nvm_script
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    arch)
+      _install_arch_nvm
+      ;;
+    debian | fedora)
+      _install_nvm_script
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

@@ -81,4 +81,3 @@ make clean             # Remove temporary artifacts
 - See [AGENTS.md](AGENTS.md) for operational AI rules and architectural governance standards.
 
 Made with ❤️ — happy hacking!
-

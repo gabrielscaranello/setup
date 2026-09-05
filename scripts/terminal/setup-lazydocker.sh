@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 LAZYDOCKER_API_URL="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
 
@@ -14,12 +14,12 @@ _fetch_remote_version() {
 }
 
 _get_local_version() {
-  if command -v lazydocker >/dev/null 2>&1; then
-    lazydocker --version 2>/dev/null | grep -Po 'version=\K[^,]*' || true
+  if command -v lazydocker > /dev/null 2>&1; then
+    lazydocker --version 2> /dev/null | grep -Po 'version=\K[^,]*' || true
   elif [ -x "/usr/local/bin/lazydocker" ]; then
-    /usr/local/bin/lazydocker --version 2>/dev/null | grep -Po 'version=\K[^,]*' || true
+    /usr/local/bin/lazydocker --version 2> /dev/null | grep -Po 'version=\K[^,]*' || true
   elif [ -x "$HOME/.local/bin/lazydocker" ]; then
-    "$HOME/.local/bin/lazydocker" --version 2>/dev/null | grep -Po 'version=\K[^,]*' || true
+    "$HOME/.local/bin/lazydocker" --version 2> /dev/null | grep -Po 'version=\K[^,]*' || true
   fi
 }
 
@@ -42,9 +42,9 @@ _resolve_lazydocker_arch() {
   local arch
   arch="$(uname -m)"
   case "$arch" in
-  i386 | i686) echo "x86" ;;
-  aarch64 | arm64) echo "arm64" ;;
-  *) echo "$arch" ;;
+    i386 | i686) echo "x86" ;;
+    aarch64 | arm64) echo "arm64" ;;
+    *) echo "$arch" ;;
   esac
 }
 
@@ -115,16 +115,16 @@ _install_lazydocker() {
   }
 
   case "$distro" in
-  arch)
-    _install_lazydocker_repo
-    ;;
-  debian | fedora)
-    _install_lazydocker_binary
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    arch)
+      _install_lazydocker_repo
+      ;;
+    debian | fedora)
+      _install_lazydocker_binary
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

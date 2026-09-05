@@ -1,0 +1,23 @@
+{
+  "name": "setup",
+  "version": "1.0.0",
+  "description": "Modular and idempotent bash setup scripts for configuring Linux desktop development environments",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "prepare": "husky",
+    "format": "prettier --write \"**/*.{md,sh}\" --ignore-path .gitignore",
+    "lint:sh": "shellcheck -x scripts/**/*.sh",
+    "lint:bats": "shellcheck --severity=warning -e SC2076 tests/**/*.bats",
+    "lint": "yarn lint:sh && yarn lint:bats"
+  },
+  "devDependencies": {
+    "git-commit-msg-linter": "^5.0.9",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-sh": "^0.19.0",
+    "shellcheck": "^4.1.0"
+  },
+  "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e"
+}

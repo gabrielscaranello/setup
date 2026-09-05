@@ -3,27 +3,26 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
-source "scripts/system/arch/_repositories.sh" 2>/dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
-
+source "scripts/_utils.sh" 2> /dev/null || true
+source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
+source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
 _install_proton_manager() {
   local de
   de="$(get_desktop_environment)"
 
   case "$de" in
-  gnome)
-    echo "Desktop environment is GNOME: installing ProtonPlus (GTK4/Libadwaita)..."
-    install_flatpak_app "com.vysp3r.ProtonPlus" "ProtonPlus"
-    ;;
-  plasma)
-    echo "Desktop environment is KDE Plasma: installing ProtonUp-Qt (Qt)..."
-    install_flatpak_app "net.davidotek.pupgui2" "ProtonUp-Qt"
-    ;;
-  *)
-    echo "Unrecognized desktop environment: $de. Skipping Proton manager setup."
-    ;;
+    gnome)
+      echo "Desktop environment is GNOME: installing ProtonPlus (GTK4/Libadwaita)..."
+      install_flatpak_app "com.vysp3r.ProtonPlus" "ProtonPlus"
+      ;;
+    plasma)
+      echo "Desktop environment is KDE Plasma: installing ProtonUp-Qt (Qt)..."
+      install_flatpak_app "net.davidotek.pupgui2" "ProtonUp-Qt"
+      ;;
+    *)
+      echo "Unrecognized desktop environment: $de. Skipping Proton manager setup."
+      ;;
   esac
 }
 
@@ -50,9 +49,9 @@ _install_steam_packages() {
   local distro="$1"
 
   case "$distro" in
-  debian) _install_debian_steam ;;
-  fedora) _install_fedora_steam ;;
-  arch) _install_arch_steam ;;
+    debian) _install_debian_steam ;;
+    fedora) _install_fedora_steam ;;
+    arch) _install_arch_steam ;;
   esac
 }
 
@@ -64,11 +63,11 @@ _setup_steam() {
   }
 
   case "$distro" in
-  debian | fedora | arch) ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    debian | fedora | arch) ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 
   _install_steam_packages "$distro" || return 1

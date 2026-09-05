@@ -3,15 +3,15 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 GITFLOW_VERSION="v2.2.1"
 INSTALLER_URL="https://raw.githubusercontent.com/CJ-Systems/gitflow-cjs/refs/heads/legacy-develop/contrib/gitflow-installer.sh"
 
 _is_gitflow_installed() {
-  if command -v git-flow >/dev/null 2>&1; then
+  if command -v git-flow > /dev/null 2>&1; then
     local current_version
-    current_version="$(git flow version 2>/dev/null || true)"
+    current_version="$(git flow version 2> /dev/null || true)"
     if [[ "$current_version" =~ $GITFLOW_VERSION ]]; then
       return 0
     fi

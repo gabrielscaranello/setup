@@ -3,13 +3,13 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 RUSTUP_URL="https://sh.rustup.rs"
 CARGO_PACKAGES=("tree-sitter-cli")
 
 _install_rustup() {
-  if command -v rustup >/dev/null 2>&1; then
+  if command -v rustup > /dev/null 2>&1; then
     echo "Rustup is already installed."
     return 0
   fi
@@ -22,7 +22,7 @@ _setup_shell_profile() {
   local profile
   profile="$(get_shell_profile)"
 
-  if grep -q 'cargo/env' "$profile" 2>/dev/null; then
+  if grep -q 'cargo/env' "$profile" 2> /dev/null; then
     echo "Rust/cargo already configured in $profile, skipping"
     return 0
   fi
@@ -42,7 +42,7 @@ _source_cargo() {
     return 0
   fi
 
-  if command -v cargo >/dev/null 2>&1; then
+  if command -v cargo > /dev/null 2>&1; then
     return 0
   fi
 
@@ -58,7 +58,7 @@ _install_cargo_packages() {
 
   echo "Installing cargo packages: ${CARGO_PACKAGES[*]}"
   for pkg in "${CARGO_PACKAGES[@]}"; do
-    if cargo install --list 2>/dev/null | grep -q "^${pkg} "; then
+    if cargo install --list 2> /dev/null | grep -q "^${pkg} "; then
       echo "$pkg already installed, skipping"
     else
       echo "Installing $pkg via cargo..."
@@ -74,7 +74,7 @@ main() {
   _install_rustup
   _setup_shell_profile
   _source_cargo
-  rustup default stable 2>/dev/null || true
+  rustup default stable 2> /dev/null || true
   _install_cargo_packages
 
   echo "setup-rust complete"

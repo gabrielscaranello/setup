@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 FONT_ARCHIVE="JetBrainsMono.zip"
 DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${FONT_ARCHIVE}"
@@ -11,11 +11,11 @@ TARGET_DIR="$HOME/.fonts"
 
 _is_font_installed() {
   if [ -d "$TARGET_DIR" ]; then
-    if ls "$TARGET_DIR"/JetBrainsMonoNerdFont*.ttf >/dev/null 2>&1; then
+    if ls "$TARGET_DIR"/JetBrainsMonoNerdFont*.ttf > /dev/null 2>&1; then
       return 0
     fi
   fi
-  if command -v fc-list >/dev/null 2>&1; then
+  if command -v fc-list > /dev/null 2>&1; then
     if fc-list : family | grep -qi "JetBrainsMono Nerd Font"; then
       return 0
     fi
@@ -25,8 +25,8 @@ _is_font_installed() {
 
 _update_font_cache() {
   echo "Updating font cache..."
-  if command -v fc-cache >/dev/null 2>&1; then
-    fc-cache -f "$TARGET_DIR" >/dev/null 2>&1 || fc-cache -f >/dev/null 2>&1 || true
+  if command -v fc-cache > /dev/null 2>&1; then
+    fc-cache -f "$TARGET_DIR" > /dev/null 2>&1 || fc-cache -f > /dev/null 2>&1 || true
   fi
 }
 
@@ -92,17 +92,17 @@ _install_fonts() {
   _install_distro_fonts
 
   case "$distro" in
-  arch)
-    _install_fonts_repo
-    ;;
-  debian | fedora)
-    install_packages curl wget unzip fontconfig || true
-    _install_fonts_from_upstream
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    arch)
+      _install_fonts_repo
+      ;;
+    debian | fedora)
+      install_packages curl wget unzip fontconfig || true
+      _install_fonts_from_upstream
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

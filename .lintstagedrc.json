@@ -1,0 +1,5 @@
+{
+  "*.{md,json}": ["prettier --write"],
+  "*.sh": ["prettier --write", "shellcheck -x"],
+  "*.bats": ["shellcheck --severity=warning -e SC2076"]
+}

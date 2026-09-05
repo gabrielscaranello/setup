@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 _fetch_remote_version() {
   local version_url="https://sw.kovidgoyal.net/kitty/current-version.txt"
@@ -15,7 +15,7 @@ _fetch_remote_version() {
 _get_local_version() {
   local bin_path="$HOME/.local/kitty.app/bin/kitty"
   if [ -x "$bin_path" ]; then
-    "$bin_path" --version 2>/dev/null | awk '{print $2}' || true
+    "$bin_path" --version 2> /dev/null | awk '{print $2}' || true
   fi
 }
 
@@ -47,8 +47,8 @@ _link_binary() {
 
   if [ -w "/usr/local/bin" ]; then
     ln -sf "$src" "/usr/local/bin/$name"
-  elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-    sudo ln -sf "$src" "/usr/local/bin/$name" 2>/dev/null || true
+  elif command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
+    sudo ln -sf "$src" "/usr/local/bin/$name" 2> /dev/null || true
   fi
 }
 
@@ -76,10 +76,10 @@ _install_desktop_entries() {
   fi
 
   if [ -f "$icon_path" ]; then
-    sed -i "s|Icon=kitty|Icon=${icon_path}|g" "$apps_dir"/kitty*.desktop 2>/dev/null || true
+    sed -i "s|Icon=kitty|Icon=${icon_path}|g" "$apps_dir"/kitty*.desktop 2> /dev/null || true
   fi
   if [ -x "$bin_kitty" ]; then
-    sed -i "s|Exec=kitty|Exec=${bin_kitty}|g" "$apps_dir"/kitty*.desktop 2>/dev/null || true
+    sed -i "s|Exec=kitty|Exec=${bin_kitty}|g" "$apps_dir"/kitty*.desktop 2> /dev/null || true
   fi
 }
 
@@ -108,9 +108,9 @@ _install_kitty_binary() {
 
   local installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
 
-  if command -v curl >/dev/null 2>&1; then
+  if command -v curl > /dev/null 2>&1; then
     curl -fsSL "$installer_url" | sh /dev/stdin launch=n
-  elif command -v wget >/dev/null 2>&1; then
+  elif command -v wget > /dev/null 2>&1; then
     wget -qO- "$installer_url" | sh /dev/stdin launch=n
   else
     echo "Neither curl nor wget available to download kitty" >&2
@@ -135,16 +135,16 @@ _install_kitty() {
   }
 
   case "$distro" in
-  arch | fedora)
-    _install_kitty_repo
-    ;;
-  debian)
-    _install_kitty_binary
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    arch | fedora)
+      _install_kitty_repo
+      ;;
+    debian)
+      _install_kitty_binary
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

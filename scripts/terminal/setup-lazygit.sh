@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 LAZYGIT_API_URL="https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
 
@@ -14,10 +14,10 @@ _fetch_remote_version() {
 }
 
 _get_local_version() {
-  if command -v lazygit >/dev/null 2>&1; then
-    lazygit --version 2>/dev/null | grep -Po 'version=\K[^,]*' || true
+  if command -v lazygit > /dev/null 2>&1; then
+    lazygit --version 2> /dev/null | grep -Po 'version=\K[^,]*' || true
   elif [ -x "/usr/local/bin/lazygit" ]; then
-    /usr/local/bin/lazygit --version 2>/dev/null | grep -Po 'version=\K[^,]*' || true
+    /usr/local/bin/lazygit --version 2> /dev/null | grep -Po 'version=\K[^,]*' || true
   fi
 }
 
@@ -40,10 +40,10 @@ _resolve_lazygit_arch() {
   local arch
   arch="$(uname -m)"
   case "$arch" in
-  x86_64) echo "x86_64" ;;
-  aarch64 | arm64) echo "arm64" ;;
-  i386 | i686) echo "32-bit" ;;
-  *) echo "$arch" ;;
+    x86_64) echo "x86_64" ;;
+    aarch64 | arm64) echo "arm64" ;;
+    i386 | i686) echo "32-bit" ;;
+    *) echo "$arch" ;;
   esac
 }
 
@@ -113,16 +113,16 @@ _install_lazygit() {
   }
 
   case "$distro" in
-  arch)
-    _install_lazygit_repo
-    ;;
-  debian | fedora)
-    _install_lazygit_binary
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    arch)
+      _install_lazygit_repo
+      ;;
+    debian | fedora)
+      _install_lazygit_binary
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

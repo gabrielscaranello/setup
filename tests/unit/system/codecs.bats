@@ -11,13 +11,13 @@ setup() {
   }
   run main
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported distribution for codecs setup." ]]
+  [[ "$output" =~ Unsupported\ distribution\ for\ codecs\ setup\. ]]
 }
 
 @test "main configures repositories on Fedora before installing packages" {
   get_distro_id() { echo "fedora"; }
-  
-  _configure_fedora_repos() {
+
+  add_fedora_rpmfusion_repo() {
     echo "rpmfusion configured"
   }
 
@@ -34,7 +34,7 @@ setup() {
 @test "main skips repository configuration on Debian" {
   get_distro_id() { echo "debian"; }
 
-  _configure_fedora_repos() {
+  add_fedora_rpmfusion_repo() {
     echo "FAIL: Should not be called on Debian"
     return 1
   }
@@ -52,7 +52,7 @@ setup() {
 @test "main skips repository configuration on Arch Linux" {
   get_distro_id() { echo "arch"; }
 
-  _configure_fedora_repos() {
+  add_fedora_rpmfusion_repo() {
     echo "FAIL: Should not be called on Arch Linux"
     return 1
   }
@@ -65,14 +65,4 @@ setup() {
   [ "$status" -eq 0 ]
   [[ ! "$output" =~ "FAIL" ]]
   [[ "$output" =~ "packages installed" ]]
-}
-
-@test "_configure_fedora_repos calls add_fedora_rpmfusion_repo" {
-  add_fedora_rpmfusion_repo() {
-    echo "called rpmfusion helper"
-  }
-  
-  run _configure_fedora_repos
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called rpmfusion helper" ]]
 }

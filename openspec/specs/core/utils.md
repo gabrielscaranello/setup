@@ -11,6 +11,7 @@ Provides reusable, distribution-agnostic helper functions for system detection, 
 ### Requirement: Distribution & Package Manager Detection
 
 The utility library SHALL detect the operating system distribution via `/etc/os-release` (with fallback to `/usr/lib/os-release` and configurable via `OS_RELEASE_PATH` for testing), exposing:
+
 - `get_distro_id`: returns the exact distribution identifier (`debian`, `fedora`, `arch`, or derivative/unsupported IDs)
 - `is_distro <id>`: returns 0 if the current distribution matches the specified ID
 - `_get_package_manager`: internal helper resolving the package manager command (`apt`, `dnf`, `pacman`) for package execution

@@ -50,7 +50,7 @@ set -euo pipefail
 - Source helpers (near the top):
 
 ```bash
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 ```
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
@@ -72,7 +72,9 @@ source "scripts/_utils.sh" 2>/dev/null || true
 ```bash
 main "$@"
 ```
+
 or (when loaded in test suites):
+
 ```bash
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
@@ -100,6 +102,7 @@ shellcheck -x scripts/*.sh
 ## 📦 Package Mappings (`scripts/packages.conf`)
 
 Cross-distribution package discrepancies must be registered in `scripts/packages.conf`:
+
 - **Format**: `GENERIC_NAME | DEBIAN | FEDORA | ARCH`
 - **Exclusivity**: Only add entries when package names differ across distributions or when unsupported (`-`) on a distro. Identical names are resolved automatically by fallback and should NOT be listed.
 - **Formatting**: Must maintain alphabetical order by generic name, preserve table column alignment, and ensure at least one space before and after every `|` separator.
@@ -180,7 +183,7 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 ```bash
 #!/bin/bash
 set -euo pipefail
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 _do_something() {
   echo "Installing foo..."

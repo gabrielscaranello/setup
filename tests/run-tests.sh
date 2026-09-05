@@ -42,7 +42,7 @@ for arg in "$@"; do
     --filter=*)
       SELECTED_FILTER="${arg#*=}"
       ;;
-    -h|--help)
+    -h | --help)
       _show_help
       exit 0
       ;;
@@ -61,11 +61,11 @@ if [[ "$RUN_UNIT" -eq 0 && "$RUN_INTEGRATION" -eq 0 ]]; then
 fi
 
 _check_docker() {
-  if ! command -v docker >/dev/null 2>&1; then
+  if ! command -v docker > /dev/null 2>&1; then
     echo "Error: docker is not installed or not in PATH." >&2
     exit 1
   fi
-  if ! docker info >/dev/null 2>&1; then
+  if ! docker info > /dev/null 2>&1; then
     echo "Error: docker daemon is not running or current user lacks permissions." >&2
     exit 1
   fi
@@ -73,11 +73,11 @@ _check_docker() {
 
 _detect_host_resources() {
   local total_cpus
-  total_cpus="$(nproc 2>/dev/null || echo 1)"
+  total_cpus="$(nproc 2> /dev/null || echo 1)"
   ALLOCATED_CPUS="$(LC_ALL=C awk -v c="$total_cpus" 'BEGIN { printf "%.2f", (c * 0.8 < 1 ? 1 : c * 0.8) }')"
 
   local total_mem_kb
-  total_mem_kb="$(grep MemTotal /proc/meminfo 2>/dev/null | awk '{print $2}' || echo 0)"
+  total_mem_kb="$(grep MemTotal /proc/meminfo 2> /dev/null | awk '{print $2}' || echo 0)"
   if [[ "$total_mem_kb" -gt 0 ]]; then
     ALLOCATED_MEM_BYTES="$(LC_ALL=C awk -v m="$total_mem_kb" 'BEGIN { printf "%.0f", (m * 1024 * 0.8) }')"
     TMPFS_SIZE_M="$(LC_ALL=C awk -v m="$total_mem_kb" 'BEGIN { sz = int((m / 1024) * 0.25); printf "%dm", (sz < 512 ? 512 : sz) }')"
@@ -159,11 +159,11 @@ _run_unit_tests() {
   fi
 
   # If bats is locally available and coverage is not requested, run directly for extreme speed
-  if [[ "$COVERAGE" -eq 0 ]] && command -v bats >/dev/null 2>&1; then
+  if [[ "$COVERAGE" -eq 0 ]] && command -v bats > /dev/null 2>&1; then
     echo "Running unit tests directly on host..."
     # Create a /setup symlink or execute directly with /setup aliased
     if [[ ! -e /setup ]]; then
-      sudo ln -s "$ROOT_DIR" /setup 2>/dev/null || true
+      sudo ln -s "$ROOT_DIR" /setup 2> /dev/null || true
     fi
     if [[ -e /setup ]]; then
       bats "${unit_tests[@]}"
@@ -173,8 +173,8 @@ _run_unit_tests() {
 
   # Otherwise run inside a lightweight Debian image
   local image="setup-test-debian"
-  if ! docker image inspect "$image" >/dev/null 2>&1; then
-    docker build -q --build-arg USERNAME="$HOST_USER" -f tests/docker/debian.Dockerfile -t "$image" tests/docker >/dev/null
+  if ! docker image inspect "$image" > /dev/null 2>&1; then
+    docker build -q --build-arg USERNAME="$HOST_USER" -f tests/docker/debian.Dockerfile -t "$image" tests/docker > /dev/null
   fi
   _run_bats_container "$image" "unit" "${unit_tests[@]}"
 }
@@ -185,8 +185,8 @@ _run_integration_distro() {
   local image="setup-test-${distro}"
 
   echo "=== Running Integration Tests on ${distro^} ==="
-  if ! docker image inspect "$image" >/dev/null 2>&1; then
-    docker build -q --build-arg USERNAME="$HOST_USER" -f "$dockerfile" -t "$image" tests/docker >/dev/null
+  if ! docker image inspect "$image" > /dev/null 2>&1; then
+    docker build -q --build-arg USERNAME="$HOST_USER" -f "$dockerfile" -t "$image" tests/docker > /dev/null
   fi
 
   local integration_tests=()
@@ -228,7 +228,7 @@ _merge_coverage() {
   fi
 }
 
-HOST_USER="${USER:-$(id -un 2>/dev/null || echo "setupuser")}"
+HOST_USER="${USER:-$(id -un 2> /dev/null || echo "setupuser")}"
 
 main() {
   _check_docker
@@ -242,9 +242,9 @@ main() {
   if [[ "$RUN_INTEGRATION" -eq 1 ]]; then
     if [[ -n "$SELECTED_DISTRO" ]]; then
       case "$SELECTED_DISTRO" in
-        archlinux|arch) _run_integration_distro "archlinux" ;;
-        debian)         _run_integration_distro "debian" ;;
-        fedora)         _run_integration_distro "fedora" ;;
+        archlinux | arch) _run_integration_distro "archlinux" ;;
+        debian) _run_integration_distro "debian" ;;
+        fedora) _run_integration_distro "fedora" ;;
         *)
           echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora" >&2
           exit 1

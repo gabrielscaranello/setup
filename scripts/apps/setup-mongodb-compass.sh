@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 _install_mongodb_compass() {
   local distro
@@ -13,14 +13,14 @@ _install_mongodb_compass() {
   }
 
   case "$distro" in
-  debian | fedora | arch)
-    echo "Installing MongoDB Compass with flatpak..."
-    install_flatpak_app "mongodb.Compass" "MongoDB Compass"
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    debian | fedora | arch)
+      echo "Installing MongoDB Compass with flatpak..."
+      install_flatpak_app "mongodb.Compass" "MongoDB Compass"
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

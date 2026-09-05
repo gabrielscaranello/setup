@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 _install_flatpak_package() {
   echo "Installing flatpak package..."
@@ -14,7 +14,7 @@ _add_flathub_remote() {
   echo "Configuring Flathub remote repository..."
   local flathub_url="https://dl.flathub.org/repo/flathub.flatpakrepo"
 
-  if flatpak remotes --columns=name 2>/dev/null | grep -qx "flathub"; then
+  if flatpak remotes --columns=name 2> /dev/null | grep -qx "flathub"; then
     echo "Flathub remote is already configured, skipping."
     return 0
   fi

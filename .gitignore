@@ -1,3 +1,6 @@
 coverage/
 /tmp/neovim
 *.log
+node_modules/
+.yarn/install-state.gz
+

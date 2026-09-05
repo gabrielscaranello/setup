@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 GRUB_BTRFS_REPO_URL="https://github.com/Antynea/grub-btrfs.git"
 
@@ -21,7 +21,7 @@ _get_documents_dir_name() {
   local documents_dir="Documents"
 
   if [ -f "$users_dir" ]; then
-    documents_dir="$(grep 'XDG_DOCUMENTS_DIR' "$users_dir" 2>/dev/null | awk -F'/' '{print $NF}' | cut -d'"' -f1 || echo "Documents")"
+    documents_dir="$(grep 'XDG_DOCUMENTS_DIR' "$users_dir" 2> /dev/null | awk -F'/' '{print $NF}' | cut -d'"' -f1 || echo "Documents")"
     if [ -z "$documents_dir" ]; then
       documents_dir="Documents"
     fi
@@ -58,7 +58,7 @@ _write_timeshift_config() {
   local target_file="$target_dir/timeshift.json"
 
   sudo mkdir -p "$target_dir"
-  echo "$content" | sudo tee "$target_file" >/dev/null
+  echo "$content" | sudo tee "$target_file" > /dev/null
 }
 
 _deploy_timeshift_config() {
@@ -74,12 +74,12 @@ _deploy_timeshift_config() {
 }
 
 _create_initial_snapshot() {
-  if ! command -v timeshift >/dev/null 2>&1; then
+  if ! command -v timeshift > /dev/null 2>&1; then
     return 0
   fi
 
   echo "Creating initial baseline Timeshift snapshot..."
-  sudo timeshift --create --comments "Initial setup snapshot" --tags D --scripted 2>/dev/null || true
+  sudo timeshift --create --comments "Initial setup snapshot" --tags D --scripted 2> /dev/null || true
 }
 
 _install_grub_btrfs_dependencies() {
@@ -98,9 +98,9 @@ _configure_grub_btrfs_source_config() {
   local distro="$2"
 
   if [ "$distro" = "fedora" ]; then
-    sed -i 's|^#GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig|GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig|' "$target_dir/config" 2>/dev/null || true
-    sed -i 's|^#GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|' "$target_dir/config" 2>/dev/null || true
-    sed -i 's|^#GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|' "$target_dir/config" 2>/dev/null || true
+    sed -i 's|^#GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig|GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig|' "$target_dir/config" 2> /dev/null || true
+    sed -i 's|^#GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|' "$target_dir/config" 2> /dev/null || true
+    sed -i 's|^#GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|' "$target_dir/config" 2> /dev/null || true
   fi
 }
 
@@ -119,8 +119,8 @@ _install_grub_btrfs_from_source() {
   (cd "$build_dir" && sudo make install)
   rm -rf "$build_dir"
 
-  if command -v systemctl >/dev/null 2>&1; then
-    sudo systemctl daemon-reload 2>/dev/null || true
+  if command -v systemctl > /dev/null 2>&1; then
+    sudo systemctl daemon-reload 2> /dev/null || true
   fi
 }
 
@@ -136,10 +136,10 @@ _install_grub_btrfs() {
 }
 
 _get_grub_btrfsd_service_file() {
-  if ! command -v systemctl >/dev/null 2>&1; then
+  if ! command -v systemctl > /dev/null 2>&1; then
     return 0
   fi
-  systemctl show -p FragmentPath grub-btrfsd.service 2>/dev/null | cut -d= -f2 || true
+  systemctl show -p FragmentPath grub-btrfsd.service 2> /dev/null | cut -d= -f2 || true
 }
 
 _patch_grub_btrfsd_service() {
@@ -148,22 +148,22 @@ _patch_grub_btrfsd_service() {
 }
 
 _enable_grub_btrfsd_service() {
-  sudo systemctl stop grub-btrfsd.service 2>/dev/null || true
-  sudo systemctl daemon-reload 2>/dev/null || true
-  sudo systemctl enable --now grub-btrfsd.service 2>/dev/null || true
+  sudo systemctl stop grub-btrfsd.service 2> /dev/null || true
+  sudo systemctl daemon-reload 2> /dev/null || true
+  sudo systemctl enable --now grub-btrfsd.service 2> /dev/null || true
 }
 
 _regenerate_grub_btrfs_menu() {
   if [ -x /etc/grub.d/41_snapshots-btrfs ]; then
     echo "Updating GRUB snapshot menu entries..."
-    sudo /etc/grub.d/41_snapshots-btrfs 2>/dev/null || true
+    sudo /etc/grub.d/41_snapshots-btrfs 2> /dev/null || true
 
-    if command -v grub2-mkconfig >/dev/null 2>&1; then
-      sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2>/dev/null || true
-    elif command -v grub-mkconfig >/dev/null 2>&1; then
-      sudo grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || true
-    elif command -v update-grub >/dev/null 2>&1; then
-      sudo update-grub 2>/dev/null || true
+    if command -v grub2-mkconfig > /dev/null 2>&1; then
+      sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null || true
+    elif command -v grub-mkconfig > /dev/null 2>&1; then
+      sudo grub-mkconfig -o /boot/grub/grub.cfg 2> /dev/null || true
+    elif command -v update-grub > /dev/null 2>&1; then
+      sudo update-grub 2> /dev/null || true
     fi
   fi
 }

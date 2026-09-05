@@ -1,6 +1,7 @@
 # Specification: NVIDIA Graphics Drivers & Hybrid GPU (`scripts/system/setup-nvidia.sh`)
 
 ## Purpose
+
 Detects NVIDIA graphics hardware, configures appropriate distribution repositories (including Debian backports for driver and firmware), installs NVIDIA display drivers, sets up Wayland modesetting and power management systemd services, and configures modern hybrid GPU management via **`switcheroo-control`**, **`prime-run`**, and PCIe Runtime D3 (RTD3) dynamic power management for laptops with dual Intel/AMD + NVIDIA graphics across **Debian 13 (Trixie)**, **Fedora 44**, and **Arch Linux**, completely replacing legacy Optimus and archived switching mechanisms.
 
 > [!NOTE]
@@ -11,12 +12,15 @@ Detects NVIDIA graphics hardware, configures appropriate distribution repositori
 ## Requirements
 
 ### Requirement: Hardware Detection & Defensiveness
+
 The script SHALL strictly inspect hardware before attempting any driver installation:
+
 - Inspect PCI devices via `lspci -nn` matching VGA, 3D, or Display controllers with NVIDIA vendor ID (`10de` or string `nvidia`).
 - **If NO NVIDIA GPU is present**: The script SHALL output an informative message (`"No NVIDIA GPU detected. Skipping NVIDIA driver setup."`) and exit with status code 0 without modifying repositories or installing packages.
 - **Hybrid GPU Detection**: The script SHALL detect whether the system is a hybrid/laptop configuration (presence of an integrated GPU from Intel or AMD alongside the discrete NVIDIA GPU) to configure `switcheroo-control`, `prime-run`, and RTD3 power rules.
 
 ### Requirement: Distribution Packaging Strategy & Debian Backports
+
 When an NVIDIA GPU is confirmed, the script SHALL configure native repositories and install packages per distribution based on `get_distro_id`:
 
 1. **Debian 13 (Trixie) (`debian`)**:
@@ -39,7 +43,9 @@ When an NVIDIA GPU is confirmed, the script SHALL configure native repositories 
    - SHALL exit with code 1 and write an error message to `stderr`.
 
 ### Requirement: Modern Hybrid GPU Architecture (`switcheroo-control` & `prime-run`)
+
 For laptops with hybrid graphics (Intel/AMD iGPU + NVIDIA dGPU), the script SHALL configure the modern Freedesktop-standard PRIME offload stack:
+
 - SHALL install and enable `switcheroo-control` (`switcheroo-control.service`), enabling native desktop launcher integration in GNOME Shell ("Launch using Discrete Graphic Card") and KDE Plasma.
 - SHALL configure the `prime-run` wrapper:
   - On Debian and Arch Linux: install `nvidia-prime` package providing `/usr/bin/prime-run`.
@@ -47,7 +53,9 @@ For laptops with hybrid graphics (Intel/AMD iGPU + NVIDIA dGPU), the script SHAL
 - Legacy Bumblebee, bbswitch, Optimus-Manager, and archived EnvyControl tools SHALL NOT be used.
 
 ### Requirement: Power Management, Modesetting & RTD3 Dynamic Power Off
+
 To prevent crashes on Wayland, ensure seamless suspend/resume, and cut dGPU power consumption to 0W when idle:
+
 - SHALL enable `nvidia-suspend.service`, `nvidia-hibernate.service`, and `nvidia-resume.service` if systemd is active.
 - SHALL configure `options nvidia-drm modeset=1` in `/etc/modprobe.d/nvidia-modeset.conf`.
 - SHALL configure `options nvidia NVreg_PreserveVideoMemoryAllocations=1` in `/etc/modprobe.d/nvidia-power-management.conf`.
@@ -57,7 +65,9 @@ To prevent crashes on Wayland, ensure seamless suspend/resume, and cut dGPU powe
 - On Arch Linux, SHALL verify `nvidia nvidia_modeset nvidia_uvm nvidia_drm` in `/etc/mkinitcpio.conf` if present.
 
 ### Requirement: Testing Isolation & Host Safety
+
 To prevent container build failures, host kernel contamination, or kernel panic during automated testing:
+
 - Automated tests (Bats / Docker containers) SHALL NOT compile or insert proprietary kernel modules (`modprobe nvidia`, `akmods`, `dkms`) into the container or host kernel.
 - **Repository Availability Validation**: Tests SHALL verify that target driver packages exist and resolve in distribution repositories (e.g., `apt-cache show nvidia-driver`, `dnf repoquery akmod-nvidia`, `pacman -Si nvidia-open-dkms`).
 - **Complementary Package Installation**: Tests SHALL validate the installation and configuration of user-space complementary utilities (e.g. `switcheroo-control`).
@@ -68,6 +78,7 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 ## Scenarios
 
 ### Scenario: Running on a machine with no NVIDIA GPU
+
 - **GIVEN** a machine with AMD, Intel, or virtual graphics without an NVIDIA GPU
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL exit with code 0
@@ -75,6 +86,7 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL NOT install driver packages or modify repository sources
 
 ### Scenario: Running on Debian 13 with an NVIDIA GPU
+
 - **GIVEN** a Debian 13 system with an NVIDIA GPU detected (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL ensure `contrib`, `non-free`, and `non-free-firmware` are enabled
@@ -83,6 +95,7 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL configure `nvidia-drm modeset=1` and RTD3 dynamic power management
 
 ### Scenario: Running on Fedora 44 with an NVIDIA GPU
+
 - **GIVEN** a Fedora 44 system with an NVIDIA GPU detected (`get_distro_id` returns `fedora`)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL call `add_fedora_rpmfusion_repo`
@@ -90,6 +103,7 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL configure `nvidia-drm modeset=1` and RTD3 dynamic power management
 
 ### Scenario: Running on Arch Linux with an NVIDIA GPU
+
 - **GIVEN** an Arch Linux system with an NVIDIA GPU detected (`get_distro_id` returns `arch`)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled
@@ -97,6 +111,7 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL configure `nvidia-drm modeset=1` and RTD3 dynamic power management
 
 ### Scenario: Hybrid GPU detected on a laptop
+
 - **GIVEN** a system with an Intel or AMD primary GPU and an NVIDIA secondary GPU
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL install and configure `prime-run`
@@ -104,11 +119,13 @@ To prevent container build failures, host kernel contamination, or kernel panic 
 - **AND** it SHALL enable `switcheroo-control.service`
 
 ### Scenario: Running on an unsupported distribution
+
 - **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
 - **WHEN** `scripts/system/setup-nvidia.sh` is executed
 - **THEN** it SHALL exit with code 1 and write an error to `stderr`
 
 ### Scenario: Running in automated test mode without host hardware
+
 - **GIVEN** a headless testing container or CI environment with `NVIDIA_SKIP_KERNEL_BUILD=1`
 - **WHEN** integration tests run
 - **THEN** they SHALL validate package existence in the repository without triggering kernel module compilation

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
 
 GO_VERSION="1.24.0"
 GO_PACKAGES=("github.com/reteps/dockerfmt@latest")
@@ -12,7 +12,7 @@ _setup_shell_profile() {
   local profile
   profile="$(get_shell_profile)"
 
-  if grep -q '/usr/local/go/bin' "$profile" 2>/dev/null; then
+  if grep -q '/usr/local/go/bin' "$profile" 2> /dev/null; then
     echo "Go PATH already configured in $profile, skipping"
     return 0
   fi
@@ -28,7 +28,7 @@ EOF_PROFILE
 _is_go_installed_from_binary() {
   if [ -x "/usr/local/go/bin/go" ]; then
     local current_version
-    current_version="$(/usr/local/go/bin/go version 2>/dev/null || true)"
+    current_version="$(/usr/local/go/bin/go version 2> /dev/null || true)"
     if [[ "$current_version" =~ go$GO_VERSION ]]; then
       return 0
     fi
@@ -40,11 +40,11 @@ _resolve_go_arch() {
   local arch
   arch="$(uname -m)"
   case "$arch" in
-  x86_64) echo "amd64" ;;
-  aarch64 | arm64) echo "arm64" ;;
-  armv6l) echo "armv6l" ;;
-  i386 | i686) echo "386" ;;
-  *) echo "$arch" ;;
+    x86_64) echo "amd64" ;;
+    aarch64 | arm64) echo "arm64" ;;
+    armv6l) echo "armv6l" ;;
+    i386 | i686) echo "386" ;;
+    *) echo "$arch" ;;
   esac
 }
 
@@ -105,7 +105,7 @@ _install_go_packages() {
   for pkg in "${GO_PACKAGES[@]}"; do
     local bin_name="${pkg##*/}"
     bin_name="${bin_name%@*}"
-    if command -v "$bin_name" >/dev/null 2>&1; then
+    if command -v "$bin_name" > /dev/null 2>&1; then
       echo "$bin_name already installed, skipping"
     else
       echo "Installing $pkg via go install..."
@@ -122,17 +122,17 @@ _install_go() {
   }
 
   case "$distro" in
-  fedora | arch)
-    _install_go_repo
-    ;;
-  debian)
-    install_packages curl wget tar git || true
-    _install_go_from_binary
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    fedora | arch)
+      _install_go_repo
+      ;;
+    debian)
+      install_packages curl wget tar git || true
+      _install_go_from_binary
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 
   _install_go_packages

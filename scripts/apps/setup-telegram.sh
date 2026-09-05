@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
-source "scripts/_utils.sh" 2>/dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
+source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
 TELEGRAM_API_URL="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
 
@@ -16,11 +16,11 @@ _fetch_remote_version() {
 
 _get_local_version() {
   if [ -x "$HOME/.local/opt/telegram-desktop/Telegram" ]; then
-    "$HOME/.local/opt/telegram-desktop/Telegram" --version 2>/dev/null | grep -Po 'Telegram Desktop \K[^ ]*' || true
-  elif command -v telegram-desktop >/dev/null 2>&1; then
-    telegram-desktop --version 2>/dev/null | grep -Po 'Telegram Desktop \K[^ ]*' || true
+    "$HOME/.local/opt/telegram-desktop/Telegram" --version 2> /dev/null | grep -Po 'Telegram Desktop \K[^ ]*' || true
+  elif command -v telegram-desktop > /dev/null 2>&1; then
+    telegram-desktop --version 2> /dev/null | grep -Po 'Telegram Desktop \K[^ ]*' || true
   elif [ -x "$HOME/.local/bin/telegram-desktop" ]; then
-    "$HOME/.local/bin/telegram-desktop" --version 2>/dev/null | grep -Po 'Telegram Desktop \K[^ ]*' || true
+    "$HOME/.local/bin/telegram-desktop" --version 2> /dev/null | grep -Po 'Telegram Desktop \K[^ ]*' || true
   fi
 }
 
@@ -53,7 +53,7 @@ _setup_desktop_integration() {
 
   # Create desktop entry if it doesn't already exist or to point to correct binary
   local desktop_file="$apps_dir/telegramdesktop.desktop"
-  cat <<DESKTOP >"$desktop_file"
+  cat << DESKTOP > "$desktop_file"
 [Desktop Entry]
 Name=Telegram Desktop
 Comment=Official desktop version of Telegram messaging app
@@ -137,16 +137,16 @@ _install_telegram() {
   }
 
   case "$distro" in
-  fedora | arch)
-    _install_telegram_repo "$distro"
-    ;;
-  debian)
-    _install_telegram_binary
-    ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    fedora | arch)
+      _install_telegram_repo "$distro"
+      ;;
+    debian)
+      _install_telegram_binary
+      ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 }
 

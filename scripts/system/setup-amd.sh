@@ -6,38 +6,38 @@ set -euo pipefail
 # NOTE: Hardware Testing Status — This script has been verified via automated unit and
 # container integration tests. Bare-metal validation on physical AMD GPUs/APUs
 # is pending and will be performed to verify real-world hardware edge cases.
-source "scripts/_utils.sh" 2>/dev/null || true
-source "scripts/system/arch/_repositories.sh" 2>/dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
-source "scripts/system/debian/_repositories.sh" 2>/dev/null || true
+source "scripts/_utils.sh" 2> /dev/null || true
+source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
+source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
+source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
 
 _detect_amd_gpu() {
   if [ "${AMD_FORCE_DETECT:-0}" = "1" ]; then
     return 0
   fi
 
-  if ! command -v lspci >/dev/null 2>&1; then
+  if ! command -v lspci > /dev/null 2>&1; then
     return 1
   fi
 
-  lspci -nn 2>/dev/null | grep -iE 'vga|3d|display' | grep -iq "1002" ||
-    lspci 2>/dev/null | grep -iE 'vga|3d|display' | grep -iqE "amd|advanced micro devices|radeon"
+  lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iq "1002" \
+    || lspci 2> /dev/null | grep -iE 'vga|3d|display' | grep -iqE "amd|advanced micro devices|radeon"
 }
 
 _configure_repositories() {
   local distro="$1"
 
   case "$distro" in
-  debian)
-    add_debian_nonfree_repo
-    add_debian_backports_repo
-    ;;
-  fedora)
-    add_fedora_rpmfusion_repo
-    ;;
-  arch)
-    add_arch_multilib_repo
-    ;;
+    debian)
+      add_debian_nonfree_repo
+      add_debian_backports_repo
+      ;;
+    fedora)
+      add_fedora_rpmfusion_repo
+      ;;
+    arch)
+      add_arch_multilib_repo
+      ;;
   esac
 }
 
@@ -54,23 +54,23 @@ _install_arch_amd_packages() {
 
 _swap_fedora_freeworld_drivers() {
   echo "Swapping restricted Mesa VA-API/VDPAU drivers with RPM Fusion freeworld codecs..."
-  if ! rpm -q mesa-va-drivers-freeworld >/dev/null 2>&1; then
-    sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld 2>/dev/null ||
-      sudo dnf install -y --allowerasing mesa-va-drivers-freeworld 2>/dev/null || true
+  if ! rpm -q mesa-va-drivers-freeworld > /dev/null 2>&1; then
+    sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld 2> /dev/null \
+      || sudo dnf install -y --allowerasing mesa-va-drivers-freeworld 2> /dev/null || true
   fi
 
-  if ! rpm -q mesa-vdpau-drivers-freeworld >/dev/null 2>&1; then
-    sudo dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld 2>/dev/null ||
-      sudo dnf install -y --allowerasing mesa-vdpau-drivers-freeworld 2>/dev/null || true
+  if ! rpm -q mesa-vdpau-drivers-freeworld > /dev/null 2>&1; then
+    sudo dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld 2> /dev/null \
+      || sudo dnf install -y --allowerasing mesa-vdpau-drivers-freeworld 2> /dev/null || true
   fi
 }
 
 _install_fedora_32bit_packages() {
-  if rpm -q glibc.i686 >/dev/null 2>&1 || [ "${FEDORA_ENABLE_MULTILIB:-0}" = "1" ]; then
+  if rpm -q glibc.i686 > /dev/null 2>&1 || [ "${FEDORA_ENABLE_MULTILIB:-0}" = "1" ]; then
     echo "Ensuring 32-bit freeworld drivers for gaming on Fedora..."
-    sudo dnf swap -y mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686 2>/dev/null || true
-    sudo dnf swap -y mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686 2>/dev/null || true
-    sudo dnf install -y mesa-vulkan-drivers.i686 2>/dev/null || true
+    sudo dnf swap -y mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686 2> /dev/null || true
+    sudo dnf swap -y mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686 2> /dev/null || true
+    sudo dnf install -y mesa-vulkan-drivers.i686 2> /dev/null || true
   fi
 }
 
@@ -93,17 +93,17 @@ _install_debian_backports_stack() {
     libglx-mesa0 \
     mesa-va-drivers \
     mesa-vdpau-drivers \
-    mesa-vulkan-drivers 2>/dev/null ||
-    install_packages firmware-amd-graphics mesa-va-drivers mesa-vdpau-drivers mesa-vulkan-drivers
+    mesa-vulkan-drivers 2> /dev/null \
+    || install_packages firmware-amd-graphics mesa-va-drivers mesa-vdpau-drivers mesa-vulkan-drivers
 }
 
 _install_debian_32bit_packages() {
   local codename
   codename="$(get_debian_codename)"
-  if command -v dpkg >/dev/null 2>&1 && dpkg --print-foreign-architectures 2>/dev/null | grep -q "i386"; then
+  if command -v dpkg > /dev/null 2>&1 && dpkg --print-foreign-architectures 2> /dev/null | grep -q "i386"; then
     echo "Configuring 32-bit AMD graphics libraries on Debian..."
-    sudo apt install -y -t "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2>/dev/null ||
-      sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2>/dev/null || true
+    sudo apt install -y -t "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null \
+      || sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
   fi
 }
 
@@ -123,9 +123,9 @@ _install_amd_packages() {
   fi
 
   case "$distro" in
-  debian) _install_debian_amd_packages ;;
-  fedora) _install_fedora_amd_packages ;;
-  arch) _install_arch_amd_packages ;;
+    debian) _install_debian_amd_packages ;;
+    fedora) _install_fedora_amd_packages ;;
+    arch) _install_arch_amd_packages ;;
   esac
 }
 
@@ -137,11 +137,11 @@ _setup_amd() {
   }
 
   case "$distro" in
-  debian | fedora | arch) ;;
-  *)
-    echo "Unsupported distribution: $distro" >&2
-    return 1
-    ;;
+    debian | fedora | arch) ;;
+    *)
+      echo "Unsupported distribution: $distro" >&2
+      return 1
+      ;;
   esac
 
   if ! _detect_amd_gpu; then

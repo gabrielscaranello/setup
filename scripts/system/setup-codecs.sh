@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Source utilities
-source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2>/dev/null || true
-source "$(dirname "${BASH_SOURCE[0]}")/fedora/_repositories.sh" 2>/dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/fedora/_repositories.sh" 2> /dev/null || true
 
 main() {
   local distro

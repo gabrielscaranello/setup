@@ -22,7 +22,7 @@ add_fedora_vscodium_repo() {
   fi
 
   echo "Configuring VSCodium repository for DNF..."
-  cat << 'EOF_REPO' | sudo tee "$repo_path" >/dev/null
+  cat << 'EOF_REPO' | sudo tee "$repo_path" > /dev/null
 [gitlab.com_paulcarroty_vscodium_repo]
 name=gitlab.com_paulcarroty_vscodium_repo
 baseurl=https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/
@@ -45,8 +45,8 @@ add_fedora_rpmfusion_repo() {
 
   echo "Configuring RPM Fusion repositories for Fedora..."
   local fedora_version
-  fedora_version="$(rpm -E %fedora 2>/dev/null || echo "rawhide")"
+  fedora_version="$(rpm -E %fedora 2> /dev/null || echo "rawhide")"
   sudo dnf install -y --nogpgcheck \
     "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" \
-    "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" 2>/dev/null || true
+    "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" 2> /dev/null || true
 }

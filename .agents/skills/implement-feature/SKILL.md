@@ -111,26 +111,32 @@ All code paths and conditional branches must be thoroughly tested:
 Before marking any implementation as finished or reporting completion to the user, the AI agent **MUST ALWAYS execute and pass all tests related to the feature**, without exceptions:
 
 1. **Unit Tests for the Feature & Modified Modules**:
+
    ```bash
    ./tests/run-tests.sh --unit --filter=<feature>
    ```
-   *Verify that all unit test cases for the feature pass with 100% branch coverage.*
+
+   _Verify that all unit test cases for the feature pass with 100% branch coverage._
 
 2. **Integration Tests for the Feature (Multi-Distro Validation)**:
+
    ```bash
    ./tests/run-tests.sh --integration --filter=<feature>
    ```
-   *Validate execution inside Debian 13, Fedora 44, and Arch Linux containers. All distro containers must succeed.*
+
+   _Validate execution inside Debian 13, Fedora 44, and Arch Linux containers. All distro containers must succeed._
 
 3. **Full Unit Test Suite (Regression Prevention)**:
+
    ```bash
    make test-unit
    ```
-   *Ensure no regressions were introduced to other modules.*
+
+   _Ensure no regressions were introduced to other modules._
 
 4. **Linting (when shellcheck is available)**:
    ```bash
-   shellcheck -x scripts/*.sh main.sh tests/*.sh 2>/dev/null || true
+   shellcheck -x scripts/*.sh main.sh tests/*.sh 2> /dev/null || true
    ```
 
 > [!IMPORTANT]
