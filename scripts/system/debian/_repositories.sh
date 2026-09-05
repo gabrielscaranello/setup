@@ -27,10 +27,6 @@ get_debian_codename() {
   echo "trixie"
 }
 
-_get_debian_codename() {
-  get_debian_codename "$@"
-}
-
 _is_debian_backports_configured() {
   local codename="${1:-$(get_debian_codename)}"
   local sources_list="/etc/apt/sources.list"
