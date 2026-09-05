@@ -12,19 +12,19 @@ Installs and configures Steam and modern gaming enhancement tools (compatibility
 
 The installation SHALL strictly target and support:
 
-- **Arch Linux** (`pacman`)
-- **Fedora 44** (`dnf`)
-- **Debian 13 (Trixie)** (`apt` & `flatpak`)
+- **Arch Linux** (`arch`)
+- **Fedora 44** (`fedora`)
+- **Debian 13 (Trixie)** (`debian`)
 
 ### Requirement: Packaging Strategy by Distribution
 
-1. **Debian 13 (`apt` & `flatpak`)**:
+1. **Debian 13 (`debian`)**:
    - To avoid polluting the Debian base system with 32-bit multiarch (`i386`) packages and library conflicts, Steam SHALL be installed via Flatpak (`com.valvesoftware.Steam`).
    - MangoHud and Gamescope for Steam SHALL be installed via their official Flathub Vulkan layer extensions:
      - `org.freedesktop.Platform.VulkanLayer.MangoHud`
      - `org.freedesktop.Platform.VulkanLayer.gamescope`
 
-2. **Fedora 44 (`dnf`)**:
+2. **Fedora 44 (`fedora`)**:
    - SHALL ensure the RPM Fusion Nonfree repository is configured via `add_fedora_rpmfusion_repo` from `scripts/system/fedora/_repositories.sh`.
    - SHALL install native packages via `install_packages`:
      - `steam` (from `rpmfusion-nonfree-steam`)
@@ -32,7 +32,7 @@ The installation SHALL strictly target and support:
      - `gamescope`
      - `gamemode`
 
-3. **Arch Linux (`pacman`)**:
+3. **Arch Linux (`arch`)**:
    - SHALL verify and ensure the `[multilib]` repository is enabled in `/etc/pacman.conf` (uncommenting `[multilib]` and its mirrorlist include if commented) and update pacman database (`pacman -Sy`).
    - SHALL install native packages via `install_packages`:
      - `steam`
@@ -58,20 +58,20 @@ MangoJuice (`io.github.radiolamp.mangojuice`) SHALL be installed via Flatpak (`i
 
 ### Requirement: Cross-Distro Package Mapping (`scripts/packages.conf`)
 
-Package divergences across package managers SHALL be mapped in `scripts/packages.conf`:
+Package divergences across distributions SHALL be mapped in `scripts/packages.conf`:
 
 - `gamemode`:
-  - `apt`: `gamemode`
-  - `dnf`: `gamemode`
-  - `pacman`: `gamemode lib32-gamemode`
+  - `debian`: `gamemode`
+  - `fedora`: `gamemode`
+  - `arch`: `gamemode lib32-gamemode`
 - `mangohud`:
-  - `apt`: `-`
-  - `dnf`: `mangohud mangohud.i686`
-  - `pacman`: `mangohud lib32-mangohud`
+  - `debian`: `-`
+  - `fedora`: `mangohud mangohud.i686`
+  - `arch`: `mangohud lib32-mangohud`
 - `steam`:
-  - `apt`: `-`
-  - `dnf`: `steam`
-  - `pacman`: `steam`
+  - `debian`: `-`
+  - `fedora`: `steam`
+  - `arch`: `steam`
 
 _(Note: `gamescope` shares the exact same package name on all supported managers and is resolved via fallback)_.
 
@@ -81,7 +81,7 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 
 ### Scenario: Running on Debian 13 under GNOME
 
-- **GIVEN** a Debian 13 system running GNOME (`pm="apt"`, `de="gnome"`)
+- **GIVEN** a Debian 13 system running GNOME (`distro="debian"`, `de="gnome"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL install `com.valvesoftware.Steam` via `install_flatpak_app`
 - **AND** it SHALL install `org.freedesktop.Platform.VulkanLayer.MangoHud` and `org.freedesktop.Platform.VulkanLayer.gamescope` via `install_flatpak_app`
@@ -89,14 +89,14 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 
 ### Scenario: Running on Debian 13 under KDE Plasma
 
-- **GIVEN** a Debian 13 system running KDE Plasma (`pm="apt"`, `de="plasma"`)
+- **GIVEN** a Debian 13 system running KDE Plasma (`distro="debian"`, `de="plasma"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL install `com.valvesoftware.Steam` via `install_flatpak_app`
 - **AND** it SHALL install `net.davidotek.pupgui2` via `install_flatpak_app`
 
 ### Scenario: Running on Fedora 44 under GNOME
 
-- **GIVEN** a Fedora 44 system running GNOME (`pm="dnf"`, `de="gnome"`)
+- **GIVEN** a Fedora 44 system running GNOME (`distro="fedora"`, `de="gnome"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL call `add_fedora_rpmfusion_repo`
 - **AND** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode`
@@ -104,7 +104,7 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 
 ### Scenario: Running on Fedora 44 under KDE Plasma
 
-- **GIVEN** a Fedora 44 system running KDE Plasma (`pm="dnf"`, `de="plasma"`)
+- **GIVEN** a Fedora 44 system running KDE Plasma (`distro="fedora"`, `de="plasma"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL call `add_fedora_rpmfusion_repo`
 - **AND** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode`
@@ -112,7 +112,7 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 
 ### Scenario: Running on Arch Linux under GNOME
 
-- **GIVEN** an Arch Linux system running GNOME (`pm="pacman"`, `de="gnome"`)
+- **GIVEN** an Arch Linux system running GNOME (`distro="arch"`, `de="gnome"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled in `/etc/pacman.conf`
 - **AND** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
@@ -120,14 +120,14 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 
 ### Scenario: Running on Arch Linux under KDE Plasma
 
-- **GIVEN** an Arch Linux system running KDE Plasma (`pm="pacman"`, `de="plasma"`)
+- **GIVEN** an Arch Linux system running KDE Plasma (`distro="arch"`, `de="plasma"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled in `/etc/pacman.conf`
 - **AND** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
 - **AND** it SHALL install `net.davidotek.pupgui2` via `install_flatpak_app`
 
-### Scenario: Running on an unsupported package manager
+### Scenario: Running on an unsupported distribution
 
-- **GIVEN** an unsupported distribution or package manager
+- **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL exit with code 1 and write an error to `stderr`

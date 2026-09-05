@@ -23,45 +23,45 @@ _install_firefox_repo() {
 }
 
 _install_firefox() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  dnf | pacman)
+  case "$distro" in
+  fedora | arch)
     _install_firefox_repo
     ;;
-  apt)
+  debian)
     install_packages wget || true
     _install_firefox_apt
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
 }
 
 _install_chromium() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  dnf | pacman)
+  case "$distro" in
+  fedora | arch)
     echo "Installing Chromium from distribution repository..."
     install_packages chromium
     ;;
-  apt)
+  debian)
     echo "Installing Chromium with flatpak..."
     install_flatpak_app "org.chromium.Chromium" "Chromium"
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

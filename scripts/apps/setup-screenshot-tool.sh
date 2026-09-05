@@ -6,16 +6,16 @@ set -euo pipefail
 source "scripts/_utils.sh" 2>/dev/null || true
 
 _install_screenshot_tool() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  apt | dnf | pacman) ;;
+  case "$distro" in
+  debian | fedora | arch) ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

@@ -7,14 +7,14 @@ setup() {
 }
 
 @test "_install_screenshot_tool fails when distribution is unsupported" {
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_screenshot_tool
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
 @test "_install_screenshot_tool installs flameshot on GNOME" {
-  _get_package_manager() { echo "pacman"; }
+  get_distro_id() { echo "arch"; }
   get_desktop_environment() { echo "gnome"; }
   install_packages() {
     echo "installed packages: $*"
@@ -26,7 +26,7 @@ setup() {
 }
 
 @test "_install_screenshot_tool installs spectacle on KDE Plasma" {
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   get_desktop_environment() { echo "plasma"; }
   install_packages() {
     echo "installed packages: $*"
@@ -38,7 +38,7 @@ setup() {
 }
 
 @test "_install_screenshot_tool skips and does nothing on unknown desktop environment" {
-  _get_package_manager() { echo "apt"; }
+  get_distro_id() { echo "debian"; }
   get_desktop_environment() { echo "unknown"; }
   install_packages() {
     echo "installed packages: $*"

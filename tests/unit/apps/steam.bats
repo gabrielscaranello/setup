@@ -7,13 +7,13 @@ setup() {
   source /setup/scripts/apps/setup-steam.sh
 }
 
-@test "_setup_steam fails when package manager is unsupported" {
-  _get_package_manager() {
-    echo "unsupported_pm"
+@test "_setup_steam fails when distribution is unsupported" {
+  get_distro_id() {
+    echo "unsupported_distro"
   }
   run _setup_steam
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager: unsupported_pm" ]]
+  [[ "$output" =~ "Unsupported distribution: unsupported_distro" ]]
 }
 
 @test "_install_steam_packages installs Flatpaks on Debian" {
@@ -21,7 +21,7 @@ setup() {
     echo "installed flatpak: $1 ($2)"
     return 0
   }
-  run _install_steam_packages "apt"
+  run _install_steam_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Installing Steam, MangoHud, and Gamescope via Flatpak on Debian" ]]
   [[ "$output" =~ "installed flatpak: com.valvesoftware.Steam (Steam)" ]]
@@ -38,7 +38,7 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
-  run _install_steam_packages "dnf"
+  run _install_steam_packages "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_fedora_rpmfusion_repo" ]]
   [[ "$output" =~ "installed packages: steam mangohud gamescope gamemode" ]]
@@ -53,7 +53,7 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
-  run _install_steam_packages "pacman"
+  run _install_steam_packages "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_arch_multilib_repo" ]]
   [[ "$output" =~ "installed packages: steam mangohud gamescope gamemode fonts-liberation" ]]
@@ -130,7 +130,7 @@ setup() {
 }
 
 @test "_setup_steam installs MangoJuice via Flatpak" {
-  _get_package_manager() { echo "pacman"; }
+  get_distro_id() { echo "arch"; }
   _install_steam_packages() { return 0; }
   _install_proton_manager() { return 0; }
   install_flatpak_app() {
@@ -145,7 +145,7 @@ setup() {
 }
 
 @test "setup-steam main executes full installation pipeline" {
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   add_fedora_rpmfusion_repo() { return 0; }
   install_packages() { return 0; }
   get_desktop_environment() { echo "gnome"; }

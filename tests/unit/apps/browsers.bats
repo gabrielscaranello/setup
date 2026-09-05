@@ -4,7 +4,7 @@
 
 @test "_install_firefox delegates to repo install on Fedora" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _install_firefox_repo() {
     echo "called repo install"
     return 0
@@ -16,7 +16,7 @@
 
 @test "_install_firefox delegates to repo install on Arch Linux" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "pacman"; }
+  get_distro_id() { echo "arch"; }
   _install_firefox_repo() {
     echo "called repo install"
     return 0
@@ -28,7 +28,7 @@
 
 @test "_install_firefox delegates to apt flow on Debian/APT" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "apt"; }
+  get_distro_id() { echo "debian"; }
   _install_firefox_apt() {
     echo "called apt install"
     return 0
@@ -55,17 +55,17 @@
   [[ "$output" =~ "installing packages: firefox firefox-i18n-pt-br" ]]
 }
 
-@test "_install_firefox fails when package manager is unsupported" {
+@test "_install_firefox fails when distribution is unsupported" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_firefox
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
-@test "_install_chromium calls install_packages chromium on Fedora/dnf" {
+@test "_install_chromium calls install_packages chromium on Fedora" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   install_packages() {
     echo "installing package: $*"
     return 0
@@ -75,9 +75,9 @@
   [[ "$output" =~ "installing package: chromium" ]]
 }
 
-@test "_install_chromium calls install_packages chromium on Arch/pacman" {
+@test "_install_chromium calls install_packages chromium on Arch" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "pacman"; }
+  get_distro_id() { echo "arch"; }
   install_packages() {
     echo "installing package: $*"
     return 0
@@ -87,9 +87,9 @@
   [[ "$output" =~ "installing package: chromium" ]]
 }
 
-@test "_install_chromium calls install_flatpak_app on Debian/apt" {
+@test "_install_chromium calls install_flatpak_app on Debian" {
   source /setup/scripts/apps/setup-browsers.sh
-  _get_package_manager() { echo "apt"; }
+  get_distro_id() { echo "debian"; }
   install_flatpak_app() {
     echo "installing flatpak app: $*"
     return 0

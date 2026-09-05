@@ -111,34 +111,34 @@ setup() {
 }
 
 @test "_install_telegram fails when distribution is unsupported" {
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_telegram
   [ "$status" -eq 1 ]
-  [[ "$output" =~ Unsupported\ package\ manager ]]
+  [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_telegram delegates to repo on pacman and dnf" {
-  _get_package_manager() { echo "pacman"; }
+@test "_install_telegram delegates to repo on arch and fedora" {
+  get_distro_id() { echo "arch"; }
   _install_telegram_repo() {
     echo "installed from repo $1"
     return 0
   }
   run _install_telegram
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ repo\ pacman ]]
+  [[ "$output" =~ installed\ from\ repo\ arch ]]
 
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _install_telegram_repo() {
     echo "installed from repo $1"
     return 0
   }
   run _install_telegram
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ repo\ dnf ]]
+  [[ "$output" =~ installed\ from\ repo\ fedora ]]
 }
 
-@test "_install_telegram delegates to binary on apt" {
-  _get_package_manager() { echo "apt"; }
+@test "_install_telegram delegates to binary on debian" {
+  get_distro_id() { echo "debian"; }
   _install_telegram_binary() {
     echo "installed from binary"
     return 0

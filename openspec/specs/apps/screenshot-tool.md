@@ -40,6 +40,6 @@ The script SHALL detect the active desktop environment via `get_desktop_environm
 
 #### Scenario: Running on an unsupported distribution
 
-- **GIVEN** an unrecognized operating system
+- **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
 - **WHEN** `scripts/apps/setup-screenshot-tool.sh` is executed
 - **THEN** it SHALL exit with code 1 and write an error message to `stderr`

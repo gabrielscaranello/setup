@@ -47,31 +47,31 @@ _install_arch_steam() {
 }
 
 _install_steam_packages() {
-  local pm="$1"
+  local distro="$1"
 
-  case "$pm" in
-  apt) _install_debian_steam ;;
-  dnf) _install_fedora_steam ;;
-  pacman) _install_arch_steam ;;
+  case "$distro" in
+  debian) _install_debian_steam ;;
+  fedora) _install_fedora_steam ;;
+  arch) _install_arch_steam ;;
   esac
 }
 
 _setup_steam() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  apt | dnf | pacman) ;;
+  case "$distro" in
+  debian | fedora | arch) ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
 
-  _install_steam_packages "$pm" || return 1
+  _install_steam_packages "$distro" || return 1
   _install_proton_manager || return 1
 
   echo "Installing MangoJuice (MangoHud GUI) via Flatpak..."

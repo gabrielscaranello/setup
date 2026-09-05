@@ -22,18 +22,18 @@ _configure_virtualbox_user_group() {
 }
 
 _configure_virtualbox_repositories() {
-  local pm="$1"
-  if [ "$pm" = "apt" ]; then
+  local distro="$1"
+  if [ "$distro" = "debian" ]; then
     add_debian_virtualbox_repo
-  elif [ "$pm" = "dnf" ]; then
+  elif [ "$distro" = "fedora" ]; then
     add_fedora_rpmfusion_repo
   fi
 }
 
 _install_virtualbox_packages() {
-  local pm="${1:-}"
-  if [ -n "$pm" ]; then
-    _configure_virtualbox_repositories "$pm"
+  local distro="${1:-}"
+  if [ -n "$distro" ]; then
+    _configure_virtualbox_repositories "$distro"
   fi
 
   echo "Installing VirtualBox packages..."
@@ -41,21 +41,21 @@ _install_virtualbox_packages() {
 }
 
 _install_virtualbox() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  apt | dnf | pacman) ;;
+  case "$distro" in
+  debian | fedora | arch) ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
 
-  _install_virtualbox_packages "$pm" || return 1
+  _install_virtualbox_packages "$distro" || return 1
   _configure_virtualbox_user_group
 }
 

@@ -135,8 +135,8 @@ _add_rpmfusion_free_repo() {
 }
 
 _install_telegram_repo() {
-  local pm="$1"
-  if [ "$pm" = "dnf" ]; then
+  local distro="$1"
+  if [ "$distro" = "fedora" ] || [ "$distro" = "dnf" ]; then
     _add_rpmfusion_free_repo
   fi
 
@@ -145,21 +145,21 @@ _install_telegram_repo() {
 }
 
 _install_telegram() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  dnf | pacman)
-    _install_telegram_repo "$pm"
+  case "$distro" in
+  fedora | arch)
+    _install_telegram_repo "$distro"
     ;;
-  apt)
+  debian)
     _install_telegram_binary
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

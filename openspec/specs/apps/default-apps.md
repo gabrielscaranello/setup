@@ -1,4 +1,4 @@
-# Specification: Default Applications & MIME Handlers (`scripts/setup-default-apps.sh`)
+# Specification: Default Applications & MIME Handlers (`scripts/apps/setup-default-apps.sh`)
 
 ## Purpose
 Configures Kitty as the default terminal emulator across XDG specifications, GNOME desktop environment, and KDE Plasma desktop environment.
@@ -18,15 +18,15 @@ The script SHALL detect the active desktop environment using `get_desktop_enviro
 
 #### Scenario: Applying defaults on GNOME
 - **GIVEN** GNOME desktop session
-- **WHEN** `scripts/setup-default-apps.sh` runs
+- **WHEN** `scripts/apps/setup-default-apps.sh` runs
 - **THEN** XDG terminal list and GNOME gsettings terminal keys SHALL be configured to `kitty`
 
 #### Scenario: Applying defaults on KDE Plasma
 - **GIVEN** KDE Plasma desktop session
-- **WHEN** `scripts/setup-default-apps.sh` runs
+- **WHEN** `scripts/apps/setup-default-apps.sh` runs
 - **THEN** XDG terminal list and `~/.config/kdeglobals` `[General]` section SHALL contain `TerminalApplication=kitty`
 
 #### Scenario: Applying defaults on unknown environment
 - **GIVEN** headless or unrecognized window manager
-- **WHEN** `scripts/setup-default-apps.sh` runs
+- **WHEN** `scripts/apps/setup-default-apps.sh` runs
 - **THEN** XDG terminal list SHALL be written and DE-specific steps skipped cleanly

@@ -7,13 +7,13 @@ setup() {
   source /setup/scripts/apps/setup-virtualbox.sh
 }
 
-@test "_install_virtualbox fails when package manager is unsupported" {
-  _get_package_manager() {
-    echo "unsupported_pm"
+@test "_install_virtualbox fails when distribution is unsupported" {
+  get_distro_id() {
+    echo "unsupported_distro"
   }
   run _install_virtualbox
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager: unsupported_pm" ]]
+  [[ "$output" =~ "Unsupported distribution: unsupported_distro" ]]
 }
 
 @test "_install_virtualbox_packages calls add_debian_virtualbox_repo on Debian" {
@@ -25,7 +25,7 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
-  run _install_virtualbox_packages "apt"
+  run _install_virtualbox_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_debian_virtualbox_repo" ]]
   [[ "$output" =~ "installed packages: virtualbox virtualbox-host-modules" ]]
@@ -44,7 +44,7 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
-  run _install_virtualbox_packages "dnf"
+  run _install_virtualbox_packages "fedora"
   [ "$status" -eq 0 ]
   [[ ! "$output" =~ "called add_debian_virtualbox_repo" ]]
   [[ "$output" =~ "called add_fedora_rpmfusion_repo" ]]
@@ -60,7 +60,7 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
-  run _install_virtualbox_packages "pacman"
+  run _install_virtualbox_packages "arch"
   [ "$status" -eq 0 ]
   [[ ! "$output" =~ "called add_debian_virtualbox_repo" ]]
   [[ "$output" =~ "installed packages: virtualbox virtualbox-host-modules" ]]

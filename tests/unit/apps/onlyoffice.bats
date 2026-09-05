@@ -7,14 +7,14 @@ setup() {
 }
 
 @test "_install_onlyoffice fails when distribution is unsupported" {
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_onlyoffice
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
-@test "_install_onlyoffice delegates to flatpak on pacman" {
-  _get_package_manager() { echo "pacman"; }
+@test "_install_onlyoffice delegates to flatpak on arch" {
+  get_distro_id() { echo "arch"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
     return 0
@@ -24,8 +24,8 @@ setup() {
   [[ "$output" =~ "installed flatpak: org.onlyoffice.desktopeditors ONLYOFFICE" ]]
 }
 
-@test "_install_onlyoffice delegates to flatpak on dnf" {
-  _get_package_manager() { echo "dnf"; }
+@test "_install_onlyoffice delegates to flatpak on fedora" {
+  get_distro_id() { echo "fedora"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
     return 0
@@ -35,8 +35,8 @@ setup() {
   [[ "$output" =~ "installed flatpak: org.onlyoffice.desktopeditors ONLYOFFICE" ]]
 }
 
-@test "_install_onlyoffice delegates to flatpak on apt" {
-  _get_package_manager() { echo "apt"; }
+@test "_install_onlyoffice delegates to flatpak on debian" {
+  get_distro_id() { echo "debian"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
     return 0
