@@ -1,4 +1,4 @@
-# Specification: Rust Toolchain & Utilities (`scripts/setup-rust.sh`)
+# Specification: Rust Toolchain & Utilities (`scripts/toolchain/setup-rust.sh`)
 
 ## Purpose
 Installs Rust compiler, Cargo package manager via official `rustup`, sets stable toolchain, configures shell profile PATH, and installs developer CLI tools (`tree-sitter-cli`).
@@ -17,5 +17,5 @@ The script SHALL inspect installed Cargo packages (`cargo install --list`) and i
 
 #### Scenario: Installing Rust when already present
 - **GIVEN** `rustup` is already in `PATH`
-- **WHEN** `scripts/setup-rust.sh` runs
+- **WHEN** `scripts/toolchain/setup-rust.sh` runs
 - **THEN** rustup download and profile additions are skipped idempotently

@@ -108,15 +108,21 @@ _install_node() {
 }
 
 _install_nvm() {
-  case "$(_get_package_manager)" in
-  pacman)
+  local distro
+  distro="$(get_distro_id)" || {
+    echo "Unsupported distribution" >&2
+    return 1
+  }
+
+  case "$distro" in
+  arch)
     _install_arch_nvm
     ;;
-  apt | dnf)
+  debian | fedora)
     _install_nvm_script
     ;;
   *)
-    echo "Unsupported package manager" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

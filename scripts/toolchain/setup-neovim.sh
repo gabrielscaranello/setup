@@ -85,56 +85,56 @@ _install_build_deps() {
 }
 
 _install_neovim() {
-  local pm="$1"
+  local distro="$1"
 
-  case "$pm" in
-  dnf | pacman)
+  case "$distro" in
+  fedora | arch)
     _install_neovim_from_repo
     ;;
-  apt)
+  debian)
     _ensure_rust
     _install_build_deps
     _install_neovim_from_source
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
 }
 
 _install_runtime_deps() {
-  local pm="$1"
+  local distro="$1"
   echo "Installing Neovim runtime dependencies and tools..."
 
   # Common dependencies across all distributions (resolved via packages.conf or identical package names)
   install_packages jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip
 
   # Distro-specific independent dependencies
-  case "$pm" in
-  apt)
+  case "$distro" in
+  debian)
     install_packages luarocks python3 python-venv
     ;;
-  dnf)
+  fedora)
     install_packages luarocks cargo lua-5.1
     ;;
-  pacman)
+  arch)
     install_packages build-tools rust tree-sitter-cli luarocks
     ;;
   esac
 }
 
 main() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
   _ensure_nvm
   _ensure_go
-  _install_runtime_deps "$pm"
-  _install_neovim "$pm"
+  _install_runtime_deps "$distro"
+  _install_neovim "$distro"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

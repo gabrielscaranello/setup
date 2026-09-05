@@ -57,10 +57,10 @@
 
 @test "_install_go fails when distribution is unsupported" {
   source /setup/scripts/toolchain/setup-go.sh
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_go
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
 @test "_install_go_packages handles empty package array" {

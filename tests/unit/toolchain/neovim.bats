@@ -2,12 +2,12 @@
 
 # Unit tests for setup-neovim.sh logic and branches
 
-@test "_install_neovim fails when package manager is unknown" {
+@test "_install_neovim fails when distribution is unknown" {
   source /setup/scripts/toolchain/setup-neovim.sh
   _install_build_deps() { return 0; }
-  run _install_neovim "unknown-pm"
+  run _install_neovim "unknown-distro"
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }
 
 @test "_install_neovim_from_source handles git clone failure" {
@@ -66,37 +66,37 @@
   [[ "$output" =~ "Failed to install DEB package" ]]
 }
 
-@test "_install_runtime_deps installs common and debian specific dependencies on apt" {
+@test "_install_runtime_deps installs common and debian specific dependencies on debian" {
   source /setup/scripts/toolchain/setup-neovim.sh
   install_packages() {
     echo "installing packages: $*"
     return 0
   }
-  run _install_runtime_deps "apt"
+  run _install_runtime_deps "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
   [[ "$output" =~ "luarocks python3 python-venv" ]]
 }
 
-@test "_install_runtime_deps installs common and fedora specific dependencies on dnf" {
+@test "_install_runtime_deps installs common and fedora specific dependencies on fedora" {
   source /setup/scripts/toolchain/setup-neovim.sh
   install_packages() {
     echo "installing packages: $*"
     return 0
   }
-  run _install_runtime_deps "dnf"
+  run _install_runtime_deps "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
   [[ "$output" =~ "luarocks cargo lua-5.1" ]]
 }
 
-@test "_install_runtime_deps installs common and arch specific dependencies on pacman" {
+@test "_install_runtime_deps installs common and arch specific dependencies on arch" {
   source /setup/scripts/toolchain/setup-neovim.sh
   install_packages() {
     echo "installing packages: $*"
     return 0
   }
-  run _install_runtime_deps "pacman"
+  run _install_runtime_deps "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
   [[ "$output" =~ "build-tools rust tree-sitter-cli luarocks" ]]
@@ -104,7 +104,7 @@
 
 @test "main executes _ensure_nvm, _ensure_go, _install_runtime_deps and _install_neovim in order" {
   source /setup/scripts/toolchain/setup-neovim.sh
-  _get_package_manager() { echo "dnf"; }
+  get_distro_id() { echo "fedora"; }
   _ensure_nvm() { echo "step: ensure_nvm"; }
   _ensure_go() { echo "step: ensure_go"; }
   _install_runtime_deps() { echo "step: install_runtime_deps for $1"; }
@@ -113,13 +113,13 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ "step: ensure_nvm" ]]
   [[ "$output" =~ "step: ensure_go" ]]
-  [[ "$output" =~ "step: install_runtime_deps for dnf" ]]
-  [[ "$output" =~ "step: install_neovim for dnf" ]]
+  [[ "$output" =~ "step: install_runtime_deps for fedora" ]]
+  [[ "$output" =~ "step: install_neovim for fedora" ]]
 }
 
 @test "main fails when distribution detection fails" {
   source /setup/scripts/toolchain/setup-neovim.sh
-  _get_package_manager() { return 1; }
+  get_distro_id() { return 1; }
   run main
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported distribution" ]]

@@ -1,4 +1,4 @@
-# Specification: Gitflow CJS (`scripts/setup-gitflow.sh`)
+# Specification: Gitflow CJS (`scripts/toolchain/setup-gitflow.sh`)
 
 ## Purpose
 Installs Gitflow CJS (`v2.2.1`) CLI extensions using the official upstream installer.
@@ -14,5 +14,5 @@ The script SHALL:
 
 #### Scenario: Installing Gitflow
 - **GIVEN** `git-flow` is not installed
-- **WHEN** `scripts/setup-gitflow.sh` runs
+- **WHEN** `scripts/toolchain/setup-gitflow.sh` runs
 - **THEN** Gitflow CJS v2.2.1 is installed into `/usr/local/bin`

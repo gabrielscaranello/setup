@@ -115,22 +115,22 @@ _install_go_packages() {
 }
 
 _install_go() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  dnf | pacman)
+  case "$distro" in
+  fedora | arch)
     _install_go_repo
     ;;
-  apt)
+  debian)
     install_packages curl wget tar git || true
     _install_go_from_binary
     ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac

@@ -66,10 +66,10 @@
   [[ "$output" =~ "No global npm packages" ]]
 }
 
-@test "_install_nvm returns error on unsupported package manager" {
+@test "_install_nvm returns error on unsupported distribution" {
   source /setup/scripts/toolchain/setup-nvm.sh
-  _get_package_manager() { echo "unknown-pm"; }
+  get_distro_id() { echo "unknown-distro"; return 1; }
   run _install_nvm
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager" ]]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }

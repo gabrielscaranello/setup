@@ -11,7 +11,7 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
-  run _install_docker_packages "apt"
+  run _install_docker_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
 }
@@ -24,18 +24,18 @@ setup() {
   install_packages() {
     return 0
   }
-  run _install_docker_packages "dnf"
+  run _install_docker_packages "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_fedora_docker_repo" ]]
 }
 
-@test "_install_docker fails when package manager is unsupported" {
-  _get_package_manager() {
-    echo "unsupported_pm"
+@test "_install_docker fails when distribution is unsupported" {
+  get_distro_id() {
+    echo "unsupported_distro"
   }
   run _install_docker
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported package manager: unsupported_pm" ]]
+  [[ "$output" =~ "Unsupported distribution: unsupported_distro" ]]
 }
 
 @test "_enable_docker_service handles presence or absence of systemctl" {

@@ -7,16 +7,16 @@ source "scripts/_utils.sh" 2>/dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2>/dev/null || true
 
 _configure_docker_repositories() {
-  local pm="$1"
-  if [ "$pm" = "dnf" ]; then
+  local distro="$1"
+  if [ "$distro" = "fedora" ]; then
     add_fedora_docker_repo
   fi
 }
 
 _install_docker_packages() {
-  local pm="${1:-}"
-  if [ -n "$pm" ]; then
-    _configure_docker_repositories "$pm"
+  local distro="${1:-}"
+  if [ -n "$distro" ]; then
+    _configure_docker_repositories "$distro"
   fi
 
   echo "Installing Docker packages..."
@@ -48,21 +48,21 @@ _configure_docker_user_group() {
 }
 
 _install_docker() {
-  local pm
-  pm="$(_get_package_manager)" || {
+  local distro
+  distro="$(get_distro_id)" || {
     echo "Unsupported distribution" >&2
     return 1
   }
 
-  case "$pm" in
-  apt | dnf | pacman) ;;
+  case "$distro" in
+  debian | fedora | arch) ;;
   *)
-    echo "Unsupported package manager: $pm" >&2
+    echo "Unsupported distribution: $distro" >&2
     return 1
     ;;
   esac
 
-  _install_docker_packages "$pm" || return 1
+  _install_docker_packages "$distro" || return 1
   _enable_docker_service
   _configure_docker_user_group
 }
