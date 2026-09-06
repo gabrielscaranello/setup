@@ -9,29 +9,29 @@ This document tracks development milestones, work in progress, and planned featu
 
 Developer runtimes, CLI utilities, and developer fonts (closing the core development toolchain).
 
-- [x] Install JetBrains Mono Nerd Font — `scripts/setup-fonts.sh`
-- [x] Install Docker engine and CLI plugins (`buildx`, `compose`) — `scripts/setup-docker.sh`
-- [x] Install Gitflow CJS — `scripts/setup-gitflow.sh`
-- [x] Install Golang — `scripts/setup-go.sh`
-- [x] Install Rust, Cargo, and developer tools (`tree-sitter-cli`) — `scripts/setup-rust.sh`
-- [x] Install NVM, Node.js, and global npm packages — `scripts/setup-nvm.sh`
-- [x] Build/install Neovim — `scripts/setup-neovim.sh`
-- [x] Configure clipboard provider for Neovim (`wl-clipboard` on Arch, `xsel` on Fedora, `xclip` on Debian) — `scripts/setup-neovim.sh`
-- [x] Add additional Neovim runtime dependencies across all distros (`imagemagick`, `jq`, `tidy`, `sqlite`, `gettext`, `protobuf-compiler`, `fd` / `fd-find`) — `scripts/setup-neovim.sh`
-- [x] Install Kitty terminal emulator — `scripts/setup-kitty.sh`
-- [x] Install Lazygit — `scripts/setup-lazygit.sh`
-- [x] Install Lazydocker — `scripts/setup-lazydocker.sh`
+- [x] Install JetBrains Mono Nerd Font — `scripts/terminal/setup-fonts.sh`
+- [x] Install Docker engine and CLI plugins (`buildx`, `compose`) — `scripts/toolchain/setup-docker.sh`
+- [x] Install Gitflow CJS — `scripts/toolchain/setup-gitflow.sh`
+- [x] Install Golang — `scripts/toolchain/setup-go.sh`
+- [x] Install Rust, Cargo, and developer tools (`tree-sitter-cli`) — `scripts/toolchain/setup-rust.sh` _(Invoked on-demand as a dependency of `setup-neovim.sh`; not included standalone in `all.sh`/distro runners)_
+- [x] Install NVM, Node.js, and global npm packages — `scripts/toolchain/setup-nvm.sh`
+- [x] Build/install Neovim — `scripts/toolchain/setup-neovim.sh`
+- [x] Configure clipboard provider for Neovim (`wl-clipboard` on Arch, `xsel` on Fedora, `xclip` on Debian) — `scripts/toolchain/setup-neovim.sh`
+- [x] Add additional Neovim runtime dependencies across all distros (`imagemagick`, `jq`, `tidy`, `sqlite`, `gettext`, `protobuf-compiler`, `fd` / `fd-find`) — `scripts/toolchain/setup-neovim.sh`
+- [x] Install Kitty terminal emulator — `scripts/terminal/setup-kitty.sh`
+- [x] Install Lazygit — `scripts/terminal/setup-lazygit.sh`
+- [x] Install Lazydocker — `scripts/terminal/setup-lazydocker.sh`
 
 ## ⚙️ Phase 2: Foundation, Kernel, Drivers & Repositories
 
 Prerequisites, kernel backports, graphics drivers, snapshots, and global package sources.
 
 - [x] Base distribution and package-manager abstraction (`get_distro_id`, `packages.conf`) — `scripts/_utils.sh`
-- [x] Configure swap settings and memory tuning — `scripts/setup-swap.sh`
-- [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/setup-timeshift.sh`
-- [x] Implement distribution repository helpers (`scripts/system/debian/_repositories.sh`, `scripts/system/fedora/_repositories.sh`) and backports kernel installation (`scripts/system/debian/setup-kernel.sh`)
-- [x] Configure Flatpak and add Flathub remote repository — `scripts/setup-flatpak.sh`
-- [x] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` / `firewall-config` on GNOME, and `plasma-firewall` on KDE Plasma) — `scripts/setup-firewall.sh`
+- [x] Configure swap settings and memory tuning — `scripts/system/setup-swap.sh`
+- [x] Implement Timeshift installation (Btrfs snapshots on Arch/Fedora, ext4 on Debian) — `scripts/system/setup-timeshift.sh`
+- [x] Implement distribution repository helpers (`scripts/system/debian/_repositories.sh`, `scripts/system/fedora/_repositories.sh`, `scripts/system/arch/_repositories.sh`) and backports kernel installation (`scripts/system/debian/setup-kernel.sh`)
+- [x] Configure Flatpak and add Flathub remote repository — `scripts/system/setup-flatpak.sh`
+- [x] Configure Firewall (`firewalld` on Fedora; `ufw` on Debian/Arch with `gufw` / `firewall-config` on GNOME, and `plasma-firewall` on KDE Plasma) — `scripts/security/setup-firewall.sh`
 - [x] Install NVIDIA graphics drivers and hybrid GPU tools (Debian backports, `switcheroo-control` & `prime-run`) — `scripts/system/setup-nvidia.sh` _(verified via container test suite; pending bare-metal hardware validation)_
 - [x] Configure AMD graphics packages, firmware and codecs (`firmware-amd-graphics` on Debian, `mesa-va-drivers-freeworld` on Fedora, `vulkan-radeon` on Arch Linux) — `scripts/system/setup-amd.sh`
 - [x] Install multimedia codecs and audio/video plugins across all distros (`Debian`, `Fedora`, `Arch Linux` — `FFmpeg`, `GStreamer` good/bad/ugly/libav, `libavcodec`) — `scripts/system/setup-codecs.sh`
@@ -58,11 +58,11 @@ General desktop productivity, database management, and gaming software.
 - [x] Install ONLYOFFICE — `scripts/apps/setup-onlyoffice.sh`
 - [x] Install Obsidian — `scripts/apps/setup-obsidian.sh`
 - [x] Install GIMP — `scripts/apps/setup-gimp.sh`
-- [x] Install DBeaver — `scripts/setup-dbeaver.sh`
+- [x] Install DBeaver — `scripts/apps/setup-dbeaver.sh`
 - [x] Install MongoDB Compass — `scripts/apps/setup-mongodb-compass.sh`
 - [x] Configure Screenshot Tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
-- [x] Install Discord — `scripts/setup-discord.sh`
-- [x] Install Telegram Desktop — `scripts/setup-telegram.sh`
+- [x] Install Discord — `scripts/apps/setup-discord.sh`
+- [x] Install Telegram Desktop — `scripts/apps/setup-telegram.sh`
 - [x] Install Steam and gaming tools (`ProtonPlus` on GNOME, `ProtonUp-Qt` on KDE Plasma, `MangoHud`, `MangoJuice`, `Gamescope`, `GameMode`) — `scripts/apps/setup-steam.sh`
 
 ## 🎨 Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE Plasma)
@@ -80,7 +80,7 @@ Desktop theming, shell extensions, and interface preferences for target environm
 
 Default application bindings, desktop menu cleanup, and end-to-end execution scripts.
 
-- [-] Implement default applications configuration script (MIME types / protocol handlers) — partially implemented (Kitty terminal emulator) in `scripts/setup-default-apps.sh`
+- [-] Implement default applications configuration script (MIME types / protocol handlers) — partially implemented (Kitty terminal emulator) in `scripts/apps/setup-default-apps.sh`
 - [ ] Implement script to hide unwanted applications from application menus (`.desktop` files)
 - [ ] Create orchestrator scripts (`all.sh` / distro-tailored entrypoints) to run all scripts sequentially
 
