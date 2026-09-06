@@ -352,14 +352,12 @@ var launchers = [
 var tasks = panel.addWidget("org.kde.plasma.icontasks");
 tasks.currentConfigGroup = ["General"];
 tasks.writeConfig("launchers", launchers);
-tasks.writeConfig("launchers", launchers);
 tasks.writeConfig("showOnlyCurrentDesktop", "false");
 tasks.reloadConfig();
 
 var pager = panel.addWidget("org.kde.plasma.pager");
 pager.currentConfigGroup = ["General"];
 pager.writeConfig("displayedText", "None");
-pager.writeConfig("rowsToDisplay", "2");
 pager.writeConfig("rowsToDisplay", "2");
 pager.reloadConfig();
 
@@ -370,7 +368,7 @@ var clock = panel.addWidget("org.kde.plasma.digitalclock");
 clock.currentConfigGroup = ["Appearance"];
 clock.writeConfig("dateFormat", "shortDate");
 clock.writeConfig("showDate", "true");
-clock.writeConfig("showSeconds", "always");
+clock.writeConfig("showSeconds", "onlyInTooltip");
 clock.reloadConfig();
 
 var allWidgets = panel.widgets();
@@ -385,20 +383,18 @@ for (var j = 0; j < allWidgets.length; ++j) {
     } else if (w.type === "org.kde.plasma.icontasks") {
         w.currentConfigGroup = ["General"];
         w.writeConfig("launchers", launchers);
-        w.writeConfig("launchers", launchers);
         w.writeConfig("showOnlyCurrentDesktop", "false");
         w.reloadConfig();
     } else if (w.type === "org.kde.plasma.pager") {
         w.currentConfigGroup = ["General"];
         w.writeConfig("displayedText", "None");
         w.writeConfig("rowsToDisplay", "2");
-        w.writeConfig("rowsToDisplay", "2");
         w.reloadConfig();
     } else if (w.type === "org.kde.plasma.digitalclock") {
         w.currentConfigGroup = ["Appearance"];
         w.writeConfig("dateFormat", "shortDate");
         w.writeConfig("showDate", "true");
-        w.writeConfig("showSeconds", "always");
+        w.writeConfig("showSeconds", "onlyInTooltip");
         w.reloadConfig();
     }
 }

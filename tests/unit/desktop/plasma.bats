@@ -499,6 +499,7 @@ EOF
   content="$(cat "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc")"
   [[ ! "$content" =~ "icon=" ]]
   [[ ! "$content" =~ ":start-here-icon:" ]]
+  [[ "$content" =~ "showSeconds=onlyInTooltip" ]]
 
   rm -rf "$test_dir"
 }
@@ -524,6 +525,8 @@ EOF
   [ "$status" -eq 0 ]
   run grep "writeConfig(\"icon\"" "$script_log"
   [ "$status" -ne 0 ]
+  run grep "writeConfig(\"showSeconds\", \"onlyInTooltip\")" "$script_log"
+  [ "$status" -eq 0 ]
 
   rm -f "$script_log"
 }

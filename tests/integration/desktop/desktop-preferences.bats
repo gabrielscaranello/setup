@@ -77,6 +77,7 @@ teardown() {
   grep -q "showOnlyCurrentDesktop=false" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "lastScreen=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "plugin=org.kde.plasma.folder" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "showSeconds=onlyInTooltip" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "favoritesPortedToStats=true" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "icon=.*start-here.svg" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   [ -f "$HOME/.icons/start-here.svg" ]

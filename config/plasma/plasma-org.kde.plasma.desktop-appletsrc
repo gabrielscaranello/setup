@@ -55,7 +55,7 @@ plugin=org.kde.plasma.digitalclock
 [Containments][1][Applets][8][Configuration][Appearance]
 dateFormat=shortDate
 showDate=true
-showSeconds=always
+showSeconds=onlyInTooltip
 
 [Containments][1][General]
 AppletOrder=2;3;4;5;6;7;8
