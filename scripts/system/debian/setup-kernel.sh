@@ -13,6 +13,7 @@ _install_backports_kernel_apt() {
   add_debian_backports_repo
 
   echo "Installing latest Linux kernel and headers from ${codename}-backports..."
+  # Justification: APT pinning (-t <release>-backports) required to select the backports kernel
   sudo apt install -y -t "${codename}-backports" linux-image-amd64 linux-headers-amd64
 }
 

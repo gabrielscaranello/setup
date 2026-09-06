@@ -60,6 +60,7 @@ _install_debian_driver() {
   local codename
   codename="$(get_debian_codename)"
   echo "Installing kernel headers, firmware, and NVIDIA driver on Debian from backports (${codename}-backports)..."
+  # Justification: APT pinning (-t <release>-backports) required for newer NVIDIA drivers on Debian
   sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings 2> /dev/null \
     || sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 2> /dev/null \
     || install_packages linux-headers-amd64 firmware-misc-nonfree nvidia-driver nvidia-smi nvidia-settings

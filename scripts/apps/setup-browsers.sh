@@ -8,6 +8,7 @@ source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
 
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
+  # Justification: Package removal is not provided by install_packages abstraction
   sudo apt remove -y firefox-esr firefox-esr-l10n-pt-br 2> /dev/null || true
 }
 

@@ -68,6 +68,7 @@ _swap_fedora_freeworld_drivers() {
 _install_fedora_32bit_packages() {
   if rpm -q glibc.i686 > /dev/null 2>&1 || [ "${FEDORA_ENABLE_MULTILIB:-0}" = "1" ]; then
     echo "Ensuring 32-bit freeworld drivers for gaming on Fedora..."
+    # Justification: dnf swap and architecture-specific packages (.i686) require direct package manager flags
     sudo dnf swap -y mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686 2> /dev/null || true
     sudo dnf swap -y mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686 2> /dev/null || true
     sudo dnf install -y mesa-vulkan-drivers.i686 2> /dev/null || true
@@ -85,6 +86,7 @@ _install_debian_backports_stack() {
   local codename
   codename="$(get_debian_codename)"
   echo "Installing AMD GPU firmware and Mesa graphics stack from Debian backports (${codename}-backports)..."
+  # Justification: APT pinning (-t <release>-backports) is required for newer Mesa on Debian
   sudo apt install -y -t "${codename}-backports" \
     firmware-amd-graphics \
     libegl-mesa0 \
@@ -102,6 +104,7 @@ _install_debian_32bit_packages() {
   codename="$(get_debian_codename)"
   if command -v dpkg > /dev/null 2>&1 && dpkg --print-foreign-architectures 2> /dev/null | grep -q "i386"; then
     echo "Configuring 32-bit AMD graphics libraries on Debian..."
+    # Justification: Multiarch architecture suffix (:i386) with backports pinning
     sudo apt install -y -t "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null \
       || sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
   fi
