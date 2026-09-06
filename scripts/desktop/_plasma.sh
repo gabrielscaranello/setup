@@ -276,7 +276,7 @@ tasks.reloadConfig();
 
 var pager = panel.addWidget("org.kde.plasma.pager");
 pager.currentConfigGroup = ["General"];
-pager.writeConfig("displayedText", "Number");
+pager.writeConfig("displayedText", "None");
 pager.writeConfig("rowsToDisplay", "2");
 pager.writeConfig("rowsToDisplay", "2");
 pager.reloadConfig();
@@ -302,7 +302,7 @@ for (var j = 0; j < allWidgets.length; ++j) {
         w.reloadConfig();
     } else if (w.type === "org.kde.plasma.pager") {
         w.currentConfigGroup = ["General"];
-        w.writeConfig("displayedText", "Number");
+        w.writeConfig("displayedText", "None");
         w.writeConfig("rowsToDisplay", "2");
         w.writeConfig("rowsToDisplay", "2");
         w.reloadConfig();

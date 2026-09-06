@@ -284,6 +284,9 @@ teardown() {
   run grep "thickness=40" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
+  run grep "displayedText=None" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
   run grep "AppletOrder=2;3;4;5;6;7;8" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
@@ -339,6 +342,9 @@ teardown() {
   [ "$status" -eq 0 ]
 
   run grep "showOnlyCurrentDesktop" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep 'displayedText.*None' "$script_log"
   [ "$status" -eq 0 ]
 
   run grep "allWidgets" "$script_log"

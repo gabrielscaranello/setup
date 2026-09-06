@@ -139,7 +139,7 @@ Supports both primary desktop environments:
      1. Application Launcher (`org.kde.plasma.kickoff`)
      2. Separator (`org.kde.plasma.marginsseparator`)
      3. Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord; shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
-     4. Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows)
+     4. Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows, text display disabled / `displayedText=None`)
      5. Separator (`org.kde.plasma.marginsseparator`)
      6. System Tray (`org.kde.plasma.systemtray`)
      7. Digital Clock (`org.kde.plasma.digitalclock`)

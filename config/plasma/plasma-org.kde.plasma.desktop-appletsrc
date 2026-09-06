@@ -32,7 +32,7 @@ immutability=1
 plugin=org.kde.plasma.pager
 
 [Containments][1][Applets][5][Configuration][General]
-displayedText=Number
+displayedText=None
 rowsToDisplay=2
 
 [Containments][1][Applets][6]
