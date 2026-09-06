@@ -33,7 +33,7 @@ Supports both primary desktop environments:
 
 1. **Interface & Appearance** (`interface.dconf`):
    - Clock: seconds and weekday display enabled (`clock-show-seconds=true`, `clock-show-weekday=true`).
-   - Typography: Cantarell 11 (interface and document), JetBrainsMono Nerd Font 10 (monospace).
+   - Typography: JetBrainsMono Nerd Font 11 (monospace); system default UI font preserved.
    - Mouse: primary clipboard paste on middle-click disabled (`gtk-enable-primary-paste=false`).
    - Timezone: automatic timezone detection enabled (`automatic-timezone=true`).
    - Sounds: event sounds disabled (`event-sounds=false`), theme `freedesktop`.
@@ -121,7 +121,6 @@ Supports both primary desktop environments:
      - Key: `LookAndFeelPackage=org.kde.breezedark.desktop`
    - **Typography**:
      - Group: `[General]`
-     - `font=Cantarell,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1`
      - `fixed=JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1`
    - **Default Terminal Application**:
      - Group: `[General]`
@@ -180,7 +179,7 @@ Supports both primary desktop environments:
 - **AND** configure Alt-Tab task switcher layout to flipswitch
 - **AND** configure mouse acceleration profile to flat in kcminputrc
 - **AND** configure global shortcuts (Meta+D, Meta+E, Ctrl+Alt+T, Ctrl+Alt+S) in kglobalshortcutsrc
-- **AND** configure default terminal to Kitty and interface/monospace fonts in kdeglobals
+- **AND** configure default terminal to Kitty and monospace font in kdeglobals
 - **AND** exit with return code 0
 
 **Scenario: Idempotent Execution on KDE Plasma 6**

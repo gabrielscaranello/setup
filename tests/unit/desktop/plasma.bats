@@ -264,6 +264,7 @@ teardown() {
   [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.kde.dolphin.desktop key=_launch val=Meta+E" ]]
   [[ "$output" =~ "colorscheme: BreezeDark" ]]
   [[ "$output" =~ "config: file=kdeglobals group=General key=TerminalApplication val=kitty" ]]
+  [[ "$output" =~ "config: file=kdeglobals group=General key=fixed val=JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1" ]]
   [[ "$output" =~ "config: file=dolphinrc group=General key=RememberOpenedTabs val=false" ]]
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=thickness val=40" ]]
   [[ "$output" =~ "_clear_plasma_kickoff_favorites called" ]]

@@ -199,7 +199,6 @@ configure_plasma_preferences() {
   plasma_apply_colorscheme "BreezeDark"
   plasma_write_config "kdeglobals" "General" "TerminalApplication" "kitty"
   plasma_write_config "kdeglobals" "General" "TerminalService" "kitty.desktop"
-  plasma_write_config "kdeglobals" "General" "font" "Cantarell,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
   plasma_write_config "kdeglobals" "General" "fixed" "JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
 
   echo "Applying KDE Plasma 6 Dolphin preferences..."
