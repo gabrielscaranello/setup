@@ -64,6 +64,7 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   9. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - **Distribution-Specific Repository Utilities**:
   When configuring third-party or upstream repositories, reuse or register functions in:
+  - **Arch Linux (`scripts/system/arch/_repositories.sh`)**: `add_arch_multilib_repo`.
   - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
 - **Helper Function Conventions**:
@@ -72,6 +73,80 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   - **Desktop Environment Handling**: When a step depends on DE, check `get_desktop_environment`. If `unknown`, do not execute DE-specific actions.
   - **SOLID Principles**: All scripts must strictly apply SOLID (Single Responsibility per function, Open/Closed via packages.conf and `get_distro_id` dispatch, Liskov Substitution across distros, Interface Segregation via granular repo helpers, and Dependency Inversion via `_utils.sh` abstractions).
 - **Entrypoint & Execution Guard**: Expose `main()` and guard direct execution with `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`.
+
+##### ✅ Canonical Script Template
+
+```bash
+#!/bin/bash
+set -euo pipefail
+source "scripts/_utils.sh" 2> /dev/null || true
+
+_install_packages() {
+  # ✅ Use install_packages — never apt/dnf/pacman directly
+  install_packages foo bar
+}
+
+_configure_de_specific() {
+  # ✅ Always detect DE; do nothing for unknown
+  local de
+  de="$(get_desktop_environment)"
+  case "$de" in
+    gnome) gsettings set org.example.key value ;;
+    plasma) kwriteconfig6 --file ... ;;
+    *) echo "Unknown DE, skipping DE-specific config." ;;
+  esac
+}
+
+_install_distro_specific() {
+  case "$(get_distro_id)" in
+    debian)
+      source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+      add_debian_example_repo
+      install_packages example-pkg
+      ;;
+    fedora)
+      source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
+      add_fedora_example_repo
+      install_packages example-pkg
+      ;;
+    arch)
+      install_packages example-pkg
+      ;;
+    *)
+      echo "Unsupported distribution, skipping."
+      return 0
+      ;;
+  esac
+}
+
+main() {
+  _install_packages
+  _configure_de_specific
+  _install_distro_specific
+}
+
+# ✅ Execution guard — allows sourcing in test suites
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi
+```
+
+##### ❌ Common Anti-Patterns to Avoid
+
+```bash
+# ❌ Raw package manager call — breaks on other distros
+sudo apt install -y ripgrep fd-find
+
+# ❌ Assumes GNOME — crashes on Plasma/unknown
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+
+# ❌ Trivial one-line wrapper used only once — inline it instead
+_install_pkg() { install_packages ripgrep; }
+_install_pkg
+
+# ❌ Missing execution guard — breaks when sourced in tests
+main "$@" # At the end of file with no BASH_SOURCE check
+```
 
 #### B. Cross-Distro Package Mapping (`scripts/packages.conf`)
 
@@ -110,7 +185,10 @@ All code paths and conditional branches must be thoroughly tested:
 
 Before marking any implementation as finished or reporting completion to the user, the AI agent **MUST ALWAYS execute and pass all tests related to the feature**, without exceptions:
 
-1. **Unit Tests for the Feature & Modified Modules**:
+> [!CAUTION]
+> **Docker-Only Execution**: Integration tests and any script-level validation **MUST** run inside the correct distro Docker containers — never on the developer's host machine. Unit tests (mocked) are safe to run on the host. Running setup scripts directly on the host may corrupt the developer's system.
+
+1. **Unit Tests for the Feature & Modified Modules** _(safe on host — mocked)_:
 
    ```bash
    ./tests/run-tests.sh --unit --filter=<feature>
@@ -118,7 +196,7 @@ Before marking any implementation as finished or reporting completion to the use
 
    _Verify that all unit test cases for the feature pass with 100% branch coverage._
 
-2. **Integration Tests for the Feature (Multi-Distro Validation)**:
+2. **Integration Tests for the Feature (Multi-Distro Validation)** _(runs inside Docker)_:
 
    ```bash
    ./tests/run-tests.sh --integration --filter=<feature>
@@ -126,7 +204,7 @@ Before marking any implementation as finished or reporting completion to the use
 
    _Validate execution inside Debian 13, Fedora 44, and Arch Linux containers. All distro containers must succeed._
 
-3. **Full Unit Test Suite (Regression Prevention)**:
+3. **Full Unit Test Suite (Regression Prevention)** _(safe on host — mocked)_:
 
    ```bash
    make test-unit
@@ -134,9 +212,10 @@ Before marking any implementation as finished or reporting completion to the use
 
    _Ensure no regressions were introduced to other modules._
 
-4. **Linting (when shellcheck is available)**:
+4. **Linting & Formatting** _(safe on host)_:
+
    ```bash
-   shellcheck -x scripts/*.sh main.sh tests/*.sh 2> /dev/null || true
+   make lint && make format
    ```
 
 > [!IMPORTANT]

@@ -28,6 +28,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 Common operations must reuse helper functions from `scripts/_utils.sh`:
 
+- `install_packages <generic_pkg>...`: Resolves packages across distributions via `packages.conf` and installs them idempotently.
 - `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
 - `is_distro <distro>`: Checks whether current system matches target distribution.
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
@@ -41,6 +42,8 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 
 Third-party repository configurations must reside in their respective distro helper modules:
 
+- **Arch Linux (`scripts/system/arch/_repositories.sh`)**:
+  - `add_arch_multilib_repo`: Idempotently enables the multilib repository in `/etc/pacman.conf` and updates the pacman database.
 - **Debian (`scripts/system/debian/_repositories.sh`)**:
   - `get_debian_codename`: Resolves Debian release codename (`trixie`, `bookworm`, etc.).
   - `add_debian_backports_repo`: Idempotently configures Debian Backports.
@@ -78,6 +81,95 @@ All setup scripts, helpers, and orchestrators must strictly adhere to the **SOLI
   - Avoid monolithic interfaces. Distro helper modules (e.g., `_repositories.sh`) should expose fine-grained, dedicated functions for individual repositories rather than huge, all-in-one setup functions. Sourced modules must only expose utilities relevant to their domain.
 - **D — Dependency Inversion Principle (DIP)**:
   - High-level setup scripts and orchestrators must depend upon abstractions provided by `scripts/_utils.sh` (`install_packages`, `download_file`, `get_desktop_environment`, `get_distro_id`, `packages.conf`) rather than binding directly to low-level package manager primitives (`apt`, `dnf`, `pacman`).
+
+---
+
+## ❌ NEVER DO — Common AI Agent Mistakes (Read First)
+
+The following violations are the most frequent causes of broken scripts and corrupted developer environments. Treat each one as a hard rule with no exceptions.
+
+### 1. Never Run Setup Scripts on the Host Machine
+
+All script **execution, testing, debugging, and validation** must happen inside the **correct Docker containers** — never on the developer's host system.
+
+```bash
+# ✅ CORRECT — unit tests: safe on host (mocked, no real installs)
+make test-unit
+./tests/run-tests.sh --unit --filter=<feature>
+
+# ✅ CORRECT — integration tests: MUST run inside Docker
+make test-integration
+./tests/run-tests.sh --integration --filter=<feature>
+./tests/run-tests.sh --integration --distro=debian --filter=<feature>
+
+# ✅ CORRECT — manual debugging inside a distro container
+docker run --rm -it -v "$(pwd)":/setup setup-test-debian bash
+docker run --rm -it -v "$(pwd)":/setup setup-test-fedora bash
+docker run --rm -it -v "$(pwd)":/setup setup-test-archlinux bash
+
+# ❌ NEVER — executes on the developer's workstation, may corrupt their system
+bash scripts/setup-docker.sh
+sudo bash scripts/system/setup-nvidia.sh
+./scripts/apps/setup-browsers.sh
+```
+
+Running setup scripts on the host can **permanently modify** the developer's system, install unwanted packages, overwrite personal configuration files, or corrupt the desktop environment.
+
+### 2. Never Call Raw Package Managers Directly
+
+Always use `install_packages` from `scripts/_utils.sh`. It resolves cross-distro package name differences via `packages.conf` automatically.
+
+```bash
+# ✅ CORRECT
+install_packages ripgrep fd neovim
+
+# ❌ NEVER
+sudo apt install -y ripgrep fd-find neovim
+sudo dnf install -y ripgrep fd-find neovim
+sudo pacman -S --needed --noconfirm ripgrep fd neovim
+```
+
+### 3. Never Assume a Desktop Environment is Active
+
+Always use `get_desktop_environment` before any DE-specific action. If the result is `unknown`, do nothing.
+
+```bash
+# ✅ CORRECT
+de="$(get_desktop_environment)"
+case "$de" in
+  gnome) gsettings set ... ;;
+  plasma) plasma-apply-colorscheme ... ;;
+  *) echo "Unknown DE, skipping." ;;
+esac
+
+# ❌ NEVER — silently fails or corrupts config on non-GNOME systems
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+```
+
+### 4. Never Create Trivial One-Line Wrapper Functions
+
+If a function is called only once and only proxies a single other call, inline it directly.
+
+```bash
+# ✅ CORRECT
+install_packages docker docker-compose-plugin
+
+# ❌ NEVER
+_install_docker_packages() { install_packages docker docker-compose-plugin; }
+_install_docker_packages
+```
+
+### 5. Never Add Identical Package Names to `packages.conf`
+
+Only add entries when package names **differ** across Debian / Fedora / Arch, or when a package is **unsupported** (`-`) on a specific distro.
+
+```
+# ✅ CORRECT — names differ across distros, must be in packages.conf
+fd-find | fd-find | fd-find | fd
+
+# ❌ NEVER — identical everywhere, NOT added to packages.conf
+# ripgrep | ripgrep | ripgrep | ripgrep
+```
 
 ---
 
