@@ -1,0 +1,9 @@
+[org/gnome/TextEditor]
+highlight-current-line=true
+indent-style='space'
+restore-session=false
+show-line-numbers=false
+show-map=false
+style-scheme='Adwaita-dark'
+style-variant='dark'
+use-system-font=true

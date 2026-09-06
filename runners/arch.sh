@@ -38,6 +38,7 @@ run_all() {
     "desktop/setup-icon-theme.sh:Icon theme setup"
     "desktop/setup-gnome-extensions.sh:GNOME extensions setup"
     "desktop/setup-gnome-extensions-config.sh:GNOME extensions configuration"
+    "desktop/setup-desktop-preferences.sh:Desktop environment preferences"
   )
 
   run_pipeline "Arch Linux Desktop Setup" "${steps[@]}"

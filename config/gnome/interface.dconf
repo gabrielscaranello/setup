@@ -1,0 +1,13 @@
+[org/gnome/desktop/interface]
+clock-show-seconds=true
+clock-show-weekday=true
+font-name='Cantarell 11'
+gtk-enable-primary-paste=false
+monospace-font-name='JetBrainsMono Nerd Font 11'
+
+[org/gnome/desktop/datetime]
+automatic-timezone=true
+
+[org/gnome/desktop/sound]
+event-sounds=false
+theme-name='__custom'

@@ -1,0 +1,19 @@
+[org/gnome/desktop/wm/preferences]
+action-middle-click-titlebar='minimize'
+
+[org/gnome/desktop/wm/keybindings]
+show-desktop=['<Super>d']
+
+[org/gnome/settings-daemon/plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']
+home=['<Super>e']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Control><Alt>t'
+command='kitty'
+name='Kitty'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
+binding='<Control><Alt>s'
+command='flameshot gui'
+name='Flameshot'

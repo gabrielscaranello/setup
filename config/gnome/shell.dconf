@@ -1,0 +1,26 @@
+[org/gnome/shell]
+app-picker-layout=[{'org.gnome.Calculator.desktop': <{'position': <0>}>, 'org.gnome.Calendar.desktop': <{'position': <1>}>, 'org.gnome.Characters.desktop': <{'position': <2>}>, 'org.gnome.TextEditor.desktop': <{'position': <3>}>, 'org.gnome.SystemMonitor.desktop': <{'position': <4>}>, 'org.gnome.Software.desktop': <{'position': <5>}>, 'b8279844-5ac4-4d3e-8187-2794b7332933': <{'position': <6>}>, '0940248a-b3cb-4922-937d-05bcc29b834f': <{'position': <7>}>, 'System': <{'position': <8>}>, 'Utilities': <{'position': <9>}>}]
+favorite-apps=['org.gnome.Nautilus.desktop', 'kitty.desktop', 'code.desktop', 'firefox.desktop', 'google-chrome.desktop', 'md.obsidian.Obsidian.desktop', 'org.onlyoffice.desktopeditors.desktop', 'org.gimp.GIMP.desktop', 'com.discordapp.Discord.desktop', 'org.telegram.desktop.desktop']
+
+[org/gnome/desktop/app-folders]
+folder-children=['System', 'Utilities', 'YaST', '0940248a-b3cb-4922-937d-05bcc29b834f', 'b8279844-5ac4-4d3e-8187-2794b7332933']
+
+[org/gnome/desktop/app-folders/folders/0940248a-b3cb-4922-937d-05bcc29b834f]
+apps=['com.vysp3r.ProtonPlus.desktop', 'com.valvesoftware.Steam.desktop']
+name='Games'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/System]
+apps=['yelp.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.baobab.desktop', 'nm-connection-editor.desktop', 'gufw.desktop', 'org.gnome.Settings.desktop', 'org.freedesktop.MalcontentControl.desktop', 'org.gnome.DiskUtility.desktop', 'im-config.desktop', 'org.gnome.Logs.desktop']
+name='X-GNOME-Shell-System.directory'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/Utilities]
+apps=['btop.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.FileRoller.desktop', 'org.flameshot.Flameshot.desktop', 'org.gnome.font-viewer.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'nvim.desktop', 'org.gnome.clocks.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Showtime.desktop', 'timeshift-gtk.desktop', 'org.gnome.Papers.desktop', 'io.github.celluloid_player.Celluloid.desktop', 'org.gnome.Connections.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Loupe.desktop']
+name='X-GNOME-Shell-Utilities.directory'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/b8279844-5ac4-4d3e-8187-2794b7332933]
+apps=['io.dbeaver.DBeaverCommunity.desktop', 'com.mongodb.Compass.desktop']
+name='Develop'
+translate=false
