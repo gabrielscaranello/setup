@@ -163,6 +163,28 @@ _configure_plasma_desktops_dbus() {
     || "$qdbus_cmd" org.kde.KWin /KWin reconfigure > /dev/null 2>&1 || true
 }
 
+_reload_plasma_shortcuts_dbus() {
+  if command -v kbuildsycoca6 > /dev/null 2>&1; then
+    kbuildsycoca6 --noincremental > /dev/null 2>&1 || true
+  elif command -v kbuildsycoca5 > /dev/null 2>&1; then
+    kbuildsycoca5 --noincremental > /dev/null 2>&1 || true
+  fi
+
+  local qdbus_cmd
+  qdbus_cmd="$(_get_plasma_dbus_cmd)" || return 0
+  [ -n "$qdbus_cmd" ] || return 0
+
+  if "$qdbus_cmd" org.kde.KWin /KWin > /dev/null 2>&1; then
+    "$qdbus_cmd" org.kde.KWin /KWin org.kde.KWin.reconfigure > /dev/null 2>&1 \
+      || "$qdbus_cmd" org.kde.KWin /KWin reconfigure > /dev/null 2>&1 || true
+  fi
+
+  if "$qdbus_cmd" org.kde.kglobalaccel /kglobalaccel > /dev/null 2>&1; then
+    "$qdbus_cmd" org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel.reconfigure > /dev/null 2>&1 \
+      || "$qdbus_cmd" org.kde.kglobalaccel /kglobalaccel reconfigure > /dev/null 2>&1 || true
+  fi
+}
+
 configure_plasma_preferences() {
   ensure_kwriteconfig
 
@@ -192,20 +214,19 @@ configure_plasma_preferences() {
   echo "Applying KDE Plasma 6 keyboard shortcuts..."
   # Global Shortcuts (kglobalshortcutsrc)
   plasma_write_config "kglobalshortcutsrc" "kwin" "Show Desktop" "Meta+D,Meta+D,Peek at Desktop"
-  plasma_write_config "kglobalshortcutsrc" "kwin" "Window Maximize" "Meta+M"
-  plasma_write_config "kglobalshortcutsrc" "kwin" "Window Minimize" "none"
-  plasma_write_config "kglobalshortcutsrc" "kwin" "Switch to Next Desktop" "Meta+PgDown"
-  plasma_write_config "kglobalshortcutsrc" "kwin" "Switch to Previous Desktop" "Meta+PgUp"
-  plasma_write_config "kglobalshortcutsrc" "kwin" "Window to Next Desktop" "Meta+Shift+PgDown"
-  plasma_write_config "kglobalshortcutsrc" "kwin" "Window to Previous Desktop" "Meta+Shift+PgUp"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window Maximize" "Meta+M,Meta+PgUp,Maximize Window"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window Minimize" "none,Meta+PgDown,Minimize Window"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Switch to Next Desktop" "Meta+PgDown,,Switch to Next Desktop"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Switch to Previous Desktop" "Meta+PgUp,,Switch to Previous Desktop"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window to Next Desktop" "Meta+Shift+PgDown,,Window to Next Desktop"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window to Previous Desktop" "Meta+Shift+PgUp,,Window to Previous Desktop"
   plasma_write_config "kglobalshortcutsrc" "services][kitty.desktop" "_launch" "Ctrl+Alt+T"
   plasma_write_config "kglobalshortcutsrc" "services][org.kde.dolphin.desktop" "_launch" "Meta+E"
-  plasma_write_config "kglobalshortcutsrc" "services][org.flameshot.Flameshot.desktop" "_launch" "Ctrl+Alt+S"
-  plasma_write_config "kglobalshortcutsrc" "services][org.kde.krunner.desktop" "_launch" 'Meta+Space\tSearch\tAlt+Space\tAlt+F2'
-  plasma_write_config "kglobalshortcutsrc" "services][org.kde.plasma-systemmonitor.desktop" "_launch" 'Meta+Esc\tCtrl+Shift+Esc'
-  plasma_write_config "kglobalshortcutsrc" "plasmashell" "show-on-mouse-pos" 'Meta+V\tMeta+Shift+V'
-  plasma_write_config "kglobalshortcutsrc" "plasmashell" "next activity" "Meta+A"
-  plasma_write_config "kglobalshortcutsrc" "plasmashell" "previous activity" "Meta+Shift+A"
+  plasma_write_config "kglobalshortcutsrc" "services][org.kde.krunner.desktop" "_launch" $'Meta+Space\tSearch\tAlt+Space\tAlt+F2'
+  plasma_write_config "kglobalshortcutsrc" "services][org.kde.plasma-systemmonitor.desktop" "_launch" $'Meta+Esc\tCtrl+Shift+Esc'
+  plasma_write_config "kglobalshortcutsrc" "plasmashell" "show-on-mouse-pos" $'Meta+V\tMeta+Shift+V,Meta+V,Show Clipboard Items at Mouse Position'
+  plasma_write_config "kglobalshortcutsrc" "plasmashell" "next activity" "Meta+A,none,Walk Through Activities"
+  plasma_write_config "kglobalshortcutsrc" "plasmashell" "previous activity" "Meta+Shift+A,none,Walk Through Activities (Reverse)"
 
   echo "Applying KDE Plasma 6 appearance, typography and defaults..."
   # Appearance & Defaults (kdeglobals)
@@ -317,6 +338,7 @@ configure_plasma_preferences() {
   _setup_plasma_start_icon
   _clear_plasma_kickoff_favorites
   _configure_plasma_desktops_dbus
+  _reload_plasma_shortcuts_dbus
   configure_plasma_panel
 }
 

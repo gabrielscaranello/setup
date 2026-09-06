@@ -109,37 +109,34 @@ Supports both primary desktop environments:
      - Key: `Show Desktop=Meta+D,Meta+D,Peek at Desktop`
    - **Window Maximize**:
      - Group: `[kwin]`
-     - Key: `Window Maximize=Meta+M`
+     - Key: `Window Maximize=Meta+M,Meta+PgUp,Maximize Window`
    - **Window Minimize** (cleared to avoid conflict with desktop navigation):
      - Group: `[kwin]`
-     - Key: `Window Minimize=none`
+     - Key: `Window Minimize=none,Meta+PgDown,Minimize Window`
    - **Switch to Next / Previous Desktop**:
      - Group: `[kwin]`
-     - Keys: `Switch to Next Desktop=Meta+PgDown`, `Switch to Previous Desktop=Meta+PgUp`
+     - Keys: `Switch to Next Desktop=Meta+PgDown,,Switch to Next Desktop`, `Switch to Previous Desktop=Meta+PgUp,,Switch to Previous Desktop`
    - **Window to Next / Previous Desktop**:
      - Group: `[kwin]`
-     - Keys: `Window to Next Desktop=Meta+Shift+PgDown`, `Window to Previous Desktop=Meta+Shift+PgUp`
+     - Keys: `Window to Next Desktop=Meta+Shift+PgDown,,Window to Next Desktop`, `Window to Previous Desktop=Meta+Shift+PgUp,,Window to Previous Desktop`
    - **Terminal Emulator (Kitty)**:
      - Group: `[services][kitty.desktop]`
      - Key: `_launch=Ctrl+Alt+T`
    - **File Manager (Dolphin)**:
      - Group: `[services][org.kde.dolphin.desktop]`
      - Key: `_launch=Meta+E`
-   - **Screenshot Tool (Flameshot)**:
-     - Group: `[services][org.flameshot.Flameshot.desktop]`
-     - Key: `_launch=Ctrl+Alt+S`
    - **Application Runner (KRunner)**:
      - Group: `[services][org.kde.krunner.desktop]`
-     - Key: `_launch=Meta+Space\tSearch\tAlt+Space\tAlt+F2`
+     - Key: `_launch=Meta+Space\tSearch\tAlt+Space\tAlt+F2` (tab-separated)
    - **System Monitor (Plasma System Monitor)**:
      - Group: `[services][org.kde.plasma-systemmonitor.desktop]`
-     - Key: `_launch=Meta+Esc\tCtrl+Shift+Esc`
+     - Key: `_launch=Meta+Esc\tCtrl+Shift+Esc` (tab-separated)
    - **Clipboard History on Mouse Position**:
      - Group: `[plasmashell]`
-     - Key: `show-on-mouse-pos=Meta+V\tMeta+Shift+V`
+     - Key: `show-on-mouse-pos=Meta+V\tMeta+Shift+V,Meta+V,Show Clipboard Items at Mouse Position` (tab-separated)
    - **Activities Navigation**:
      - Group: `[plasmashell]`
-     - Keys: `next activity=Meta+A`, `previous activity=Meta+Shift+A`
+     - Keys: `next activity=Meta+A,none,Walk Through Activities`, `previous activity=Meta+Shift+A,none,Walk Through Activities (Reverse)`
 
 4. **Appearance, Fonts & System Defaults (`~/.config/kdeglobals`)**:
    - **Color Scheme**:
@@ -300,7 +297,7 @@ Supports both primary desktop environments:
 - **AND** configure Alt-Tab task switcher layout to flipswitch
 - **AND** configure titlebar buttons to ButtonsOnLeft=E and ButtonsOnRight=IAX in kwinrc
 - **AND** configure mouse acceleration profile to flat in kcminputrc
-- **AND** configure global shortcuts (Meta+D, Meta+M, Window Minimize=none, Meta+PgDown/PgUp, Meta+Shift+PgDown/PgUp, Ctrl+Alt+T, Meta+E, Ctrl+Alt+S, Meta+Space, Meta+Esc/Ctrl+Shift+Esc, Meta+V/Meta+Shift+V, Meta+A/Meta+Shift+A) in kglobalshortcutsrc
+- **AND** configure global shortcuts (Meta+D, Meta+M, Window Minimize=none, Meta+PgDown/PgUp, Meta+Shift+PgDown/PgUp, Ctrl+Alt+T, Meta+E, Meta+Space, Meta+Esc/Ctrl+Shift+Esc, Meta+V/Meta+Shift+V, Meta+A/Meta+Shift+A) in kglobalshortcutsrc
 - **AND** configure default terminal to Kitty and monospace font in kdeglobals
 - **AND** configure session to start with an empty session in ksmserverrc
 - **AND** configure Dolphin to open at home directory without remembering tabs in dolphinrc

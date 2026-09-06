@@ -222,6 +222,54 @@ teardown() {
   [[ "$output" != *"Configuring KDE Plasma 6 virtual desktops via KWin D-Bus..."* ]]
 }
 
+# ── _reload_plasma_shortcuts_dbus Tests ───────────────────────────────────────
+
+@test "_reload_plasma_shortcuts_dbus triggers kbuildsycoca and reloads KWin and kglobalaccel via D-Bus" {
+  local calls_file
+  calls_file="$(mktemp /tmp/mock_reload_dbus_XXXXXX)"
+
+  command() {
+    if [ "$2" = "kbuildsycoca6" ]; then return 0; fi
+    builtin command "$@"
+  }
+  kbuildsycoca6() {
+    echo "kbuildsycoca6 called: $*" >> "$calls_file"
+    return 0
+  }
+  _get_plasma_dbus_cmd() { echo "mock_qdbus"; }
+  mock_qdbus() {
+    echo "mock_qdbus called: $*" >> "$calls_file"
+    return 0
+  }
+
+  run _reload_plasma_shortcuts_dbus
+  [ "$status" -eq 0 ]
+  [ -s "$calls_file" ]
+
+  run grep "kbuildsycoca6 called: --noincremental" "$calls_file"
+  [ "$status" -eq 0 ]
+
+  run grep "mock_qdbus called: org.kde.KWin /KWin" "$calls_file"
+  [ "$status" -eq 0 ]
+
+  run grep "mock_qdbus called: org.kde.kglobalaccel /kglobalaccel" "$calls_file"
+  [ "$status" -eq 0 ]
+
+  rm -f "$calls_file"
+}
+
+@test "_reload_plasma_shortcuts_dbus gracefully skips when D-Bus is unavailable" {
+  command() {
+    if [ "$2" = "kbuildsycoca6" ]; then return 1; fi
+    if [ "$2" = "kbuildsycoca5" ]; then return 1; fi
+    builtin command "$@"
+  }
+  _get_plasma_dbus_cmd() { return 1; }
+
+  run _reload_plasma_shortcuts_dbus
+  [ "$status" -eq 0 ]
+}
+
 # ── configure_plasma_preferences Tests ────────────────────────────────────────
 
 @test "configure_plasma_preferences configures all target groups and keys" {
@@ -240,6 +288,10 @@ teardown() {
   }
   _configure_plasma_desktops_dbus() {
     echo "_configure_plasma_desktops_dbus called"
+    return 0
+  }
+  _reload_plasma_shortcuts_dbus() {
+    echo "_reload_plasma_shortcuts_dbus called"
     return 0
   }
   configure_plasma_panel() {
@@ -262,20 +314,19 @@ teardown() {
   [[ "$output" =~ "config: file=kcminputrc group=Mouse key=AccelerationProfile val=flat" ]]
   [[ "$output" =~ "config: file=kcminputrc group=Touchpad key=TwoFingerScroll val=true" ]]
   [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Show Desktop val=Meta+D,Meta+D,Peek at Desktop" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window Maximize val=Meta+M" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window Minimize val=none" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Switch to Next Desktop val=Meta+PgDown" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Switch to Previous Desktop val=Meta+PgUp" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window to Next Desktop val=Meta+Shift+PgDown" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window to Previous Desktop val=Meta+Shift+PgUp" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window Maximize val=Meta+M,Meta+PgUp,Maximize Window" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window Minimize val=none,Meta+PgDown,Minimize Window" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Switch to Next Desktop val=Meta+PgDown,,Switch to Next Desktop" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Switch to Previous Desktop val=Meta+PgUp,,Switch to Previous Desktop" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window to Next Desktop val=Meta+Shift+PgDown,,Window to Next Desktop" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=kwin key=Window to Previous Desktop val=Meta+Shift+PgUp,,Window to Previous Desktop" ]]
   [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][kitty.desktop key=_launch val=Ctrl+Alt+T" ]]
   [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.kde.dolphin.desktop key=_launch val=Meta+E" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.flameshot.Flameshot.desktop key=_launch val=Ctrl+Alt+S" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.kde.krunner.desktop key=_launch val=Meta+Space\tSearch\tAlt+Space\tAlt+F2" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.kde.plasma-systemmonitor.desktop key=_launch val=Meta+Esc\tCtrl+Shift+Esc" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=plasmashell key=show-on-mouse-pos val=Meta+V\tMeta+Shift+V" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=plasmashell key=next activity val=Meta+A" ]]
-  [[ "$output" =~ "config: file=kglobalshortcutsrc group=plasmashell key=previous activity val=Meta+Shift+A" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.kde.krunner.desktop key=_launch val=Meta+Space"$'\t'"Search"$'\t'"Alt+Space"$'\t'"Alt+F2" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=services][org.kde.plasma-systemmonitor.desktop key=_launch val=Meta+Esc"$'\t'"Ctrl+Shift+Esc" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=plasmashell key=show-on-mouse-pos val=Meta+V"$'\t'"Meta+Shift+V,Meta+V,Show Clipboard Items at Mouse Position" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=plasmashell key=next activity val=Meta+A,none,Walk Through Activities" ]]
+  [[ "$output" =~ "config: file=kglobalshortcutsrc group=plasmashell key=previous activity val=Meta+Shift+A,none,Walk Through Activities (Reverse)" ]]
   [[ "$output" =~ "colorscheme: BreezeDark" ]]
   [[ "$output" =~ "config: file=kdeglobals group=General key=TerminalApplication val=kitty" ]]
   [[ "$output" =~ "config: file=kdeglobals group=General key=fixed val=JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1" ]]
@@ -334,6 +385,7 @@ teardown() {
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=thickness val=40" ]]
   [[ "$output" =~ "_clear_plasma_kickoff_favorites called" ]]
   [[ "$output" =~ "_configure_plasma_desktops_dbus called" ]]
+  [[ "$output" =~ "_reload_plasma_shortcuts_dbus called" ]]
   [[ "$output" =~ "configure_plasma_panel called" ]]
 }
 
