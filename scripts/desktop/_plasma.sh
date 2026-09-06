@@ -103,7 +103,15 @@ plasma_write_config() {
   local value="$4"
 
   if command -v kwriteconfig6 > /dev/null 2>&1; then
-    kwriteconfig6 --file "$file" --group "$group" --key "$key" "$value"
+    local group_args=()
+    IFS=']' read -ra parts <<< "$group"
+    for part in "${parts[@]}"; do
+      part="${part#[}"
+      if [ -n "$part" ]; then
+        group_args+=(--group "$part")
+      fi
+    done
+    kwriteconfig6 --file "$file" "${group_args[@]}" --key "$key" "$value"
   else
     _plasma_ini_write "$file" "$group" "$key" "$value"
   fi
@@ -117,6 +125,44 @@ plasma_apply_colorscheme() {
   plasma_write_config "kdeglobals" "KDE" "LookAndFeelPackage" "org.kde.breezedark.desktop"
 }
 
+_get_plasma_dbus_cmd() {
+  if command -v qdbus6 > /dev/null 2>&1; then
+    echo "qdbus6"
+  elif command -v qdbus > /dev/null 2>&1; then
+    echo "qdbus"
+  fi
+}
+
+_configure_plasma_desktops_dbus() {
+  local qdbus_cmd
+  qdbus_cmd="$(_get_plasma_dbus_cmd)" || return 0
+  [ -n "$qdbus_cmd" ] || return 0
+
+  # Check if KWin is running and responding on DBus
+  if ! "$qdbus_cmd" org.kde.KWin /KWin > /dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Configuring KDE Plasma 6 virtual desktops via KWin D-Bus..."
+  local current_count
+  current_count="$("$qdbus_cmd" org.kde.KWin /VirtualDesktopManager org.kde.KWin.VirtualDesktopManager.count 2> /dev/null || "$qdbus_cmd" org.kde.KWin /VirtualDesktopManager count 2> /dev/null || echo "")"
+
+  if [[ "$current_count" =~ ^[0-9]+$ ]]; then
+    while [ "$current_count" -lt 4 ]; do
+      current_count=$((current_count + 1))
+      "$qdbus_cmd" org.kde.KWin /VirtualDesktopManager org.kde.KWin.VirtualDesktopManager.createDesktop "$current_count" "Desktop $current_count" 2> /dev/null \
+        || "$qdbus_cmd" org.kde.KWin /VirtualDesktopManager createDesktop "$current_count" "Desktop $current_count" 2> /dev/null || true
+    done
+  fi
+
+  "$qdbus_cmd" org.kde.KWin /VirtualDesktopManager org.freedesktop.DBus.Properties.Set org.kde.KWin.VirtualDesktopManager rows 2 2> /dev/null \
+    || "$qdbus_cmd" org.kde.KWin /VirtualDesktopManager org.kde.KWin.VirtualDesktopManager.rows 2 2> /dev/null \
+    || "$qdbus_cmd" org.kde.KWin /VirtualDesktopManager rows 2 2> /dev/null || true
+
+  "$qdbus_cmd" org.kde.KWin /KWin org.kde.KWin.reconfigure > /dev/null 2>&1 \
+    || "$qdbus_cmd" org.kde.KWin /KWin reconfigure > /dev/null 2>&1 || true
+}
+
 configure_plasma_preferences() {
   ensure_kwriteconfig
 
@@ -124,6 +170,10 @@ configure_plasma_preferences() {
   # Window Management & Effects (kwinrc)
   plasma_write_config "kwinrc" "Desktops" "Number" "4"
   plasma_write_config "kwinrc" "Desktops" "Rows" "2"
+  plasma_write_config "kwinrc" "Desktops" "Name_1" "Desktop 1"
+  plasma_write_config "kwinrc" "Desktops" "Name_2" "Desktop 2"
+  plasma_write_config "kwinrc" "Desktops" "Name_3" "Desktop 3"
+  plasma_write_config "kwinrc" "Desktops" "Name_4" "Desktop 4"
   plasma_write_config "kwinrc" "MouseBindings" "CommandActiveTitlebar2" "Minimize"
   plasma_write_config "kwinrc" "NightColor" "Active" "true"
   plasma_write_config "kwinrc" "NightColor" "Mode" "Constant"
@@ -156,15 +206,12 @@ configure_plasma_preferences() {
   # Dolphin (dolphinrc)
   plasma_write_config "dolphinrc" "General" "RememberOpenedTabs" "false"
 
-  configure_plasma_panel
-}
+  # Ensure default panel views have thickness 40
+  plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
+  plasma_write_config "plasmashellrc" "PlasmaViews][Panel 2][Defaults" "thickness" "40"
 
-_get_plasma_dbus_cmd() {
-  if command -v qdbus6 > /dev/null 2>&1; then
-    echo "qdbus6"
-  elif command -v qdbus > /dev/null 2>&1; then
-    echo "qdbus"
-  fi
+  _configure_plasma_desktops_dbus
+  configure_plasma_panel
 }
 
 _configure_plasma_panel_dbus() {
@@ -199,20 +246,38 @@ if (typeof panelIds !== "undefined") {
 
 var panel = new Panel("org.kde.panel");
 panel.location = "bottom";
+panel.height = 40;
 panel.floating = false;
 
 panel.addWidget("org.kde.plasma.kickoff");
 panel.addWidget("org.kde.plasma.marginsseparator");
 
+var launchers = [
+    "applications:org.kde.dolphin.desktop",
+    "applications:kitty.desktop",
+    "applications:codium.desktop",
+    "applications:firefox.desktop",
+    "applications:google-chrome.desktop",
+    "applications:io.dbeaver.DBeaverCommunity.desktop",
+    "applications:org.onlyoffice.desktopeditors.desktop",
+    "applications:md.obsidian.Obsidian.desktop",
+    "applications:org.gimp.GIMP.desktop",
+    "applications:org.telegram.desktop.desktop",
+    "applications:steam.desktop",
+    "applications:com.discordapp.Discord.desktop"
+].join(",");
+
 var tasks = panel.addWidget("org.kde.plasma.icontasks");
 tasks.currentConfigGroup = ["General"];
-tasks.writeConfig("launchers", "preferred://filemanager,applications:kitty.desktop,applications:codium.desktop,preferred://browser,applications:google-chrome.desktop,applications:io.dbeaver.DBeaverCommunity.desktop,applications:org.onlyoffice.desktopeditors.desktop,applications:md.obsidian.Obsidian.desktop,applications:org.gimp.GIMP.desktop,applications:org.telegram.desktop.desktop,applications:steam.desktop,applications:com.discordapp.Discord.desktop");
+tasks.writeConfig("launchers", launchers);
+tasks.writeConfig("launchers", launchers);
 tasks.writeConfig("showOnlyCurrentDesktop", "false");
 tasks.reloadConfig();
 
 var pager = panel.addWidget("org.kde.plasma.pager");
 pager.currentConfigGroup = ["General"];
 pager.writeConfig("displayedText", "Number");
+pager.writeConfig("rowsToDisplay", "2");
 pager.writeConfig("rowsToDisplay", "2");
 pager.reloadConfig();
 
@@ -225,6 +290,31 @@ clock.writeConfig("dateFormat", "shortDate");
 clock.writeConfig("showDate", "true");
 clock.writeConfig("showSeconds", "always");
 clock.reloadConfig();
+
+var allWidgets = panel.widgets();
+for (var j = 0; j < allWidgets.length; ++j) {
+    var w = allWidgets[j];
+    if (w.type === "org.kde.plasma.icontasks") {
+        w.currentConfigGroup = ["General"];
+        w.writeConfig("launchers", launchers);
+        w.writeConfig("launchers", launchers);
+        w.writeConfig("showOnlyCurrentDesktop", "false");
+        w.reloadConfig();
+    } else if (w.type === "org.kde.plasma.pager") {
+        w.currentConfigGroup = ["General"];
+        w.writeConfig("displayedText", "Number");
+        w.writeConfig("rowsToDisplay", "2");
+        w.writeConfig("rowsToDisplay", "2");
+        w.reloadConfig();
+    } else if (w.type === "org.kde.plasma.digitalclock") {
+        w.currentConfigGroup = ["Appearance"];
+        w.writeConfig("dateFormat", "shortDate");
+        w.writeConfig("showDate", "true");
+        w.writeConfig("showSeconds", "always");
+        w.reloadConfig();
+    }
+}
+panel.reloadConfig();
 EOF
   )"
 

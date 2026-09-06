@@ -69,7 +69,9 @@ teardown() {
   grep -q "TerminalApplication=kitty" "$HOME/.config/kdeglobals"
   [ -f "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" ]
   grep -q "floating=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "thickness=40" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "AppletOrder=2;3;4;5;6;7;8" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "applications:org\.kde\.dolphin\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "showOnlyCurrentDesktop=false" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "lastScreen=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"

@@ -121,6 +121,21 @@ teardown() {
   [[ "$output" =~ "kwriteconfig6 called: --file kwinrc --group MouseBindings --key CommandActiveTitlebar2 Minimize" ]]
 }
 
+@test "plasma_write_config splits nested groups for kwriteconfig6" {
+  command() {
+    if [ "$2" = "kwriteconfig6" ]; then return 0; fi
+    builtin command "$@"
+  }
+  kwriteconfig6() {
+    echo "kwriteconfig6 called: $*"
+    return 0
+  }
+
+  run plasma_write_config "kglobalshortcutsrc" "services][kitty.desktop" "_launch" "Ctrl+Alt+T"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "kwriteconfig6 called: --file kglobalshortcutsrc --group services --group kitty.desktop --key _launch Ctrl+Alt+T" ]]
+}
+
 @test "plasma_write_config delegates to fallback when kwriteconfig6 is absent" {
   command() {
     if [ "$2" = "kwriteconfig6" ]; then return 1; fi
@@ -156,6 +171,57 @@ teardown() {
   [[ "$output" =~ "plasma_write_config called: kdeglobals KDE LookAndFeelPackage org.kde.breezedark.desktop" ]]
 }
 
+# ── _configure_plasma_desktops_dbus Tests ─────────────────────────────────────
+
+@test "_configure_plasma_desktops_dbus sets 4 desktops and 2 rows via D-Bus when KWin is active" {
+  local dbus_calls
+  dbus_calls="$(mktemp /tmp/mock_kwin_dbus_XXXXXX)"
+
+  _get_plasma_dbus_cmd() { echo "mock_qdbus"; }
+  mock_qdbus() {
+    echo "$*" >> "$dbus_calls"
+    if [ "$1" = "org.kde.KWin" ] && [ "$2" = "/KWin" ]; then
+      return 0
+    fi
+    if [ "$1" = "org.kde.KWin" ] && [ "$2" = "/VirtualDesktopManager" ]; then
+      if [ "$3" = "count" ] || [ "$3" = "org.kde.KWin.VirtualDesktopManager.count" ]; then
+        echo "2"
+        return 0
+      fi
+      return 0
+    fi
+    return 0
+  }
+
+  run _configure_plasma_desktops_dbus
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring KDE Plasma 6 virtual desktops via KWin D-Bus..." ]]
+  [ -s "$dbus_calls" ]
+
+  run grep "createDesktop 3 Desktop 3" "$dbus_calls"
+  [ "$status" -eq 0 ]
+
+  run grep "createDesktop 4 Desktop 4" "$dbus_calls"
+  [ "$status" -eq 0 ]
+
+  run grep "rows 2" "$dbus_calls"
+  [ "$status" -eq 0 ]
+
+  run grep "reconfigure" "$dbus_calls"
+  [ "$status" -eq 0 ]
+
+  rm -f "$dbus_calls"
+}
+
+@test "_configure_plasma_desktops_dbus gracefully skips when KWin is absent" {
+  _get_plasma_dbus_cmd() { echo "mock_qdbus"; }
+  mock_qdbus() { return 1; }
+
+  run _configure_plasma_desktops_dbus
+  [ "$status" -eq 0 ]
+  [[ "$output" != *"Configuring KDE Plasma 6 virtual desktops via KWin D-Bus..."* ]]
+}
+
 # ── configure_plasma_preferences Tests ────────────────────────────────────────
 
 @test "configure_plasma_preferences configures all target groups and keys" {
@@ -168,7 +234,10 @@ teardown() {
     echo "config: file=$1 group=$2 key=$3 val=$4"
     return 0
   }
-
+  _configure_plasma_desktops_dbus() {
+    echo "_configure_plasma_desktops_dbus called"
+    return 0
+  }
   configure_plasma_panel() {
     echo "configure_plasma_panel called"
     return 0
@@ -179,6 +248,7 @@ teardown() {
   [[ "$output" =~ "Applying KDE Plasma 6 window manager preferences..." ]]
   [[ "$output" =~ "config: file=kwinrc group=Desktops key=Number val=4" ]]
   [[ "$output" =~ "config: file=kwinrc group=Desktops key=Rows val=2" ]]
+  [[ "$output" =~ "config: file=kwinrc group=Desktops key=Name_1 val=Desktop 1" ]]
   [[ "$output" =~ "config: file=kwinrc group=MouseBindings key=CommandActiveTitlebar2 val=Minimize" ]]
   [[ "$output" =~ "config: file=kwinrc group=NightColor key=Active val=true" ]]
   [[ "$output" =~ "config: file=kwinrc group=NightColor key=NightTemperature val=4700" ]]
@@ -191,6 +261,8 @@ teardown() {
   [[ "$output" =~ "colorscheme: BreezeDark" ]]
   [[ "$output" =~ "config: file=kdeglobals group=General key=TerminalApplication val=kitty" ]]
   [[ "$output" =~ "config: file=dolphinrc group=General key=RememberOpenedTabs val=false" ]]
+  [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=thickness val=40" ]]
+  [[ "$output" =~ "_configure_plasma_desktops_dbus called" ]]
   [[ "$output" =~ "configure_plasma_panel called" ]]
 }
 
@@ -209,7 +281,13 @@ teardown() {
   run grep "floating=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
+  run grep "thickness=40" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
   run grep "AppletOrder=2;3;4;5;6;7;8" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  run grep "applications:org\.kde\.dolphin\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
   run grep "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
@@ -248,13 +326,22 @@ teardown() {
   [[ "$output" =~ "Panel layout script sent to plasmashell successfully." ]]
   [ -s "$script_log" ]
 
+  run grep "panel.height = 40" "$script_log"
+  [ "$status" -eq 0 ]
+
   run grep "org.kde.plasma.kickoff" "$script_log"
   [ "$status" -eq 0 ]
 
   run grep "org.kde.plasma.icontasks" "$script_log"
   [ "$status" -eq 0 ]
 
+  run grep "applications:org.kde.dolphin.desktop" "$script_log"
+  [ "$status" -eq 0 ]
+
   run grep "showOnlyCurrentDesktop" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep "allWidgets" "$script_log"
   [ "$status" -eq 0 ]
 
   rm -f "$script_log"

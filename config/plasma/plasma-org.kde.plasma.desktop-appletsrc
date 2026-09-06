@@ -9,6 +9,7 @@ immutability=1
 lastScreen=0
 location=4
 plugin=org.kde.panel
+thickness=40
 
 [Containments][1][Applets][2]
 immutability=1
@@ -23,7 +24,7 @@ immutability=1
 plugin=org.kde.plasma.icontasks
 
 [Containments][1][Applets][4][Configuration][General]
-launchers=preferred://filemanager,applications:kitty.desktop,applications:codium.desktop,preferred://browser,applications:google-chrome.desktop,applications:io.dbeaver.DBeaverCommunity.desktop,applications:org.onlyoffice.desktopeditors.desktop,applications:md.obsidian.Obsidian.desktop,applications:org.gimp.GIMP.desktop,applications:org.telegram.desktop.desktop,applications:steam.desktop,applications:com.discordapp.Discord.desktop
+launchers=applications:org.kde.dolphin.desktop,applications:kitty.desktop,applications:codium.desktop,applications:firefox.desktop,applications:google-chrome.desktop,applications:io.dbeaver.DBeaverCommunity.desktop,applications:org.onlyoffice.desktopeditors.desktop,applications:md.obsidian.Obsidian.desktop,applications:org.gimp.GIMP.desktop,applications:org.telegram.desktop.desktop,applications:steam.desktop,applications:com.discordapp.Discord.desktop
 showOnlyCurrentDesktop=false
 
 [Containments][1][Applets][5]
