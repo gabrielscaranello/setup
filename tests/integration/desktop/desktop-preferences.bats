@@ -78,6 +78,9 @@ teardown() {
   grep -q "lastScreen=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "plugin=org.kde.plasma.folder" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "favoritesPortedToStats=true" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "icon=.*start-here.svg" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ -f "$HOME/.icons/start-here.svg" ]
+  [ -f "$HOME/.local/share/icons/start-here.svg" ]
   [ -f "$HOME/.config/kactivitymanagerd-statsrc" ]
   grep -q "ordering=" "$HOME/.config/kactivitymanagerd-statsrc"
 

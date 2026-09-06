@@ -398,6 +398,132 @@ EOF
   run grep "allWidgets" "$script_log"
   [ "$status" -eq 0 ]
 
+  run grep "start-here.svg" "$script_log"
+  [ "$status" -eq 0 ]
+
+  rm -f "$script_log"
+}
+
+@test "configure_plasma_panel deploys template and configures start-here icon" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_panel_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  _get_plasma_dbus_cmd() { return 1; }
+
+  run configure_plasma_panel
+  [ "$status" -eq 0 ]
+  [ -f "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc" ]
+
+  local content
+  content="$(cat "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc")"
+  [[ "$content" =~ "icon=" ]]
+  [[ "$content" =~ "start-here.svg" ]]
+  [[ ! "$content" =~ ":start-here-icon:" ]]
+
+  rm -rf "$test_dir"
+}
+
+@test "_setup_plasma_start_icon installs arch icon on Arch Linux" {
+  local test_home
+  test_home="$(mktemp -d /tmp/plasma_icon_test_XXXXXX)"
+  HOME="$test_home"
+  get_distro_id() { echo "arch"; }
+
+  run _setup_plasma_start_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing KDE Plasma start menu icon for arch..." ]]
+  [ -f "$test_home/.icons/start-here.svg" ]
+  [ -f "$test_home/.local/share/icons/start-here.svg" ]
+
+  rm -rf "$test_home"
+}
+
+@test "_setup_plasma_start_icon installs debian icon on Debian" {
+  local test_home
+  test_home="$(mktemp -d /tmp/plasma_icon_test_XXXXXX)"
+  HOME="$test_home"
+  get_distro_id() { echo "debian"; }
+
+  run _setup_plasma_start_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing KDE Plasma start menu icon for debian..." ]]
+  [ -f "$test_home/.icons/start-here.svg" ]
+  [ -f "$test_home/.local/share/icons/start-here.svg" ]
+
+  rm -rf "$test_home"
+}
+
+@test "_setup_plasma_start_icon installs fedora icon on Fedora" {
+  local test_home
+  test_home="$(mktemp -d /tmp/plasma_icon_test_XXXXXX)"
+  HOME="$test_home"
+  get_distro_id() { echo "fedora"; }
+
+  run _setup_plasma_start_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing KDE Plasma start menu icon for fedora..." ]]
+  [ -f "$test_home/.icons/start-here.svg" ]
+  [ -f "$test_home/.local/share/icons/start-here.svg" ]
+
+  rm -rf "$test_home"
+}
+
+@test "_setup_plasma_start_icon does not install icon when distribution is unknown" {
+  local test_home
+  test_home="$(mktemp -d /tmp/plasma_icon_test_XXXXXX)"
+  HOME="$test_home"
+  get_distro_id() { echo "unknown"; }
+
+  run _setup_plasma_start_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Distribution 'unknown' is not recognized for start menu icon. Leaving default icon." ]]
+  [ ! -f "$test_home/.icons/start-here.svg" ]
+  [ ! -f "$test_home/.local/share/icons/start-here.svg" ]
+
+  rm -rf "$test_home"
+}
+
+@test "configure_plasma_panel removes icon setting when icon file is absent" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_panel_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  KDE_START_HERE_ICON="$test_dir/nonexistent.svg"
+  _get_plasma_dbus_cmd() { return 1; }
+
+  run configure_plasma_panel
+  [ "$status" -eq 0 ]
+  [ -f "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc" ]
+
+  local content
+  content="$(cat "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc")"
+  [[ ! "$content" =~ "icon=" ]]
+  [[ ! "$content" =~ ":start-here-icon:" ]]
+
+  rm -rf "$test_dir"
+}
+
+@test "configure_plasma_panel with D-Bus omits icon when icon file is absent" {
+  local script_log
+  script_log="$(mktemp /tmp/mock_script_XXXXXX)"
+  KDE_START_HERE_ICON="/nonexistent/start-here.svg"
+
+  _get_plasma_dbus_cmd() { echo "mock_qdbus"; }
+  mock_qdbus() {
+    if [ "$1" = "org.kde.plasmashell" ] && [ "$2" = "/PlasmaShell" ]; then
+      if [ -z "${3:-}" ]; then return 0; fi
+      if [ "$3" = "org.kde.PlasmaShell.evaluateScript" ]; then
+        echo "$4" > "$script_log"
+        return 0
+      fi
+    fi
+    return 1
+  }
+
+  run configure_plasma_panel
+  [ "$status" -eq 0 ]
+  run grep "writeConfig(\"icon\"" "$script_log"
+  [ "$status" -ne 0 ]
+
   rm -f "$script_log"
 }
 

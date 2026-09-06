@@ -18,6 +18,7 @@ plugin=org.kde.plasma.kickoff
 [Containments][1][Applets][2][Configuration][General]
 favorites=
 favoritesPortedToStats=true
+icon=:start-here-icon:
 
 [Containments][1][Applets][3]
 immutability=1

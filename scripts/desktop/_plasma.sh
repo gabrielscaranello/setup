@@ -210,9 +210,44 @@ configure_plasma_preferences() {
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 2][Defaults" "thickness" "40"
 
+  _setup_plasma_start_icon
   _clear_plasma_kickoff_favorites
   _configure_plasma_desktops_dbus
   configure_plasma_panel
+}
+
+_setup_plasma_start_icon() {
+  local distro
+  distro="$(get_distro_id 2> /dev/null || true)"
+  local repo_root
+  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  local assets_dir="${repo_root}/assets/icons"
+
+  local src_icon=""
+  case "$distro" in
+    arch)
+      src_icon="${assets_dir}/arch.svg"
+      ;;
+    debian)
+      src_icon="${assets_dir}/debian.svg"
+      ;;
+    fedora)
+      src_icon="${assets_dir}/fedora.svg"
+      ;;
+    *)
+      echo "Distribution '$distro' is not recognized for start menu icon. Leaving default icon."
+      return 0
+      ;;
+  esac
+
+  if [ -n "$src_icon" ] && [ -f "$src_icon" ]; then
+    echo "Installing KDE Plasma start menu icon for $distro..."
+    local icons_dir="${HOME}/.icons"
+    local local_icons_dir="${XDG_DATA_HOME:-$HOME/.local/share}/icons"
+    mkdir -p "$icons_dir" "$local_icons_dir"
+    cp "$src_icon" "${icons_dir}/start-here.svg"
+    cp "$src_icon" "${local_icons_dir}/start-here.svg"
+  fi
 }
 
 _clear_plasma_kickoff_favorites() {
@@ -264,6 +299,8 @@ _configure_plasma_panel_dbus() {
     return 1
   fi
 
+  local icon_path="${KDE_START_HERE_ICON:-$HOME/.icons/start-here.svg}"
+
   echo "Applying KDE Plasma 6 panel layout via Plasma Desktop Scripting (live session)..."
   local script
   script="$(
@@ -293,6 +330,7 @@ var kickoff = panel.addWidget("org.kde.plasma.kickoff");
 kickoff.currentConfigGroup = ["General"];
 kickoff.writeConfig("favorites", "");
 kickoff.writeConfig("favoritesPortedToStats", "true");
+:start-here-icon-config:
 kickoff.reloadConfig();
 
 panel.addWidget("org.kde.plasma.marginsseparator");
@@ -343,6 +381,7 @@ for (var j = 0; j < allWidgets.length; ++j) {
         w.currentConfigGroup = ["General"];
         w.writeConfig("favorites", "");
         w.writeConfig("favoritesPortedToStats", "true");
+        :start-here-icon-widget-config:
         w.reloadConfig();
     } else if (w.type === "org.kde.plasma.icontasks") {
         w.currentConfigGroup = ["General"];
@@ -368,6 +407,14 @@ panel.reloadConfig();
 EOF
   )"
 
+  if [ -f "$icon_path" ]; then
+    script="${script//:start-here-icon-config:/kickoff.writeConfig(\"icon\", \"$icon_path\");}"
+    script="${script//:start-here-icon-widget-config:/w.writeConfig(\"icon\", \"$icon_path\");}"
+  else
+    script="${script//:start-here-icon-config:/}"
+    script="${script//:start-here-icon-widget-config:/}"
+  fi
+
   "$qdbus_cmd" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$script" > /dev/null 2>&1 || return 1
   echo "Panel layout script sent to plasmashell successfully."
   return 0
@@ -385,11 +432,17 @@ configure_plasma_panel() {
   repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
   local template_file="${PLASMA_PANEL_TEMPLATE:-${repo_root}/config/plasma/plasma-org.kde.plasma.desktop-appletsrc}"
   local target_file="${config_dir}/plasma-org.kde.plasma.desktop-appletsrc"
+  local icon_path="${KDE_START_HERE_ICON:-$HOME/.icons/start-here.svg}"
 
   mkdir -p "$config_dir"
 
   if [ -f "$template_file" ]; then
     echo "Applying KDE Plasma 6 panel and taskbar layout..."
     cp "$template_file" "$target_file"
+    if [ -f "$icon_path" ]; then
+      sed -i "s|:start-here-icon:|$icon_path|g" "$target_file"
+    else
+      sed -i '/:start-here-icon:/d' "$target_file"
+    fi
   fi
 }
