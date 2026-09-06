@@ -18,44 +18,44 @@ Usage:
   make [command]
 
 Available Commands:
-  help                  - Show this help message
-  all                   - Run complete desktop setup pipeline for current distribution
-  amd                   - Install AMD GPU drivers, firmware and codecs
-  browsers              - Install Web Browsers (Chromium, Firefox)
-  codecs                - Install Multimedia Codecs and A/V Plugins
-  cursor                - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
-  dbeaver               - Install DBeaver
-  default-apps          - Configure default desktop applications (MIME / Kitty terminal)
-  desktop-preferences   - Configure desktop environment preferences (GNOME, KDE Plasma)
-  discord               - Install Discord
-  docker                - Install Docker engine and plugins (buildx, compose)
-  firewall              - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
-  flatpak               - Configure Flatpak and Flathub repository
-  fonts                 - Install JetBrains Mono Nerd Font
-  gimp                  - Install GIMP image editor
-  gitflow               - Install Gitflow CJS
-  gnome-extensions      - Install and enable GNOME Shell extensions
+  help                    - Show this help message
+  all                     - Run complete desktop setup pipeline for current distribution
+  amd                     - Install AMD GPU drivers, firmware and codecs
+  browsers                - Install Web Browsers (Chromium, Firefox)
+  codecs                  - Install Multimedia Codecs and A/V Plugins
+  cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
+  dbeaver                 - Install DBeaver
+  default-apps            - Configure default desktop applications (MIME / Kitty terminal)
+  desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
+  discord                 - Install Discord
+  docker                  - Install Docker engine and plugins (buildx, compose)
+  firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
+  flatpak                 - Configure Flatpak and Flathub repository
+  fonts                   - Install JetBrains Mono Nerd Font
+  gimp                    - Install GIMP image editor
+  gitflow                 - Install Gitflow CJS
+  gnome-extensions        - Install and enable GNOME Shell extensions
   gnome-extensions-config - Configure GNOME Shell extensions via dconf
-  go                    - Install Golang programming language
-  gtk-theme             - Install and configure adw-gtk3-dark GTK theme (GNOME)
-  icon-theme            - Install and configure Papirus-Dark icon theme (GNOME)
-  kernel-debian         - Install latest Linux kernel and headers from Debian backports
-  kitty                 - Install Kitty terminal emulator
-  lazydocker            - Install Lazydocker
-  lazygit               - Install Lazygit
-  mongodb-compass       - Install MongoDB Compass (Flatpak)
-  neovim                - Install Neovim and build runtime dependencies
-  nvidia                - Install NVIDIA drivers and hybrid GPU tools (switcheroo-control & prime-run)
-  nvm                   - Install NVM, Node.js and global packages
-  obsidian              - Install Obsidian Knowledge Base
-  onlyoffice            - Install ONLYOFFICE Desktop Editors (Flatpak)
-  rust                  - Install Rust, Cargo and tools (tree-sitter-cli)
-  screenshot            - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
-  steam                 - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
-  swap                  - Configure Swap and VM memory tuning
-  telegram              - Install Telegram Desktop
-  timeshift             - Install and configure Timeshift (Btrfs / Rsync)
-  vscodium              - Install VSCodium (Code - OSS on Arch)
+  go                      - Install Golang programming language
+  gtk-theme               - Install and configure adw-gtk3-dark GTK theme (GNOME)
+  icon-theme              - Install and configure Papirus-Dark icon theme (GNOME)
+  kernel-debian           - Install latest Linux kernel and headers from Debian backports
+  kitty                   - Install Kitty terminal emulator
+  lazydocker              - Install Lazydocker
+  lazygit                 - Install Lazygit
+  mongodb-compass         - Install MongoDB Compass (Flatpak)
+  neovim                  - Install Neovim and build runtime dependencies
+  nvidia                  - Install NVIDIA drivers and hybrid GPU tools (switcheroo-control & prime-run)
+  nvm                     - Install NVM, Node.js and global packages
+  obsidian                - Install Obsidian Knowledge Base
+  onlyoffice              - Install ONLYOFFICE Desktop Editors (Flatpak)
+  rust                    - Install Rust, Cargo and tools (tree-sitter-cli)
+  screenshot              - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
+  steam                   - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
+  swap                    - Configure Swap and VM memory tuning
+  telegram                - Install Telegram Desktop
+  timeshift               - Install and configure Timeshift (Btrfs / Rsync)
+  vscodium                - Install VSCodium (Code - OSS on Arch)
 HELP_EOF
 }
 
