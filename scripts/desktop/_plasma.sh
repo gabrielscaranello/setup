@@ -210,8 +210,48 @@ configure_plasma_preferences() {
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 2][Defaults" "thickness" "40"
 
+  _clear_plasma_kickoff_favorites
   _configure_plasma_desktops_dbus
   configure_plasma_panel
+}
+
+_clear_plasma_kickoff_favorites() {
+  local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
+  local stats_file="${config_dir}/kactivitymanagerd-statsrc"
+
+  mkdir -p "$config_dir"
+  if [ -f "$stats_file" ]; then
+    if command -v python3 > /dev/null 2>&1; then
+      python3 -c '
+import sys
+
+file_path = sys.argv[1]
+with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+    lines = f.readlines()
+
+in_favorites = False
+for idx, line in enumerate(lines):
+    stripped = line.strip()
+    if stripped.startswith("[") and stripped.endswith("]"):
+        in_favorites = "Favorites" in stripped
+    elif in_favorites and stripped.startswith("ordering="):
+        lines[idx] = "ordering=\n"
+
+with open(file_path, "w", encoding="utf-8") as f:
+    f.writelines(lines)
+' "$stats_file"
+    fi
+  else
+    cat << 'EOF' > "$stats_file"
+[Favorites-org.kde.plasma.kickoff.favorites.instance-2-global]
+ordering=
+EOF
+  fi
+
+  local db_file="${HOME}/.local/share/kactivitymanagerd/resources/database"
+  if [ -f "$db_file" ] && command -v sqlite3 > /dev/null 2>&1; then
+    sqlite3 "$db_file" "DELETE FROM ResourceLink WHERE initiatingAgent LIKE '%favorites%';" 2> /dev/null || true
+  fi
 }
 
 _configure_plasma_panel_dbus() {
@@ -249,7 +289,12 @@ panel.location = "bottom";
 panel.height = 40;
 panel.floating = false;
 
-panel.addWidget("org.kde.plasma.kickoff");
+var kickoff = panel.addWidget("org.kde.plasma.kickoff");
+kickoff.currentConfigGroup = ["General"];
+kickoff.writeConfig("favorites", "");
+kickoff.writeConfig("favoritesPortedToStats", "true");
+kickoff.reloadConfig();
+
 panel.addWidget("org.kde.plasma.marginsseparator");
 
 var launchers = [
@@ -294,7 +339,12 @@ clock.reloadConfig();
 var allWidgets = panel.widgets();
 for (var j = 0; j < allWidgets.length; ++j) {
     var w = allWidgets[j];
-    if (w.type === "org.kde.plasma.icontasks") {
+    if (w.type === "org.kde.plasma.kickoff") {
+        w.currentConfigGroup = ["General"];
+        w.writeConfig("favorites", "");
+        w.writeConfig("favoritesPortedToStats", "true");
+        w.reloadConfig();
+    } else if (w.type === "org.kde.plasma.icontasks") {
         w.currentConfigGroup = ["General"];
         w.writeConfig("launchers", launchers);
         w.writeConfig("launchers", launchers);

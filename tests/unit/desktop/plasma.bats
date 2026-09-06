@@ -234,6 +234,10 @@ teardown() {
     echo "config: file=$1 group=$2 key=$3 val=$4"
     return 0
   }
+  _clear_plasma_kickoff_favorites() {
+    echo "_clear_plasma_kickoff_favorites called"
+    return 0
+  }
   _configure_plasma_desktops_dbus() {
     echo "_configure_plasma_desktops_dbus called"
     return 0
@@ -262,8 +266,46 @@ teardown() {
   [[ "$output" =~ "config: file=kdeglobals group=General key=TerminalApplication val=kitty" ]]
   [[ "$output" =~ "config: file=dolphinrc group=General key=RememberOpenedTabs val=false" ]]
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=thickness val=40" ]]
+  [[ "$output" =~ "_clear_plasma_kickoff_favorites called" ]]
   [[ "$output" =~ "_configure_plasma_desktops_dbus called" ]]
   [[ "$output" =~ "configure_plasma_panel called" ]]
+}
+
+# ── _clear_plasma_kickoff_favorites Tests ─────────────────────────────────────
+
+@test "_clear_plasma_kickoff_favorites creates empty stats file when missing" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_fav_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+
+  run _clear_plasma_kickoff_favorites
+  [ "$status" -eq 0 ]
+  [ -f "$test_dir/config/kactivitymanagerd-statsrc" ]
+  run grep "ordering=" "$test_dir/config/kactivitymanagerd-statsrc"
+  [ "$status" -eq 0 ]
+
+  rm -rf "$test_dir"
+}
+
+@test "_clear_plasma_kickoff_favorites clears existing ordering in stats file" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_fav_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  mkdir -p "$KDE_CONFIG_DIR"
+
+  cat << 'EOF' > "$KDE_CONFIG_DIR/kactivitymanagerd-statsrc"
+[Favorites-org.kde.plasma.kickoff.favorites.instance-2-global]
+ordering=applications:firefox.desktop,applications:org.kde.dolphin.desktop
+EOF
+
+  run _clear_plasma_kickoff_favorites
+  [ "$status" -eq 0 ]
+  run grep -E "ordering=\s*$" "$test_dir/config/kactivitymanagerd-statsrc"
+  [ "$status" -eq 0 ]
+  run grep "applications:firefox.desktop" "$test_dir/config/kactivitymanagerd-statsrc"
+  [ "$status" -ne 0 ]
+
+  rm -rf "$test_dir"
 }
 
 # ── configure_plasma_panel Tests ──────────────────────────────────────────────
@@ -297,6 +339,9 @@ teardown() {
   [ "$status" -eq 0 ]
 
   run grep "lastScreen=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  run grep "favoritesPortedToStats=true" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
   run grep "plugin=org.kde.plasma.folder" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
@@ -333,6 +378,9 @@ teardown() {
   [ "$status" -eq 0 ]
 
   run grep "org.kde.plasma.kickoff" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep "favoritesPortedToStats" "$script_log"
   [ "$status" -eq 0 ]
 
   run grep "org.kde.plasma.icontasks" "$script_log"

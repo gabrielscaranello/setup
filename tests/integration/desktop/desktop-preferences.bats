@@ -77,6 +77,9 @@ teardown() {
   grep -q "showOnlyCurrentDesktop=false" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "lastScreen=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "plugin=org.kde.plasma.folder" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "favoritesPortedToStats=true" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ -f "$HOME/.config/kactivitymanagerd-statsrc" ]
+  grep -q "ordering=" "$HOME/.config/kactivitymanagerd-statsrc"
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh

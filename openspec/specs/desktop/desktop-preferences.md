@@ -136,7 +136,7 @@ Supports both primary desktop environments:
    - **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
    - **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `thickness=40`, `formfactor=2`, `lastScreen=0`).
    - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
-     1. Application Launcher (`org.kde.plasma.kickoff`)
+     1. Application Launcher (`org.kde.plasma.kickoff`) — favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`)
      2. Separator (`org.kde.plasma.marginsseparator`)
      3. Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord; shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
      4. Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows, text display disabled / `displayedText=None`)
