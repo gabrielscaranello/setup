@@ -181,11 +181,19 @@ _configure_plasma_panel_dbus() {
   local script
   script="$(
     cat << 'EOF'
-var allPanels = panels();
-for (var i = 0; i < allPanels.length; ++i) {
-    var p = panelById(allPanels[i]);
+var pList = panels();
+for (var i = pList.length - 1; i >= 0; --i) {
+    var p = pList[i];
     if (p && p.location === "bottom") {
         p.remove();
+    }
+}
+if (typeof panelIds !== "undefined") {
+    for (var i = panelIds.length - 1; i >= 0; --i) {
+        var p = panelById(panelIds[i]);
+        if (p && p.location === "bottom") {
+            p.remove();
+        }
     }
 }
 
