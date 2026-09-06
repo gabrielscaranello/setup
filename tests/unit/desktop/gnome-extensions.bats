@@ -122,6 +122,16 @@ teardown() {
   [ "$output" = "/download/ext.zip" ]
 }
 
+@test "_resolve_extension_url prepends domain to relative path and keeps absolute URLs" {
+  run _resolve_extension_url "/download/ext.zip"
+  [ "$status" -eq 0 ]
+  [ "$output" = "https://extensions.gnome.org/download/ext.zip" ]
+
+  run _resolve_extension_url "https://custom.domain/download/ext.zip"
+  [ "$status" -eq 0 ]
+  [ "$output" = "https://custom.domain/download/ext.zip" ]
+}
+
 # ── Official GNOME Extensions Tooling Tests (SRP) ─────────────────────────────
 
 @test "_install_extension_archive invokes gnome-extensions install --force" {

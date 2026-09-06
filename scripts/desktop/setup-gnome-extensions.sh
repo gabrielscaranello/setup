@@ -62,6 +62,16 @@ _parse_api_field() {
   fi
 }
 
+_resolve_extension_url() {
+  local download_url="$1"
+
+  if [[ "$download_url" =~ ^https?:// ]]; then
+    echo "$download_url"
+  else
+    echo "https://extensions.gnome.org${download_url}"
+  fi
+}
+
 _install_extension_archive() {
   local zip_file="$1"
   gnome-extensions install --force "$zip_file"
@@ -78,11 +88,7 @@ _download_and_install_extension() {
   local name="$3"
 
   local full_download_url
-  if [[ "$download_url" =~ ^https?:// ]]; then
-    full_download_url="$download_url"
-  else
-    full_download_url="https://extensions.gnome.org${download_url}"
-  fi
+  full_download_url="$(_resolve_extension_url "$download_url")"
 
   local tmp_zip
   tmp_zip="$(mktemp /tmp/gnome_ext_XXXXXX.zip)"
@@ -191,10 +197,13 @@ main() {
   shell_ver="$(_get_gnome_shell_major_version)"
   echo "Detected GNOME Shell major version: $shell_ver"
 
-  while IFS= read -r entry; do
+  local -a target_extensions=()
+  mapfile -t target_extensions < <(_get_target_extensions)
+
+  for entry in "${target_extensions[@]}"; do
     [ -n "$entry" ] || continue
     _process_extension "$entry" "$shell_ver"
-  done < <(_get_target_extensions)
+  done
 
   echo "GNOME extensions setup completed successfully."
   echo "Note: If you are running a Wayland session, please log out and log back in for new extensions to take effect."
