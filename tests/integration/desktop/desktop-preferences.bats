@@ -89,6 +89,23 @@ teardown() {
   [ -f "$HOME/.config/dolphinrc" ]
   grep -q "RememberOpenedTabs=false" "$HOME/.config/dolphinrc"
   grep -q "HomeUrl=file://$HOME" "$HOME/.config/dolphinrc"
+  [ -f "$HOME/.config/kglobalshortcutsrc" ]
+  grep -q "Show Desktop=" "$HOME/.config/kglobalshortcutsrc"
+  grep -q "Window Maximize=Meta+M" "$HOME/.config/kglobalshortcutsrc"
+  grep -q "Switch to Next Desktop=Meta+PgDown" "$HOME/.config/kglobalshortcutsrc"
+  grep -q "_launch=Ctrl+Alt+T" "$HOME/.config/kglobalshortcutsrc"
+  grep -q "_launch=Meta+E" "$HOME/.config/kglobalshortcutsrc"
+  grep -q "show-on-mouse-pos=" "$HOME/.config/kglobalshortcutsrc"
+  [ -f "$HOME/.config/krunnerrc" ]
+  grep -q "FreeFloating=true" "$HOME/.config/krunnerrc"
+  [ -f "$HOME/.config/plasmaparc" ]
+  grep -q "AudioFeedback=false" "$HOME/.config/plasmaparc"
+  [ -f "$HOME/.config/plasma_workspace.notifyrc" ]
+  grep -q "\[Event/catastrophe\]" "$HOME/.config/plasma_workspace.notifyrc"
+  grep -q "Action=Popup" "$HOME/.config/plasma_workspace.notifyrc"
+  [ -f "$HOME/.config/plasma_applet_timer.notifyrc" ]
+  grep -q "Action=Popup|Sound" "$HOME/.config/plasma_applet_timer.notifyrc"
+  grep -q "Sound=alarm-clock-elapsed" "$HOME/.config/plasma_applet_timer.notifyrc"
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh

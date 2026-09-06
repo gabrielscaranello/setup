@@ -104,15 +104,39 @@ Supports both primary desktop environments:
    - **Show Desktop**:
      - Group: `[kwin]`
      - Key: `Show Desktop=Meta+D,Meta+D,Peek at Desktop`
+   - **Window Maximize**:
+     - Group: `[kwin]`
+     - Key: `Window Maximize=Meta+M`
+   - **Window Minimize** (cleared to avoid conflict with desktop navigation):
+     - Group: `[kwin]`
+     - Key: `Window Minimize=none`
+   - **Switch to Next / Previous Desktop**:
+     - Group: `[kwin]`
+     - Keys: `Switch to Next Desktop=Meta+PgDown`, `Switch to Previous Desktop=Meta+PgUp`
+   - **Window to Next / Previous Desktop**:
+     - Group: `[kwin]`
+     - Keys: `Window to Next Desktop=Meta+Shift+PgDown`, `Window to Previous Desktop=Meta+Shift+PgUp`
    - **Terminal Emulator (Kitty)**:
      - Group: `[services][kitty.desktop]`
      - Key: `_launch=Ctrl+Alt+T`
    - **File Manager (Dolphin)**:
      - Group: `[services][org.kde.dolphin.desktop]`
      - Key: `_launch=Meta+E`
-   - **Screenshot Tool**:
+   - **Screenshot Tool (Flameshot)**:
      - Group: `[services][org.flameshot.Flameshot.desktop]`
      - Key: `_launch=Ctrl+Alt+S`
+   - **Application Runner (KRunner)**:
+     - Group: `[services][org.kde.krunner.desktop]`
+     - Key: `_launch=Meta+Space\tSearch\tAlt+Space\tAlt+F2`
+   - **System Monitor (Plasma System Monitor)**:
+     - Group: `[services][org.kde.plasma-systemmonitor.desktop]`
+     - Key: `_launch=Meta+Esc\tCtrl+Shift+Esc`
+   - **Clipboard History on Mouse Position**:
+     - Group: `[plasmashell]`
+     - Key: `show-on-mouse-pos=Meta+V\tMeta+Shift+V`
+   - **Activities Navigation**:
+     - Group: `[plasmashell]`
+     - Keys: `next activity=Meta+A`, `previous activity=Meta+Shift+A`
 
 4. **Appearance, Fonts & System Defaults (`~/.config/kdeglobals`)**:
    - **Color Scheme**:
@@ -135,18 +159,50 @@ Supports both primary desktop environments:
      - Group: `[General]`
      - Key: `loginMode=emptySession`
 
-7. **Panel & Taskbar Layout**:
-   - **Panel Height**: Configured to 40px (`panel.height = 40;` in D-Bus script, `thickness=40` in `plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc`).
-   - **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
-   - **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `thickness=40`, `formfactor=2`, `lastScreen=0`).
-   - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
-     1. Application Launcher (`org.kde.plasma.kickoff`) — custom start menu icon (Papirus distributor-logo `start-here.svg` installed to `~/.icons/start-here.svg` per distro: Arch Linux, Debian, Fedora), favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`, `icon=~/.icons/start-here.svg`)
-     2. Separator (`org.kde.plasma.marginsseparator`)
-     3. Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord; shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
-     4. Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows, text display disabled / `displayedText=None`)
-     5. Separator (`org.kde.plasma.marginsseparator`)
-     6. System Tray (`org.kde.plasma.systemtray`)
-     7. Digital Clock (`org.kde.plasma.digitalclock`) — short date, date display enabled, seconds displayed only in tooltip (`showSeconds="onlyInTooltip"`)
+7. **KRunner Application Launcher (`~/.config/krunnerrc`)**:
+   - **Center Screen Floating Position**:
+     - Group: `[General]`
+     - Key: `FreeFloating=true`
+
+8. **Audio Volume Feedback (`~/.config/plasmaparc`)**:
+   - **Disable Volume Change Beep/Feedback**:
+     - Group: `[General]`
+     - Key: `AudioFeedback=false`
+
+9. **Application Notification Sounds (`~/.config/plasma_workspace.notifyrc`, `~/.config/oom-notifier.notifyrc`, `~/.config/plasma_applet_timer.notifyrc`)**:
+   - **Disable Sound for Plasma Workspace Events**:
+     - Group: `[Event/Trash: emptied]`, Key: `Action=`
+     - Group: `[Event/beep]`, Key: `Action=`
+     - Group: `[Event/catastrophe]`, Key: `Action=Popup`
+     - Group: `[Event/deviceAdded]`, Key: `Action=`
+     - Group: `[Event/deviceRemoved]`, Key: `Action=`
+     - Group: `[Event/fatalerror]`, Key: `Action=Popup`
+     - Group: `[Event/messageCritical]`, Key: `Action=Taskbar`
+     - Group: `[Event/messageInformation]`, Key: `Action=Taskbar`
+     - Group: `[Event/messageQuestion]`, Key: `Action=Taskbar`
+     - Group: `[Event/messageWarning]`, Key: `Action=Taskbar`
+     - Group: `[Event/notification]`, Key: `Action=Popup`
+     - Group: `[Event/printerror]`, Key: `Action=Popup`
+     - Group: `[Event/warning]`, Key: `Action=Popup`
+   - **OOM Notifier**:
+     - Group: `[Event/catastrophe]`, Key: `Action=Popup`
+   - **Keep Timer Sound Enabled**:
+     - File: `plasma_applet_timer.notifyrc`
+     - Group: `[Event/timerFinished]`, Keys: `Action=Popup|Sound`, `Sound=alarm-clock-elapsed`
+
+10. **Panel & Taskbar Layout**:
+
+- **Panel Height**: Configured to 40px (`panel.height = 40;` in D-Bus script, `thickness=40` in `plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc`).
+- **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
+- **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `thickness=40`, `formfactor=2`, `lastScreen=0`).
+- Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
+  1.  Application Launcher (`org.kde.plasma.kickoff`) — custom start menu icon (Papirus distributor-logo `start-here.svg` installed to `~/.icons/start-here.svg` per distro: Arch Linux, Debian, Fedora), favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`, `icon=~/.icons/start-here.svg`)
+  2.  Separator (`org.kde.plasma.marginsseparator`)
+  3.  Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord; shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
+  4.  Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows, text display disabled / `displayedText=None`)
+  5.  Separator (`org.kde.plasma.marginsseparator`)
+  6.  System Tray (`org.kde.plasma.systemtray`)
+  7.  Digital Clock (`org.kde.plasma.digitalclock`) — short date, date display enabled, seconds displayed only in tooltip (`showSeconds="onlyInTooltip"`)
 
 ---
 
@@ -183,10 +239,13 @@ Supports both primary desktop environments:
 - **AND** configure Night Color to constant 4700K
 - **AND** configure Alt-Tab task switcher layout to flipswitch
 - **AND** configure mouse acceleration profile to flat in kcminputrc
-- **AND** configure global shortcuts (Meta+D, Meta+E, Ctrl+Alt+T, Ctrl+Alt+S) in kglobalshortcutsrc
+- **AND** configure global shortcuts (Meta+D, Meta+M, Window Minimize=none, Meta+PgDown/PgUp, Meta+Shift+PgDown/PgUp, Ctrl+Alt+T, Meta+E, Ctrl+Alt+S, Meta+Space, Meta+Esc/Ctrl+Shift+Esc, Meta+V/Meta+Shift+V, Meta+A/Meta+Shift+A) in kglobalshortcutsrc
 - **AND** configure default terminal to Kitty and monospace font in kdeglobals
 - **AND** configure session to start with an empty session in ksmserverrc
 - **AND** configure Dolphin to open at home directory without remembering tabs in dolphinrc
+- **AND** configure KRunner to float centrally in krunnerrc
+- **AND** disable audio volume feedback in plasmaparc
+- **AND** silence notification sounds for Plasma apps while preserving timer sound in notifyrc files
 - **AND** exit with return code 0
 
 **Scenario: Idempotent Execution on KDE Plasma 6**

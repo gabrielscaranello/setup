@@ -190,9 +190,20 @@ configure_plasma_preferences() {
   echo "Applying KDE Plasma 6 keyboard shortcuts..."
   # Global Shortcuts (kglobalshortcutsrc)
   plasma_write_config "kglobalshortcutsrc" "kwin" "Show Desktop" "Meta+D,Meta+D,Peek at Desktop"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window Maximize" "Meta+M"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window Minimize" "none"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Switch to Next Desktop" "Meta+PgDown"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Switch to Previous Desktop" "Meta+PgUp"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window to Next Desktop" "Meta+Shift+PgDown"
+  plasma_write_config "kglobalshortcutsrc" "kwin" "Window to Previous Desktop" "Meta+Shift+PgUp"
   plasma_write_config "kglobalshortcutsrc" "services][kitty.desktop" "_launch" "Ctrl+Alt+T"
   plasma_write_config "kglobalshortcutsrc" "services][org.kde.dolphin.desktop" "_launch" "Meta+E"
   plasma_write_config "kglobalshortcutsrc" "services][org.flameshot.Flameshot.desktop" "_launch" "Ctrl+Alt+S"
+  plasma_write_config "kglobalshortcutsrc" "services][org.kde.krunner.desktop" "_launch" 'Meta+Space\tSearch\tAlt+Space\tAlt+F2'
+  plasma_write_config "kglobalshortcutsrc" "services][org.kde.plasma-systemmonitor.desktop" "_launch" 'Meta+Esc\tCtrl+Shift+Esc'
+  plasma_write_config "kglobalshortcutsrc" "plasmashell" "show-on-mouse-pos" 'Meta+V\tMeta+Shift+V'
+  plasma_write_config "kglobalshortcutsrc" "plasmashell" "next activity" "Meta+A"
+  plasma_write_config "kglobalshortcutsrc" "plasmashell" "previous activity" "Meta+Shift+A"
 
   echo "Applying KDE Plasma 6 appearance, typography and defaults..."
   # Appearance & Defaults (kdeglobals)
@@ -209,6 +220,33 @@ configure_plasma_preferences() {
   # Dolphin (dolphinrc)
   plasma_write_config "dolphinrc" "General" "RememberOpenedTabs" "false"
   plasma_write_config "dolphinrc" "General" "HomeUrl" "file://${HOME}"
+
+  echo "Applying KDE Plasma 6 KRunner preferences..."
+  # KRunner (krunnerrc)
+  plasma_write_config "krunnerrc" "General" "FreeFloating" "true"
+
+  echo "Applying KDE Plasma 6 audio volume preferences..."
+  # Audio Feedback (plasmaparc)
+  plasma_write_config "plasmaparc" "General" "AudioFeedback" "false"
+
+  echo "Applying KDE Plasma 6 notification sound preferences..."
+  # Notification Sounds (plasma_workspace.notifyrc, oom-notifier.notifyrc, plasma_applet_timer.notifyrc)
+  plasma_write_config "plasma_workspace.notifyrc" "Event/Trash: emptied" "Action" ""
+  plasma_write_config "plasma_workspace.notifyrc" "Event/beep" "Action" ""
+  plasma_write_config "plasma_workspace.notifyrc" "Event/catastrophe" "Action" "Popup"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/deviceAdded" "Action" ""
+  plasma_write_config "plasma_workspace.notifyrc" "Event/deviceRemoved" "Action" ""
+  plasma_write_config "plasma_workspace.notifyrc" "Event/fatalerror" "Action" "Popup"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/messageCritical" "Action" "Taskbar"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/messageInformation" "Action" "Taskbar"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/messageQuestion" "Action" "Taskbar"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/messageWarning" "Action" "Taskbar"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/notification" "Action" "Popup"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/printerror" "Action" "Popup"
+  plasma_write_config "plasma_workspace.notifyrc" "Event/warning" "Action" "Popup"
+  plasma_write_config "oom-notifier.notifyrc" "Event/catastrophe" "Action" "Popup"
+  plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Action" "Popup|Sound"
+  plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Sound" "alarm-clock-elapsed"
 
   # Ensure default panel views have thickness 40
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
