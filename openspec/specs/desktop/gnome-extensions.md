@@ -55,6 +55,7 @@ Automate the downloading, installation, updating, and activation of essential GN
   - If `local_version < remote_version`: Download new version, install with `--force`, and re-enable.
   - If `local_version == remote_version`: Skip download and verify extension is enabled.
 - If not installed: Download archive from `download_url`, install, and enable.
+- Upon completion, the script prints an informational notice reminding users that on Wayland sessions, logging out and logging back in is required for newly installed extensions to take effect.
 
 ## Test Scenarios
 

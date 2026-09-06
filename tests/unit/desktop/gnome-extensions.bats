@@ -287,4 +287,5 @@ teardown() {
   [[ "$output" =~ "Detected GNOME Shell major version: 47" ]]
   [[ "$output" =~ "processed 4269:AlphabeticalAppGrid@stuarthayhurst:Alphabetical App Grid" ]]
   [[ "$output" =~ "GNOME extensions setup completed successfully." ]]
+  [[ "$output" =~ "Note: If you are running a Wayland session, please log out and log back in for new extensions to take effect." ]]
 }

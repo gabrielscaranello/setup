@@ -197,6 +197,7 @@ main() {
   done < <(_get_target_extensions)
 
   echo "GNOME extensions setup completed successfully."
+  echo "Note: If you are running a Wayland session, please log out and log back in for new extensions to take effect."
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
