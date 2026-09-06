@@ -131,8 +131,9 @@ Supports both primary desktop environments:
    - Group: `[General]`
    - Key: `RememberOpenedTabs=false`
 
-6. **Panel & Taskbar Layout (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**:
-   - Bottom-fixed, non-floating panel: `location=4`, `floating=0`, `formfactor=2`.
+6. **Panel & Taskbar Layout**:
+   - **Live Session (D-Bus)**: When `plasmashell` is active, invokes `org.kde.PlasmaShell.evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments or requiring a restart.
+   - **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `formfactor=2`, `lastScreen=0`).
    - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
      1. Application Launcher (`org.kde.plasma.kickoff`)
      2. Separator (`org.kde.plasma.marginsseparator`)

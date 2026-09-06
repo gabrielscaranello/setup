@@ -159,7 +159,79 @@ configure_plasma_preferences() {
   configure_plasma_panel
 }
 
+_get_plasma_dbus_cmd() {
+  if command -v qdbus6 > /dev/null 2>&1; then
+    echo "qdbus6"
+  elif command -v qdbus > /dev/null 2>&1; then
+    echo "qdbus"
+  fi
+}
+
+_configure_plasma_panel_dbus() {
+  local qdbus_cmd
+  qdbus_cmd="$(_get_plasma_dbus_cmd)" || return 1
+  [ -n "$qdbus_cmd" ] || return 1
+
+  # Test if plasmashell is running and responding on DBus
+  if ! "$qdbus_cmd" org.kde.plasmashell /PlasmaShell > /dev/null 2>&1; then
+    return 1
+  fi
+
+  echo "Applying KDE Plasma 6 panel layout via Plasma Desktop Scripting (live session)..."
+  local script
+  script="$(
+    cat << 'EOF'
+var allPanels = panels();
+for (var i = 0; i < allPanels.length; ++i) {
+    var p = panelById(allPanels[i]);
+    if (p && p.location === "bottom") {
+        p.remove();
+    }
+}
+
+var panel = new Panel("org.kde.panel");
+panel.location = "bottom";
+panel.floating = false;
+
+panel.addWidget("org.kde.plasma.kickoff");
+panel.addWidget("org.kde.plasma.marginsseparator");
+
+var tasks = panel.addWidget("org.kde.plasma.icontasks");
+tasks.currentConfigGroup = ["General"];
+tasks.writeConfig("launchers", "preferred://filemanager,applications:kitty.desktop,applications:codium.desktop,preferred://browser,applications:google-chrome.desktop,applications:io.dbeaver.DBeaverCommunity.desktop,applications:org.onlyoffice.desktopeditors.desktop,applications:md.obsidian.Obsidian.desktop,applications:org.gimp.GIMP.desktop,applications:org.telegram.desktop.desktop,applications:steam.desktop,applications:com.discordapp.Discord.desktop");
+tasks.writeConfig("showOnlyCurrentDesktop", "false");
+tasks.reloadConfig();
+
+var pager = panel.addWidget("org.kde.plasma.pager");
+pager.currentConfigGroup = ["General"];
+pager.writeConfig("displayedText", "Number");
+pager.writeConfig("rowsToDisplay", "2");
+pager.reloadConfig();
+
+panel.addWidget("org.kde.plasma.marginsseparator");
+panel.addWidget("org.kde.plasma.systemtray");
+
+var clock = panel.addWidget("org.kde.plasma.digitalclock");
+clock.currentConfigGroup = ["Appearance"];
+clock.writeConfig("dateFormat", "shortDate");
+clock.writeConfig("showDate", "true");
+clock.writeConfig("showSeconds", "always");
+clock.reloadConfig();
+EOF
+  )"
+
+  "$qdbus_cmd" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$script" > /dev/null 2>&1 || return 1
+  echo "Panel layout script sent to plasmashell successfully."
+  return 0
+}
+
 configure_plasma_panel() {
+  # 1. If plasmashell is running in an active graphical session, use D-Bus evaluateScript
+  if _configure_plasma_panel_dbus; then
+    return 0
+  fi
+
+  # 2. Offline / headless / container fallback: deploy template file
   local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
   local repo_root
   repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"

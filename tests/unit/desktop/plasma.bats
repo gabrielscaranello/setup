@@ -215,10 +215,49 @@ teardown() {
   run grep "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
-  run grep "showOnlyCurrentDesktop=false" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  run grep "lastScreen=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  run grep "plugin=org.kde.plasma.folder" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
   rm -rf "$test_dir"
+}
+
+@test "configure_plasma_panel uses D-Bus evaluateScript when plasmashell is active" {
+  local script_log
+  script_log="$(mktemp /tmp/mock_script_XXXXXX)"
+
+  _get_plasma_dbus_cmd() { echo "mock_qdbus"; }
+  mock_qdbus() {
+    if [ "$1" = "org.kde.plasmashell" ] && [ "$2" = "/PlasmaShell" ]; then
+      if [ -z "${3:-}" ]; then
+        return 0
+      fi
+      if [ "$3" = "org.kde.PlasmaShell.evaluateScript" ]; then
+        echo "$4" > "$script_log"
+        return 0
+      fi
+    fi
+    return 1
+  }
+
+  run configure_plasma_panel
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Applying KDE Plasma 6 panel layout via Plasma Desktop Scripting (live session)..." ]]
+  [[ "$output" =~ "Panel layout script sent to plasmashell successfully." ]]
+  [ -s "$script_log" ]
+
+  run grep "org.kde.plasma.kickoff" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep "org.kde.plasma.icontasks" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep "showOnlyCurrentDesktop" "$script_log"
+  [ "$status" -eq 0 ]
+
+  rm -f "$script_log"
 }
 
 @test "configure_plasma_panel does nothing if template is missing" {
