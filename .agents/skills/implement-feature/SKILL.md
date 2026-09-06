@@ -64,7 +64,7 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   9. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - **Distribution-Specific Repository Utilities**:
   When configuring third-party or upstream repositories, reuse or register functions in:
-  - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_virtualbox_repo`, `add_debian_nonfree_repo`.
+  - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).

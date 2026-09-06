@@ -22,7 +22,6 @@ run_all() {
     "apps/setup-screenshot-tool.sh:Screenshot tool setup"
     "apps/setup-discord.sh:Discord setup"
     "apps/setup-telegram.sh:Telegram setup"
-    "apps/setup-virtualbox.sh:VirtualBox setup"
     "apps/setup-vscodium.sh:VSCodium setup"
     "apps/setup-steam.sh:Steam and gaming tools setup"
     "terminal/setup-fonts.sh:Fonts setup"

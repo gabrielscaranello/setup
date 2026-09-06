@@ -147,55 +147,6 @@ EOF
   [[ "$output" =~ "already configured" ]]
 }
 
-@test "add_debian_virtualbox_repo skips when repository files exist" {
-  local test_dir="/tmp/test-virtualbox-apt-repo"
-  mkdir -p "$test_dir"
-  touch "$test_dir/virtualbox.sources" "$test_dir/oracle-virtualbox-2016.gpg"
-
-  add_debian_virtualbox_repo() {
-    local keyring_path="$test_dir/oracle-virtualbox-2016.gpg"
-    local sources_path="$test_dir/virtualbox.sources"
-    if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
-      echo "VirtualBox repository already configured on Debian, skipping."
-      return 0
-    fi
-  }
-
-  run add_debian_virtualbox_repo
-  rm -rf "$test_dir"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "already configured" ]]
-}
-
-@test "add_debian_virtualbox_repo configures repo when not present" {
-  local test_dir="/tmp/test-virtualbox-apt-repo-new"
-  mkdir -p "$test_dir"
-
-  sudo() {
-    return 0
-  }
-  get_debian_codename() {
-    echo "trixie"
-  }
-  command() {
-    if [ "$2" = "wget" ]; then
-      return 0
-    fi
-    builtin command "$@"
-  }
-  wget() {
-    return 0
-  }
-  gpg() {
-    return 0
-  }
-
-  run add_debian_virtualbox_repo
-  rm -rf "$test_dir"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Configuring Oracle VirtualBox repository for APT" ]]
-}
-
 @test "add_debian_nonfree_repo ensures contrib, non-free and non-free-firmware on deb822 sources" {
   export APT_DEBIAN_SOURCES="/tmp/test_debian_nonfree_$$.sources"
   cat << 'EOF' > "$APT_DEBIAN_SOURCES"

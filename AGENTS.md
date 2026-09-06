@@ -46,7 +46,6 @@ Third-party repository configurations must reside in their respective distro hel
   - `add_debian_backports_repo`: Idempotently configures Debian Backports.
   - `add_debian_vscodium_repo`: Idempotently imports GPG key and adds VSCodium APT source.
   - `add_debian_mozilla_repo`: Idempotently imports Mozilla GPG key, adds source, and sets APT pinning priority.
-  - `add_debian_virtualbox_repo`: Idempotently imports Oracle GPG key and adds VirtualBox APT source.
   - `add_debian_nonfree_repo`: Idempotently enables contrib, non-free, and non-free-firmware components.
 - **Fedora (`scripts/system/fedora/_repositories.sh`)**:
   - `add_fedora_docker_repo`: Idempotently adds Docker CE DNF repository.

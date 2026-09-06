@@ -57,7 +57,7 @@ source "scripts/_utils.sh" 2> /dev/null || true
 - **Rule for One-Line Functions**: Do not create trivial one-line proxy functions if called in only one place. Inline the helper or command directly. Only keep one-line functions if reused across multiple locations.
 - **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_distro_id`, `is_distro`, `get_desktop_environment`, `get_root_filesystem`, `get_shell_profile`, `install_flatpak_app`, `download_file`, `fetch_url`).
 - **Distribution Repository Helpers**: Reuse distro repository utilities for adding upstream or third-party repositories:
-  - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_virtualbox_repo`, `add_debian_nonfree_repo`.
+  - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
 - **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps. When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
 - **SOLID Design Principles**: All scripts and helpers must adhere to SOLID principles:
