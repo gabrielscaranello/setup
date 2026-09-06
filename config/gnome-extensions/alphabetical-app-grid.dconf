@@ -1,0 +1,3 @@
+[org/gnome/shell/extensions/alphabetical-app-grid]
+folder-order-position='end'
+sort-folder-contents=true

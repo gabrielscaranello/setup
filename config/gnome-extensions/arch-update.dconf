@@ -1,0 +1,10 @@
+[org/gnome/shell/extensions/arch-update]
+always-visible=true
+check-cmd="/bin/sh -c \"/usr/bin/checkupdates; /usr/bin/flatpak remote-ls --columns=application -a --updates\""
+check-interval=60
+disable-parsing=true
+linkify-menu=false
+package-info-cmd='xdg-open https://www.archlinux.org/packages/%2$s/%3$s/%1$s'
+strip-versions=false
+update-cmd='kitty --start-as=maximized --title "Update packages" -1 sh -c "sudo pacman -Syu; flatpak update; echo Done - Press enter to exit; read"'
+use-buildin-icons=true

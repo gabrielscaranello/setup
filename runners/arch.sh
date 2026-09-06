@@ -37,6 +37,7 @@ run_all() {
     "desktop/setup-gtk-theme.sh:GTK theme setup"
     "desktop/setup-icon-theme.sh:Icon theme setup"
     "desktop/setup-gnome-extensions.sh:GNOME extensions setup"
+    "desktop/setup-gnome-extensions-config.sh:GNOME extensions configuration"
   )
 
   run_pipeline "Arch Linux Desktop Setup" "${steps[@]}"

@@ -74,7 +74,7 @@ Desktop theming, shell extensions, and interface preferences for target environm
 - [x] Implement icon theme installation (`GNOME`) — `scripts/desktop/setup-icon-theme.sh`
 - [x] Implement GNOME shell extensions installation — `scripts/desktop/setup-gnome-extensions.sh`
 - [ ] Implement desktop environment preferences script (`GNOME`, `KDE Plasma`)
-- [ ] Implement GNOME extensions configuration script
+- [x] Implement GNOME extensions configuration script — `scripts/desktop/setup-gnome-extensions-config.sh`
 
 ## 🏁 Phase 7: Final Tweaks & Orchestration
 

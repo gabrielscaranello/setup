@@ -34,6 +34,7 @@ Available Commands:
   gimp                  - Install GIMP image editor
   gitflow               - Install Gitflow CJS
   gnome-extensions      - Install and enable GNOME Shell extensions
+  gnome-extensions-config - Configure GNOME Shell extensions via dconf
   go                    - Install Golang programming language
   gtk-theme             - Install and configure adw-gtk3-dark GTK theme (GNOME)
   icon-theme            - Install and configure Papirus-Dark icon theme (GNOME)
@@ -154,6 +155,10 @@ run_module() {
 
     gnome-extensions)
       bash "$SCRIPTS_DIR/desktop/setup-gnome-extensions.sh"
+      ;;
+
+    gnome-extensions-config)
+      bash "$SCRIPTS_DIR/desktop/setup-gnome-extensions-config.sh"
       ;;
 
     go)

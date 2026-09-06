@@ -1,0 +1,16 @@
+[org/gnome/shell/extensions/coverflowalttab]
+animation-time=0.25
+dim-factor=0.5
+easing-function='ease-in-out-circ'
+hide-panel=true
+highlight-mouse-over=false
+icon-style='Overlay'
+offset=0
+overlay-icon-size=128.0
+perspective-correction-method='Adjust Angles'
+position='Bottom'
+preview-to-monitor-ratio=0.90000000000000002
+randomize-animation-times=false
+switcher-background-color=(1.0, 1.0, 1.0)
+switcher-looping-method='Flip Stack'
+switcher-style='Coverflow'

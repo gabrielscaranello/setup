@@ -1,0 +1,4 @@
+[org/gnome/shell/extensions/top-bar-organizer]
+center-box-order=['dateMenu']
+left-box-order=['LogoMenu', 'vitalsMenu', 'activities']
+right-box-order=['StatusTray-org.kde.StatusNotifierItem-17976-2/StatusNotifierItem', 'StatusTray-org.kde.StatusNotifierItem-17735-2/StatusNotifierItem', 'StatusTray-:1.222/org/ayatana/NotificationItem/steam', 'StatusTray-:1.192/StatusNotifierItem', 'StatusTray-:1.181/StatusNotifierItem', 'clipboardIndicator', 'emoji-copy@felipeftn', 'color-picker@tuberry', 'tiling-assistant@leleat-on-github', 'screenRecording', 'screenSharing', 'dwellClick', 'a11y', 'keyboard', 'quickSettings']

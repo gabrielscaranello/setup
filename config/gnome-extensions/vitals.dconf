@@ -1,0 +1,9 @@
+[org/gnome/shell/extensions/vitals]
+alphabetize=true
+fixed-widths=true
+hide-icons=false
+hot-sensors=['_memory_usage_', '_processor_usage_', '_temperature_k10temp_tctl_']
+position-in-panel=0
+show-storage=false
+show-system=false
+update-time=2
