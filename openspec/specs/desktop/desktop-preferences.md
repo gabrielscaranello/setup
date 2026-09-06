@@ -205,7 +205,7 @@ Supports both primary desktop environments:
      - Group: `[General]`
      - Key: `AudioFeedback=false`
 
-9. **Application Notification Sounds (`~/.config/plasma_workspace.notifyrc`, `~/.config/oom-notifier.notifyrc`, `~/.config/plasma_applet_timer.notifyrc`)**:
+9. **Application Notification Sounds (`~/.config/plasma_workspace.notifyrc`, `~/.config/oom-notifier.notifyrc`, `~/.config/plasma_applet_timer.notifyrc`, `~/.config/powerdevil.notifyrc`, `~/.config/polkit-kde-authentication-agent-1.notifyrc`, `~/.config/kwrited.notifyrc`)**:
    - **Disable Sound for Plasma Workspace Events**:
      - Group: `[Event/Trash: emptied]`, Key: `Action=`
      - Group: `[Event/beep]`, Key: `Action=`
@@ -225,6 +225,17 @@ Supports both primary desktop environments:
    - **Keep Timer Sound Enabled**:
      - File: `plasma_applet_timer.notifyrc`
      - Group: `[Event/timerFinished]`, Keys: `Action=Popup|Sound`, `Sound=alarm-clock-elapsed`
+   - **Power Management Sounds (`powerdevil.notifyrc`)**:
+     - Group: `[Event/pluggedin]`, Key: `Action=`
+     - Group: `[Event/unplugged]`, Key: `Action=`
+     - Group: `[Event/fullbattery]`, Key: `Action=`
+     - Group: `[Event/lowperipheralbattery]`, Key: `Action=Popup`
+     - Group: `[Event/lowbattery]`, Keys: `Action=Sound|Popup`, `Sound=battery-caution`
+     - Group: `[Event/criticalbattery]`, Keys: `Action=Sound|Popup`, `Sound=battery-low`
+   - **Authentication System Sounds (`polkit-kde-authentication-agent-1.notifyrc`)**:
+     - Group: `[Event/authenticate]`, Key: `Action=`
+   - **Local System Message Service Sounds (`kwrited.notifyrc`)**:
+     - Group: `[Event/NewMessage]`, Key: `Action=Popup`
 
 10. **Recent Files & Activity Privacy (`~/.config/kactivitymanagerd-pluginsrc`, `~/.config/kactivitymanagerdrc`, `~/.config/krunnerrc`)**:
     - **Do Not Remember Opened Documents**:
@@ -295,7 +306,7 @@ Supports both primary desktop environments:
 - **AND** configure Dolphin to open at home directory without remembering tabs in dolphinrc
 - **AND** configure KRunner to float centrally in krunnerrc
 - **AND** disable audio volume feedback in plasmaparc
-- **AND** silence notification sounds for Plasma apps while preserving timer sound in notifyrc files
+- **AND** silence notification sounds for Plasma apps while preserving timer sound and low/critical battery sounds in notifyrc files
 - **AND** disable remembering recent files in kactivitymanagerd-pluginsrc, kactivitymanagerdrc, and krunnerrc
 - **AND** disable file indexing in baloofilerc
 - **AND** exit with return code 0

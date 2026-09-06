@@ -114,6 +114,20 @@ teardown() {
   [ -f "$HOME/.config/plasma_applet_timer.notifyrc" ]
   grep -q "Action=Popup|Sound" "$HOME/.config/plasma_applet_timer.notifyrc"
   grep -q "Sound=alarm-clock-elapsed" "$HOME/.config/plasma_applet_timer.notifyrc"
+  [ -f "$HOME/.config/powerdevil.notifyrc" ]
+  grep -q "\[Event/lowbattery\]" "$HOME/.config/powerdevil.notifyrc"
+  grep -q "Action=Sound|Popup" "$HOME/.config/powerdevil.notifyrc"
+  grep -q "Sound=battery-caution" "$HOME/.config/powerdevil.notifyrc"
+  grep -q "\[Event/criticalbattery\]" "$HOME/.config/powerdevil.notifyrc"
+  grep -q "Sound=battery-low" "$HOME/.config/powerdevil.notifyrc"
+  grep -q "\[Event/lowperipheralbattery\]" "$HOME/.config/powerdevil.notifyrc"
+  grep -q "Action=Popup" "$HOME/.config/powerdevil.notifyrc"
+  [ -f "$HOME/.config/polkit-kde-authentication-agent-1.notifyrc" ]
+  grep -q "\[Event/authenticate\]" "$HOME/.config/polkit-kde-authentication-agent-1.notifyrc"
+  grep -q "Action=" "$HOME/.config/polkit-kde-authentication-agent-1.notifyrc"
+  [ -f "$HOME/.config/kwrited.notifyrc" ]
+  grep -q "\[Event/NewMessage\]" "$HOME/.config/kwrited.notifyrc"
+  grep -q "Action=Popup" "$HOME/.config/kwrited.notifyrc"
   [ -f "$HOME/.config/kactivitymanagerd-pluginsrc" ]
   grep -q "what-to-remember=2" "$HOME/.config/kactivitymanagerd-pluginsrc"
   [ -f "$HOME/.config/kactivitymanagerdrc" ]

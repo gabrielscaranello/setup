@@ -284,6 +284,16 @@ configure_plasma_preferences() {
   plasma_write_config "oom-notifier.notifyrc" "Event/catastrophe" "Action" "Popup"
   plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Action" "Popup|Sound"
   plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Sound" "alarm-clock-elapsed"
+  plasma_write_config "powerdevil.notifyrc" "Event/pluggedin" "Action" ""
+  plasma_write_config "powerdevil.notifyrc" "Event/unplugged" "Action" ""
+  plasma_write_config "powerdevil.notifyrc" "Event/fullbattery" "Action" ""
+  plasma_write_config "powerdevil.notifyrc" "Event/lowperipheralbattery" "Action" "Popup"
+  plasma_write_config "powerdevil.notifyrc" "Event/lowbattery" "Action" "Sound|Popup"
+  plasma_write_config "powerdevil.notifyrc" "Event/lowbattery" "Sound" "battery-caution"
+  plasma_write_config "powerdevil.notifyrc" "Event/criticalbattery" "Action" "Sound|Popup"
+  plasma_write_config "powerdevil.notifyrc" "Event/criticalbattery" "Sound" "battery-low"
+  plasma_write_config "polkit-kde-authentication-agent-1.notifyrc" "Event/authenticate" "Action" ""
+  plasma_write_config "kwrited.notifyrc" "Event/NewMessage" "Action" "Popup"
 
   echo "Applying KDE Plasma 6 recent files and privacy preferences..."
   # Recent Files & Privacy (kactivitymanagerd-pluginsrc, kactivitymanagerdrc, krunnerrc)
