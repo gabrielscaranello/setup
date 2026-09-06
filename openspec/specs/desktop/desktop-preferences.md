@@ -51,7 +51,7 @@ Supports both primary desktop environments:
 6. **Nautilus File Manager** (`nautilus.dconf`):
    - Default zoom `small-plus`, tree view navigation enabled in list view.
 7. **Shell & App Folders** (`shell.dconf`):
-   - Dash favorite apps: Nautilus, Kitty, Code, Firefox, Chrome, Obsidian, OnlyOffice, GIMP, Discord, Telegram.
+   - Dash favorite apps: Nautilus, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord.
    - App picker folders: Games (`ProtonPlus`, `Steam`), Develop (`DBeaver`, `Compass`), System, Utilities.
 8. **Applications** (`apps.dconf`):
    - GNOME Text Editor: highlight current line, space indentation, dark style scheme.

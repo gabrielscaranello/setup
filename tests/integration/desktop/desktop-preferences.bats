@@ -33,6 +33,15 @@ teardown() {
   [[ "$output" =~ "Applying GNOME desktop environment preferences..." ]]
   [[ "$output" =~ "GNOME desktop preferences configuration completed successfully." ]]
 
+  # Source dconf helper to read settings
+  source /setup/scripts/desktop/_dconf.sh
+  run dconf_exec read /org/gnome/shell/favorite-apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
+  [[ "$output" =~ "codium.desktop" ]]
+  [[ "$output" =~ "steam.desktop" ]]
+  [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
+
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh
   [ "$status" -eq 0 ]
