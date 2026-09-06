@@ -85,12 +85,15 @@ Supports both primary desktop environments:
    - **Night Color (Luz Noturna)**:
      - Group: `[NightColor]`
      - Keys: `Active=true`, `Mode=Constant`, `NightTemperature=4700`
-   - **Alt-Tab Task Switcher (Coverflow/Flipswitch)**:
+   - **Alt-Tab Task Switcher (Interruptor Flip / Flipswitch)**:
      - Group: `[TabBox]`
      - Key: `LayoutName=flipswitch`
+   - **Titlebar Buttons (Botões na Barra de Título)**:
+     - Group: `[org.kde.kdecoration2]`
+     - Keys: `ButtonsOnLeft=E` (Ocultar de captura e gravação de tela / `hide-from-screencast`), `ButtonsOnRight=IAX` (Minimizar, Maximizar, Fechar)
    - **Window Effects**:
-     - Group: `[Plugins]`
-     - Keys: `blurEnabled=true`, `magiclampEnabled=true`
+   - Group: `[Plugins]`
+   - Keys: `blurEnabled=true`, `magiclampEnabled=true`
 
 2. **Peripherals & Mouse Acceleration (`~/.config/kcminputrc`)**:
    - **Mouse Acceleration Profile**:
@@ -163,6 +166,39 @@ Supports both primary desktop environments:
    - **Center Screen Floating Position**:
      - Group: `[General]`
      - Key: `FreeFloating=true`
+   - **Plasma Search Runners (`[Plugins]`)**:
+     - Enabled Runners (`true`):
+       - `krunner_powerdevilEnabled=true` (Energia)
+       - `krunner_servicesEnabled=true` (Aplicativos)
+       - `krunner_systemsettingsEnabled=true` (Configurações do sistema)
+       - `helprunnerEnabled=true` (Ajuda do executor)
+       - `calculatorEnabled=true` (Calculadora)
+       - `krunner_appstreamEnabled=true` (Central de aplicativos)
+       - `unitconverterEnabled=true` (Conversor de unidades)
+       - `krunner_colorsEnabled=true` (Cores)
+       - `krunner_killEnabled=true` (Encerrar aplicativos)
+       - `windowsEnabled=true` (Janelas)
+       - `krunner_kwinEnabled=true` (KWin)
+       - `krunner_shellEnabled=true` (Linha de comando)
+       - `krunner_placesrunnerEnabled=true` (Locais)
+       - `locationsEnabled=true` (Localizações)
+       - `krunner_plasma-desktopEnabled=true` (Shell da área de trabalho Plasma)
+     - Disabled Runners (`false`):
+       - `baloosearchEnabled=false` (Pesquisa de arquivos)
+       - `browserhistoryEnabled=false` (Histórico do navegador)
+       - `browsertabsEnabled=false` (Abas do navegador)
+       - `krunner_bookmarksrunnerEnabled=false` (Favoritos)
+       - `krunner_charrunnerEnabled=false` (Caracteres especiais)
+       - `org.kde.datetimeEnabled=false` (Data e hora)
+       - `krunner_dictionaryEnabled=false` (Dicionário)
+       - `krunner_katesessionsEnabled=false` (Sessões do Kate)
+       - `krunner_keysEnabled=false` (Atalhos globais)
+       - `krunner_konsoleprofilesEnabled=false` (Perfis do Konsole)
+       - `krunner_recentdocumentsEnabled=false` (Arquivos recentes)
+       - `krunner_sessionsEnabled=false` (Sessões da área de trabalho)
+       - `krunner_spellcheckEnabled=false` (Verificador ortográfico)
+       - `krunner_webshortcutsEnabled=false` (Palavras-chave de pesquisa na Web)
+       - `org.kde.activities2Enabled=false` (Atividades)
 
 8. **Audio Volume Feedback (`~/.config/plasmaparc`)**:
    - **Disable Volume Change Beep/Feedback**:
@@ -190,7 +226,20 @@ Supports both primary desktop environments:
      - File: `plasma_applet_timer.notifyrc`
      - Group: `[Event/timerFinished]`, Keys: `Action=Popup|Sound`, `Sound=alarm-clock-elapsed`
 
-10. **Panel & Taskbar Layout**:
+10. **Recent Files & Activity Privacy (`~/.config/kactivitymanagerd-pluginsrc`, `~/.config/kactivitymanagerdrc`, `~/.config/krunnerrc`)**:
+    - **Do Not Remember Opened Documents**:
+      - File: `kactivitymanagerd-pluginsrc`, Group: `[Plugin-org.kde.ActivityManager.Resources.Scoring]`, Key: `what-to-remember=2`
+    - **Disable Resource Scoring Plugin**:
+      - File: `kactivitymanagerdrc`, Group: `[Plugins]`, Key: `org.kde.ActivityManager.ResourceScoringEnabled=false`
+    - **Disable KRunner History**:
+      - File: `krunnerrc`, Group: `[General]`, Key: `historyBehavior=Disabled`
+
+11. **File Indexing & Baloo Search (`~/.config/baloofilerc`)**:
+    - **Disable File Indexing**:
+      - File: `baloofilerc`, Group: `[Basic Settings]`, Key: `Indexing-Enabled=false`
+      - Run `balooctl6 disable` / `balooctl disable` when available to immediately stop any running indexing daemon.
+
+12. **Panel & Taskbar Layout**:
 
 - **Panel Height**: Configured to 40px (`panel.height = 40;` in D-Bus script, `thickness=40` in `plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc`).
 - **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
@@ -238,6 +287,7 @@ Supports both primary desktop environments:
 - **AND** configure KWin titlebar middle click to Minimize
 - **AND** configure Night Color to constant 4700K
 - **AND** configure Alt-Tab task switcher layout to flipswitch
+- **AND** configure titlebar buttons to ButtonsOnLeft=E and ButtonsOnRight=IAX in kwinrc
 - **AND** configure mouse acceleration profile to flat in kcminputrc
 - **AND** configure global shortcuts (Meta+D, Meta+M, Window Minimize=none, Meta+PgDown/PgUp, Meta+Shift+PgDown/PgUp, Ctrl+Alt+T, Meta+E, Ctrl+Alt+S, Meta+Space, Meta+Esc/Ctrl+Shift+Esc, Meta+V/Meta+Shift+V, Meta+A/Meta+Shift+A) in kglobalshortcutsrc
 - **AND** configure default terminal to Kitty and monospace font in kdeglobals
@@ -246,6 +296,8 @@ Supports both primary desktop environments:
 - **AND** configure KRunner to float centrally in krunnerrc
 - **AND** disable audio volume feedback in plasmaparc
 - **AND** silence notification sounds for Plasma apps while preserving timer sound in notifyrc files
+- **AND** disable remembering recent files in kactivitymanagerd-pluginsrc, kactivitymanagerdrc, and krunnerrc
+- **AND** disable file indexing in baloofilerc
 - **AND** exit with return code 0
 
 **Scenario: Idempotent Execution on KDE Plasma 6**

@@ -63,6 +63,9 @@ teardown() {
   grep -q "Rows=2" "$HOME/.config/kwinrc"
   grep -q "CommandActiveTitlebar2=Minimize" "$HOME/.config/kwinrc"
   grep -q "NightTemperature=4700" "$HOME/.config/kwinrc"
+  grep -q "LayoutName=flipswitch" "$HOME/.config/kwinrc"
+  grep -q "ButtonsOnLeft=E" "$HOME/.config/kwinrc"
+  grep -q "ButtonsOnRight=IAX" "$HOME/.config/kwinrc"
   [ -f "$HOME/.config/kcminputrc" ]
   grep -q "AccelerationProfile=flat" "$HOME/.config/kcminputrc"
   [ -f "$HOME/.config/kdeglobals" ]
@@ -98,6 +101,11 @@ teardown() {
   grep -q "show-on-mouse-pos=" "$HOME/.config/kglobalshortcutsrc"
   [ -f "$HOME/.config/krunnerrc" ]
   grep -q "FreeFloating=true" "$HOME/.config/krunnerrc"
+  grep -q "krunner_powerdevilEnabled=true" "$HOME/.config/krunnerrc"
+  grep -q "baloosearchEnabled=false" "$HOME/.config/krunnerrc"
+  grep -q "calculatorEnabled=true" "$HOME/.config/krunnerrc"
+  grep -q "windowsEnabled=true" "$HOME/.config/krunnerrc"
+  grep -q "unitconverterEnabled=true" "$HOME/.config/krunnerrc"
   [ -f "$HOME/.config/plasmaparc" ]
   grep -q "AudioFeedback=false" "$HOME/.config/plasmaparc"
   [ -f "$HOME/.config/plasma_workspace.notifyrc" ]
@@ -106,6 +114,13 @@ teardown() {
   [ -f "$HOME/.config/plasma_applet_timer.notifyrc" ]
   grep -q "Action=Popup|Sound" "$HOME/.config/plasma_applet_timer.notifyrc"
   grep -q "Sound=alarm-clock-elapsed" "$HOME/.config/plasma_applet_timer.notifyrc"
+  [ -f "$HOME/.config/kactivitymanagerd-pluginsrc" ]
+  grep -q "what-to-remember=2" "$HOME/.config/kactivitymanagerd-pluginsrc"
+  [ -f "$HOME/.config/kactivitymanagerdrc" ]
+  grep -q "ResourceScoringEnabled=false" "$HOME/.config/kactivitymanagerdrc"
+  grep -q "historyBehavior=Disabled" "$HOME/.config/krunnerrc"
+  [ -f "$HOME/.config/baloofilerc" ]
+  grep -q "Indexing-Enabled=false" "$HOME/.config/baloofilerc"
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh

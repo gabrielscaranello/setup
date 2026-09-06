@@ -179,6 +179,8 @@ configure_plasma_preferences() {
   plasma_write_config "kwinrc" "NightColor" "Mode" "Constant"
   plasma_write_config "kwinrc" "NightColor" "NightTemperature" "4700"
   plasma_write_config "kwinrc" "TabBox" "LayoutName" "flipswitch"
+  plasma_write_config "kwinrc" "org.kde.kdecoration2" "ButtonsOnLeft" "E"
+  plasma_write_config "kwinrc" "org.kde.kdecoration2" "ButtonsOnRight" "IAX"
   plasma_write_config "kwinrc" "Plugins" "blurEnabled" "true"
   plasma_write_config "kwinrc" "Plugins" "magiclampEnabled" "true"
 
@@ -225,6 +227,41 @@ configure_plasma_preferences() {
   # KRunner (krunnerrc)
   plasma_write_config "krunnerrc" "General" "FreeFloating" "true"
 
+  # Plasma Search Runners (krunnerrc - Plugins)
+  # Enabled runners
+  plasma_write_config "krunnerrc" "Plugins" "krunner_powerdevilEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_servicesEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_systemsettingsEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "helprunnerEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "calculatorEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_appstreamEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "unitconverterEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_colorsEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_killEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "windowsEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_kwinEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_shellEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_placesrunnerEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "locationsEnabled" "true"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_plasma-desktopEnabled" "true"
+
+  # Disabled runners
+  plasma_write_config "krunnerrc" "Plugins" "baloosearchEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "browserhistoryEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "browsertabsEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_bookmarksrunnerEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_charrunnerEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "org.kde.datetimeEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_dictionaryEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_katesessionsEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_keysEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_konsoleprofilesEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_recentdocumentsEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_sessionsEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_spellcheckEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "krunner_webshortcutsEnabled" "false"
+  plasma_write_config "krunnerrc" "Plugins" "org.kde.activities2Enabled" "false"
+
   echo "Applying KDE Plasma 6 audio volume preferences..."
   # Audio Feedback (plasmaparc)
   plasma_write_config "plasmaparc" "General" "AudioFeedback" "false"
@@ -247,6 +284,21 @@ configure_plasma_preferences() {
   plasma_write_config "oom-notifier.notifyrc" "Event/catastrophe" "Action" "Popup"
   plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Action" "Popup|Sound"
   plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Sound" "alarm-clock-elapsed"
+
+  echo "Applying KDE Plasma 6 recent files and privacy preferences..."
+  # Recent Files & Privacy (kactivitymanagerd-pluginsrc, kactivitymanagerdrc, krunnerrc)
+  plasma_write_config "kactivitymanagerd-pluginsrc" "Plugin-org.kde.ActivityManager.Resources.Scoring" "what-to-remember" "2"
+  plasma_write_config "kactivitymanagerdrc" "Plugins" "org.kde.ActivityManager.ResourceScoringEnabled" "false"
+  plasma_write_config "krunnerrc" "General" "historyBehavior" "Disabled"
+
+  echo "Applying KDE Plasma 6 file indexing (Baloo) preferences..."
+  # File Indexing / Search (baloofilerc)
+  plasma_write_config "baloofilerc" "Basic Settings" "Indexing-Enabled" "false"
+  if command -v balooctl6 > /dev/null 2>&1; then
+    balooctl6 disable > /dev/null 2>&1 || true
+  elif command -v balooctl > /dev/null 2>&1; then
+    balooctl disable > /dev/null 2>&1 || true
+  fi
 
   # Ensure default panel views have thickness 40
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
