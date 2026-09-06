@@ -38,6 +38,7 @@ Available Commands:
   gnome-extensions-config - Configure GNOME Shell extensions via dconf
   go                      - Install Golang programming language
   gtk-theme               - Install and configure adw-gtk3-dark GTK theme (GNOME)
+  hide-apps               - Hide unwanted applications from desktop menus (.desktop files)
   icon-theme              - Install and configure Papirus-Dark icon theme (GNOME)
   kernel-debian           - Install latest Linux kernel and headers from Debian backports
   kitty                   - Install Kitty terminal emulator
@@ -172,6 +173,10 @@ run_module() {
 
     gtk-theme)
       bash "$SCRIPTS_DIR/desktop/setup-gtk-theme.sh"
+      ;;
+
+    hide-apps)
+      bash "$SCRIPTS_DIR/desktop/setup-hide-apps.sh"
       ;;
 
     icon-theme)

@@ -39,6 +39,7 @@ run_all() {
     "desktop/setup-gnome-extensions.sh:GNOME extensions setup"
     "desktop/setup-gnome-extensions-config.sh:GNOME extensions configuration"
     "desktop/setup-desktop-preferences.sh:Desktop environment preferences"
+    "desktop/setup-hide-apps.sh:Hide unwanted desktop applications"
   )
 
   run_pipeline "Arch Linux Desktop Setup" "${steps[@]}"

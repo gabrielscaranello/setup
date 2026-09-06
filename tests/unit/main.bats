@@ -57,6 +57,10 @@ setup() {
   run run_module "amd"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-amd.sh" ]]
+
+  run run_module "hide-apps"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "setup-hide-apps.sh" ]]
 }
 
 @test "run_all dispatches to debian runner when distribution is debian" {
