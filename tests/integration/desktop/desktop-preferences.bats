@@ -71,6 +71,7 @@ teardown() {
   grep -q "floating=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "AppletOrder=2;3;4;5;6;7;8" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "showOnlyCurrentDesktop=false" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh

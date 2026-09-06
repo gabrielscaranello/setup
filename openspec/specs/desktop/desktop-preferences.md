@@ -136,7 +136,7 @@ Supports both primary desktop environments:
    - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
      1. Application Launcher (`org.kde.plasma.kickoff`)
      2. Separator (`org.kde.plasma.marginsseparator`)
-     3. Icons-Only Task Manager (`org.kde.plasma.icontasks`) — expands across the panel to push right-hand widgets
+     3. Icons-Only Task Manager (`org.kde.plasma.icontasks`) — expands across the panel to push right-hand widgets; shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
      4. Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows)
      5. Separator (`org.kde.plasma.marginsseparator`)
      6. System Tray (`org.kde.plasma.systemtray`)

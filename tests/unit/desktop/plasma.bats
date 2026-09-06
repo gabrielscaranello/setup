@@ -215,6 +215,9 @@ teardown() {
   run grep "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
+  run grep "showOnlyCurrentDesktop=false" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
   rm -rf "$test_dir"
 }
 
