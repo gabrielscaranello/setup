@@ -17,14 +17,14 @@ teardown() {
   :
 }
 
-@test "setup-desktop-preferences.sh completes gracefully when DE is not GNOME" {
-  export XDG_CURRENT_DESKTOP="KDE"
+@test "setup-desktop-preferences.sh completes gracefully when DE is unsupported" {
+  export XDG_CURRENT_DESKTOP="XFCE"
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Skipping" ]]
+  [[ "$output" =~ "Skipping desktop preferences configuration." ]]
 }
 
-@test "setup-desktop-preferences.sh applies preferences and is idempotent" {
+@test "setup-desktop-preferences.sh applies GNOME preferences and is idempotent" {
   export XDG_CURRENT_DESKTOP="GNOME"
 
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh
@@ -37,4 +37,28 @@ teardown() {
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh
   [ "$status" -eq 0 ]
   [[ "$output" =~ "GNOME desktop preferences configuration completed successfully." ]]
+}
+
+@test "setup-desktop-preferences.sh applies KDE Plasma preferences and is idempotent" {
+  export XDG_CURRENT_DESKTOP="KDE"
+
+  run bash /setup/scripts/desktop/setup-desktop-preferences.sh
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Starting KDE Plasma 6 desktop preferences configuration..." ]]
+  [[ "$output" =~ "Applying KDE Plasma 6 window manager preferences..." ]]
+  [[ "$output" =~ "KDE Plasma 6 desktop preferences configuration completed successfully." ]]
+
+  # Verify generated configuration files and key values in user config directory
+  [ -f "$HOME/.config/kwinrc" ]
+  grep -q "CommandActiveTitlebar2=Minimize" "$HOME/.config/kwinrc"
+  grep -q "NightTemperature=4700" "$HOME/.config/kwinrc"
+  [ -f "$HOME/.config/kcminputrc" ]
+  grep -q "AccelerationProfile=flat" "$HOME/.config/kcminputrc"
+  [ -f "$HOME/.config/kdeglobals" ]
+  grep -q "TerminalApplication=kitty" "$HOME/.config/kdeglobals"
+
+  # Idempotent second execution
+  run bash /setup/scripts/desktop/setup-desktop-preferences.sh
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "KDE Plasma 6 desktop preferences configuration completed successfully." ]]
 }

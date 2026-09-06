@@ -2,129 +2,173 @@
 
 ## Overview
 
-Automate desktop environment preferences and system application configurations via modular `dconf` dumps across supported distributions (Debian 13, Fedora 44, and Arch Linux).
+Automate desktop environment preferences and system application configurations across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**).
 
-Currently focused on **GNOME**, with configurations divided into granular `.dconf` files under `config/gnome/` for maintainability, clean diffs, and idempotent application via `dconf load`. Support for other desktop environments (such as KDE Plasma) is deferred to future iterations.
+Supports both primary desktop environments:
+
+- **GNOME**: Configured via modular `dconf` dumps organized under `config/gnome/` applied idempotently via `_dconf.sh`.
+- **KDE Plasma 6** (Plasma 6.3 on Debian 13, Plasma 6.7 on Arch Linux and Fedora 44): Configured via granular CLI tools (`kwriteconfig6`, `plasma-apply-colorscheme`) and direct INI configuration merging under `~/.config/` applied idempotently via `_plasma.sh`.
 
 ## Requirements
 
 ### Desktop Environment Support & Skip Policy
 
-- **Mandatory GNOME Detection**:
+- **Environment Detection**:
   - The script checks the current desktop environment using `get_desktop_environment`.
-  - **GNOME Only**: When `get_desktop_environment` returns `gnome`, the script proceeds with loading modular `.dconf` preferences from `config/gnome/`.
-- **Non-GNOME Skip Invariant**:
-  - Whenever `get_desktop_environment` returns anything other than `gnome` (such as `plasma`, `xfce`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all configuration steps.
-  - It outputs an informative log message indicating that GNOME is not the active desktop environment and **exits with return code 0** without modifying any dconf settings, files, or executing system commands.
+  - **GNOME**: When `get_desktop_environment` returns `gnome`, the script delegates to GNOME configuration routines.
+  - **KDE Plasma**: When `get_desktop_environment` returns `plasma`, the script delegates to KDE Plasma 6 configuration routines.
+- **Unsupported DE Skip Invariant**:
+  - Whenever `get_desktop_environment` returns an unsupported or unknown environment (such as `xfce`, `cinnamon`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all configuration steps.
+  - It outputs an informative log message and **exits with return code 0** without modifying any configuration settings or files.
 
-### Prerequisites
+### 1. GNOME Desktop Environment Preferences
 
-- `dconf` command-line utility available (`dconf load`).
-- Fail-fast if `dconf` is not found when running in a GNOME environment.
-- Headless / container compatibility: when running in environments without an active session bus (`DBUS_SESSION_BUS_ADDRESS` empty or unset), execution must wrap `dconf` calls with `dbus-run-session` to ensure settings are cleanly written to the user database.
+#### Prerequisites
 
-### Modular Configuration Architecture (`config/gnome/`)
+- `dconf` command-line utility available (`dconf load`, `dconf write`).
+- Automatic dependency resolution via `install_packages dconf`.
+- Headless / container execution wrapper: automatically executes with `dbus-run-session` when `DBUS_SESSION_BUS_ADDRESS` is empty.
 
-Configuration settings are organized into individual `.dconf` dump files within `config/gnome/`:
+#### Modular Configuration Files (`config/gnome/*.dconf`)
 
-1. **System Interface & Appearance** (`interface.dconf`):
-   - Schema paths: `[org/gnome/desktop/interface]`, `[org/gnome/desktop/datetime]`, `[org/gnome/desktop/sound]`
+1. **Interface & Appearance** (`interface.dconf`):
    - Clock: seconds and weekday display enabled (`clock-show-seconds=true`, `clock-show-weekday=true`).
-   - Typography: Cantarell 11 for document and interface font, JetBrainsMono Nerd Font 10 for monospace.
-   - Mouse: primary clipboard paste on middle click disabled (`gtk-enable-primary-paste=false`).
+   - Typography: Cantarell 11 (interface and document), JetBrainsMono Nerd Font 10 (monospace).
+   - Mouse: primary clipboard paste on middle-click disabled (`gtk-enable-primary-paste=false`).
    - Timezone: automatic timezone detection enabled (`automatic-timezone=true`).
-   - Audio: system event sounds disabled (`event-sounds=false`), freedesktop theme.
-
+   - Sounds: event sounds disabled (`event-sounds=false`), theme `freedesktop`.
 2. **Peripherals** (`peripherals.dconf`):
-   - Schema paths: `[org/gnome/desktop/peripherals/mouse]`, `[org/gnome/desktop/peripherals/touchpad]`
    - Mouse: flat acceleration profile (`accel-profile='flat'`).
    - Touchpad: two-finger scrolling enabled (`two-finger-scrolling-enabled=true`).
-
 3. **Window Manager & Keybindings** (`window-manager.dconf`):
-   - Schema paths: `[org/gnome/desktop/wm/preferences]`, `[org/gnome/desktop/wm/keybindings]`, `[org/gnome/settings-daemon/plugins/media-keys]`, `[.../custom-keybindings/custom0]`, `[.../custom-keybindings/custom1]`
-   - Window behavior: middle-clicking the titlebar minimizes the window.
-   - Global shortcuts:
-     - Show Desktop: `<Super>d`.
-     - Open Home Folder: `<Super>e`.
-     - Custom Shortcut 0: Terminal -> `<Control><Alt>t` (`kitty`).
-     - Custom Shortcut 1: Flameshot -> `<Control><Alt>s` (`flameshot gui`).
-
+   - Titlebar middle click: minimizes window.
+   - Global shortcuts: Show Desktop (`<Super>d`), Home Folder (`<Super>e`), Terminal (`<Control><Alt>t` -> `kitty`), Flameshot (`<Control><Alt>s` -> `flameshot gui`).
 4. **Night Light** (`night-light.dconf`):
-   - Schema path: `[org/gnome/settings-daemon/plugins/color]`
-   - Night light enabled with manual schedule (`night-light-schedule-automatic=false`).
-   - Schedule hours: from `4.0` (04:00 AM) to `3.9833333333333334` (~03:59 AM) for continuous protection.
-   - Color temperature: 4700K (`uint32 4700`).
-
+   - Enabled with manual continuous schedule (from 4.0 to ~3.98), temperature 4700K.
 5. **Privacy & Search Providers** (`privacy.dconf`):
-   - Schema paths: `[org/gnome/desktop/privacy]`, `[org/gnome/desktop/search-providers]`
-   - Privacy: recent files maximum age 30 days, `remember-recent-files=false`.
-   - Auto-clean: automatic removal of old temp files and trash files enabled.
-   - Search providers: disable Clocks, Seahorse, Contacts, and Nautilus from shell search; prioritize Settings, Contacts, and Nautilus in sort order.
-
+   - Recent files retention 30 days, `remember-recent-files=false`, auto-clean old temp/trash files.
+   - Search providers: disable Clocks, Seahorse, Contacts, Nautilus.
 6. **Nautilus File Manager** (`nautilus.dconf`):
-   - Schema paths: `[org/gnome/nautilus/icon-view]`, `[org/gnome/nautilus/list-view]`, `[org/gnome/nautilus/preferences]`
-   - Icon view: default zoom level `small-plus`.
-   - List view: tree view navigation enabled (`use-tree-view=true`).
-   - Preferences: default folder viewer set to `icon-view`, search filter time type `last_modified`.
+   - Default zoom `small-plus`, tree view navigation enabled in list view.
+7. **Shell & App Folders** (`shell.dconf`):
+   - Dash favorite apps: Nautilus, Kitty, Code, Firefox, Chrome, Obsidian, OnlyOffice, GIMP, Discord, Telegram.
+   - App picker folders: Games (`ProtonPlus`, `Steam`), Develop (`DBeaver`, `Compass`), System, Utilities.
+8. **Applications** (`apps.dconf`):
+   - GNOME Text Editor: highlight current line, space indentation, dark style scheme.
+   - System Monitor: custom CPU core colors, resources tab default, user processes filter.
 
-7. **Shell, Favorites & App Folders** (`shell.dconf`):
-   - Schema paths: `[org/gnome/shell]`, `[org/gnome/desktop/app-folders]`, `[.../folders/*]`
-   - Favorite apps in Dash: Nautilus, Kitty, VS Code / VSCodium, Firefox, Chrome, Obsidian, OnlyOffice, GIMP, Discord, Telegram.
-   - App picker layout and structured folders:
-     - `Games`: ProtonPlus, Steam.
-     - `Develop`: DBeaver, MongoDB Compass.
-     - `System`: Settings, Tweaks, Disks, Logs, Baobab, etc.
-     - `Utilities`: Flameshot, Kitty/Nvim, Extension Manager, Celluloid, Showtime, Loupe, Papers/Evince, etc.
+---
 
-8. **Default GNOME Applications** (`apps.dconf`):
-   - Schema paths: `[org/gnome/TextEditor]`, `[org/gnome/gnome-system-monitor]`
-   - Text Editor: highlight current line, spaces indentation, dark style scheme (`Adwaita-dark`), use system font, restore session disabled.
-   - System Monitor: custom 24-color CPU palette, default tab set to `resources`, processes filter set to `user`.
+### 2. KDE Plasma 6 Desktop Environment Preferences (Approach 2: Granular CLI)
+
+#### Compatibility & Target Platforms
+
+- **Debian 13 (Trixie)**: KDE Plasma 6.3
+- **Fedora 44**: KDE Plasma 6.7
+- **Arch Linux**: KDE Plasma 6.7
+
+#### Prerequisites & Tooling
+
+- Primary CLI utility: `kwriteconfig6` (provided by `kconfig` on Arch, `kf6-kconfig` on Fedora, and `libkf6config-bin` on Debian 13).
+- Theme application utility: `plasma-apply-colorscheme` (provided by `plasma-workspace`).
+- Fallback mechanism: In minimal container or headless test environments without `kwriteconfig6`, the configuration routines must safely write or update INI key/value pairs directly in the corresponding `~/.config/<filename>` files.
+
+#### Granular Configuration Specifications
+
+1. **Window Management & Visual Effects (`~/.config/kwinrc`)**:
+   - **Titlebar Middle Click**:
+     - Group: `[MouseBindings]`
+     - Key: `CommandActiveTitlebar2=Minimize`
+   - **Night Color (Luz Noturna)**:
+     - Group: `[NightColor]`
+     - Keys: `Active=true`, `Mode=Constant`, `NightTemperature=4700`
+   - **Alt-Tab Task Switcher (Coverflow/Flipswitch)**:
+     - Group: `[TabBox]`
+     - Key: `LayoutName=flipswitch`
+   - **Window Effects**:
+     - Group: `[Plugins]`
+     - Keys: `blurEnabled=true`, `magiclampEnabled=true`
+
+2. **Peripherals & Mouse Acceleration (`~/.config/kcminputrc`)**:
+   - **Mouse Acceleration Profile**:
+     - Group: `[Mouse]`
+     - Key: `AccelerationProfile=flat`
+   - **Touchpad Scrolling**:
+     - Group: `[Touchpad]`
+     - Key: `TwoFingerScroll=true`
+
+3. **Global Keyboard Shortcuts (`~/.config/kglobalshortcutsrc`)**:
+   - **Show Desktop**:
+     - Group: `[kwin]`
+     - Key: `Show Desktop=Meta+D,Meta+D,Peek at Desktop`
+   - **Terminal Emulator (Kitty)**:
+     - Group: `[services][kitty.desktop]`
+     - Key: `_launch=Ctrl+Alt+T`
+   - **File Manager (Dolphin)**:
+     - Group: `[services][org.kde.dolphin.desktop]`
+     - Key: `_launch=Meta+E`
+   - **Screenshot Tool**:
+     - Group: `[services][org.flameshot.Flameshot.desktop]`
+     - Key: `_launch=Ctrl+Alt+S`
+
+4. **Appearance, Fonts & System Defaults (`~/.config/kdeglobals`)**:
+   - **Color Scheme**:
+     - Apply `BreezeDark` via `plasma-apply-colorscheme BreezeDark` or set:
+     - Group: `[KDE]`
+     - Key: `LookAndFeelPackage=org.kde.breezedark.desktop`
+   - **Typography**:
+     - Group: `[General]`
+     - `font=Cantarell,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1`
+     - `fixed=JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1`
+   - **Default Terminal Application**:
+     - Group: `[General]`
+     - Keys: `TerminalApplication=kitty`, `TerminalService=kitty.desktop`
+
+5. **Dolphin File Manager (`~/.config/dolphinrc`)**:
+   - Group: `[General]`
+   - Key: `RememberOpenedTabs=false`
+
+---
 
 ### Idempotency & Execution Mechanics
 
-- Each `.dconf` file under `config/gnome/` is loaded into the user dconf database using `dconf load / < "$file"`.
-- Applying the configurations repeatedly produces the same configuration without side effects or errors.
+- Running the script repeatedly produces identical configuration values across all targeted keys without duplicates or errors.
+- Any existing non-conflicting user settings in other groups within the `.config` files are preserved.
 
 ## Test Scenarios
 
 ### Feature: Desktop Environment Preferences
 
-**Scenario: Non-GNOME Desktop Environment**
+**Scenario: Unsupported Desktop Environment**
 
-- **GIVEN** `get_desktop_environment` returns `plasma` or `unknown`
+- **GIVEN** `get_desktop_environment` returns `unknown` or `xfce`
 - **WHEN** `setup-desktop-preferences.sh` is executed
 - **THEN** it should output an informative skip message
-- **AND** exit with return code 0 without modifying dconf or any files
+- **AND** exit with return code 0 without modifying any configuration
 
-**Scenario: Missing dconf Command**
-
-- **GIVEN** `get_desktop_environment` returns `gnome`
-- **AND** `dconf` is not available in PATH
-- **WHEN** `setup-desktop-preferences.sh` is executed
-- **THEN** it should output an error message to stderr
-- **AND** exit with a non-zero return code (fail-fast)
-
-**Scenario: Missing Configuration Directory**
+**Scenario: GNOME Desktop Environment Preferences Application**
 
 - **GIVEN** `get_desktop_environment` returns `gnome`
-- **AND** directory `config/gnome/` does not exist or has no `.dconf` files
 - **WHEN** `setup-desktop-preferences.sh` is executed
-- **THEN** it should output an error message to stderr
-- **AND** exit with a non-zero return code (fail-fast)
-
-**Scenario: Preference Application on GNOME**
-
-- **GIVEN** `get_desktop_environment` returns `gnome`
-- **AND** `dconf` is available in PATH
-- **AND** configuration files exist in `config/gnome/`
-- **WHEN** `setup-desktop-preferences.sh` is executed
-- **THEN** it should load all `.dconf` files under `config/gnome/` via `dconf load`
+- **THEN** it should ensure `dconf` is available
+- **AND** load all 8 `.dconf` files from `config/gnome/`
 - **AND** exit with return code 0
 
-**Scenario: Idempotent Execution**
+**Scenario: KDE Plasma 6 Desktop Environment Preferences Application**
 
-- **GIVEN** desktop preferences have already been applied to the dconf database
+- **GIVEN** `get_desktop_environment` returns `plasma`
+- **WHEN** `setup-desktop-preferences.sh` is executed
+- **THEN** it should configure KWin titlebar middle click to Minimize
+- **AND** configure Night Color to constant 4700K
+- **AND** configure Alt-Tab task switcher layout to flipswitch
+- **AND** configure mouse acceleration profile to flat in kcminputrc
+- **AND** configure global shortcuts (Meta+D, Meta+E, Ctrl+Alt+T, Ctrl+Alt+S) in kglobalshortcutsrc
+- **AND** configure default terminal to Kitty and interface/monospace fonts in kdeglobals
+- **AND** exit with return code 0
+
+**Scenario: Idempotent Execution on KDE Plasma 6**
+
+- **GIVEN** KDE Plasma 6 preferences are already applied
 - **WHEN** `setup-desktop-preferences.sh` is executed again
-- **THEN** all configurations should be applied cleanly
+- **THEN** all configurations should remain intact
 - **AND** exit with return code 0

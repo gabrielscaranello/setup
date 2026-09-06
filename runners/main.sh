@@ -26,7 +26,7 @@ Available Commands:
   cursor                - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver               - Install DBeaver
   default-apps          - Configure default desktop applications (MIME / Kitty terminal)
-  desktop-preferences   - Configure desktop environment preferences (GNOME dconf)
+  desktop-preferences   - Configure desktop environment preferences (GNOME, KDE Plasma)
   discord               - Install Discord
   docker                - Install Docker engine and plugins (buildx, compose)
   firewall              - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI

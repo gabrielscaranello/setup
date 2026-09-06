@@ -4,6 +4,7 @@ set -euo pipefail
 # Source common utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_plasma.sh" 2> /dev/null || true
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -34,11 +35,12 @@ main() {
       echo "GNOME desktop preferences configuration completed successfully."
       ;;
     plasma)
-      echo "KDE Plasma desktop environment preferences are not yet implemented. Skipping."
-      return 0
+      echo "Starting KDE Plasma 6 desktop preferences configuration..."
+      configure_plasma_preferences || return 1
+      echo "KDE Plasma 6 desktop preferences configuration completed successfully."
       ;;
     *)
-      echo "Desktop Environment is '$de' (unsupported or not GNOME). Skipping desktop preferences configuration."
+      echo "Desktop Environment is '$de' (unsupported desktop environment). Skipping desktop preferences configuration."
       return 0
       ;;
   esac

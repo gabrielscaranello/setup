@@ -16,15 +16,7 @@ teardown() {
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Desktop Environment is 'unknown' (unsupported or not GNOME). Skipping desktop preferences configuration." ]]
-}
-
-@test "main skips when desktop environment is plasma" {
-  get_desktop_environment() { echo "plasma"; }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "KDE Plasma desktop environment preferences are not yet implemented. Skipping." ]]
+  [[ "$output" =~ "Desktop Environment is 'unknown' (unsupported desktop environment). Skipping desktop preferences configuration." ]]
 }
 
 @test "main skips when desktop environment is unsupported (e.g. xfce)" {
@@ -32,7 +24,7 @@ teardown() {
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Desktop Environment is 'xfce' (unsupported or not GNOME). Skipping desktop preferences configuration." ]]
+  [[ "$output" =~ "Desktop Environment is 'xfce' (unsupported desktop environment). Skipping desktop preferences configuration." ]]
 }
 
 # ── Configuration Array Definition Tests ──────────────────────────────────────
@@ -49,7 +41,7 @@ teardown() {
   [[ " ${GNOME_DCONF_FILES[*]} " =~ " apps.dconf " ]]
 }
 
-# ── End-to-End Main Pipeline Tests ────────────────────────────────────────────
+# ── End-to-End GNOME Pipeline Tests ───────────────────────────────────────────
 
 @test "main executes successfully on GNOME" {
   get_desktop_environment() { echo "gnome"; }
@@ -79,6 +71,30 @@ teardown() {
   get_desktop_environment() { echo "gnome"; }
   ensure_dconf() { return 0; }
   load_dconf_files() { return 1; }
+
+  run main
+  [ "$status" -ne 0 ]
+}
+
+# ── End-to-End KDE Plasma Pipeline Tests ──────────────────────────────────────
+
+@test "main executes successfully on KDE Plasma" {
+  get_desktop_environment() { echo "plasma"; }
+  configure_plasma_preferences() {
+    echo "configure_plasma_preferences invoked"
+    return 0
+  }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Starting KDE Plasma 6 desktop preferences configuration..." ]]
+  [[ "$output" =~ "configure_plasma_preferences invoked" ]]
+  [[ "$output" =~ "KDE Plasma 6 desktop preferences configuration completed successfully." ]]
+}
+
+@test "main fails if configure_plasma_preferences fails on KDE Plasma" {
+  get_desktop_environment() { echo "plasma"; }
+  configure_plasma_preferences() { return 1; }
 
   run main
   [ "$status" -ne 0 ]
