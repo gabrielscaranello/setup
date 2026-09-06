@@ -128,9 +128,14 @@ Supports both primary desktop environments:
 
 5. **Dolphin File Manager (`~/.config/dolphinrc`)**:
    - Group: `[General]`
-   - Key: `RememberOpenedTabs=false`
+   - Keys: `RememberOpenedTabs=false`, `HomeUrl=file://${HOME}`
 
-6. **Panel & Taskbar Layout**:
+6. **Session Management (`~/.config/ksmserverrc`)**:
+   - **Start with Empty Session**:
+     - Group: `[General]`
+     - Key: `loginMode=emptySession`
+
+7. **Panel & Taskbar Layout**:
    - **Panel Height**: Configured to 40px (`panel.height = 40;` in D-Bus script, `thickness=40` in `plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc`).
    - **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
    - **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `thickness=40`, `formfactor=2`, `lastScreen=0`).
@@ -180,6 +185,8 @@ Supports both primary desktop environments:
 - **AND** configure mouse acceleration profile to flat in kcminputrc
 - **AND** configure global shortcuts (Meta+D, Meta+E, Ctrl+Alt+T, Ctrl+Alt+S) in kglobalshortcutsrc
 - **AND** configure default terminal to Kitty and monospace font in kdeglobals
+- **AND** configure session to start with an empty session in ksmserverrc
+- **AND** configure Dolphin to open at home directory without remembering tabs in dolphinrc
 - **AND** exit with return code 0
 
 **Scenario: Idempotent Execution on KDE Plasma 6**

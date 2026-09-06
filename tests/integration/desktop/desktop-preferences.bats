@@ -84,6 +84,11 @@ teardown() {
   [ -f "$HOME/.local/share/icons/start-here.svg" ]
   [ -f "$HOME/.config/kactivitymanagerd-statsrc" ]
   grep -q "ordering=" "$HOME/.config/kactivitymanagerd-statsrc"
+  [ -f "$HOME/.config/ksmserverrc" ]
+  grep -q "loginMode=emptySession" "$HOME/.config/ksmserverrc"
+  [ -f "$HOME/.config/dolphinrc" ]
+  grep -q "RememberOpenedTabs=false" "$HOME/.config/dolphinrc"
+  grep -q "HomeUrl=file://$HOME" "$HOME/.config/dolphinrc"
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh

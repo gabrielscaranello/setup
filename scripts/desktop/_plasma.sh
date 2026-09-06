@@ -201,9 +201,14 @@ configure_plasma_preferences() {
   plasma_write_config "kdeglobals" "General" "TerminalService" "kitty.desktop"
   plasma_write_config "kdeglobals" "General" "fixed" "JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
 
+  echo "Applying KDE Plasma 6 session preferences..."
+  # Session Management (ksmserverrc)
+  plasma_write_config "ksmserverrc" "General" "loginMode" "emptySession"
+
   echo "Applying KDE Plasma 6 Dolphin preferences..."
   # Dolphin (dolphinrc)
   plasma_write_config "dolphinrc" "General" "RememberOpenedTabs" "false"
+  plasma_write_config "dolphinrc" "General" "HomeUrl" "file://${HOME}"
 
   # Ensure default panel views have thickness 40
   plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
