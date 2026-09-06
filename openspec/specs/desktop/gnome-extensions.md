@@ -29,13 +29,14 @@ Automate the downloading, installation, updating, and activation of essential GN
 2. **Blur my Shell** (ID: `3193`, UUID: `blur-my-shell@aunetx`)
 3. **Caffeine** (ID: `517`, UUID: `caffeine@patapon.info`)
 4. **Color Picker** (ID: `3396`, UUID: `color-picker@tuberry`)
-5. **Coverflow Alt-Tab** (ID: `97`, UUID: `CoverflowAltTab@palatis.blogspot.com`)
-6. **Emoji Copy** (ID: `6242`, UUID: `emoji-copy@felipeftn`)
-7. **Hide Activities Button** (ID: `744`, UUID: `Hide_Activities@shay.shayel.org`)
-8. **Logo Menu** (ID: `4451`, UUID: `logomenu@aryan_k`)
-9. **Status Tray** (ID: `9164`, UUID: `status-tray@keithvassallo.com`)
-10. **Top Bar Organizer** (ID: `4356`, UUID: `top-bar-organizer@julian.gse.jsts.xyz`)
-11. **Vitals** (ID: `1460`, UUID: `Vitals@CoreCoding.com`)
+5. **Copyous** (ID: `8834`, UUID: `copyous@boerdereinar.dev`)
+6. **Coverflow Alt-Tab** (ID: `97`, UUID: `CoverflowAltTab@palatis.blogspot.com`)
+7. **Emoji Copy** (ID: `6242`, UUID: `emoji-copy@felipeftn`)
+8. **Hide Activities Button** (ID: `744`, UUID: `Hide_Activities@shay.shayel.org`)
+9. **Logo Menu** (ID: `4451`, UUID: `logomenu@aryan_k`)
+10. **Status Tray** (ID: `9164`, UUID: `status-tray@keithvassallo.com`)
+11. **Top Bar Organizer** (ID: `4356`, UUID: `top-bar-organizer@julian.gse.jsts.xyz`)
+12. **Vitals** (ID: `1460`, UUID: `Vitals@CoreCoding.com`)
 
 #### Distribution-Specific Extensions
 
@@ -81,7 +82,7 @@ Automate the downloading, installation, updating, and activation of essential GN
 - **GIVEN** `get_desktop_environment` returns `gnome`
 - **AND** `get_distro_id` returns `debian` or `fedora`
 - **WHEN** `setup-gnome-extensions.sh` is executed
-- **THEN** it should install and enable the 11 common extensions
+- **THEN** it should install and enable the 12 common extensions
 - **AND** skip Arch Linux Updates Indicator (ID: 1010)
 
 **Scenario: GNOME Desktop Environment on Arch Linux**
@@ -89,7 +90,7 @@ Automate the downloading, installation, updating, and activation of essential GN
 - **GIVEN** `get_desktop_environment` returns `gnome`
 - **AND** `get_distro_id` returns `arch`
 - **WHEN** `setup-gnome-extensions.sh` is executed
-- **THEN** it should install and enable the 11 common extensions
+- **THEN** it should install and enable the 12 common extensions
 - **AND** install and enable Arch Linux Updates Indicator (ID: 1010)
 
 **Scenario: Idempotent Execution with All Extensions Up-to-Date**

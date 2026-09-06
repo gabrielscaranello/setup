@@ -8,6 +8,7 @@ COMMON_EXTENSIONS=(
   "3193:blur-my-shell@aunetx:Blur my Shell"
   "517:caffeine@patapon.info:Caffeine"
   "3396:color-picker@tuberry:Color Picker"
+  "8834:copyous@boerdereinar.dev:Copyous"
   "97:CoverflowAltTab@palatis.blogspot.com:Coverflow Alt-Tab"
   "6242:emoji-copy@felipeftn:Emoji Copy"
   "744:Hide_Activities@shay.shayel.org:Hide Activities Button"
