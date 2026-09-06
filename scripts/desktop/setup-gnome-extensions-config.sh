@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source common utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -18,47 +19,6 @@ COMMON_DCONF_FILES=(
   "top-bar-organizer.dconf"
   "vitals.dconf"
 )
-
-_ensure_dconf() {
-  if ! command -v dconf > /dev/null 2>&1; then
-    echo "dconf not found in PATH, attempting to install..."
-    install_packages dconf || true
-  fi
-
-  if ! command -v dconf > /dev/null 2>&1; then
-    echo "Error: dconf CLI is not installed or not found in PATH." >&2
-    return 1
-  fi
-}
-
-_dconf() {
-  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session > /dev/null 2>&1; then
-    dbus-run-session -- dconf "$@"
-  else
-    dconf "$@"
-  fi
-}
-
-_load_dconf_file() {
-  local file_path="$1"
-  local name
-  name="$(basename "$file_path")"
-
-  if [ ! -f "$file_path" ]; then
-    echo "  Warning: Configuration file '$file_path' not found. Skipping." >&2
-    return 0
-  fi
-
-  echo "  Loading dconf configuration: $name..."
-  _dconf load / < "$file_path"
-}
-
-_configure_common_extensions() {
-  echo "Applying common GNOME extensions configuration..."
-  for conf in "${COMMON_DCONF_FILES[@]}"; do
-    _load_dconf_file "${CONFIG_DIR}/${conf}"
-  done
-}
 
 _configure_logo_menu_icon() {
   local distro icon_id
@@ -81,17 +41,18 @@ _configure_logo_menu_icon() {
   esac
 
   echo "  Setting Logo Menu icon for $distro (index: $icon_id)..."
-  _dconf write /org/gnome/shell/extensions/Logo-menu/menu-button-icon-image "$icon_id"
+  dconf_exec write /org/gnome/shell/extensions/Logo-menu/menu-button-icon-image "$icon_id"
 }
 
 _configure_arch_update() {
   if is_distro "arch"; then
     echo "Configuring Arch Linux Updates Indicator extension..."
-    _load_dconf_file "${CONFIG_DIR}/arch-update.dconf"
+    load_dconf_file "${CONFIG_DIR}/arch-update.dconf"
   fi
 }
 
 main() {
+  set -euo pipefail
   local de
   de="$(get_desktop_environment)"
 
@@ -102,8 +63,9 @@ main() {
 
   echo "Starting GNOME extensions configuration..."
 
-  _ensure_dconf
-  _configure_common_extensions
+  ensure_dconf || return 1
+  echo "Applying common GNOME extensions configuration..."
+  load_dconf_files "$CONFIG_DIR" "${COMMON_DCONF_FILES[@]}" || return 1
   _configure_logo_menu_icon
   _configure_arch_update
 
