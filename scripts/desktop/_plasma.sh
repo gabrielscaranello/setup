@@ -122,6 +122,8 @@ configure_plasma_preferences() {
 
   echo "Applying KDE Plasma 6 window manager preferences..."
   # Window Management & Effects (kwinrc)
+  plasma_write_config "kwinrc" "Desktops" "Number" "4"
+  plasma_write_config "kwinrc" "Desktops" "Rows" "2"
   plasma_write_config "kwinrc" "MouseBindings" "CommandActiveTitlebar2" "Minimize"
   plasma_write_config "kwinrc" "NightColor" "Active" "true"
   plasma_write_config "kwinrc" "NightColor" "Mode" "Constant"
@@ -153,4 +155,21 @@ configure_plasma_preferences() {
   echo "Applying KDE Plasma 6 Dolphin preferences..."
   # Dolphin (dolphinrc)
   plasma_write_config "dolphinrc" "General" "RememberOpenedTabs" "false"
+
+  configure_plasma_panel
+}
+
+configure_plasma_panel() {
+  local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
+  local repo_root
+  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  local template_file="${PLASMA_PANEL_TEMPLATE:-${repo_root}/config/plasma/plasma-org.kde.plasma.desktop-appletsrc}"
+  local target_file="${config_dir}/plasma-org.kde.plasma.desktop-appletsrc"
+
+  mkdir -p "$config_dir"
+
+  if [ -f "$template_file" ]; then
+    echo "Applying KDE Plasma 6 panel and taskbar layout..."
+    cp "$template_file" "$target_file"
+  fi
 }

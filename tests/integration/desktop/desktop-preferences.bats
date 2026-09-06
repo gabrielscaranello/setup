@@ -50,12 +50,18 @@ teardown() {
 
   # Verify generated configuration files and key values in user config directory
   [ -f "$HOME/.config/kwinrc" ]
+  grep -q "Number=4" "$HOME/.config/kwinrc"
+  grep -q "Rows=2" "$HOME/.config/kwinrc"
   grep -q "CommandActiveTitlebar2=Minimize" "$HOME/.config/kwinrc"
   grep -q "NightTemperature=4700" "$HOME/.config/kwinrc"
   [ -f "$HOME/.config/kcminputrc" ]
   grep -q "AccelerationProfile=flat" "$HOME/.config/kcminputrc"
   [ -f "$HOME/.config/kdeglobals" ]
   grep -q "TerminalApplication=kitty" "$HOME/.config/kdeglobals"
+  [ -f "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" ]
+  grep -q "floating=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "AppletOrder=2;3;4;5;6;7;8" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -q "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh

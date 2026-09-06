@@ -169,9 +169,16 @@ teardown() {
     return 0
   }
 
+  configure_plasma_panel() {
+    echo "configure_plasma_panel called"
+    return 0
+  }
+
   run configure_plasma_preferences
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Applying KDE Plasma 6 window manager preferences..." ]]
+  [[ "$output" =~ "config: file=kwinrc group=Desktops key=Number val=4" ]]
+  [[ "$output" =~ "config: file=kwinrc group=Desktops key=Rows val=2" ]]
   [[ "$output" =~ "config: file=kwinrc group=MouseBindings key=CommandActiveTitlebar2 val=Minimize" ]]
   [[ "$output" =~ "config: file=kwinrc group=NightColor key=Active val=true" ]]
   [[ "$output" =~ "config: file=kwinrc group=NightColor key=NightTemperature val=4700" ]]
@@ -184,4 +191,43 @@ teardown() {
   [[ "$output" =~ "colorscheme: BreezeDark" ]]
   [[ "$output" =~ "config: file=kdeglobals group=General key=TerminalApplication val=kitty" ]]
   [[ "$output" =~ "config: file=dolphinrc group=General key=RememberOpenedTabs val=false" ]]
+  [[ "$output" =~ "configure_plasma_panel called" ]]
+}
+
+# ── configure_plasma_panel Tests ──────────────────────────────────────────────
+
+@test "configure_plasma_panel copies template to target config directory" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_panel_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+
+  run configure_plasma_panel
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Applying KDE Plasma 6 panel and taskbar layout..." ]]
+  [ -f "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc" ]
+
+  run grep "floating=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  run grep "AppletOrder=2;3;4;5;6;7;8" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  run grep "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  rm -rf "$test_dir"
+}
+
+@test "configure_plasma_panel does nothing if template is missing" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_panel_missing_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  PLASMA_PANEL_TEMPLATE="$test_dir/nonexistent"
+
+  run configure_plasma_panel
+  [ "$status" -eq 0 ]
+  [[ "$output" != *"Applying KDE Plasma 6 panel and taskbar layout..."* ]]
+  [ ! -f "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc" ]
+
+  rm -rf "$test_dir"
 }

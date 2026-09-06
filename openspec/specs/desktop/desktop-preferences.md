@@ -76,6 +76,9 @@ Supports both primary desktop environments:
 #### Granular Configuration Specifications
 
 1. **Window Management & Visual Effects (`~/.config/kwinrc`)**:
+   - **Virtual Desktops (2x2 Grid)**:
+     - Group: `[Desktops]`
+     - Keys: `Number=4`, `Rows=2`
    - **Titlebar Middle Click**:
      - Group: `[MouseBindings]`
      - Key: `CommandActiveTitlebar2=Minimize`
@@ -128,6 +131,17 @@ Supports both primary desktop environments:
    - Group: `[General]`
    - Key: `RememberOpenedTabs=false`
 
+6. **Panel & Taskbar Layout (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**:
+   - Bottom-fixed, non-floating panel: `location=4`, `floating=0`, `formfactor=2`.
+   - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
+     1. Application Launcher (`org.kde.plasma.kickoff`)
+     2. Separator (`org.kde.plasma.marginsseparator`)
+     3. Icons-Only Task Manager (`org.kde.plasma.icontasks`) — expands across the panel to push right-hand widgets
+     4. Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows)
+     5. Separator (`org.kde.plasma.marginsseparator`)
+     6. System Tray (`org.kde.plasma.systemtray`)
+     7. Digital Clock (`org.kde.plasma.digitalclock`)
+
 ---
 
 ### Idempotency & Execution Mechanics
@@ -158,7 +172,8 @@ Supports both primary desktop environments:
 
 - **GIVEN** `get_desktop_environment` returns `plasma`
 - **WHEN** `setup-desktop-preferences.sh` is executed
-- **THEN** it should configure KWin titlebar middle click to Minimize
+- **THEN** it should configure virtual desktops to a 2x2 grid (Number=4, Rows=2) in kwinrc
+- **AND** configure KWin titlebar middle click to Minimize
 - **AND** configure Night Color to constant 4700K
 - **AND** configure Alt-Tab task switcher layout to flipswitch
 - **AND** configure mouse acceleration profile to flat in kcminputrc
