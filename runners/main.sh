@@ -27,6 +27,7 @@ Available Commands:
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
   default-apps            - Configure default desktop applications (MIME / Kitty terminal)
+  desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
   desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
   discord                 - Install Discord
   docker                  - Install Docker engine and plugins (buildx, compose)
@@ -132,6 +133,10 @@ run_module() {
 
     default-apps)
       bash "$SCRIPTS_DIR/apps/setup-default-apps.sh"
+      ;;
+
+    desktop-apps)
+      bash "$SCRIPTS_DIR/desktop/setup-desktop-apps.sh"
       ;;
 
     desktop-preferences)

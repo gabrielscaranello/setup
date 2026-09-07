@@ -42,6 +42,7 @@ Essential system utilities and base desktop environments for minimal installatio
 
 - [x] Implement Desktop Environment (DE) installation on Arch Linux (`GNOME`, `KDE Plasma`) — `scripts/system/arch/setup-desktop-environment.sh`
 - [x] Implement core system packages installation (`Debian`, `Arch Linux`, `Fedora` — including `util-linux-user` on Fedora) — `scripts/system/setup-packages.sh`
+- [x] Implement curated Desktop Environment applications suite (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-desktop-apps.sh`
 
 ## 🔴 Phase 4: Cleanup & Debloat
 

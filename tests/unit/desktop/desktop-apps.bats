@@ -1,0 +1,67 @@
+#!/usr/bin/env bats
+# shellcheck disable=SC2218
+
+setup() {
+  source /setup/scripts/desktop/setup-desktop-apps.sh 2>/dev/null || \
+  source "${BATS_TEST_DIRNAME}/../../../scripts/desktop/setup-desktop-apps.sh"
+}
+
+@test "main skips execution when desktop environment is unknown" {
+  get_desktop_environment() { echo "unknown"; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "skipping desktop applications setup" ]]
+}
+
+@test "_install_plasma_apps calls install_packages with KDE Plasma suite" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+
+  run _install_plasma_apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "dolphin dolphin-plugins" ]]
+  [[ "$output" =~ "ark gwenview okular" ]]
+  [[ "$output" =~ "kalk plasma-systemmonitor filelight" ]]
+  [[ "$output" =~ "partitionmanager ghostwriter" ]]
+  [[ "$output" =~ "kde-gtk-config kdeconnect kweather" ]]
+}
+
+@test "_install_gnome_apps calls install_packages with GNOME suite" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+
+  run _install_gnome_apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "nautilus sushi" ]]
+  [[ "$output" =~ "file-roller loupe evince" ]]
+  [[ "$output" =~ "gnome-calculator gnome-system-monitor baobab" ]]
+  [[ "$output" =~ "gnome-disk-utility gnome-text-editor" ]]
+  [[ "$output" =~ "gnome-tweaks gnome-weather" ]]
+}
+
+@test "main runs KDE Plasma application setup when DE is plasma" {
+  get_desktop_environment() { echo "plasma"; }
+  _install_plasma_apps() { echo "mock plasma apps installed"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring applications for KDE Plasma" ]]
+  [[ "$output" =~ "mock plasma apps installed" ]]
+  [[ "$output" =~ "setup-desktop-apps complete" ]]
+}
+
+@test "main runs GNOME application setup when DE is gnome" {
+  get_desktop_environment() { echo "gnome"; }
+  _install_gnome_apps() { echo "mock gnome apps installed"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring applications for GNOME" ]]
+  [[ "$output" =~ "mock gnome apps installed" ]]
+  [[ "$output" =~ "setup-desktop-apps complete" ]]
+}
