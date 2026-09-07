@@ -21,6 +21,7 @@ Available Commands:
   help                    - Show this help message
   all                     - Run complete desktop setup pipeline for current distribution
   amd                     - Install AMD GPU drivers, firmware and codecs
+  arch-de                 - Provision Desktop Environment (GNOME, KDE Plasma) on Arch Linux
   browsers                - Install Web Browsers (Chromium, Firefox)
   codecs                  - Install Multimedia Codecs and A/V Plugins
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
@@ -106,6 +107,11 @@ run_module() {
 
     amd)
       bash "$SCRIPTS_DIR/system/setup-amd.sh"
+      ;;
+
+    arch-de | desktop-environment)
+      shift || true
+      bash "$SCRIPTS_DIR/system/arch/setup-desktop-environment.sh" "$@"
       ;;
 
     browsers)

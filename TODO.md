@@ -40,7 +40,7 @@ Prerequisites, kernel backports, graphics drivers, snapshots, and global package
 
 Essential system utilities and base desktop environments for minimal installations.
 
-- [ ] Implement Desktop Environment (DE) installation on Arch Linux (`GNOME`, `KDE Plasma`)
+- [x] Implement Desktop Environment (DE) installation on Arch Linux (`GNOME`, `KDE Plasma`) — `scripts/system/arch/setup-desktop-environment.sh`
 - [x] Implement core system packages installation (`Debian`, `Arch Linux`, `Fedora` — including `util-linux-user` on Fedora) — `scripts/system/setup-packages.sh`
 
 ## 🔴 Phase 4: Cleanup & Debloat
