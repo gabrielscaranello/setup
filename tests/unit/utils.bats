@@ -323,4 +323,8 @@ setup() {
   [ "$(_get_package_name "nvidia-driver" "debian")" = "nvidia-driver" ]
   [ "$(_get_package_name "nvidia-driver" "fedora")" = "akmod-nvidia" ]
   [ "$(_get_package_name "nvidia-driver" "arch")" = "nvidia-open-dkms nvidia-utils" ]
+
+  [ "$(_get_package_name "power-profiles-daemon" "debian")" = "power-profiles-daemon" ]
+  [ "$(_get_package_name "power-profiles-daemon" "fedora")" = "tuned-ppd" ]
+  [ "$(_get_package_name "power-profiles-daemon" "arch")" = "power-profiles-daemon" ]
 }

@@ -44,7 +44,7 @@ The script SHALL install modern command-line utilities and shell environments ac
 
 The script SHALL install hardware management, power profiling, and firmware update packages via `install_packages`:
 
-- `power-profiles-daemon`: DBus-based power profile manager (Performance, Balanced, Power-saver).
+- `power-profiles-daemon`: DBus-based power profile manager (`power-profiles-daemon` on Debian/Arch, `tuned-ppd` on Fedora 41+).
 - `numlockx`: Utility to enable NumLock on keyboard during session initialization.
 - `fwupd`: Linux Vendor Firmware Service (LVFS) client (including `fwupd-efi` on Arch Linux).
 
@@ -52,7 +52,7 @@ The script SHALL install hardware management, power profiling, and firmware upda
 
 - **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** hardware package installation executes
-- **THEN** `power-profiles-daemon`, `numlockx`, and `fwupd` (plus `fwupd-efi` on Arch Linux) SHALL be installed via `install_packages`
+- **THEN** `power-profiles-daemon` (resolving to `tuned-ppd` on Fedora), `numlockx`, and `fwupd` (plus `fwupd-efi` on Arch Linux) SHALL be installed via `install_packages`
 
 ---
 
