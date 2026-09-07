@@ -50,6 +50,7 @@ Available Commands:
   nvm                     - Install NVM, Node.js and global packages
   obsidian                - Install Obsidian Knowledge Base
   onlyoffice              - Install ONLYOFFICE Desktop Editors (Flatpak)
+  packages                - Install core system packages and CLI utilities
   rust                    - Install Rust, Cargo and tools (tree-sitter-cli)
   screenshot              - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
   steam                   - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
@@ -221,6 +222,10 @@ run_module() {
 
     onlyoffice)
       bash "$SCRIPTS_DIR/apps/setup-onlyoffice.sh"
+      ;;
+
+    packages)
+      bash "$SCRIPTS_DIR/system/setup-packages.sh"
       ;;
 
     rust)

@@ -6,6 +6,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/_utils.sh"
 run_all() {
   local steps=(
     "system/setup-swap.sh:Swap and memory tuning setup"
+    "system/setup-packages.sh:Core system packages setup"
     "system/setup-timeshift.sh:Timeshift setup"
     "system/setup-nvidia.sh:NVIDIA graphics drivers setup"
     "system/setup-amd.sh:AMD graphics drivers and codecs setup"
