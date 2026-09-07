@@ -131,6 +131,20 @@ setup() {
   [ "$(_get_package_name "steam" "pacman")" = "steam" ]
 }
 
+@test "_get_package_name resolves desktop environment app packages for distros" {
+  [ "$(_get_package_name "kde-gtk-config" "apt")" = "kde-config-gtk-style" ]
+  [ "$(_get_package_name "kde-gtk-config" "dnf")" = "kde-gtk-config" ]
+  [ "$(_get_package_name "kde-gtk-config" "pacman")" = "kde-gtk-config" ]
+
+  [ "$(_get_package_name "kdeconnect" "apt")" = "kdeconnect" ]
+  [ "$(_get_package_name "kdeconnect" "dnf")" = "kde-connect" ]
+  [ "$(_get_package_name "kdeconnect" "pacman")" = "kdeconnect" ]
+
+  [ "$(_get_package_name "partitionmanager" "apt")" = "partitionmanager" ]
+  [ "$(_get_package_name "partitionmanager" "dnf")" = "kde-partitionmanager" ]
+  [ "$(_get_package_name "partitionmanager" "pacman")" = "partitionmanager" ]
+}
+
 @test "_get_package_name resolves nvidia driver package for distros" {
   [ "$(_get_package_name "nvidia-driver" "apt")" = "nvidia-driver" ]
   [ "$(_get_package_name "nvidia-driver" "dnf")" = "akmod-nvidia" ]

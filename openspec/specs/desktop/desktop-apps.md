@@ -50,7 +50,7 @@ When the detected environment is `plasma`, the script SHALL install the followin
 - `filelight`: Disk usage graphical analyzer.
 - `partitionmanager`: Partition editor (`partitionmanager` on Debian/Arch, `kde-partitionmanager` on Fedora).
 - `ghostwriter`: Distraction-free markdown text editor.
-- `kde-gtk-config`: GTK theme integration module for KDE Plasma.
+- `kde-gtk-config`: GTK theme integration module for KDE Plasma (`kde-config-gtk-style` on Debian, `kde-gtk-config` on Fedora/Arch).
 - `kdeconnect`: Device integration client (`kdeconnect` on Debian/Arch, `kde-connect` on Fedora).
 - `kweather`: Weather forecast application.
 - `vlc`: Multi-format media and video player.
