@@ -19,14 +19,14 @@ setup() {
   [ "$output" = "ext4" ]
 }
 
-@test "_install_timeshift_packages calls install_packages timeshift" {
+@test "_install_timeshift_packages calls install_packages timeshift and xhost" {
   install_packages() {
     echo "installed: $*"
     return 0
   }
   run _install_timeshift_packages
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed:\ timeshift ]]
+  [[ "$output" =~ installed:\ timeshift\ xhost ]]
 }
 
 @test "_get_documents_dir_name defaults to Documents" {
@@ -228,4 +228,43 @@ CONF
   [ "$status" -eq 0 ]
   [[ "$output" =~ grub-mkconfig\ updated ]]
   rm -f "$mock_grub_script"
+}
+
+@test "_enable_cron_service enables cron on debian" {
+  is_distro() { [ "$1" = "debian" ]; }
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  systemctl() { return 0; }
+  sudo() { "$@"; }
+
+  run _enable_cron_service
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling cron scheduler service" ]]
+}
+
+@test "_enable_cron_service enables cronie on arch" {
+  is_distro() { [ "$1" = "arch" ]; }
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  systemctl() { return 0; }
+  sudo() { "$@"; }
+
+  run _enable_cron_service
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling cron scheduler service" ]]
+}
+
+@test "_enable_cron_service enables crond on fedora" {
+  is_distro() { [ "$1" = "fedora" ]; }
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  systemctl() { return 0; }
+  sudo() { "$@"; }
+
+  run _enable_cron_service
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling cron scheduler service" ]]
+}
+
+@test "_enable_cron_service skips cleanly when systemctl is missing" {
+  command() { if [ "${2:-}" = "systemctl" ]; then return 1; fi; builtin command "$@"; }
+  run _enable_cron_service
+  [ "$status" -eq 0 ]
 }

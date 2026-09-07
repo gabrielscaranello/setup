@@ -40,19 +40,56 @@ The script SHALL install modern command-line utilities and shell environments ac
 
 ---
 
-### Requirement: Hardware, Energy & Firmware Daemons Installation
+### Requirement: Hardware, Energy, Firmware, Printing & Bluetooth Daemons Installation
 
-The script SHALL install hardware management, power profiling, and firmware update packages via `install_packages`:
+The script SHALL install hardware management, power profiling, firmware update, printing, cron scheduling, and Bluetooth stack packages via `install_packages`:
 
 - `power-profiles-daemon`: DBus-based power profile manager (`power-profiles-daemon` on Debian/Arch, `tuned-ppd` on Fedora 41+).
 - `numlockx`: Utility to enable NumLock on keyboard during session initialization.
 - `fwupd`: Linux Vendor Firmware Service (LVFS) client (including `fwupd-efi` on Arch Linux).
+- `bluez`: Official Linux Bluetooth protocol stack and tools (`bluez` on Debian/Fedora, `bluez` and `bluez-utils` on Arch Linux).
+- `cups`: OpenPrinting CUPS daemon and printing system.
+- `cron`: Job scheduler daemon (`cron` on Debian, `cronie` on Fedora and Arch Linux).
 
 #### Scenario: Installing hardware and power utilities across distros
 
 - **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** hardware package installation executes
-- **THEN** `power-profiles-daemon` (resolving to `tuned-ppd` on Fedora), `numlockx`, and `fwupd` (plus `fwupd-efi` on Arch Linux) SHALL be installed via `install_packages`
+- **THEN** `power-profiles-daemon` (resolving to `tuned-ppd` on Fedora), `numlockx`, `fwupd` (plus `fwupd-efi` on Arch Linux), `bluez` (plus `bluez-utils` on Arch Linux), `cups`, and `cron` (resolving to `cronie` on Fedora and Arch Linux) SHALL be installed via `install_packages`
+
+---
+
+### Requirement: Bluetooth Policy Configuration
+
+The script SHALL ensure that the Bluetooth controller is configured to power on automatically via `_configure_bluetooth`:
+
+- SHALL verify if `/etc/bluetooth/main.conf` or `/etc/bluetooth` exists.
+- SHALL configure `AutoEnable=true` under `[Policy]` section idempotently.
+
+#### Scenario: Configuring Bluetooth auto-enable
+
+- **GIVEN** `/etc/bluetooth/main.conf` exists
+- **WHEN** `_configure_bluetooth` executes
+- **THEN** `[Policy]` section SHALL contain `AutoEnable=true`
+
+---
+
+### Requirement: Essential System Services Enablement
+
+The script SHALL enable systemd services and timers via `_enable_system_services` when `systemctl` is present:
+
+- Power management: `tuned.service` on Fedora; `power-profiles-daemon.service` on Debian and Arch Linux.
+- Bluetooth stack: `bluetooth.service` across all distributions.
+- Printing subsystem: `cups.service` across all distributions.
+- Cron scheduler: `cron.service` on Debian; `cronie.service` on Fedora and Arch Linux.
+- Storage maintenance: `fstrim.timer` for periodic SSD TRIM across all distributions.
+- When `systemctl` is not available, service enablement steps SHALL be bypassed cleanly.
+
+#### Scenario: Enabling services on systemd environment
+
+- **GIVEN** system running systemd
+- **WHEN** `_enable_system_services` executes
+- **THEN** power management service, `bluetooth.service`, `cups.service`, cron service, and `fstrim.timer` SHALL be enabled
 
 ---
 

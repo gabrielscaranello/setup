@@ -111,6 +111,10 @@ setup() {
   [ "$(_get_package_name "tidy" "apt")" = "tidy" ]
   [ "$(_get_package_name "tidy" "dnf")" = "libtidy" ]
   [ "$(_get_package_name "tidy" "pacman")" = "tidy" ]
+
+  [ "$(_get_package_name "xhost" "apt")" = "x11-xserver-utils" ]
+  [ "$(_get_package_name "xhost" "dnf")" = "xhost" ]
+  [ "$(_get_package_name "xhost" "pacman")" = "xorg-xhost" ]
 }
 
 @test "_get_package_name resolves gaming packages for distros" {
@@ -327,4 +331,12 @@ setup() {
   [ "$(_get_package_name "power-profiles-daemon" "debian")" = "power-profiles-daemon" ]
   [ "$(_get_package_name "power-profiles-daemon" "fedora")" = "tuned-ppd" ]
   [ "$(_get_package_name "power-profiles-daemon" "arch")" = "power-profiles-daemon" ]
+
+  [ "$(_get_package_name "bluez" "debian")" = "bluez" ]
+  [ "$(_get_package_name "bluez" "fedora")" = "bluez" ]
+  [ "$(_get_package_name "bluez" "arch")" = "bluez bluez-utils" ]
+
+  [ "$(_get_package_name "cron" "debian")" = "cron" ]
+  [ "$(_get_package_name "cron" "fedora")" = "cronie" ]
+  [ "$(_get_package_name "cron" "arch")" = "cronie" ]
 }

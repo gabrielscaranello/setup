@@ -9,7 +9,7 @@ GRUB_BTRFS_REPO_URL="https://github.com/Antynea/grub-btrfs.git"
 
 _install_timeshift_packages() {
   echo "Installing Timeshift and UI dependencies..."
-  install_packages timeshift || true
+  install_packages timeshift xhost || true
 }
 
 _get_config_dir() {
@@ -189,10 +189,26 @@ _configure_grub_btrfsd() {
   _regenerate_grub_btrfs_menu
 }
 
+_enable_cron_service() {
+  if ! command -v systemctl > /dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Enabling cron scheduler service for Timeshift automation..."
+  if is_distro debian; then
+    sudo systemctl enable --now cron.service 2> /dev/null || sudo systemctl enable cron.service 2> /dev/null || true
+  elif is_distro fedora; then
+    sudo systemctl enable --now crond.service 2> /dev/null || sudo systemctl enable crond.service 2> /dev/null || true
+  else
+    sudo systemctl enable --now cronie.service 2> /dev/null || sudo systemctl enable cronie.service 2> /dev/null || true
+  fi
+}
+
 _setup_timeshift() {
   _install_timeshift_packages
   _deploy_timeshift_config
   _configure_grub_btrfsd
+  _enable_cron_service
   _create_initial_snapshot
 }
 

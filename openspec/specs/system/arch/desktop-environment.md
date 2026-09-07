@@ -71,16 +71,17 @@ When the resolved target DE is `plasma`, the script SHALL:
 1. **Packages**: Install the KDE Plasma desktop stack via `install_packages`:
    - `plasma-login-manager`
    - `plasma-desktop`, `plasma-workspace`, `plasma-workspace-wallpapers`, `plasma-nm`, `plasma-pa`, `powerdevil`, `kscreen`, `polkit-kde-agent`, `plasma-integration`
+   - `bluedevil`, `networkmanager`
    - `pipewire`, `pipewire-pulse`, `wireplumber`, `gst-plugin-pipewire`
    - `xdg-desktop-portal-kde`, `egl-wayland`, `xorg-xwayland`
-2. **Login Service**: Enable the `plasmalogin.service` via `systemctl enable plasmalogin`.
+2. **Services**: Enable `NetworkManager.service`, `bluetooth.service`, `fstrim.timer`, and `plasmalogin.service` via `systemctl enable`.
 
 #### Scenario: Provisioning KDE Plasma
 
 - **GIVEN** target DE resolved to `plasma`
 - **WHEN** KDE Plasma provisioning executes
 - **THEN** KDE packages SHALL be installed via `install_packages`
-- **AND** `plasmalogin.service` SHALL be enabled in systemd
+- **AND** `NetworkManager.service`, `bluetooth.service`, `fstrim.timer`, and `plasmalogin.service` SHALL be enabled in systemd
 
 ---
 
@@ -91,16 +92,17 @@ When the resolved target DE is `gnome`, the script SHALL:
 1. **Packages**: Install the GNOME desktop stack via `install_packages`:
    - `gdm`
    - `gnome-shell`, `mutter`, `gnome-control-center`, `gnome-session`, `gsettings-desktop-schemas`
+   - `networkmanager`, `gnome-bluetooth-3.0`
    - `pipewire`, `pipewire-pulse`, `wireplumber`
    - `xdg-desktop-portal-gnome`, `xorg-xwayland`
-2. **Login Service**: Enable the `gdm.service` via `systemctl enable gdm`.
+2. **Services**: Enable `NetworkManager.service`, `bluetooth.service`, `fstrim.timer`, and `gdm.service` via `systemctl enable`.
 
 #### Scenario: Provisioning GNOME
 
 - **GIVEN** target DE resolved to `gnome`
 - **WHEN** GNOME provisioning executes
 - **THEN** GNOME packages SHALL be installed via `install_packages`
-- **AND** `gdm.service` SHALL be enabled in systemd
+- **AND** `NetworkManager.service`, `bluetooth.service`, `fstrim.timer`, and `gdm.service` SHALL be enabled in systemd
 
 ---
 

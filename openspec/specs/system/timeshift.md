@@ -10,13 +10,13 @@ Installs and configures Timeshift for automated and on-demand desktop backup sna
 
 ### Requirement: Timeshift Package Installation
 
-The script SHALL install the `timeshift` package across supported distributions via `install_packages timeshift`.
+The script SHALL install the `timeshift` and `xhost` packages across supported distributions via `install_packages timeshift xhost` (providing Wayland root GUI launcher support via `xorg-xhost` on Arch, `x11-xserver-utils` on Debian, and `xhost` on Fedora).
 
 #### Scenario: Installing package
 
 - **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** `scripts/system/setup-timeshift.sh` runs
-- **THEN** `timeshift` package SHALL be installed
+- **THEN** `timeshift` and `xhost` packages SHALL be installed
 
 ---
 
@@ -95,3 +95,15 @@ The script SHALL create an initial baseline snapshot if `timeshift` binary is pr
 - **GIVEN** Timeshift configuration deployed
 - **WHEN** setup finishes
 - **THEN** an initial on-demand daily snapshot is created non-interactively
+
+---
+
+### Requirement: Cron Scheduler Service Enablement
+
+The script SHALL enable the system cron daemon (`cron.service` on Debian, `crond.service` on Fedora, `cronie.service` on Arch Linux) via `_enable_cron_service` when `systemctl` is available, ensuring automated scheduled snapshot jobs execute as expected.
+
+#### Scenario: Enabling cron service for Timeshift
+
+- **GIVEN** system running systemd
+- **WHEN** `_enable_cron_service` executes
+- **THEN** `cron.service` (Debian), `crond.service` (Fedora), or `cronie.service` (Arch Linux) SHALL be enabled

@@ -62,11 +62,17 @@ _install_plasma_stack() {
       plasma-login-manager \
       plasma-desktop plasma-workspace plasma-workspace-wallpapers \
       plasma-nm plasma-pa powerdevil kscreen polkit-kde-agent plasma-integration \
+      bluedevil networkmanager \
       pipewire pipewire-pulse wireplumber gst-plugin-pipewire \
       xdg-desktop-portal-kde egl-wayland xorg-xwayland
   fi
 
-  echo "Enabling plasmalogin.service..."
+  echo "Enabling NetworkManager, Bluetooth, and plasmalogin services..."
+  sudo systemctl enable NetworkManager.service 2> /dev/null \
+    || sudo systemctl enable NetworkManager 2> /dev/null || true
+  sudo systemctl enable bluetooth.service 2> /dev/null \
+    || sudo systemctl enable bluetooth 2> /dev/null || true
+  sudo systemctl enable fstrim.timer 2> /dev/null || true
   sudo systemctl enable plasmalogin.service 2> /dev/null \
     || sudo systemctl enable plasmalogin 2> /dev/null || true
 }
@@ -79,11 +85,17 @@ _install_gnome_stack() {
     install_packages \
       gdm \
       gnome-shell mutter gnome-control-center gnome-session gsettings-desktop-schemas \
+      networkmanager gnome-bluetooth-3.0 \
       pipewire pipewire-pulse wireplumber \
       xdg-desktop-portal-gnome xorg-xwayland
   fi
 
-  echo "Enabling gdm.service..."
+  echo "Enabling NetworkManager, Bluetooth, and gdm services..."
+  sudo systemctl enable NetworkManager.service 2> /dev/null \
+    || sudo systemctl enable NetworkManager 2> /dev/null || true
+  sudo systemctl enable bluetooth.service 2> /dev/null \
+    || sudo systemctl enable bluetooth 2> /dev/null || true
+  sudo systemctl enable fstrim.timer 2> /dev/null || true
   sudo systemctl enable gdm.service 2> /dev/null \
     || sudo systemctl enable gdm 2> /dev/null || true
 }

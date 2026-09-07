@@ -69,7 +69,8 @@ setup() {
   run _install_plasma_stack
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: plasma-login-manager plasma-desktop" ]]
-  [[ "$output" =~ "Enabling plasmalogin.service" ]]
+  [[ "$output" =~ "bluedevil networkmanager" ]]
+  [[ "$output" =~ "Enabling NetworkManager, Bluetooth, and plasmalogin services" ]]
 }
 
 @test "_install_gnome_stack installs packages and enables gdm" {
@@ -85,7 +86,8 @@ setup() {
   run _install_gnome_stack
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: gdm gnome-shell mutter" ]]
-  [[ "$output" =~ "Enabling gdm.service" ]]
+  [[ "$output" =~ "networkmanager gnome-bluetooth-3.0" ]]
+  [[ "$output" =~ "Enabling NetworkManager, Bluetooth, and gdm services" ]]
 }
 
 @test "main provisions plasma stack on Arch Linux" {
