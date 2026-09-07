@@ -81,7 +81,7 @@ Desktop theming, shell extensions, and interface preferences for target environm
 
 Default application bindings, desktop menu cleanup, and end-to-end execution scripts.
 
-- [-] Implement default applications configuration script (MIME types / protocol handlers) — partially implemented (Kitty terminal emulator) in `scripts/apps/setup-default-apps.sh`
+- [-] Implement default applications configuration script (MIME types / protocol handlers) — partially implemented (Kitty terminal emulator, VLC video player) in `scripts/apps/setup-default-apps.sh`
 - [x] Implement script to hide unwanted applications from application menus (`.desktop` files) — `scripts/desktop/setup-hide-apps.sh`
 - [x] Create orchestrator scripts (`all.sh` / distro-tailored entrypoints) to run all scripts sequentially — `main.sh`, `runners/main.sh`, and `runners/{arch,debian,fedora}.sh`
 

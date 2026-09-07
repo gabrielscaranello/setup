@@ -27,6 +27,7 @@ setup() {
   [[ "$output" =~ "kalk plasma-systemmonitor filelight" ]]
   [[ "$output" =~ "partitionmanager ghostwriter" ]]
   [[ "$output" =~ "kde-gtk-config kdeconnect kweather" ]]
+  [[ "$output" =~ "vlc" ]]
 }
 
 @test "_install_gnome_apps calls install_packages with GNOME suite" {
@@ -42,6 +43,7 @@ setup() {
   [[ "$output" =~ "gnome-calculator gnome-system-monitor baobab" ]]
   [[ "$output" =~ "gnome-disk-utility gnome-text-editor" ]]
   [[ "$output" =~ "gnome-tweaks gnome-weather" ]]
+  [[ "$output" =~ "vlc" ]]
 }
 
 @test "main runs KDE Plasma application setup when DE is plasma" {

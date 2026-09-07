@@ -53,6 +53,7 @@ When the detected environment is `plasma`, the script SHALL install the followin
 - `kde-gtk-config`: GTK theme integration module for KDE Plasma.
 - `kdeconnect`: Device integration client (`kdeconnect` on Debian/Arch, `kde-connect` on Fedora).
 - `kweather`: Weather forecast application.
+- `vlc`: Multi-format media and video player.
 
 #### Scenario: Installing KDE Plasma suite
 
@@ -78,6 +79,7 @@ When the detected environment is `gnome`, the script SHALL install the following
 - `gnome-text-editor`: Modern GTK4 text editor.
 - `gnome-tweaks`: Advanced configuration and customization utility.
 - `gnome-weather`: Weather forecast application.
+- `vlc`: Multi-format media and video player.
 
 #### Scenario: Installing GNOME suite
 

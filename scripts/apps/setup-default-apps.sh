@@ -97,9 +97,57 @@ _set_default_terminal() {
   echo "Default terminal emulator configured successfully."
 }
 
+_set_default_video_player() {
+  local desktop_file="vlc.desktop"
+  local mimeapps_file="$HOME/.config/mimeapps.list"
+  local video_mimes=(
+    "video/mp4"
+    "video/mkv"
+    "video/x-matroska"
+    "video/x-msvideo"
+    "video/avi"
+    "video/quicktime"
+    "video/webm"
+    "video/x-flv"
+    "video/mpeg"
+    "video/ogg"
+    "video/3gpp"
+    "video/x-ms-wmv"
+  )
+
+  echo "Setting VLC as the default video player..."
+  mkdir -p "$HOME/.config"
+
+  local mime
+  for mime in "${video_mimes[@]}"; do
+    if command -v xdg-mime > /dev/null 2>&1; then
+      xdg-mime default "$desktop_file" "$mime" 2> /dev/null || true
+    fi
+  done
+
+  # Guarantee mimeapps.list contains the entries even if xdg-mime didn't write them
+  if [ ! -f "$mimeapps_file" ]; then
+    echo "[Default Applications]" > "$mimeapps_file"
+  elif ! grep -q "^\[Default Applications\]" "$mimeapps_file"; then
+    echo "" >> "$mimeapps_file"
+    echo "[Default Applications]" >> "$mimeapps_file"
+  fi
+
+  for mime in "${video_mimes[@]}"; do
+    if grep -q "^${mime}=" "$mimeapps_file"; then
+      sed -i "s|^${mime}=.*|${mime}=${desktop_file};|" "$mimeapps_file"
+    else
+      sed -i "/^\[Default Applications\]/a ${mime}=${desktop_file};" "$mimeapps_file"
+    fi
+  done
+
+  echo "Default video player configured successfully."
+}
+
 main() {
   echo "Configuring default desktop applications..."
   _set_default_terminal
+  _set_default_video_player
   echo "setup-default-apps complete"
 }
 

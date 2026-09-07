@@ -14,7 +14,8 @@ _install_plasma_apps() {
     ark gwenview okular \
     kalk plasma-systemmonitor filelight \
     partitionmanager ghostwriter \
-    kde-gtk-config kdeconnect kweather
+    kde-gtk-config kdeconnect kweather \
+    vlc
 }
 
 _install_gnome_apps() {
@@ -28,7 +29,8 @@ _install_gnome_apps() {
     file-roller loupe evince \
     gnome-calculator gnome-system-monitor baobab \
     gnome-disk-utility gnome-text-editor \
-    gnome-tweaks gnome-weather
+    gnome-tweaks gnome-weather \
+    vlc
 }
 
 main() {

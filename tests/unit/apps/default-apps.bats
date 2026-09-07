@@ -158,9 +158,69 @@
   [ "$plasma_called" -eq 0 ]
 }
 
-@test "setup-default-apps main runs _set_default_terminal successfully" {
+@test "_set_default_video_player creates mimeapps.list and sets vlc.desktop" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-vlc-home"
+  mkdir -p "$test_home"
+
+  HOME="$test_home" _set_default_video_player
+
+  [ -f "$test_home/.config/mimeapps.list" ]
+  grep -q "^\[Default Applications\]" "$test_home/.config/mimeapps.list"
+  grep -q "^video/mp4=vlc.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^video/mkv=vlc.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^video/webm=vlc.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_video_player updates existing mimeapps.list idempotently" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-vlc-existing"
+  mkdir -p "$test_home/.config"
+  cat << 'EOF' > "$test_home/.config/mimeapps.list"
+[Default Applications]
+text/plain=org.gnome.TextEditor.desktop
+video/mp4=totem.desktop;
+EOF
+
+  HOME="$test_home" _set_default_video_player
+
+  grep -q "^text/plain=org.gnome.TextEditor.desktop" "$test_home/.config/mimeapps.list"
+  grep -q "^video/mp4=vlc.desktop;" "$test_home/.config/mimeapps.list"
+  # Should not contain totem for video/mp4
+  run grep -q "^video/mp4=totem.desktop" "$test_home/.config/mimeapps.list"
+  [ "$status" -ne 0 ]
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_video_player calls xdg-mime when available" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-vlc-xdg"
+  mkdir -p "$test_home"
+
+  local xdg_mime_calls=0
+  xdg-mime() {
+    xdg_mime_calls=$((xdg_mime_calls + 1))
+    return 0
+  }
+
+  command() {
+    if [ "${2:-}" = "xdg-mime" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  HOME="$test_home" _set_default_video_player
+
+  [ "$xdg_mime_calls" -ge 10 ]
+  rm -rf "$test_home"
+}
+
+@test "setup-default-apps main runs terminal and video player defaults successfully" {
   source /setup/scripts/apps/setup-default-apps.sh
   _set_default_terminal() { return 0; }
+  _set_default_video_player() { return 0; }
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-default-apps complete" ]]
