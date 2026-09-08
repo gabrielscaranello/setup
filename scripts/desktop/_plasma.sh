@@ -380,29 +380,53 @@ _setup_plasma_start_icon() {
 _clear_plasma_kickoff_favorites() {
   local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
   local stats_file="${config_dir}/kactivitymanagerd-statsrc"
+  local data_dir="${XDG_DATA_HOME:-$HOME/.local/share}"
+  local db_file="${data_dir}/kactivitymanagerd/resources/database"
+
+  # Stop kactivitymanagerd if active in live session so changes are not overwritten
+  local restart_kactivity=0
+  if command -v systemctl > /dev/null 2>&1 && systemctl --user is-active plasma-kactivitymanagerd.service > /dev/null 2>&1; then
+    systemctl --user stop plasma-kactivitymanagerd.service 2> /dev/null || true
+    restart_kactivity=1
+  fi
 
   mkdir -p "$config_dir"
-  if [ -f "$stats_file" ]; then
-    if command -v python3 > /dev/null 2>&1; then
-      python3 -c '
-import sys
+  if command -v python3 > /dev/null 2>&1; then
+    python3 -c '
+import sys, os
 
 file_path = sys.argv[1]
-with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-    lines = f.readlines()
+lines = []
+if os.path.exists(file_path):
+    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+        lines = f.readlines()
 
 in_favorites = False
+seen_sections = set()
 for idx, line in enumerate(lines):
     stripped = line.strip()
     if stripped.startswith("[") and stripped.endswith("]"):
         in_favorites = "Favorites" in stripped
+        if in_favorites:
+            seen_sections.add(stripped)
     elif in_favorites and stripped.startswith("ordering="):
         lines[idx] = "ordering=\n"
+
+# Ensure all common instance IDs from 1 to 30 exist with ordering=
+for i in range(1, 31):
+    for prefix in ["Favorites-org.kde.plasma.kickoff.favorites.instance-", "Favorites-org.kde.plasma.kicker.favorites.instance-"]:
+        section = f"[{prefix}{i}-global]"
+        if section not in seen_sections:
+            lines.append(f"\n{section}\nordering=\n")
+            seen_sections.add(section)
+
+global_fav = "[Favorites-org.kde.plasma.favorites.applications]"
+if global_fav not in seen_sections:
+    lines.append(f"\n{global_fav}\nordering=\n")
 
 with open(file_path, "w", encoding="utf-8") as f:
     f.writelines(lines)
 ' "$stats_file"
-    fi
   else
     cat << 'EOF' > "$stats_file"
 [Favorites-org.kde.plasma.kickoff.favorites.instance-2-global]
@@ -410,9 +434,29 @@ ordering=
 EOF
   fi
 
-  local db_file="${HOME}/.local/share/kactivitymanagerd/resources/database"
-  if [ -f "$db_file" ] && command -v sqlite3 > /dev/null 2>&1; then
-    sqlite3 "$db_file" "DELETE FROM ResourceLink WHERE initiatingAgent LIKE '%favorites%';" 2> /dev/null || true
+  if [ -f "$db_file" ]; then
+    if command -v python3 > /dev/null 2>&1; then
+      python3 -c '
+import sys, os, sqlite3
+
+db_file = sys.argv[1]
+if os.path.exists(db_file):
+    try:
+        conn = sqlite3.connect(db_file)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM ResourceLink WHERE initiatingAgent LIKE \"%favorites%\" OR initiatingAgent LIKE \"%kickoff%\" OR initiatingAgent LIKE \"%kicker%\" OR targettedResource LIKE \"applications:%\";")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+' "$db_file"
+    elif command -v sqlite3 > /dev/null 2>&1; then
+      sqlite3 "$db_file" "DELETE FROM ResourceLink WHERE initiatingAgent LIKE '%favorites%' OR initiatingAgent LIKE '%kickoff%' OR initiatingAgent LIKE '%kicker%' OR targettedResource LIKE 'applications:%';" 2> /dev/null || true
+    fi
+  fi
+
+  if [ "$restart_kactivity" -eq 1 ]; then
+    systemctl --user start plasma-kactivitymanagerd.service 2> /dev/null || true
   fi
 }
 

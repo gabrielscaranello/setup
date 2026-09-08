@@ -426,6 +426,41 @@ EOF
   rm -rf "$test_dir"
 }
 
+@test "_clear_plasma_kickoff_favorites deletes favorites from activity database" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_fav_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  XDG_DATA_HOME="$test_dir/data"
+  local db_dir="$XDG_DATA_HOME/kactivitymanagerd/resources"
+  mkdir -p "$db_dir"
+
+  python3 -c '
+import sqlite3, sys
+conn = sqlite3.connect(sys.argv[1])
+cur = conn.cursor()
+cur.execute("CREATE TABLE ResourceLink (initiatingAgent TEXT, targettedResource TEXT);")
+cur.execute("INSERT INTO ResourceLink VALUES (\"org.kde.plasma.favorites.applications\", \"applications:firefox.desktop\");")
+conn.commit()
+conn.close()
+' "$db_dir/database"
+
+  run _clear_plasma_kickoff_favorites
+  [ "$status" -eq 0 ]
+
+  run python3 -c '
+import sqlite3, sys
+conn = sqlite3.connect(sys.argv[1])
+cur = conn.cursor()
+cur.execute("SELECT COUNT(*) FROM ResourceLink;")
+count = cur.fetchone()[0]
+conn.close()
+sys.exit(0 if count == 0 else 1)
+' "$db_dir/database"
+  [ "$status" -eq 0 ]
+
+  rm -rf "$test_dir"
+}
+
 # ── configure_plasma_panel Tests ──────────────────────────────────────────────
 
 @test "configure_plasma_panel copies template to target config directory" {
