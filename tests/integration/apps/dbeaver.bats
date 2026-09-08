@@ -4,12 +4,9 @@
 
 setup_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
-  local pm
-  pm="$(_get_package_manager)"
-  if [ "$pm" = "apt" ] || [ "$pm" = "dnf" ]; then
-    # In headless containers without full systemd/D-Bus, mock successful flatpak installation
-    sudo mkdir -p /usr/local/bin
-    sudo bash -c "cat << 'MOCK' > /usr/local/bin/flatpak
+  # In headless containers without full systemd/D-Bus, mock successful flatpak installation
+  sudo mkdir -p /usr/local/bin
+  sudo bash -c "cat << 'MOCK' > /usr/local/bin/flatpak
 #!/bin/bash
 if [ \"\$1\" = \"remotes\" ]; then echo \"flathub\"; exit 0; fi
 if [ \"\$1\" = \"list\" ]; then
@@ -25,8 +22,7 @@ if [ \"\$1\" = \"install\" ]; then
 fi
 exit 0
 MOCK"
-    sudo chmod +x /usr/local/bin/flatpak
-  fi
+  sudo chmod +x /usr/local/bin/flatpak
 
   bash /setup/scripts/apps/setup-dbeaver.sh
 }
@@ -35,15 +31,8 @@ teardown_file() {
   sudo rm -f /usr/local/bin/flatpak /tmp/mock_dbeaver_installed
 }
 
-@test "dbeaver is installed either via repo or flatpak" {
-  source /setup/scripts/_utils.sh 2>/dev/null
-  local pm
-  pm="$(_get_package_manager)"
-  if [ "$pm" = "pacman" ]; then
-    command -v dbeaver >/dev/null 2>&1
-  else
-    flatpak list --app --columns=application | grep -qx "io.dbeaver.DBeaverCommunity"
-  fi
+@test "dbeaver is installed via flatpak" {
+  flatpak list --app --columns=application | grep -qx "io.dbeaver.DBeaverCommunity"
 }
 
 @test "setup-dbeaver.sh is idempotent (second run succeeds)" {

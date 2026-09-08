@@ -10,22 +10,14 @@ Installs DBeaver Community Edition (CE) database management tool using the optim
 
 ### Requirement: Distribution Packaging Strategy
 
-The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
+The script SHALL install DBeaver Community Edition via Flatpak (`io.dbeaver.DBeaverCommunity`) across all supported distributions:
 
-- **Arch Linux (`arch`)**: SHALL install the native distribution package `dbeaver`.
-- **Debian (`debian`) & Fedora (`fedora`)**: SHALL install the official Flatpak package `io.dbeaver.DBeaverCommunity` via Flathub to ensure up-to-date releases and avoid repository bloat.
+- **All Supported Distros (`arch`, `debian`, `fedora`)**: SHALL invoke `install_flatpak_app "io.dbeaver.DBeaverCommunity" "DBeaver"` to ensure up-to-date releases, isolate Java/JRE dependencies inside the Flatpak sandbox, and avoid system repository bloat.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
-#### Scenario: Running on Arch Linux
+#### Scenario: Running on Arch Linux, Debian, or Fedora
 
-- **GIVEN** an Arch Linux system (`get_distro_id` returns `arch`)
-- **WHEN** `scripts/apps/setup-dbeaver.sh` is executed
-- **THEN** it SHALL call `install_packages dbeaver`
-- **AND** it SHALL NOT attempt to install via Flatpak
-
-#### Scenario: Running on Debian or Fedora
-
-- **GIVEN** a Debian or Fedora system (`get_distro_id` returns `debian` or `fedora`)
+- **GIVEN** a supported distribution (`get_distro_id` returns `arch`, `debian`, or `fedora`)
 - **WHEN** `scripts/apps/setup-dbeaver.sh` is executed
 - **THEN** it SHALL invoke `install_flatpak_app io.dbeaver.DBeaverCommunity DBeaver`
 - **AND** ensure Flatpak and Flathub are configured

@@ -14,19 +14,8 @@ setup() {
   [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_dbeaver delegates to repo on arch" {
+@test "_install_dbeaver delegates to flatpak on arch, debian and fedora" {
   get_distro_id() { echo "arch"; }
-  install_packages() {
-    echo "installed packages: $*"
-    return 0
-  }
-  run _install_dbeaver
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ packages:\ dbeaver ]]
-}
-
-@test "_install_dbeaver delegates to flatpak on debian and fedora" {
-  get_distro_id() { echo "debian"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
     return 0
@@ -35,11 +24,12 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
 
+  get_distro_id() { echo "debian"; }
+  run _install_dbeaver
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
+
   get_distro_id() { echo "fedora"; }
-  install_flatpak_app() {
-    echo "installed flatpak: $*"
-    return 0
-  }
   run _install_dbeaver
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]

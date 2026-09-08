@@ -13,11 +13,7 @@ _install_dbeaver() {
   }
 
   case "$distro" in
-    arch)
-      echo "Installing DBeaver from distribution repository..."
-      install_packages dbeaver
-      ;;
-    debian | fedora)
+    debian | fedora | arch)
       echo "Installing DBeaver with flatpak..."
       install_flatpak_app "io.dbeaver.DBeaverCommunity" "DBeaver"
       ;;
