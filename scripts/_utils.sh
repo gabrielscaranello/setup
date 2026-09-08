@@ -119,7 +119,7 @@ _install_package_from_repository() {
       ;;
 
     dnf)
-      sudo dnf install -y "$@"
+      sudo dnf install -y --allowerasing "$@"
       ;;
 
     pacman)

@@ -31,6 +31,33 @@ setup() {
   [[ "$output" =~ "packages installed: ffmpeg gstreamer-plugins-base gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer-libav codec-openh264" ]]
 }
 
+@test "_swap_fedora_ffmpeg swaps ffmpeg-free for ffmpeg when ffmpeg-free is present" {
+  rpm() {
+    if [ "$2" = "ffmpeg-free" ]; then return 0; fi
+    if [ "$2" = "ffmpeg" ]; then return 1; fi
+    return 1
+  }
+  sudo() { echo "sudo: $*"; return 0; }
+
+  run _swap_fedora_ffmpeg
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Swapping ffmpeg-free for full ffmpeg from RPM Fusion..." ]]
+  [[ "$output" =~ "sudo: dnf swap -y ffmpeg-free ffmpeg --allowerasing" ]]
+}
+
+@test "_swap_fedora_ffmpeg does nothing if ffmpeg is already installed" {
+  rpm() {
+    if [ "$2" = "ffmpeg-free" ]; then return 0; fi
+    if [ "$2" = "ffmpeg" ]; then return 0; fi
+    return 1
+  }
+  sudo() { echo "sudo: $*"; return 0; }
+
+  run _swap_fedora_ffmpeg
+  [ "$status" -eq 0 ]
+  [[ ! "$output" =~ "Swapping ffmpeg-free" ]]
+}
+
 @test "main skips repository configuration on Debian" {
   get_distro_id() { echo "debian"; }
 

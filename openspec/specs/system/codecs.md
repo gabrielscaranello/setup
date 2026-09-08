@@ -20,7 +20,7 @@ Install multimedia codecs and audio/video plugins across all supported distribut
 
 ### Configuration Requirements
 
-- **Fedora**: Must configure and enable RPM Fusion repositories (Free and Non-Free) before installing packages to ensure access to full codec implementations. Uses existing `add_fedora_rpmfusion_repo` helper.
+- **Fedora**: Must configure and enable RPM Fusion repositories (Free and Non-Free) before installing packages to ensure access to full codec implementations. Uses existing `add_fedora_rpmfusion_repo` helper. Must swap pre-installed `ffmpeg-free` for full `ffmpeg` from RPM Fusion using `--allowerasing` to avoid package conflicts.
 - **Debian**: Uses default repositories. No third-party repo required.
 - **Arch Linux**: Uses default repositories. No third-party repo required.
 
@@ -39,6 +39,7 @@ Install multimedia codecs and audio/video plugins across all supported distribut
 - **GIVEN** the system is Fedora
 - **WHEN** the codecs setup script is executed
 - **THEN** it should add RPM Fusion repositories
+- **AND** swap `ffmpeg-free` for full `ffmpeg` using `--allowerasing` if `ffmpeg-free` is installed
 - **AND** install the Fedora-specific codec packages via `install_packages`
 
 **Scenario: Install codecs on Arch Linux**
