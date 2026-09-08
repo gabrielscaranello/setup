@@ -34,7 +34,13 @@ The installation SHALL strictly target and support:
 
 3. **Arch Linux (`arch`)**:
    - SHALL verify and ensure the `[multilib]` repository is enabled in `/etc/pacman.conf` (uncommenting `[multilib]` and its mirrorlist include if commented) and update pacman database (`pacman -Sy`).
+   - SHALL detect physical GPU hardware (`lspci`) to resolve appropriate Vulkan and 32-bit driver packages before installing Steam, avoiding unprompted fallback to `nvidia-utils` during non-interactive pacman execution:
+     - **AMD**: `vulkan-radeon lib32-vulkan-radeon lib32-mesa`
+     - **Intel**: `vulkan-intel lib32-vulkan-intel lib32-mesa`
+     - **NVIDIA**: `nvidia-utils lib32-nvidia-utils`
+     - **Fallback (Unrecognized / Default)**: `vulkan-radeon lib32-vulkan-radeon lib32-mesa` (safe open-source Mesa stack)
    - SHALL install native packages via `install_packages`:
+     - detected GPU Vulkan driver packages
      - `steam`
      - `mangohud` and `lib32-mangohud`
      - `gamescope`
@@ -115,7 +121,7 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 - **GIVEN** an Arch Linux system running GNOME (`distro="arch"`, `de="gnome"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled in `/etc/pacman.conf`
-- **AND** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
+- **AND** it SHALL detect the GPU and install appropriate Vulkan drivers alongside native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
 - **AND** it SHALL install `com.vysp3r.ProtonPlus` via `install_flatpak_app`
 
 ### Scenario: Running on Arch Linux under KDE Plasma
@@ -123,7 +129,7 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 - **GIVEN** an Arch Linux system running KDE Plasma (`distro="arch"`, `de="plasma"`)
 - **WHEN** `scripts/apps/setup-steam.sh` is executed
 - **THEN** it SHALL ensure `[multilib]` is enabled in `/etc/pacman.conf`
-- **AND** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
+- **AND** it SHALL detect the GPU and install appropriate Vulkan drivers alongside native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
 - **AND** it SHALL install `net.davidotek.pupgui2` via `install_flatpak_app`
 
 ### Scenario: Running on an unsupported distribution

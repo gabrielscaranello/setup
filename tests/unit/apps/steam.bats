@@ -53,10 +53,13 @@ setup() {
     echo "installed packages: $*"
     return 0
   }
+  _get_arch_steam_gpu_packages() {
+    echo "vulkan-radeon lib32-vulkan-radeon lib32-mesa"
+  }
   run _install_steam_packages "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_arch_multilib_repo" ]]
-  [[ "$output" =~ "installed packages: steam mangohud gamescope gamemode fonts-liberation" ]]
+  [[ "$output" =~ "installed packages: vulkan-radeon lib32-vulkan-radeon lib32-mesa steam mangohud gamescope gamemode fonts-liberation" ]]
 }
 
 @test "_install_debian_steam installs Steam flatpaks" {
@@ -81,10 +84,71 @@ setup() {
 @test "_install_arch_steam calls add_arch_multilib_repo and installs packages" {
   add_arch_multilib_repo() { echo "called multilib"; }
   install_packages() { echo "packages: $*"; }
+  _get_arch_steam_gpu_packages() {
+    echo "vulkan-radeon lib32-vulkan-radeon lib32-mesa"
+  }
   run _install_arch_steam
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called multilib" ]]
-  [[ "$output" =~ "packages: steam mangohud gamescope gamemode fonts-liberation" ]]
+  [[ "$output" =~ "packages: vulkan-radeon lib32-vulkan-radeon lib32-mesa steam mangohud gamescope gamemode fonts-liberation" ]]
+}
+
+@test "_get_arch_steam_gpu_packages detects AMD GPU" {
+  lspci() {
+    echo "03:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [1002:747e]"
+  }
+  run _get_arch_steam_gpu_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "vulkan-radeon" ]]
+  [[ "$output" =~ "lib32-vulkan-radeon" ]]
+  [[ "$output" =~ "lib32-mesa" ]]
+  [[ ! "$output" =~ "nvidia-utils" ]]
+}
+
+@test "_get_arch_steam_gpu_packages detects Intel GPU" {
+  lspci() {
+    echo "00:02.0 VGA compatible controller [0300]: Intel Corporation [8086:a7a0]"
+  }
+  run _get_arch_steam_gpu_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "vulkan-intel" ]]
+  [[ "$output" =~ "lib32-vulkan-intel" ]]
+  [[ "$output" =~ "lib32-mesa" ]]
+  [[ ! "$output" =~ "nvidia-utils" ]]
+}
+
+@test "_get_arch_steam_gpu_packages detects NVIDIA GPU" {
+  lspci() {
+    echo "01:00.0 VGA compatible controller [0300]: NVIDIA Corporation [10de:2860]"
+  }
+  run _get_arch_steam_gpu_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "nvidia-utils" ]]
+  [[ "$output" =~ "lib32-nvidia-utils" ]]
+  [[ ! "$output" =~ "vulkan-radeon" ]]
+}
+
+@test "_get_arch_steam_gpu_packages detects hybrid graphics" {
+  lspci() {
+    echo "00:02.0 VGA compatible controller [0300]: Intel Corporation [8086:a7a0]"
+    echo "01:00.0 3D controller [0302]: NVIDIA Corporation [10de:2860]"
+  }
+  run _get_arch_steam_gpu_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "vulkan-intel" ]]
+  [[ "$output" =~ "nvidia-utils" ]]
+}
+
+@test "_get_arch_steam_gpu_packages falls back to open-source AMD RADV when no GPU matches" {
+  lspci() {
+    echo "00:02.0 VGA compatible controller [0300]: Unknown controller [1234:5678]"
+  }
+  run _get_arch_steam_gpu_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "vulkan-radeon" ]]
+  [[ "$output" =~ "lib32-vulkan-radeon" ]]
+  [[ "$output" =~ "lib32-mesa" ]]
+  [[ ! "$output" =~ "nvidia-utils" ]]
 }
 
 @test "_install_proton_manager installs ProtonPlus on GNOME" {

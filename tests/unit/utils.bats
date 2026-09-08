@@ -406,3 +406,49 @@ setup() {
   [ "$(_get_package_name "cron" "fedora")" = "cronie" ]
   [ "$(_get_package_name "cron" "arch")" = "cronie" ]
 }
+
+@test "get_gpu_vendor honors GPU_VENDOR environment override" {
+  GPU_VENDOR="amd" run get_gpu_vendor
+  [ "$status" -eq 0 ]
+  [ "$output" = "amd" ]
+
+  GPU_VENDOR="nvidia" run get_gpu_vendor
+  [ "$status" -eq 0 ]
+  [ "$output" = "nvidia" ]
+}
+
+@test "get_gpu_vendor detects nvidia from lspci" {
+  lspci() {
+    echo "01:00.0 VGA compatible controller [0300]: NVIDIA Corporation AD106M [GeForce RTX 4070 Max-Q] [10de:2860] (rev a1)"
+  }
+  run get_gpu_vendor
+  [ "$status" -eq 0 ]
+  [ "$output" = "nvidia" ]
+}
+
+@test "get_gpu_vendor detects amd from lspci" {
+  lspci() {
+    echo "03:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 32 [Radeon RX 7700 XT] [1002:747e] (rev c8)"
+  }
+  run get_gpu_vendor
+  [ "$status" -eq 0 ]
+  [ "$output" = "amd" ]
+}
+
+@test "get_gpu_vendor detects intel from lspci" {
+  lspci() {
+    echo "00:02.0 VGA compatible controller [0300]: Intel Corporation Raptor Lake-P [Iris Xe Graphics] [8086:a7a0] (rev 04)"
+  }
+  run get_gpu_vendor
+  [ "$status" -eq 0 ]
+  [ "$output" = "intel" ]
+}
+
+@test "get_gpu_vendor returns unknown when no physical GPU matches" {
+  lspci() {
+    echo "00:02.0 VGA compatible controller [0300]: Red Hat, Inc. Virtio GPU [1af4:1050]"
+  }
+  run get_gpu_vendor
+  [ "$status" -eq 0 ]
+  [ "$output" = "unknown" ]
+}

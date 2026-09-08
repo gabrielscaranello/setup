@@ -169,6 +169,32 @@ get_root_filesystem() {
   findmnt -n -o FSTYPE / 2> /dev/null || df -T / 2> /dev/null | awk 'NR==2 {print $2}' || echo "unknown"
 }
 
+get_gpu_vendor() {
+  if [ -n "${GPU_VENDOR:-}" ]; then
+    echo "$GPU_VENDOR"
+    return 0
+  fi
+
+  if command -v lspci > /dev/null 2>&1; then
+    local pci_display
+    pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
+    if [ -n "$pci_display" ]; then
+      if echo "$pci_display" | grep -iq "10de" || echo "$pci_display" | grep -iq "nvidia"; then
+        echo "nvidia"
+        return 0
+      elif echo "$pci_display" | grep -iq "1002" || echo "$pci_display" | grep -iqE "amd|advanced micro devices|radeon"; then
+        echo "amd"
+        return 0
+      elif echo "$pci_display" | grep -iq "8086" || echo "$pci_display" | grep -iq "intel"; then
+        echo "intel"
+        return 0
+      fi
+    fi
+  fi
+
+  echo "unknown"
+}
+
 get_desktop_environment() {
   local de="${TARGET_DE:-${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION:-}}}"
   if [ -z "$de" ] && [ -f "$HOME/.config/setup/desktop-environment" ]; then
