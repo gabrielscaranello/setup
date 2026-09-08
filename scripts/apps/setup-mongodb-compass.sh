@@ -15,7 +15,7 @@ _install_mongodb_compass() {
   case "$distro" in
     debian | fedora | arch)
       echo "Installing MongoDB Compass with flatpak..."
-      install_flatpak_app "mongodb.Compass" "MongoDB Compass"
+      install_flatpak_app "com.mongodb.Compass" "MongoDB Compass"
       ;;
     *)
       echo "Unsupported distribution: $distro" >&2

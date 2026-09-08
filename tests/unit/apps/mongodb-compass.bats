@@ -21,7 +21,7 @@ setup() {
   }
   run _install_mongodb_compass
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed flatpak: mongodb.Compass MongoDB Compass" ]]
+  [[ "$output" =~ "installed flatpak: com.mongodb.Compass MongoDB Compass" ]]
 }
 
 @test "_install_mongodb_compass delegates to flatpak on fedora" {
@@ -32,7 +32,7 @@ setup() {
   }
   run _install_mongodb_compass
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed flatpak: mongodb.Compass MongoDB Compass" ]]
+  [[ "$output" =~ "installed flatpak: com.mongodb.Compass MongoDB Compass" ]]
 }
 
 @test "_install_mongodb_compass delegates to flatpak on debian" {
@@ -43,5 +43,5 @@ setup() {
   }
   run _install_mongodb_compass
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed flatpak: mongodb.Compass MongoDB Compass" ]]
+  [[ "$output" =~ "installed flatpak: com.mongodb.Compass MongoDB Compass" ]]
 }

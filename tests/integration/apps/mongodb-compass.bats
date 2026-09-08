@@ -11,7 +11,7 @@ setup_file() {
 if [ \"\$1\" = \"remotes\" ]; then echo \"flathub\"; exit 0; fi
 if [ \"\$1\" = \"list\" ]; then
   if [ -f /tmp/mock_compass_installed ]; then
-    echo \"mongodb.Compass\"
+    echo \"com.mongodb.Compass\"
   fi
   exit 0
 fi
@@ -32,7 +32,7 @@ teardown_file() {
 }
 
 @test "mongodb compass is installed via flatpak" {
-  flatpak list --app --columns=application | grep -qx "mongodb.Compass"
+  flatpak list --app --columns=application | grep -qx "com.mongodb.Compass"
 }
 
 @test "setup-mongodb-compass.sh is idempotent (second run succeeds)" {
