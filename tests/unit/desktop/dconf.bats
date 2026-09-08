@@ -102,6 +102,49 @@ teardown() {
   [[ "$output" =~ "dconf called with: read /some/key" ]]
 }
 
+# ── gsettings_exec Tests ──────────────────────────────────────────────────────
+
+@test "gsettings_exec uses dbus-run-session when session address is empty and tool exists" {
+  export DBUS_SESSION_BUS_ADDRESS=""
+  command() {
+    if [ "$2" = "dbus-run-session" ]; then return 0; fi
+    builtin command "$@"
+  }
+  dbus-run-session() {
+    echo "dbus-run-session called with: $*"
+  }
+
+  run gsettings_exec get org.gnome.shell enabled-extensions
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "dbus-run-session called with: -- gsettings get org.gnome.shell enabled-extensions" ]]
+}
+
+@test "gsettings_exec invokes gsettings directly when DBUS_SESSION_BUS_ADDRESS is present" {
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
+  gsettings() {
+    echo "gsettings called with: $*"
+  }
+
+  run gsettings_exec get org.gnome.shell enabled-extensions
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "gsettings called with: get org.gnome.shell enabled-extensions" ]]
+}
+
+@test "gsettings_exec invokes gsettings directly when dbus-run-session is not available" {
+  export DBUS_SESSION_BUS_ADDRESS=""
+  command() {
+    if [ "$2" = "dbus-run-session" ]; then return 1; fi
+    builtin command "$@"
+  }
+  gsettings() {
+    echo "gsettings called with: $*"
+  }
+
+  run gsettings_exec get org.gnome.shell enabled-extensions
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "gsettings called with: get org.gnome.shell enabled-extensions" ]]
+}
+
 # ── load_dconf_file Tests ─────────────────────────────────────────────────────
 
 @test "load_dconf_file warns and returns 0 when file does not exist" {

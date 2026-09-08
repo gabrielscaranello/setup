@@ -47,7 +47,9 @@ Automate the downloading, installation, updating, and activation of essential GN
 
 - **API Endpoint**: `https://extensions.gnome.org/extension-info/?pk=<ID>&shell_version=<major>`
 - **Native Installation**: Uses official `gnome-extensions install --force <archive.zip>`.
-- **Activation**: Enables extension via official `gnome-extensions enable <uuid>`.
+- **Activation & Persistence**:
+  - For live sessions, calls `gnome-extensions enable <uuid>`.
+  - To ensure extensions are activated across TTY/headless installations, VM provisioning, and upon initial desktop login, the script synchronizes enabled extension UUIDs into the dconf database (`/org/gnome/shell/enabled-extensions`) and GSettings (`org.gnome.shell enabled-extensions`) without duplicating existing entries, and explicitly sets `disable-user-extensions` to `false`.
 
 ### Idempotency & Automatic Updates
 
@@ -83,6 +85,8 @@ Automate the downloading, installation, updating, and activation of essential GN
 - **AND** `get_distro_id` returns `debian` or `fedora`
 - **WHEN** `setup-gnome-extensions.sh` is executed
 - **THEN** it should install and enable the 12 common extensions
+- **AND** persist the enabled extension UUIDs in dconf and GSettings
+- **AND** set `disable-user-extensions` to `false`
 - **AND** skip Arch Linux Updates Indicator (ID: 1010)
 
 **Scenario: GNOME Desktop Environment on Arch Linux**
@@ -91,6 +95,8 @@ Automate the downloading, installation, updating, and activation of essential GN
 - **AND** `get_distro_id` returns `arch`
 - **WHEN** `setup-gnome-extensions.sh` is executed
 - **THEN** it should install and enable the 12 common extensions
+- **AND** persist the enabled extension UUIDs in dconf and GSettings
+- **AND** set `disable-user-extensions` to `false`
 - **AND** install and enable Arch Linux Updates Indicator (ID: 1010)
 
 **Scenario: Idempotent Execution with All Extensions Up-to-Date**

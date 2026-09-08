@@ -2,6 +2,7 @@
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 
 COMMON_EXTENSIONS=(
   "4269:AlphabeticalAppGrid@stuarthayhurst:Alphabetical App Grid"
@@ -78,9 +79,87 @@ _install_extension_archive() {
   gnome-extensions install --force "$zip_file"
 }
 
+_merge_enabled_extensions() {
+  local current_raw="$1"
+  shift
+  local new_uuids=("$@")
+
+  if command -v python3 > /dev/null 2>&1; then
+    python3 -c '
+import sys, re
+current = sys.argv[1]
+items = re.findall(r"[\x27\x22]([^\x27\x22]+)[\x27\x22]", current)
+seen = set(items)
+for arg in sys.argv[2:]:
+    if arg and arg not in seen:
+        items.append(arg)
+        seen.add(arg)
+print("[" + ", ".join(f"\x27{x}\x27" for x in items) + "]")
+' "$current_raw" "${new_uuids[@]}"
+  else
+    local -a items=()
+    if [ -n "$current_raw" ]; then
+      local line
+      while IFS= read -r line; do
+        [ -n "$line" ] && items+=("$line")
+      done < <(echo "$current_raw" | grep -oE "'[^']+'|\"[^\"]+\"" | tr -d "'\"" || true)
+    fi
+    for arg in "${new_uuids[@]}"; do
+      [ -n "$arg" ] || continue
+      local found=0
+      for it in "${items[@]}"; do
+        if [ "$it" = "$arg" ]; then
+          found=1
+          break
+        fi
+      done
+      if [ "$found" -eq 0 ]; then
+        items+=("$arg")
+      fi
+    done
+    local formatted=""
+    for it in "${items[@]}"; do
+      if [ -z "$formatted" ]; then
+        formatted="'$it'"
+      else
+        formatted="$formatted, '$it'"
+      fi
+    done
+    echo "[$formatted]"
+  fi
+}
+
+_sync_enabled_extensions() {
+  local new_uuids=("$@")
+  [ "${#new_uuids[@]}" -gt 0 ] || return 0
+
+  local current=""
+  if command -v dconf > /dev/null 2>&1; then
+    current="$(dconf_exec read /org/gnome/shell/enabled-extensions 2> /dev/null || true)"
+  fi
+  if [ -z "$current" ] && command -v gsettings > /dev/null 2>&1; then
+    current="$(gsettings_exec get org.gnome.shell enabled-extensions 2> /dev/null || true)"
+  fi
+
+  local merged
+  merged="$(_merge_enabled_extensions "$current" "${new_uuids[@]}")"
+
+  echo "  Persisting enabled extensions in dconf and GSettings..."
+  if command -v dconf > /dev/null 2>&1; then
+    dconf_exec write /org/gnome/shell/disable-user-extensions "false" || true
+    dconf_exec write /org/gnome/shell/enabled-extensions "$merged" || true
+  fi
+
+  if command -v gsettings > /dev/null 2>&1; then
+    gsettings_exec set org.gnome.shell disable-user-extensions false 2> /dev/null || true
+    gsettings_exec set org.gnome.shell enabled-extensions "$merged" 2> /dev/null || true
+  fi
+}
+
 _enable_extension() {
   local uuid="$1"
   gnome-extensions enable "$uuid" 2> /dev/null || true
+  _sync_enabled_extensions "$uuid"
 }
 
 _download_and_install_extension() {
@@ -205,6 +284,20 @@ main() {
     [ -n "$entry" ] || continue
     _process_extension "$entry" "$shell_ver"
   done
+
+  local -a installed_uuids=()
+  for entry in "${target_extensions[@]}"; do
+    [ -n "$entry" ] || continue
+    local uuid
+    uuid="$(cut -d: -f2 <<< "$entry")"
+    if [ -d "$HOME/.local/share/gnome-shell/extensions/$uuid" ] || [ -d "/usr/share/gnome-shell/extensions/$uuid" ]; then
+      installed_uuids+=("$uuid")
+    fi
+  done
+
+  if [ "${#installed_uuids[@]}" -gt 0 ]; then
+    _sync_enabled_extensions "${installed_uuids[@]}"
+  fi
 
   echo "GNOME extensions setup completed successfully."
   echo "Note: If you are running a Wayland session, please log out and log back in for new extensions to take effect."

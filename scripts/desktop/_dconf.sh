@@ -25,6 +25,14 @@ dconf_exec() {
   fi
 }
 
+gsettings_exec() {
+  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session > /dev/null 2>&1; then
+    dbus-run-session -- gsettings "$@"
+  else
+    gsettings "$@"
+  fi
+}
+
 load_dconf_file() {
   local file_path="$1"
   local name

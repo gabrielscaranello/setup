@@ -148,7 +148,60 @@ teardown() {
   [[ "$output" =~ "installed: /tmp/dummy.zip" ]]
 }
 
-@test "_enable_extension invokes gnome-extensions enable" {
+# ── Extensions Persistence & Synchronization Tests (SRP / DIP) ────────────────
+
+@test "_merge_enabled_extensions produces formatted list from empty current" {
+  run _merge_enabled_extensions "" "ext1@domain" "ext2@domain"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['ext1@domain', 'ext2@domain']" ]
+}
+
+@test "_merge_enabled_extensions merges existing list with new UUIDs and avoids duplicates" {
+  run _merge_enabled_extensions "['ext1@domain', 'ext3@domain']" "ext1@domain" "ext2@domain"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['ext1@domain', 'ext3@domain', 'ext2@domain']" ]
+}
+
+@test "_merge_enabled_extensions works via fallback when python3 is not available" {
+  command() {
+    if [ "$2" = "python3" ]; then return 1; fi
+    builtin command "$@"
+  }
+
+  run _merge_enabled_extensions "['ext1@domain']" "ext1@domain" "ext2@domain"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['ext1@domain', 'ext2@domain']" ]
+}
+
+@test "_sync_enabled_extensions does nothing when new_uuids is empty" {
+  dconf_exec() { echo "dconf_exec called: $*"; }
+  run _sync_enabled_extensions
+  [ "$status" -eq 0 ]
+  [ "$output" = "" ]
+}
+
+@test "_sync_enabled_extensions writes enabled-extensions and disable-user-extensions to dconf and gsettings" {
+  dconf_exec() {
+    echo "dconf_exec: $*"
+  }
+  gsettings_exec() {
+    echo "gsettings_exec: $*"
+  }
+  command() {
+    if [ "$2" = "dconf" ] || [ "$2" = "gsettings" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  run _sync_enabled_extensions "ext1@domain" "ext2@domain"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Persisting enabled extensions in dconf and GSettings..." ]]
+  [[ "$output" =~ "dconf_exec: write /org/gnome/shell/disable-user-extensions false" ]]
+  [[ "$output" =~ "dconf_exec: write /org/gnome/shell/enabled-extensions ['ext1@domain', 'ext2@domain']" ]]
+  [[ "$output" =~ "gsettings_exec: set org.gnome.shell disable-user-extensions false" ]]
+  [[ "$output" =~ "gsettings_exec: set org.gnome.shell enabled-extensions ['ext1@domain', 'ext2@domain']" ]]
+}
+
+@test "_enable_extension invokes gnome-extensions enable and syncs extension" {
   gnome-extensions() {
     if [ "$1" = "enable" ]; then
       echo "enabled: $2"
@@ -156,10 +209,14 @@ teardown() {
     fi
     return 1
   }
+  _sync_enabled_extensions() {
+    echo "synced: $*"
+  }
 
   run _enable_extension "sample@uuid"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "enabled: sample@uuid" ]]
+  [[ "$output" =~ "synced: sample@uuid" ]]
 }
 
 @test "_download_and_install_extension handles download failures safely" {
@@ -299,3 +356,26 @@ teardown() {
   [[ "$output" =~ "GNOME extensions setup completed successfully." ]]
   [[ "$output" =~ "Note: If you are running a Wayland session, please log out and log back in for new extensions to take effect." ]]
 }
+
+@test "main executes batch sync of installed extensions" {
+  local mock_home
+  mock_home="$(mktemp -d)"
+  HOME="$mock_home"
+  mkdir -p "$mock_home/.local/share/gnome-shell/extensions/AlphabeticalAppGrid@stuarthayhurst"
+
+  get_desktop_environment() { echo "gnome"; }
+  _get_gnome_shell_major_version() { echo "47"; }
+  _get_target_extensions() {
+    echo "4269:AlphabeticalAppGrid@stuarthayhurst:Alphabetical App Grid"
+  }
+  _process_extension() { :; }
+  _sync_enabled_extensions() {
+    echo "batch synced: $*"
+  }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "batch synced: AlphabeticalAppGrid@stuarthayhurst" ]]
+  rm -rf "$mock_home"
+}
+
