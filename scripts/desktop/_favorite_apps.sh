@@ -33,26 +33,37 @@ get_favorite_apps() {
     fm="org.gnome.Nautilus.desktop"
   fi
 
-  local editor browser notes gimp chat
+  local editor browser notes gimp chat firefox
 
   case "$distro" in
     arch)
       editor="$(_resolve_desktop_app "code-oss.desktop" "codium.desktop")"
-      browser="$(_resolve_desktop_app "chromium.desktop" "org.chromium.Chromium.desktop")"
+      firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
+      browser="$(_resolve_desktop_app "chromium.desktop" "org.chromium.Chromium.desktop" "chromium-browser.desktop")"
       notes="$(_resolve_desktop_app "obsidian.desktop" "md.obsidian.Obsidian.desktop")"
       gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
       chat="$(_resolve_desktop_app "discord.desktop" "com.discordapp.Discord.desktop")"
       ;;
     debian)
       editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
-      browser="$(_resolve_desktop_app "org.chromium.Chromium.desktop" "chromium.desktop")"
+      firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
+      browser="$(_resolve_desktop_app "org.chromium.Chromium.desktop" "chromium.desktop" "chromium-browser.desktop")"
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
       gimp="$(_resolve_desktop_app "org.gimp.GIMP.desktop" "gimp.desktop")"
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
       ;;
+    fedora)
+      editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
+      firefox="$(_resolve_desktop_app "org.mozilla.firefox.desktop" "firefox.desktop")"
+      browser="$(_resolve_desktop_app "chromium-browser.desktop" "chromium.desktop" "org.chromium.Chromium.desktop")"
+      notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
+      gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
+      chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
+      ;;
     *)
       editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
-      browser="$(_resolve_desktop_app "chromium.desktop" "org.chromium.Chromium.desktop")"
+      firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
+      browser="$(_resolve_desktop_app "chromium.desktop" "chromium-browser.desktop" "org.chromium.Chromium.desktop")"
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
       gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
@@ -66,7 +77,7 @@ get_favorite_apps() {
     "$fm" \
     "kitty.desktop" \
     "$editor" \
-    "firefox.desktop" \
+    "$firefox" \
     "$browser" \
     "io.dbeaver.DBeaverCommunity.desktop" \
     "org.onlyoffice.desktopeditors.desktop" \
