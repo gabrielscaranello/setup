@@ -16,7 +16,7 @@ name='X-GNOME-Shell-System.directory'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Utilities]
-apps=['btop.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.FileRoller.desktop', 'org.flameshot.Flameshot.desktop', 'org.gnome.font-viewer.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'nvim.desktop', 'org.gnome.clocks.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Showtime.desktop', 'timeshift-gtk.desktop', 'org.gnome.Papers.desktop', 'io.github.celluloid_player.Celluloid.desktop', 'org.gnome.Connections.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Loupe.desktop']
+apps=['btop.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.FileRoller.desktop', 'org.flameshot.Flameshot.desktop', 'org.gnome.font-viewer.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'nvim.desktop', 'org.gnome.clocks.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Showtime.desktop', 'timeshift-gtk.desktop', 'org.gnome.Papers.desktop', 'io.github.celluloid_player.Celluloid.desktop', 'org.gnome.Connections.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Loupe.desktop', 'vlc.desktop']
 name='X-GNOME-Shell-Utilities.directory'
 translate=true
 
