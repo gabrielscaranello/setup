@@ -86,7 +86,7 @@ setup() {
   run _install_gnome_stack
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: gdm gnome-shell mutter" ]]
-  [[ "$output" =~ "gnome-backgrounds" ]]
+  [[ "$output" =~ "gnome-backgrounds extension-manager" ]]
   [[ "$output" =~ "networkmanager gnome-bluetooth-3.0" ]]
   [[ "$output" =~ "Enabling NetworkManager, Bluetooth, and gdm services" ]]
 }

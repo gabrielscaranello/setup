@@ -405,6 +405,10 @@ setup() {
   [ "$(_get_package_name "cron" "debian")" = "cron" ]
   [ "$(_get_package_name "cron" "fedora")" = "cronie" ]
   [ "$(_get_package_name "cron" "arch")" = "cronie" ]
+
+  [ "$(_get_package_name "extension-manager" "debian")" = "" ]
+  [ "$(_get_package_name "extension-manager" "fedora")" = "" ]
+  [ "$(_get_package_name "extension-manager" "arch")" = "extension-manager" ]
 }
 
 @test "get_gpu_vendor honors GPU_VENDOR environment override" {

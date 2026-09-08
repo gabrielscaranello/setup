@@ -30,7 +30,17 @@ _install_gnome_apps() {
     gnome-calculator gnome-system-monitor baobab \
     gnome-disk-utility gnome-text-editor \
     gnome-tweaks gnome-weather \
+    extension-manager \
     vlc
+
+  local distro
+  distro="$(get_distro_id 2> /dev/null || echo "unknown")"
+  case "$distro" in
+    debian | fedora)
+      echo "Installing Extension Manager via Flatpak on $distro..."
+      install_flatpak_app "com.mattjakeman.ExtensionManager" "Extension Manager"
+      ;;
+  esac
 }
 
 main() {

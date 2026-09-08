@@ -43,7 +43,31 @@ setup() {
   [[ "$output" =~ "gnome-calculator gnome-system-monitor baobab" ]]
   [[ "$output" =~ "gnome-disk-utility gnome-text-editor" ]]
   [[ "$output" =~ "gnome-tweaks gnome-weather" ]]
+  [[ "$output" =~ "extension-manager" ]]
   [[ "$output" =~ "vlc" ]]
+}
+
+@test "_install_gnome_apps installs Extension Manager via Flatpak on Debian and Fedora" {
+  install_packages() { return 0; }
+  install_flatpak_app() {
+    echo "installed flatpak: $1 ($2)"
+    return 0
+  }
+
+  get_distro_id() { echo "debian"; }
+  run _install_gnome_apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: com.mattjakeman.ExtensionManager (Extension Manager)" ]]
+
+  get_distro_id() { echo "fedora"; }
+  run _install_gnome_apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: com.mattjakeman.ExtensionManager (Extension Manager)" ]]
+
+  get_distro_id() { echo "arch"; }
+  run _install_gnome_apps
+  [ "$status" -eq 0 ]
+  [[ ! "$output" =~ "installed flatpak" ]]
 }
 
 @test "main runs KDE Plasma application setup when DE is plasma" {

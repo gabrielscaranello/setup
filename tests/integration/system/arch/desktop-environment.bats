@@ -54,6 +54,7 @@
     gnome-session
     gsettings-desktop-schemas
     gnome-backgrounds
+    extension-manager
     pipewire
     pipewire-pulse
     wireplumber

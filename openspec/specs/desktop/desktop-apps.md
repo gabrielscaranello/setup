@@ -89,6 +89,7 @@ When the detected environment is `gnome`, the script SHALL install the following
 - `gnome-disk-utility`: Storage drives and partition manager.
 - `gnome-text-editor`: Modern GTK4 text editor.
 - `gnome-tweaks`: Advanced configuration and customization utility.
+- `extension-manager`: Graphical utility to browse, install, and manage GNOME Shell extensions (installed natively on Arch Linux, and via Flatpak `com.mattjakeman.ExtensionManager` on Debian and Fedora).
 - `gnome-weather`: Weather forecast application.
 - `vlc`: Multi-format media and video player.
 
@@ -97,6 +98,7 @@ When the detected environment is `gnome`, the script SHALL install the following
 - **GIVEN** `gnome` environment active across any supported distribution
 - **WHEN** `_install_gnome_apps` executes
 - **THEN** all specified GNOME packages SHALL be resolved via `packages.conf` and installed via `install_packages`
+- **AND** `com.mattjakeman.ExtensionManager` SHALL be installed via `install_flatpak_app` on Debian and Fedora
 
 ---
 
