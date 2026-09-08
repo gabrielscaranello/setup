@@ -53,6 +53,7 @@
     gnome-control-center
     gnome-session
     gsettings-desktop-schemas
+    gnome-backgrounds
     pipewire
     pipewire-pulse
     wireplumber

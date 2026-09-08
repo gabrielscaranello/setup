@@ -64,6 +64,7 @@ _install_gnome_stack() {
     install_packages \
       gdm \
       gnome-shell mutter gnome-control-center gnome-session gsettings-desktop-schemas \
+      gnome-backgrounds \
       networkmanager gnome-bluetooth-3.0 \
       pipewire pipewire-pulse wireplumber \
       xdg-desktop-portal-gnome xorg-xwayland
