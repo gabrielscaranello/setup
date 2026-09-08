@@ -67,3 +67,30 @@ setup() {
   [[ "$output" =~ "mock gnome apps installed" ]]
   [[ "$output" =~ "setup-desktop-apps complete" ]]
 }
+
+@test "main calls save_desktop_environment when DE is known" {
+  get_desktop_environment() { echo "plasma"; }
+  save_desktop_environment() { echo "saved DE: $1"; }
+  _install_plasma_apps() { return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "saved DE: plasma" ]]
+}
+
+@test "main prompts and saves DE when unknown and stdin is a terminal" {
+  get_desktop_environment() { echo "unknown"; }
+  save_desktop_environment() { echo "saved DE: $1"; }
+  _install_gnome_apps() { echo "installed gnome apps"; return 0; }
+
+  main_interactive() {
+    local de="gnome"
+    save_desktop_environment "$de"
+    _install_gnome_apps
+  }
+
+  run main_interactive
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "saved DE: gnome" ]]
+  [[ "$output" =~ "installed gnome apps" ]]
+}

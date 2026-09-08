@@ -35,7 +35,14 @@ _install_gnome_apps() {
 
 main() {
   local de
-  de="$(get_desktop_environment)"
+  if [ -t 0 ]; then
+    de="$(ensure_desktop_environment "Selecione o Desktop Environment para instalar os aplicativos:")"
+  else
+    de="$(get_desktop_environment)"
+    if [ "$de" != "unknown" ]; then
+      save_desktop_environment "$de"
+    fi
+  fi
 
   case "$de" in
     plasma)

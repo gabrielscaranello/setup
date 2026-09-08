@@ -277,9 +277,61 @@ setup() {
   [ "$status" -eq 0 ]
   [ "$output" = "unknown" ]
 
-  XDG_CURRENT_DESKTOP="" DESKTOP_SESSION="" run get_desktop_environment
+  TARGET_DE="gnome" XDG_CURRENT_DESKTOP="KDE" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "gnome" ]
+
+  TARGET_DE="plasma" XDG_CURRENT_DESKTOP="GNOME" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "plasma" ]
+
+  local mock_home="/tmp/mock-home-$$"
+  mkdir -p "$mock_home/.config/setup"
+  echo "gnome" > "$mock_home/.config/setup/desktop-environment"
+  HOME="$mock_home" TARGET_DE="" XDG_CURRENT_DESKTOP="" DESKTOP_SESSION="" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "gnome" ]
+  rm -rf "$mock_home"
+
+  TARGET_DE="" XDG_CURRENT_DESKTOP="" DESKTOP_SESSION="" HOME="/nonexistent" run get_desktop_environment
   [ "$status" -eq 0 ]
   [ "$output" = "unknown" ]
+}
+
+@test "save_desktop_environment sets TARGET_DE and writes config file" {
+  source /setup/scripts/_utils.sh
+  local mock_home="/tmp/mock-home-$$"
+  HOME="$mock_home" save_desktop_environment "plasma"
+  [ "$TARGET_DE" = "plasma" ]
+  [ -f "$mock_home/.config/setup/desktop-environment" ]
+  [ "$(cat "$mock_home/.config/setup/desktop-environment")" = "plasma" ]
+  rm -rf "$mock_home"
+}
+
+@test "prompt_desktop_environment returns default when non-interactive" {
+  source /setup/scripts/_utils.sh
+  run prompt_desktop_environment "Test prompt" "gnome"
+  [ "$status" -eq 0 ]
+  [ "$output" = "gnome" ]
+
+  run prompt_desktop_environment "Test prompt"
+  [ "$status" -eq 0 ]
+  [ "$output" = "plasma" ]
+}
+
+@test "ensure_desktop_environment resolves and saves DE" {
+  source /setup/scripts/_utils.sh
+  local mock_home="/tmp/mock-home-$$"
+  HOME="$mock_home" TARGET_DE="" XDG_CURRENT_DESKTOP="" DESKTOP_SESSION="" run ensure_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "plasma" ]
+  [ -f "$mock_home/.config/setup/desktop-environment" ]
+  rm -rf "$mock_home"
+
+  HOME="$mock_home" TARGET_DE="gnome" run ensure_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "gnome" ]
+  rm -rf "$mock_home"
 }
 
 @test "get_distro_id detects distribution from os-release" {

@@ -38,6 +38,8 @@ The script SHALL determine the target desktop environment (`plasma` or `gnome`) 
    - `2) GNOME`
 5. **Non-Interactive Default**: If running non-interactively without an environment or parameter specified, the script SHALL default to `plasma`.
 
+6. **Persistence**: Once resolved, the target DE SHALL be persisted via `save_desktop_environment` (setting `export TARGET_DE` and writing to `~/.config/setup/desktop-environment`).
+
 #### Scenario: Detecting already running desktop
 
 - **GIVEN** an Arch system with an active GNOME session (`get_desktop_environment` returns `gnome`)

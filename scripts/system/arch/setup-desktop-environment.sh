@@ -16,41 +16,20 @@ _resolve_target_de() {
 
   # Normalize target string
   target="$(echo "$target" | tr '[:upper:]' '[:lower:]')"
-  if [ "$target" = "plasma" ] || [ "$target" = "kde" ]; then
-    echo "plasma"
-    return 0
-  elif [ "$target" = "gnome" ]; then
-    echo "gnome"
-    return 0
-  fi
+  case "$target" in
+    plasma | kde)
+      save_desktop_environment "plasma"
+      echo "plasma"
+      return 0
+      ;;
+    gnome)
+      save_desktop_environment "gnome"
+      echo "gnome"
+      return 0
+      ;;
+  esac
 
-  # Check current running DE
-  local current_de
-  current_de="$(get_desktop_environment)"
-  if [ "$current_de" = "plasma" ] || [ "$current_de" = "gnome" ]; then
-    echo "$current_de"
-    return 0
-  fi
-
-  # Interactive prompt if stdin is a terminal
-  if [ -t 0 ]; then
-    echo "" >&2
-    echo "Nenhum ambiente gráfico ativo detectado." >&2
-    echo "Selecione o Desktop Environment para o Arch Linux:" >&2
-    echo "  1) KDE Plasma (Recomendado)" >&2
-    echo "  2) GNOME" >&2
-    echo "" >&2
-    local choice
-    read -r -p "Opção [1-2, padrão: 1]: " choice < /dev/tty || true
-    case "$choice" in
-      2 | [gG]*) echo "gnome" ;;
-      *) echo "plasma" ;;
-    esac
-    return 0
-  fi
-
-  # Non-interactive fallback
-  echo "plasma"
+  ensure_desktop_environment "Selecione o Desktop Environment para o Arch Linux:"
 }
 
 _install_plasma_stack() {
@@ -108,6 +87,7 @@ main() {
 
   local de
   de="$(_resolve_target_de "$@")"
+  save_desktop_environment "$de"
   echo "Selected Desktop Environment: $de"
 
   case "$de" in

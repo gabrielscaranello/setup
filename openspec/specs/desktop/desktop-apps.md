@@ -14,23 +14,34 @@ The script SHALL inspect the current desktop environment using `get_desktop_envi
 
 - When `plasma`: SHALL install the curated KDE Plasma application suite via `_install_plasma_apps`.
 - When `gnome`: SHALL install the curated GNOME application suite via `_install_gnome_apps`.
-- When `unknown`: SHALL report an informative message and exit cleanly with code 0 without attempting desktop-specific package installation.
+- When `unknown` and interactive (`[ -t 0 ]`): SHALL prompt the user to select between KDE Plasma and GNOME, persist the choice via `save_desktop_environment`, and proceed with installation.
+- When `unknown` and non-interactive: SHALL report an informative message and exit cleanly with code 0 without attempting desktop-specific package installation.
+- When desktop environment is resolved: SHALL persist the environment via `save_desktop_environment`.
 
 #### Scenario: Running under KDE Plasma
 
 - **GIVEN** active desktop environment is `plasma` (`get_desktop_environment` returns `plasma`)
 - **WHEN** `scripts/desktop/setup-desktop-apps.sh` executes
 - **THEN** KDE Plasma application suite SHALL be installed
+- **AND** desktop environment SHALL be persisted via `save_desktop_environment`
 
 #### Scenario: Running under GNOME
 
 - **GIVEN** active desktop environment is `gnome` (`get_desktop_environment` returns `gnome`)
 - **WHEN** `scripts/desktop/setup-desktop-apps.sh` executes
 - **THEN** GNOME application suite SHALL be installed
+- **AND** desktop environment SHALL be persisted via `save_desktop_environment`
 
-#### Scenario: Running under unknown or headless environment
+#### Scenario: Running under unknown environment interactively
 
-- **GIVEN** no recognized desktop environment (`get_desktop_environment` returns `unknown`)
+- **GIVEN** desktop environment is `unknown` and running in an interactive terminal
+- **WHEN** `scripts/desktop/setup-desktop-apps.sh` executes
+- **THEN** an interactive prompt SHALL prompt the user to choose Plasma or GNOME
+- **AND** the selection SHALL be saved via `save_desktop_environment` and the chosen application suite installed
+
+#### Scenario: Running under unknown or headless environment non-interactively
+
+- **GIVEN** no recognized desktop environment (`get_desktop_environment` returns `unknown`) and non-interactive shell
 - **WHEN** `scripts/desktop/setup-desktop-apps.sh` executes
 - **THEN** execution terminates immediately with exit code 0 and an informative message
 
