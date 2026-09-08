@@ -4,6 +4,7 @@
 
 # Source common utilities if available
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_favorite_apps.sh" 2> /dev/null || true
 
 ensure_kwriteconfig() {
   if ! command -v kwriteconfig6 > /dev/null 2>&1; then
@@ -460,22 +461,9 @@ kickoff.writeConfig("favoritesPortedToStats", "true");
 kickoff.reloadConfig();
 
 panel.addWidget("org.kde.plasma.marginsseparator");
-
-var launchers = [
-    "applications:org.kde.dolphin.desktop",
-    "applications:kitty.desktop",
-    "applications:codium.desktop",
-    "applications:firefox.desktop",
-    "applications:google-chrome.desktop",
-    "applications:io.dbeaver.DBeaverCommunity.desktop",
-    "applications:org.onlyoffice.desktopeditors.desktop",
-    "applications:md.obsidian.Obsidian.desktop",
-    "applications:org.gimp.GIMP.desktop",
-    "applications:org.telegram.desktop.desktop",
-    "applications:steam.desktop",
-    "applications:com.discordapp.Discord.desktop"
-].join(",");
-
+ 
+var launchers = :plasma-launchers:;
+ 
 var tasks = panel.addWidget("org.kde.plasma.icontasks");
 tasks.currentConfigGroup = ["General"];
 tasks.writeConfig("launchers", launchers);
@@ -537,6 +525,10 @@ EOF
     script="${script//:start-here-icon-widget-config:/}"
   fi
 
+  local launchers
+  launchers="$(get_plasma_launchers)"
+  script="${script//:plasma-launchers:/\"$launchers\"}"
+
   "$qdbus_cmd" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$script" > /dev/null 2>&1 || return 1
   echo "Panel layout script sent to plasmashell successfully."
   return 0
@@ -555,12 +547,17 @@ configure_plasma_panel() {
   local template_file="${PLASMA_PANEL_TEMPLATE:-${repo_root}/config/plasma/plasma-org.kde.plasma.desktop-appletsrc}"
   local target_file="${config_dir}/plasma-org.kde.plasma.desktop-appletsrc"
   local icon_path="${KDE_START_HERE_ICON:-$HOME/.icons/start-here.svg}"
+  local launchers
+  launchers="$(get_plasma_launchers)"
 
   mkdir -p "$config_dir"
 
   if [ -f "$template_file" ]; then
     echo "Applying KDE Plasma 6 panel and taskbar layout..."
     cp "$template_file" "$target_file"
+    if [ -n "$launchers" ]; then
+      sed -i "s|^launchers=.*|launchers=${launchers}|" "$target_file"
+    fi
     if [ -f "$icon_path" ]; then
       sed -i "s|:start-here-icon:|$icon_path|g" "$target_file"
     else

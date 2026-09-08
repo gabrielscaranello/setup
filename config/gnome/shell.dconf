@@ -1,12 +1,12 @@
 [org/gnome/shell]
 app-picker-layout=[{'org.gnome.Calculator.desktop': <{'position': <0>}>, 'org.gnome.Calendar.desktop': <{'position': <1>}>, 'org.gnome.Characters.desktop': <{'position': <2>}>, 'org.gnome.TextEditor.desktop': <{'position': <3>}>, 'org.gnome.SystemMonitor.desktop': <{'position': <4>}>, 'org.gnome.Software.desktop': <{'position': <5>}>, 'b8279844-5ac4-4d3e-8187-2794b7332933': <{'position': <6>}>, '0940248a-b3cb-4922-937d-05bcc29b834f': <{'position': <7>}>, 'System': <{'position': <8>}>, 'Utilities': <{'position': <9>}>}]
-favorite-apps=['org.gnome.Nautilus.desktop', 'kitty.desktop', 'codium.desktop', 'firefox.desktop', 'google-chrome.desktop', 'io.dbeaver.DBeaverCommunity.desktop', 'org.onlyoffice.desktopeditors.desktop', 'md.obsidian.Obsidian.desktop', 'org.gimp.GIMP.desktop', 'org.telegram.desktop.desktop', 'steam.desktop', 'com.discordapp.Discord.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'kitty.desktop', 'codium.desktop', 'firefox.desktop', 'chromium.desktop', 'io.dbeaver.DBeaverCommunity.desktop', 'org.onlyoffice.desktopeditors.desktop', 'md.obsidian.Obsidian.desktop', 'org.gimp.GIMP.desktop', 'org.telegram.desktop.desktop', 'steam.desktop', 'com.discordapp.Discord.desktop']
 
 [org/gnome/desktop/app-folders]
 folder-children=['System', 'Utilities', 'YaST', '0940248a-b3cb-4922-937d-05bcc29b834f', 'b8279844-5ac4-4d3e-8187-2794b7332933']
 
 [org/gnome/desktop/app-folders/folders/0940248a-b3cb-4922-937d-05bcc29b834f]
-apps=['com.vysp3r.ProtonPlus.desktop', 'com.valvesoftware.Steam.desktop']
+apps=['com.vysp3r.ProtonPlus.desktop', 'com.valvesoftware.Steam.desktop', 'steam.desktop']
 name='Games'
 translate=true
 

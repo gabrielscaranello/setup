@@ -51,7 +51,7 @@ Supports both primary desktop environments:
 6. **Nautilus File Manager** (`nautilus.dconf`):
    - Default zoom `small-plus`, tree view navigation enabled in list view.
 7. **Shell & App Folders** (`shell.dconf`):
-   - Dash favorite apps: Nautilus, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord.
+   - Dash favorite apps: Dynamically resolved based on distribution and installed desktop entries: Nautilus, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on Debian/Fedora), Firefox, Chromium (`chromium.desktop` on Arch/Fedora, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Telegram, Steam, Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora).
    - App picker folders: Games (`ProtonPlus`, `Steam`), Develop (`DBeaver`, `Compass`), System, Utilities.
 8. **Applications** (`apps.dconf`):
    - GNOME Text Editor: highlight current line, space indentation, dark style scheme.
@@ -255,7 +255,7 @@ Supports both primary desktop environments:
 - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
   1.  Application Launcher (`org.kde.plasma.kickoff`) — custom start menu icon (Papirus distributor-logo `start-here.svg` installed to `~/.icons/start-here.svg` per distro: Arch Linux, Debian, Fedora), favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`, `icon=~/.icons/start-here.svg`)
   2.  Separator (`org.kde.plasma.marginsseparator`)
-  3.  Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, Codium, Firefox, Chrome, DBeaver, OnlyOffice, Obsidian, GIMP, Telegram, Steam, Discord; shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
+  3.  Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on Debian/Fedora), Firefox, Chromium (`chromium.desktop` on Arch/Fedora, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Telegram, Steam, Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora); shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
   4.  Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows, text display disabled / `displayedText=None`)
   5.  Separator (`org.kde.plasma.marginsseparator`)
   6.  System Tray (`org.kde.plasma.systemtray`)

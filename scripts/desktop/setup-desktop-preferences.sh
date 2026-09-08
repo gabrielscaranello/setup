@@ -4,6 +4,7 @@ set -euo pipefail
 # Source common utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_favorite_apps.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_plasma.sh" 2> /dev/null || true
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -32,6 +33,7 @@ main() {
       ensure_dconf || return 1
       echo "Applying GNOME desktop environment preferences..."
       load_dconf_files "$CONFIG_DIR" "${GNOME_DCONF_FILES[@]}" || return 1
+      configure_gnome_favorite_apps
       echo "GNOME desktop preferences configuration completed successfully."
       ;;
     plasma)

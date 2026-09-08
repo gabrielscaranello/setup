@@ -38,9 +38,9 @@ teardown() {
   run dconf_exec read /org/gnome/shell/favorite-apps
   [ "$status" -eq 0 ]
   [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
-  [[ "$output" =~ "codium.desktop" ]]
+  [[ "$output" =~ "codium.desktop" || "$output" =~ "code-oss.desktop" ]]
   [[ "$output" =~ "steam.desktop" ]]
-  [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
+  [[ "$output" =~ "com.discordapp.Discord.desktop" || "$output" =~ "discord.desktop" ]]
 
   # Idempotent second execution
   run bash /setup/scripts/desktop/setup-desktop-preferences.sh
@@ -76,7 +76,7 @@ teardown() {
   grep -q "AppletOrder=2;3;4;5;6;7;8" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "applications:org\.kde\.dolphin\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "displayedText=None" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
-  grep -q "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  grep -E -q "steam\.desktop,applications:(com\.discordapp\.Discord|discord)\.desktop" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "showOnlyCurrentDesktop=false" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "lastScreen=0" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
   grep -q "plugin=org.kde.plasma.folder" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
