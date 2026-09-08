@@ -52,7 +52,7 @@ Supports both primary desktop environments:
    - Default zoom `small-plus`, tree view navigation enabled in list view.
 7. **Shell & App Folders** (`shell.dconf`):
    - Dash favorite apps: Dynamically resolved based on distribution and installed desktop entries: Nautilus, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on Debian/Fedora), Firefox, Chromium (`chromium.desktop` on Arch/Fedora, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Telegram, Steam, Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora).
-   - App picker folders: Games (`ProtonPlus`, `Steam`), Develop (`DBeaver`, `Compass`), System, Utilities.
+   - App picker folders: Games (`ProtonPlus`, `MangoJuice`, `Steam`), Develop (`DBeaver`, `Compass`), System, Utilities.
 8. **Applications** (`apps.dconf`):
    - GNOME Text Editor: highlight current line, space indentation, dark style scheme.
    - System Monitor: custom CPU core colors, resources tab default, user processes filter.

@@ -6,7 +6,7 @@ favorite-apps=['org.gnome.Nautilus.desktop', 'kitty.desktop', 'codium.desktop', 
 folder-children=['System', 'Utilities', 'YaST', '0940248a-b3cb-4922-937d-05bcc29b834f', 'b8279844-5ac4-4d3e-8187-2794b7332933']
 
 [org/gnome/desktop/app-folders/folders/0940248a-b3cb-4922-937d-05bcc29b834f]
-apps=['com.vysp3r.ProtonPlus.desktop', 'com.valvesoftware.Steam.desktop', 'steam.desktop']
+apps=['com.vysp3r.ProtonPlus.desktop', 'io.github.radiolamp.mangojuice.desktop', 'com.valvesoftware.Steam.desktop', 'steam.desktop']
 name='Games'
 translate=true
 
