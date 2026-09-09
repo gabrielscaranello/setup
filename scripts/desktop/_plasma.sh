@@ -332,15 +332,43 @@ configure_plasma_preferences() {
     balooctl disable > /dev/null 2>&1 || true
   fi
 
-  # Ensure default panel views have thickness 40
-  plasma_write_config "plasmashellrc" "PlasmaViews][Panel 1][Defaults" "thickness" "40"
-  plasma_write_config "plasmashellrc" "PlasmaViews][Panel 2][Defaults" "thickness" "40"
+  echo "Applying KDE Plasma 6 panel thickness and non-floating preferences..."
+  _ensure_plasma_panel_non_floating
 
   _setup_plasma_start_icon
   _clear_plasma_kickoff_favorites
   _configure_plasma_desktops_dbus
   _reload_plasma_shortcuts_dbus
   configure_plasma_panel
+}
+
+_ensure_plasma_panel_non_floating() {
+  local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
+  local plasmashellrc="${config_dir}/plasmashellrc"
+  local panel_ids="1 2 3 4 5 6 7 8 9 10"
+
+  if [ -f "$plasmashellrc" ]; then
+    local detected_panels
+    detected_panels="$(grep -oE '\[PlasmaViews\]\[Panel [0-9]+' "$plasmashellrc" 2> /dev/null | sed -E 's/.*Panel ([0-9]+)/\1/' | sort -u || true)"
+    if [ -n "$detected_panels" ]; then
+      panel_ids="$(echo "$panel_ids $detected_panels" | tr ' ' '\n' | sort -n -u | tr '\n' ' ')"
+    fi
+  fi
+
+  for p_id in $panel_ids; do
+    plasma_write_config "plasmashellrc" "PlasmaViews][Panel ${p_id}" "floating" "0"
+    plasma_write_config "plasmashellrc" "PlasmaViews][Panel ${p_id}][Defaults" "floating" "0"
+    plasma_write_config "plasmashellrc" "PlasmaViews][Panel ${p_id}][Defaults" "thickness" "40"
+  done
+
+  local appletsrc="${config_dir}/plasma-org.kde.plasma.desktop-appletsrc"
+  if [ -f "$appletsrc" ]; then
+    local containment_ids
+    containment_ids="$(grep -oE '\[Containments\]\[[0-9]+' "$appletsrc" 2> /dev/null | sed -E 's/.*\[([0-9]+)/\1/' | sort -u || true)"
+    for c_id in $containment_ids; do
+      plasma_write_config "plasma-org.kde.plasma.desktop-appletsrc" "Containments][${c_id}" "floating" "0"
+    done
+  fi
 }
 
 _setup_plasma_start_icon() {
@@ -528,6 +556,9 @@ var panel = new Panel("org.kde.panel");
 panel.location = "bottom";
 panel.height = 40;
 panel.floating = false;
+if (typeof panel.writeConfig === "function") {
+    panel.writeConfig("floating", 0);
+}
 
 var kickoff = panel.addWidget("org.kde.plasma.kickoff");
 kickoff.currentConfigGroup = ["General"];
@@ -589,7 +620,23 @@ for (var j = 0; j < allWidgets.length; ++j) {
         w.reloadConfig();
     }
 }
+panel.floating = false;
+if (typeof panel.writeConfig === "function") {
+    panel.writeConfig("floating", 0);
+}
 panel.reloadConfig();
+panel.floating = false;
+
+var remainingPanels = panels();
+for (var k = 0; k < remainingPanels.length; ++k) {
+    var rp = remainingPanels[k];
+    if (rp && rp.location === "bottom") {
+        rp.floating = false;
+        if (typeof rp.writeConfig === "function") {
+            rp.writeConfig("floating", 0);
+        }
+    }
+}
 EOF
   )"
 
@@ -613,6 +660,7 @@ EOF
 configure_plasma_panel() {
   # 1. If plasmashell is running in an active graphical session, use D-Bus evaluateScript
   if _configure_plasma_panel_dbus; then
+    _ensure_plasma_panel_non_floating
     return 0
   fi
 
@@ -640,4 +688,5 @@ configure_plasma_panel() {
       sed -i '/:start-here-icon:/d' "$target_file"
     fi
   fi
+  _ensure_plasma_panel_non_floating
 }

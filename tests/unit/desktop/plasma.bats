@@ -382,11 +382,47 @@ teardown() {
   [[ "$output" =~ "config: file=kactivitymanagerdrc group=Plugins key=org.kde.ActivityManager.ResourceScoringEnabled val=false" ]]
   [[ "$output" =~ "config: file=krunnerrc group=General key=historyBehavior val=Disabled" ]]
   [[ "$output" =~ "config: file=baloofilerc group=Basic Settings key=Indexing-Enabled val=false" ]]
+  [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1 key=floating val=0" ]]
+  [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=floating val=0" ]]
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=thickness val=40" ]]
   [[ "$output" =~ "_clear_plasma_kickoff_favorites called" ]]
   [[ "$output" =~ "_configure_plasma_desktops_dbus called" ]]
   [[ "$output" =~ "_reload_plasma_shortcuts_dbus called" ]]
   [[ "$output" =~ "configure_plasma_panel called" ]]
+}
+
+# ── _ensure_plasma_panel_non_floating Tests ───────────────────────────────────
+
+@test "_ensure_plasma_panel_non_floating sets floating 0 and thickness 40 for panels" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_panel_floating_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  mkdir -p "$test_dir/config"
+
+  cat << 'EOF' > "$test_dir/config/plasmashellrc"
+[PlasmaViews][Panel 3]
+floating=1
+[PlasmaViews][Panel 3][Defaults]
+thickness=48
+EOF
+
+  cat << 'EOF' > "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+[Containments][5]
+floating=1
+plugin=org.kde.panel
+EOF
+
+  run _ensure_plasma_panel_non_floating
+  [ "$status" -eq 0 ]
+
+  run grep "floating=0" "$test_dir/config/plasmashellrc"
+  [ "$status" -eq 0 ]
+  run grep "thickness=40" "$test_dir/config/plasmashellrc"
+  [ "$status" -eq 0 ]
+  run grep "floating=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
+  rm -rf "$test_dir"
 }
 
 # ── _clear_plasma_kickoff_favorites Tests ─────────────────────────────────────
@@ -544,6 +580,12 @@ sys.exit(0 if count == 0 else 1)
   [ -s "$script_log" ]
 
   run grep "panel.height = 40" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep "panel.floating = false" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep 'writeConfig("floating", 0)' "$script_log"
   [ "$status" -eq 0 ]
 
   run grep "org.kde.plasma.kickoff" "$script_log"

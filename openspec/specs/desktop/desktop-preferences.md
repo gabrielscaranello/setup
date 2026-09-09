@@ -249,8 +249,8 @@ Supports both primary desktop environments:
 
 12. **Panel & Taskbar Layout**:
 
-- **Panel Height**: Configured to 40px (`panel.height = 40;` in D-Bus script, `thickness=40` in `plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc`).
-- **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
+- **Panel Height & Style**: Configured to 40px height (`panel.height = 40;` in D-Bus script, `thickness=40` in `plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc`) and docked non-floating (`floating=0` / `panel.floating = false;` across all panel views in `plasmashellrc` and containments in `plasma-org.kde.plasma.desktop-appletsrc`).
+- **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, enforces `panel.floating = false;` and `writeConfig("floating", 0)`, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
 - **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `thickness=40`, `formfactor=2`, `lastScreen=0`).
 - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
   1.  Application Launcher (`org.kde.plasma.kickoff`) — custom start menu icon (Papirus distributor-logo `start-here.svg` installed to `~/.icons/start-here.svg` per distro: Arch Linux, Debian, Fedora), favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`, `icon=~/.icons/start-here.svg`, and immutable override in `kicker-extra-favoritesrc` with `IgnoreDefaults[$i]=true` and `Prepend[$i]=` to prevent distribution defaults from returning upon session restart)
