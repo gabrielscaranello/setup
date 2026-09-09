@@ -458,6 +458,38 @@ if os.path.exists(db_file):
   if [ "$restart_kactivity" -eq 1 ]; then
     systemctl --user start plasma-kactivitymanagerd.service 2> /dev/null || true
   fi
+
+  # Override distribution/system default favorites (e.g. Fedora kde-settings kicker-extra-favoritesrc)
+  # Prepend[$i]= and IgnoreDefaults[$i]=true ensure KDE does not re-seed default favorites on new session login
+  local kicker_extra_fav="${config_dir}/kicker-extra-favoritesrc"
+  cat << 'EOF' > "$kicker_extra_fav"
+[General]
+Prepend=
+Prepend[$i]=
+Append=
+Append[$i]=
+Favorites=
+Favorites[$i]=
+IgnoreDefaults=true
+IgnoreDefaults[$i]=true
+EOF
+
+  local kickoff_rc="${config_dir}/kickoffrc"
+  cat << 'EOF' > "$kickoff_rc"
+[General]
+favorites=
+favorites[$i]=
+EOF
+
+  if sudo -n true 2> /dev/null; then
+    sudo mkdir -p /etc/xdg
+    sudo tee /etc/xdg/kicker-extra-favoritesrc > /dev/null << 'EOF' || true
+[General]
+Prepend=
+Append=
+IgnoreDefaults=true
+EOF
+  fi
 }
 
 _configure_plasma_panel_dbus() {

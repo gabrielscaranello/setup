@@ -461,6 +461,22 @@ sys.exit(0 if count == 0 else 1)
   rm -rf "$test_dir"
 }
 
+@test "_clear_plasma_kickoff_favorites overrides default favorites in kicker-extra-favoritesrc" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_fav_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+
+  run _clear_plasma_kickoff_favorites
+  [ "$status" -eq 0 ]
+  [ -f "$test_dir/config/kicker-extra-favoritesrc" ]
+  run grep "IgnoreDefaults\[\$i\]=true" "$test_dir/config/kicker-extra-favoritesrc"
+  [ "$status" -eq 0 ]
+  run grep "Prepend\[\$i\]=" "$test_dir/config/kicker-extra-favoritesrc"
+  [ "$status" -eq 0 ]
+
+  rm -rf "$test_dir"
+}
+
 # ── configure_plasma_panel Tests ──────────────────────────────────────────────
 
 @test "configure_plasma_panel copies template to target config directory" {
