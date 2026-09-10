@@ -410,6 +410,9 @@ EOF
 [Containments][5]
 floating=1
 plugin=org.kde.panel
+
+[Containments][5][Applets][6]
+plugin=org.kde.plasma.kickoff
 EOF
 
   run _ensure_plasma_panel_non_floating
@@ -420,6 +423,8 @@ EOF
   run grep "thickness=40" "$test_dir/config/plasmashellrc"
   [ "$status" -eq 0 ]
   run grep "floating=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+  run grep "showActionButtonCaptions=false" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
   rm -rf "$test_dir"
@@ -549,6 +554,9 @@ sys.exit(0 if count == 0 else 1)
   run grep "favoritesPortedToStats=true" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
+  run grep "showActionButtonCaptions=false" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  [ "$status" -eq 0 ]
+
   run grep "plugin=org.kde.plasma.folder" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
@@ -592,6 +600,9 @@ sys.exit(0 if count == 0 else 1)
   [ "$status" -eq 0 ]
 
   run grep "favoritesPortedToStats" "$script_log"
+  [ "$status" -eq 0 ]
+
+  run grep 'writeConfig("showActionButtonCaptions", "false")' "$script_log"
   [ "$status" -eq 0 ]
 
   run grep "org.kde.plasma.icontasks" "$script_log"

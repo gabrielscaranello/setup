@@ -368,6 +368,24 @@ _ensure_plasma_panel_non_floating() {
     for c_id in $containment_ids; do
       plasma_write_config "plasma-org.kde.plasma.desktop-appletsrc" "Containments][${c_id}" "floating" "0"
     done
+
+    # Ensure Kickoff application launcher uses compact session buttons (without labels)
+    local kickoff_sections
+    kickoff_sections="$(awk '
+      /^\[Containments\]\[[0-9]+\]\[Applets\]\[[0-9]+\]$/ {
+        section = substr($0, 2, length($0) - 2)
+      }
+      $0 ~ /^plugin=org\.kde\.plasma\.kickoff/ {
+        if (section != "") { print section }
+      }
+    ' "$appletsrc" 2> /dev/null || true)"
+    if [ -n "$kickoff_sections" ]; then
+      for s in $kickoff_sections; do
+        plasma_write_config "plasma-org.kde.plasma.desktop-appletsrc" "${s}][Configuration][General" "showActionButtonCaptions" "false"
+      done
+    else
+      plasma_write_config "plasma-org.kde.plasma.desktop-appletsrc" "Containments][1][Applets][2][Configuration][General" "showActionButtonCaptions" "false"
+    fi
   fi
 }
 
@@ -564,6 +582,7 @@ var kickoff = panel.addWidget("org.kde.plasma.kickoff");
 kickoff.currentConfigGroup = ["General"];
 kickoff.writeConfig("favorites", "");
 kickoff.writeConfig("favoritesPortedToStats", "true");
+kickoff.writeConfig("showActionButtonCaptions", "false");
 :start-here-icon-config:
 kickoff.reloadConfig();
 
@@ -600,6 +619,7 @@ for (var j = 0; j < allWidgets.length; ++j) {
         w.currentConfigGroup = ["General"];
         w.writeConfig("favorites", "");
         w.writeConfig("favoritesPortedToStats", "true");
+        w.writeConfig("showActionButtonCaptions", "false");
         :start-here-icon-widget-config:
         w.reloadConfig();
     } else if (w.type === "org.kde.plasma.icontasks") {
