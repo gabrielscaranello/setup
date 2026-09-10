@@ -336,10 +336,27 @@ configure_plasma_preferences() {
   _ensure_plasma_panel_non_floating
 
   _setup_plasma_start_icon
+  _setup_plasma_workspace_env
   _clear_plasma_kickoff_favorites
   _configure_plasma_desktops_dbus
   _reload_plasma_shortcuts_dbus
   configure_plasma_panel
+}
+
+_setup_plasma_workspace_env() {
+  local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
+  local env_dir="${config_dir}/plasma-workspace/env"
+  local target_file="${env_dir}/nvm.sh"
+  local repo_root
+  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  local template_file="${PLASMA_WORKSPACE_ENV_NVM:-${repo_root}/config/plasma/plasma-workspace/env/nvm.sh}"
+
+  if [ -f "$template_file" ]; then
+    echo "Configuring KDE Plasma workspace startup environment script for NVM..."
+    mkdir -p "$env_dir"
+    cp "$template_file" "$target_file"
+    chmod +x "$target_file"
+  fi
 }
 
 _ensure_plasma_panel_non_floating() {

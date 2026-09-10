@@ -261,6 +261,9 @@ Supports both primary desktop environments:
   6.  System Tray (`org.kde.plasma.systemtray`)
   7.  Digital Clock (`org.kde.plasma.digitalclock`) — short date, date display enabled, seconds displayed only in tooltip (`showSeconds="onlyInTooltip"`)
 
+13. **Workspace Environment Startup Scripts (`~/.config/plasma-workspace/env/`)**:
+    - **NVM Environment (`nvm.sh`)**: Deploys `~/.config/plasma-workspace/env/nvm.sh` with executable permissions (`+x`) from template `config/plasma/plasma-workspace/env/nvm.sh` to initialize NVM (`export NVM_DIR="$HOME/.nvm"`, source `nvm.sh`, `bash_completion`, and `/usr/share/nvm/init-nvm.sh`) on login in KDE Plasma sessions.
+
 ---
 
 ### Idempotency & Execution Mechanics

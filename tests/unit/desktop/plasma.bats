@@ -282,6 +282,10 @@ teardown() {
     echo "config: file=$1 group=$2 key=$3 val=$4"
     return 0
   }
+  _setup_plasma_workspace_env() {
+    echo "_setup_plasma_workspace_env called"
+    return 0
+  }
   _clear_plasma_kickoff_favorites() {
     echo "_clear_plasma_kickoff_favorites called"
     return 0
@@ -385,10 +389,44 @@ teardown() {
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1 key=floating val=0" ]]
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=floating val=0" ]]
   [[ "$output" =~ "config: file=plasmashellrc group=PlasmaViews][Panel 1][Defaults key=thickness val=40" ]]
+  [[ "$output" =~ "_setup_plasma_workspace_env called" ]]
   [[ "$output" =~ "_clear_plasma_kickoff_favorites called" ]]
   [[ "$output" =~ "_configure_plasma_desktops_dbus called" ]]
   [[ "$output" =~ "_reload_plasma_shortcuts_dbus called" ]]
   [[ "$output" =~ "configure_plasma_panel called" ]]
+}
+
+# ── _setup_plasma_workspace_env Tests ─────────────────────────────────────────
+
+@test "_setup_plasma_workspace_env deploys nvm.sh to plasma-workspace/env" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_env_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+
+  run _setup_plasma_workspace_env
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring KDE Plasma workspace startup environment script for NVM..." ]]
+  [ -f "$test_dir/config/plasma-workspace/env/nvm.sh" ]
+  [ -x "$test_dir/config/plasma-workspace/env/nvm.sh" ]
+  run grep "NVM_DIR" "$test_dir/config/plasma-workspace/env/nvm.sh"
+  [ "$status" -eq 0 ]
+  run grep "init-nvm.sh" "$test_dir/config/plasma-workspace/env/nvm.sh"
+  [ "$status" -eq 0 ]
+
+  rm -rf "$test_dir"
+}
+
+@test "_setup_plasma_workspace_env does nothing if template is missing" {
+  local test_dir
+  test_dir="$(mktemp -d /tmp/plasma_env_test_XXXXXX)"
+  KDE_CONFIG_DIR="$test_dir/config"
+  PLASMA_WORKSPACE_ENV_NVM="$test_dir/nonexistent"
+
+  run _setup_plasma_workspace_env
+  [ "$status" -eq 0 ]
+  [ ! -f "$test_dir/config/plasma-workspace/env/nvm.sh" ]
+
+  rm -rf "$test_dir"
 }
 
 # ── _ensure_plasma_panel_non_floating Tests ───────────────────────────────────
