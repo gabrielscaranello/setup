@@ -217,6 +217,14 @@ Supports both primary desktop environments:
      - Group: `[Event/notification]`, Key: `Action=Popup`
      - Group: `[Event/printerror]`, Key: `Action=Popup`
      - Group: `[Event/warning]`, Key: `Action=Popup`
+     - Group: `[Event/startkde]`, Keys: `Action=`, `Sound=`
+     - Group: `[Event/exitkde]`, Keys: `Action=`, `Sound=`
+     - Group: `[Event/cancellogout]`, Keys: `Action=`, `Sound=`
+     - Group: `[Event/login]`, Keys: `Action=`, `Sound=`
+     - Group: `[Event/logout]`, Keys: `Action=`, `Sound=`
+   - **Disable Screen Locker Sounds (`kscreenlocker.notifyrc`)**:
+     - Group: `[Event/locked]`, Keys: `Action=`, `Sound=`
+     - Group: `[Event/unlocked]`, Keys: `Action=`, `Sound=`
    - **OOM Notifier**:
      - Group: `[Event/catastrophe]`, Key: `Action=Popup`
    - **Keep Timer Sound Enabled**:
