@@ -134,6 +134,18 @@ EOF
   [ "$has_btop" -eq 1 ]
 }
 
+@test "APPS contains cups and system-config-printer" {
+  local has_cups=0
+  local has_printer=0
+  local app
+  for app in "${APPS[@]}"; do
+    if [ "$app" = "cups" ]; then has_cups=1; fi
+    if [ "$app" = "system-config-printer" ]; then has_printer=1; fi
+  done
+  [ "$has_cups" -eq 1 ]
+  [ "$has_printer" -eq 1 ]
+}
+
 @test "_unhide_app removes local desktop file when NoDisplay=true is present" {
   local target_dir
   target_dir="$(_get_target_dir)"

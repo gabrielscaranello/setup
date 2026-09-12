@@ -9,6 +9,7 @@ APPS=(
   bottom
   bssh
   bvnc
+  cups
   designer
   display-im7.q16
   linguist
@@ -20,6 +21,7 @@ APPS=(
   qdbusviewer
   qv4l2
   qvidcap
+  system-config-printer
 )
 
 UNHIDE_APPS=(

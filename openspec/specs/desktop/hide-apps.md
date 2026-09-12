@@ -25,6 +25,7 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `bottom`: Bottom terminal system monitor
 - `bssh`: Avahi SSH Server Browser
 - `bvnc`: Avahi VNC Server Browser
+- `cups`: CUPS Web Administration Interface
 - `designer`: Qt Designer
 - `display-im7.q16`: ImageMagick Display GUI
 - `linguist`: Qt Linguist
@@ -36,6 +37,7 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `qdbusviewer`: Qt D-Bus Viewer
 - `qv4l2`: V4L2 Test Utility
 - `qvidcap`: V4L2 Video Capture Utility
+- `system-config-printer`: Print Settings / Printer configuration GUI (redundant with desktop settings)
 
 > [!NOTE]
 > Developer tools with desired desktop menu presence (such as `nvim` and `btop`) must NOT be hidden.
