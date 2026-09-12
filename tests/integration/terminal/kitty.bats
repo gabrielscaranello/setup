@@ -40,3 +40,18 @@ setup_file() {
     false
   fi
 }
+
+@test "xdg-terminal-exec is available and executable" {
+  if command -v xdg-terminal-exec >/dev/null 2>&1; then
+    run xdg-terminal-exec --version
+    [ "$status" -eq 0 ]
+  elif [ -x "$HOME/.local/bin/xdg-terminal-exec" ]; then
+    run "$HOME/.local/bin/xdg-terminal-exec" --version
+    [ "$status" -eq 0 ]
+  elif [ -x "/usr/local/bin/xdg-terminal-exec" ]; then
+    run "/usr/local/bin/xdg-terminal-exec" --version
+    [ "$status" -eq 0 ]
+  else
+    false
+  fi
+}

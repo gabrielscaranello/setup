@@ -97,6 +97,7 @@ _setup_desktop_integration() {
 
   _create_binary_symlinks "$base_dir"
   _install_desktop_entries "$base_dir"
+  ensure_xdg_terminal_exec
 }
 
 _install_kitty_binary() {
@@ -131,11 +132,7 @@ _install_kitty_repo() {
   echo "Installing kitty from distribution repository..."
   install_packages kitty
 
-  local bin_kitty
-  bin_kitty="$(command -v kitty 2> /dev/null || echo "/usr/bin/kitty")"
-  if [ -x "$bin_kitty" ]; then
-    _link_binary "$bin_kitty" "x-terminal-emulator"
-  fi
+  ensure_xdg_terminal_exec
 }
 
 _install_kitty() {

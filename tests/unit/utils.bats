@@ -456,3 +456,19 @@ setup() {
   [ "$status" -eq 0 ]
   [ "$output" = "unknown" ]
 }
+
+@test "ensure_xdg_terminal_exec deploys xdg-terminal-exec and fallback symlinks" {
+  source /setup/scripts/_utils.sh
+  local test_home="/tmp/test-utils-terminal-exec-home"
+  local mock_sys_bin="/tmp/test-mock-usr-local-bin-utils"
+  mkdir -p "$test_home/.local/bin" "$mock_sys_bin"
+
+  HOME="$test_home" run ensure_xdg_terminal_exec
+  [ "$status" -eq 0 ]
+  [ -x "$test_home/.local/bin/xdg-terminal-exec" ]
+  [ -L "$test_home/.local/bin/x-terminal-emulator" ]
+  [ -L "$test_home/.local/bin/gnome-terminal" ]
+  [ -f "$test_home/.config/environment.d/10-local-path.conf" ]
+
+  rm -rf "$test_home" "$mock_sys_bin"
+}

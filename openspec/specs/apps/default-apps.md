@@ -13,7 +13,7 @@ Configures default applications across XDG specifications, GNOME desktop environ
 
 ### Requirement: XDG Standards Configuration for Terminal Emulator
 
-The script SHALL configure `kitty.desktop` in `~/.config/xdg-terminals.list` and register `x-scheme-handler/terminal` via `xdg-mime` if available.
+The script SHALL configure `kitty.desktop` in `~/.config/xdg-terminals.list`, register `x-scheme-handler/terminal` via `xdg-mime` if available, and ensure `xdg-terminal-exec` is deployed to `~/.local/bin` and `/usr/local/bin` (via `ensure_xdg_terminal_exec`).
 
 ### Requirement: Desktop Environment Specific Configuration for Terminal Emulator
 

@@ -24,6 +24,7 @@
   [ -f "$test_home/.config/xdg-terminals.list" ]
   grep -q "kitty.desktop" "$test_home/.config/xdg-terminals.list"
   [ "$xdg_mime_called" -ge 1 ]
+  [ -x "$test_home/.local/bin/xdg-terminal-exec" ]
 
   rm -rf "$test_home"
 }

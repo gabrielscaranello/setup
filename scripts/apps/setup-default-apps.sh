@@ -17,6 +17,8 @@ _set_default_terminal_xdg() {
   if command -v xdg-mime > /dev/null 2>&1; then
     xdg-mime default "$desktop_file" x-scheme-handler/terminal 2> /dev/null || true
   fi
+
+  ensure_xdg_terminal_exec
 }
 
 _set_default_terminal_gnome() {
