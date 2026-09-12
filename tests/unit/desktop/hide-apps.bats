@@ -99,10 +99,13 @@ EOF
       local target_dir
       target_dir="$(_get_target_dir)"
       mkdir -p "${target_dir}"
+
       local home_location="${target_dir}/${app}.desktop"
+      rm -f "${home_location}"
       cp "${default_location}" "${home_location}"
+      chmod u+w "${home_location}"
       sed -i "s/NoDisplay=\(true\|false\)//g" "${home_location}" > /dev/null
-      echo "NoDisplay=true" | tee -a "${home_location}" > /dev/null
+      echo "NoDisplay=true" >> "${home_location}"
     fi
   }
 
@@ -115,6 +118,36 @@ EOF
   [[ "$content" =~ "NoDisplay=true" ]]
 
   rm -rf "/tmp/test-local-apps"
+}
+
+@test "_hide_app correctly handles read-only source desktop files and read-only target files" {
+  local mock_app="readonlyapp"
+  local mock_sys_dir="$TEST_DIR/sys_apps"
+  mkdir -p "$mock_sys_dir"
+  cat << 'EOF' > "$mock_sys_dir/${mock_app}.desktop"
+[Desktop Entry]
+Type=Application
+Name=ReadOnlyApp
+Exec=readonlyapp
+NoDisplay=false
+EOF
+  chmod 444 "$mock_sys_dir/${mock_app}.desktop"
+
+  local target_dir
+  target_dir="$(_get_target_dir)"
+  mkdir -p "$target_dir"
+  cp "$mock_sys_dir/${mock_app}.desktop" "$target_dir/${mock_app}.desktop"
+  chmod 444 "$target_dir/${mock_app}.desktop"
+
+  SYSTEM_APPLICATIONS_DIR="$mock_sys_dir" run _hide_app "$mock_app"
+  [ "$status" -eq 0 ]
+  [ -f "$target_dir/${mock_app}.desktop" ]
+  [ -w "$target_dir/${mock_app}.desktop" ]
+
+  local content
+  content="$(cat "$target_dir/${mock_app}.desktop")"
+  [[ "$content" =~ "NoDisplay=true" ]]
+  [[ ! "$content" =~ "NoDisplay=false" ]]
 }
 
 @test "APPS does not contain nvim or btop and UNHIDE_APPS contains them" {

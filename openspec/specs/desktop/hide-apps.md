@@ -48,6 +48,7 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
   - Check if the system `.desktop` file exists in `/usr/share/applications/<app>.desktop` or `/usr/local/share/applications/<app>.desktop`.
   - If the system file does not exist, safely skip it without errors.
   - If it exists, copy it to `${XDG_DATA_HOME:-$HOME/.local/share}/applications/<app>.desktop`.
+  - Ensure the destination file is writable by the user (`chmod u+w`), accounting for read-only system files (e.g., `cups.desktop` on Arch Linux).
   - Ensure any existing `NoDisplay=` setting is removed, and set `NoDisplay=true`.
 - For applications explicitly excluded from being hidden (e.g., `nvim`, `btop`):
   - If a user override exists in `${XDG_DATA_HOME:-$HOME/.local/share}/applications/<app>.desktop` with `NoDisplay=true`, remove the local file to restore visibility.

@@ -35,10 +35,12 @@ _get_target_dir() {
 
 _hide_app() {
   local app="$1"
-  local default_location="/usr/share/applications/${app}.desktop"
+  local default_dir="${SYSTEM_APPLICATIONS_DIR:-/usr/share/applications}"
+  local local_dir="${LOCAL_APPLICATIONS_DIR:-/usr/local/share/applications}"
+  local default_location="${default_dir}/${app}.desktop"
 
-  if [ ! -f "${default_location}" ] && [ -f "/usr/local/share/applications/${app}.desktop" ]; then
-    default_location="/usr/local/share/applications/${app}.desktop"
+  if [ ! -f "${default_location}" ] && [ -f "${local_dir}/${app}.desktop" ]; then
+    default_location="${local_dir}/${app}.desktop"
   fi
 
   if [ -f "${default_location}" ]; then
@@ -47,9 +49,11 @@ _hide_app() {
     mkdir -p "${target_dir}"
 
     local home_location="${target_dir}/${app}.desktop"
+    rm -f "${home_location}"
     cp "${default_location}" "${home_location}"
+    chmod u+w "${home_location}"
     sed -i "s/NoDisplay=\(true\|false\)//g" "${home_location}" > /dev/null
-    echo "NoDisplay=true" | tee -a "${home_location}" > /dev/null
+    echo "NoDisplay=true" >> "${home_location}"
   fi
 }
 
