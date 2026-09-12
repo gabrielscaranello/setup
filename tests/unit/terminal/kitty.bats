@@ -226,3 +226,35 @@ DESKTOP_OPEN
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed from binary" ]]
 }
+
+@test "_install_kitty_repo installs kitty and links x-terminal-emulator" {
+  source /setup/scripts/terminal/setup-kitty.sh
+  local test_bin_dir="/tmp/test-kitty-repo-bin"
+  mkdir -p "$test_bin_dir"
+  touch "$test_bin_dir/kitty"
+  chmod +x "$test_bin_dir/kitty"
+
+  install_packages() {
+    echo "install_packages called with: $*"
+    return 0
+  }
+
+  _link_binary() {
+    echo "_link_binary called with: $1 -> $2"
+  }
+
+  command() {
+    if [ "${2:-}" = "kitty" ]; then
+      echo "$test_bin_dir/kitty"
+      return 0
+    fi
+    builtin command "$@"
+  }
+
+  run _install_kitty_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "install_packages called with: kitty" ]]
+  [[ "$output" =~ "_link_binary called with: $test_bin_dir/kitty -> x-terminal-emulator" ]]
+
+  rm -rf "$test_bin_dir"
+}

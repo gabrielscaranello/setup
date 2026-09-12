@@ -43,12 +43,17 @@ _link_binary() {
     return 0
   fi
 
+  mkdir -p "$user_bin"
   ln -sf "$src" "$user_bin/$name"
 
   if [ -w "/usr/local/bin" ]; then
     ln -sf "$src" "/usr/local/bin/$name"
-  elif command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
-    sudo ln -sf "$src" "/usr/local/bin/$name" 2> /dev/null || true
+  elif command -v sudo > /dev/null 2>&1; then
+    if sudo -n true 2> /dev/null; then
+      sudo ln -sf "$src" "/usr/local/bin/$name" 2> /dev/null || true
+    elif [ -t 0 ]; then
+      sudo ln -sf "$src" "/usr/local/bin/$name" 2> /dev/null || true
+    fi
   fi
 }
 
@@ -125,6 +130,12 @@ _install_kitty_binary() {
 _install_kitty_repo() {
   echo "Installing kitty from distribution repository..."
   install_packages kitty
+
+  local bin_kitty
+  bin_kitty="$(command -v kitty 2> /dev/null || echo "/usr/bin/kitty")"
+  if [ -x "$bin_kitty" ]; then
+    _link_binary "$bin_kitty" "x-terminal-emulator"
+  fi
 }
 
 _install_kitty() {
