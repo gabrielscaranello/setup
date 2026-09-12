@@ -8,7 +8,6 @@ APPS=(
   avahi-discover
   bottom
   bssh
-  btop
   bvnc
   designer
   display-im7.q16
@@ -16,12 +15,16 @@ APPS=(
   lstopo
   mpv
   nm-connection-editor
-  nvim
   org.gnome.Extensions
   org.gnome.Tour
   qdbusviewer
   qv4l2
   qvidcap
+)
+
+UNHIDE_APPS=(
+  btop
+  nvim
 )
 
 _get_target_dir() {
@@ -48,6 +51,17 @@ _hide_app() {
   fi
 }
 
+_unhide_app() {
+  local app="$1"
+  local target_dir
+  target_dir="$(_get_target_dir)"
+  local home_location="${target_dir}/${app}.desktop"
+
+  if [ -f "${home_location}" ] && grep -q "^NoDisplay=true" "${home_location}" 2> /dev/null; then
+    rm -f "${home_location}"
+  fi
+}
+
 _hide_desktop_apps() {
   echo "Hiding unwanted desktop applications..."
 
@@ -58,6 +72,10 @@ _hide_desktop_apps() {
   local app
   for app in "${APPS[@]}"; do
     _hide_app "$app"
+  done
+
+  for app in "${UNHIDE_APPS[@]}"; do
+    _unhide_app "$app"
   done
 
   echo "Desktop applications hidden."

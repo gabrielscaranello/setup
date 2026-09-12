@@ -24,7 +24,6 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `avahi-discover`: Avahi Zeroconf Discovery
 - `bottom`: Bottom terminal system monitor
 - `bssh`: Avahi SSH Server Browser
-- `btop`: btop terminal resource monitor
 - `bvnc`: Avahi VNC Server Browser
 - `designer`: Qt Designer
 - `display-im7.q16`: ImageMagick Display GUI
@@ -32,20 +31,24 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `lstopo`: hwloc hardware topology viewer
 - `mpv`: mpv media player (CLI player launcher)
 - `nm-connection-editor`: Network Connections Editor (redundant with desktop settings)
-- `nvim`: Neovim editor (terminal application)
 - `org.gnome.Extensions`: Standalone GNOME Extensions tool (redundant)
 - `org.gnome.Tour`: GNOME Tour welcome application
 - `qdbusviewer`: Qt D-Bus Viewer
 - `qv4l2`: V4L2 Test Utility
 - `qvidcap`: V4L2 Video Capture Utility
 
-### 3. File Existence Check & Idempotency
+> [!NOTE]
+> Developer tools with desired desktop menu presence (such as `nvim` and `btop`) must NOT be hidden.
+
+### 3. File Existence Check, Idempotency & Unhide Cleanup
 
 - For each target application:
   - Check if the system `.desktop` file exists in `/usr/share/applications/<app>.desktop` or `/usr/local/share/applications/<app>.desktop`.
   - If the system file does not exist, safely skip it without errors.
   - If it exists, copy it to `${XDG_DATA_HOME:-$HOME/.local/share}/applications/<app>.desktop`.
   - Ensure any existing `NoDisplay=` setting is removed, and set `NoDisplay=true`.
+- For applications explicitly excluded from being hidden (e.g., `nvim`, `btop`):
+  - If a user override exists in `${XDG_DATA_HOME:-$HOME/.local/share}/applications/<app>.desktop` with `NoDisplay=true`, remove the local file to restore visibility.
 - Executing the script multiple times produces identical configuration files and preserves idempotency.
 
 ## Test Scenarios
@@ -54,9 +57,9 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 
 **Scenario: Hide existing system application**
 
-- **GIVEN** a system `.desktop` file exists in `/usr/share/applications/nvim.desktop`
+- **GIVEN** a system `.desktop` file exists in `/usr/share/applications/bottom.desktop`
 - **WHEN** `setup-hide-apps.sh` is executed
-- **THEN** it should copy the file to `~/.local/share/applications/nvim.desktop`
+- **THEN** it should copy the file to `~/.local/share/applications/bottom.desktop`
 - **AND** the local file should contain `NoDisplay=true`
 - **AND** the exit code should be 0
 
@@ -69,7 +72,15 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 
 **Scenario: Idempotent execution**
 
-- **GIVEN** `~/.local/share/applications/btop.desktop` already has `NoDisplay=true`
+- **GIVEN** `~/.local/share/applications/bottom.desktop` already has `NoDisplay=true`
 - **WHEN** `setup-hide-apps.sh` is executed again
-- **THEN** `~/.local/share/applications/btop.desktop` should remain valid with `NoDisplay=true` without duplicate entries
+- **THEN** `~/.local/share/applications/bottom.desktop` should remain valid with `NoDisplay=true` without duplicate entries
+- **AND** the exit code should be 0
+
+**Scenario: Unhide explicitly excluded applications**
+
+- **GIVEN** a user override exists in `~/.local/share/applications/nvim.desktop` or `btop.desktop` with `NoDisplay=true`
+- **WHEN** `setup-hide-apps.sh` is executed
+- **THEN** `~/.local/share/applications/nvim.desktop` and `btop.desktop` should be removed to restore visibility
+- **AND** `nvim` and `btop` must NOT be present in the hidden apps list
 - **AND** the exit code should be 0

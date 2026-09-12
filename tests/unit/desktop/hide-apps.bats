@@ -117,16 +117,76 @@ EOF
   rm -rf "/tmp/test-local-apps"
 }
 
-@test "_hide_desktop_apps iterates over APPS and hides found apps" {
-  local called_apps=()
+@test "APPS does not contain nvim or btop and UNHIDE_APPS contains them" {
+  local app
+  for app in "${APPS[@]}"; do
+    [ "$app" != "nvim" ]
+    [ "$app" != "btop" ]
+  done
+
+  local has_nvim=0
+  local has_btop=0
+  for app in "${UNHIDE_APPS[@]}"; do
+    if [ "$app" = "nvim" ]; then has_nvim=1; fi
+    if [ "$app" = "btop" ]; then has_btop=1; fi
+  done
+  [ "$has_nvim" -eq 1 ]
+  [ "$has_btop" -eq 1 ]
+}
+
+@test "_unhide_app removes local desktop file when NoDisplay=true is present" {
+  local target_dir
+  target_dir="$(_get_target_dir)"
+  mkdir -p "$target_dir"
+  cat << 'EOF' > "$target_dir/nvim.desktop"
+[Desktop Entry]
+Type=Application
+Name=Neovim
+Exec=nvim
+NoDisplay=true
+EOF
+
+  run _unhide_app "nvim"
+  [ "$status" -eq 0 ]
+  [ ! -f "$target_dir/nvim.desktop" ]
+}
+
+@test "_unhide_app preserves local desktop file when NoDisplay=true is absent" {
+  local target_dir
+  target_dir="$(_get_target_dir)"
+  mkdir -p "$target_dir"
+  cat << 'EOF' > "$target_dir/custom.desktop"
+[Desktop Entry]
+Type=Application
+Name=Custom
+Exec=custom
+EOF
+
+  run _unhide_app "custom"
+  [ "$status" -eq 0 ]
+  [ -f "$target_dir/custom.desktop" ]
+}
+
+@test "_unhide_app does nothing when target file does not exist" {
+  run _unhide_app "nonexistent"
+  [ "$status" -eq 0 ]
+}
+
+@test "_hide_desktop_apps iterates over APPS and hides found apps, and unhides UNHIDE_APPS" {
   _hide_app() {
-    called_apps+=("$1")
+    echo "hiding: $1"
+  }
+  _unhide_app() {
+    echo "unhiding: $1"
   }
 
   run _hide_desktop_apps
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Hiding unwanted desktop applications..." ]]
   [[ "$output" =~ "Desktop applications hidden." ]]
+  [[ "$output" =~ "hiding: bottom" ]]
+  [[ "$output" =~ "unhiding: nvim" ]]
+  [[ "$output" =~ "unhiding: btop" ]]
 }
 
 @test "main executes _hide_desktop_apps successfully" {
