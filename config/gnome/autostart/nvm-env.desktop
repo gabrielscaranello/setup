@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=NVM Environment Initialization
+Comment=Initializes NVM and Node environment on GNOME login
+Exec=sh -c 'if [ -f "$HOME/.config/gnome/env/nvm.sh" ]; then . "$HOME/.config/gnome/env/nvm.sh"; fi'
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;

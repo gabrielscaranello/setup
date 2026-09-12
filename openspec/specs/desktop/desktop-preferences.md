@@ -57,6 +57,13 @@ Supports both primary desktop environments:
    - GNOME Text Editor: highlight current line, space indentation, dark style scheme.
    - System Monitor: custom CPU core colors, resources tab default, user processes filter.
 
+#### GNOME Workspace Startup Environment Script for NVM
+
+- Sourced from template `config/gnome/env/nvm.sh` and deployed to `~/.config/gnome/env/nvm.sh`.
+- XDG autostart desktop entry deployed from `config/gnome/autostart/nvm-env.desktop` to `~/.config/autostart/nvm-env.desktop`.
+- Systemd user environment generator deployed to `~/.config/systemd/user-environment-generators/10-nvm.sh` to inject `NVM_DIR`, `NVM_BIN`, and Node `PATH` early in the session lifecycle for GNOME Shell and all child processes.
+- Idempotent: safe to run multiple times without duplicating or overwriting user configurations.
+
 ---
 
 ### 2. KDE Plasma 6 Desktop Environment Preferences (Approach 2: Granular CLI)

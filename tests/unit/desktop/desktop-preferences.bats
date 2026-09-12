@@ -99,3 +99,23 @@ teardown() {
   run main
   [ "$status" -ne 0 ]
 }
+
+@test "_setup_gnome_workspace_env deploys nvm.sh and autostart desktop entry" {
+  local test_home="/tmp/test-gnome-workspace-env-home"
+  mkdir -p "$test_home/.config"
+
+  HOME="$test_home" run _setup_gnome_workspace_env
+  [ "$status" -eq 0 ]
+  [ -f "$test_home/.config/gnome/env/nvm.sh" ]
+  [ -x "$test_home/.config/gnome/env/nvm.sh" ]
+  [ -f "$test_home/.config/autostart/nvm-env.desktop" ]
+  [ -f "$test_home/.config/systemd/user-environment-generators/10-nvm.sh" ]
+  [ -x "$test_home/.config/systemd/user-environment-generators/10-nvm.sh" ]
+
+  rm -rf "$test_home"
+}
+
+@test "_setup_gnome_workspace_env does nothing if template is missing" {
+  GNOME_WORKSPACE_ENV_NVM="/nonexistent/nvm.sh" run _setup_gnome_workspace_env
+  [ "$status" -eq 0 ]
+}
