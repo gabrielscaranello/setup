@@ -222,7 +222,136 @@ EOF
   source /setup/scripts/apps/setup-default-apps.sh
   _set_default_terminal() { return 0; }
   _set_default_video_player() { return 0; }
+  _set_default_audio_player() { return 0; }
+  _set_default_web_browser() { return 0; }
+  _set_default_office_suite() { return 0; }
+  _set_default_pdf_viewer() { return 0; }
+  _set_default_image_viewer() { return 0; }
+  _set_default_text_editor() { return 0; }
+  _set_added_associations() { return 0; }
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-default-apps complete" ]]
 }
+
+@test "_set_default_audio_player sets vlc.desktop for audio MIME types" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-audio-home"
+  mkdir -p "$test_home"
+
+  HOME="$test_home" _set_default_audio_player
+
+  [ -f "$test_home/.config/mimeapps.list" ]
+  grep -q "^audio/mpeg=vlc.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^audio/flac=vlc.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^audio/ogg=vlc.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_web_browser sets resolved browser for web schemes and formats" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-browser-home"
+  mkdir -p "$test_home"
+
+  resolve_desktop_app() { echo "firefox.desktop"; }
+
+  HOME="$test_home" _set_default_web_browser
+
+  [ -f "$test_home/.config/mimeapps.list" ]
+  grep -q "^text/html=firefox.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^x-scheme-handler/http=firefox.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^x-scheme-handler/https=firefox.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_office_suite sets ONLYOFFICE for document, spreadsheet, and presentation formats" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-office-home"
+  mkdir -p "$test_home"
+
+  resolve_desktop_app() { echo "org.onlyoffice.desktopeditors.desktop"; }
+
+  HOME="$test_home" _set_default_office_suite
+
+  [ -f "$test_home/.config/mimeapps.list" ]
+  grep -q "^application/vnd.openxmlformats-officedocument.wordprocessingml.document=org.onlyoffice.desktopeditors.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=org.onlyoffice.desktopeditors.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^application/vnd.openxmlformats-officedocument.presentationml.presentation=org.onlyoffice.desktopeditors.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_pdf_viewer resolves Evince on GNOME and Okular on Plasma" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-pdf-home"
+  mkdir -p "$test_home"
+
+  get_desktop_environment() { echo "gnome"; }
+  resolve_desktop_app() { echo "$1"; }
+
+  HOME="$test_home" _set_default_pdf_viewer
+  grep -q "^application/pdf=org.gnome.Evince.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "plasma"; }
+  HOME="$test_home" _set_default_pdf_viewer
+  grep -q "^application/pdf=org.kde.okular.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_image_viewer resolves Loupe on GNOME and Gwenview on Plasma" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-image-home"
+  mkdir -p "$test_home"
+
+  get_desktop_environment() { echo "gnome"; }
+  resolve_desktop_app() { echo "$1"; }
+
+  HOME="$test_home" _set_default_image_viewer
+  grep -q "^image/png=org.gnome.Loupe.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "plasma"; }
+  HOME="$test_home" _set_default_image_viewer
+  grep -q "^image/png=org.kde.gwenview.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_text_editor resolves TextEditor on GNOME and Kate on Plasma" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-text-home"
+  mkdir -p "$test_home"
+
+  get_desktop_environment() { echo "gnome"; }
+  resolve_desktop_app() { echo "$1"; }
+
+  HOME="$test_home" _set_default_text_editor
+  grep -q "^text/plain=org.gnome.TextEditor.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "plasma"; }
+  HOME="$test_home" _set_default_text_editor
+  grep -q "^text/plain=org.kde.kate.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_added_associations configures secondary associations in mimeapps.list" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-added-home"
+  mkdir -p "$test_home"
+
+  resolve_desktop_app() { echo "$1"; }
+
+  HOME="$test_home" _set_added_associations
+
+  [ -f "$test_home/.config/mimeapps.list" ]
+  grep -q "^\[Added Associations\]" "$test_home/.config/mimeapps.list"
+  grep -q "^x-scheme-handler/https=firefox.desktop;chromium.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^image/png=gimp.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^text/plain=codium.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+

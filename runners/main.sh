@@ -26,7 +26,7 @@ Available Commands:
   codecs                  - Install Multimedia Codecs and A/V Plugins
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
-  default-apps            - Configure default desktop applications (MIME / Kitty terminal)
+  default-apps            - Configure default desktop applications (MIME types, handlers, terminal)
   desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
   desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
   discord                 - Install Discord

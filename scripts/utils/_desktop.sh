@@ -59,3 +59,18 @@ ensure_desktop_environment() {
   save_desktop_environment "$de"
   echo "$de"
 }
+
+resolve_desktop_app() {
+  local candidate
+  for candidate in "$@"; do
+    if [ -f "/usr/share/applications/$candidate" ] \
+      || [ -f "/usr/local/share/applications/$candidate" ] \
+      || [ -f "/var/lib/flatpak/exports/share/applications/$candidate" ] \
+      || [ -f "$HOME/.local/share/flatpak/exports/share/applications/$candidate" ] \
+      || [ -f "$HOME/.local/share/applications/$candidate" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  echo "$1"
+}

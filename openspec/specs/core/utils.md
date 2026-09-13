@@ -85,6 +85,38 @@ The utility function `get_desktop_environment` SHALL detect the active desktop e
 
 ---
 
+### Requirement: Desktop Environment Selection & Persistence
+
+The utility functions `save_desktop_environment`, `prompt_desktop_environment`, and `ensure_desktop_environment` SHALL persist user selection and guarantee a valid desktop environment is determined.
+
+#### Scenario: Persisting desktop environment
+
+- **GIVEN** a desktop environment identifier (e.g. `plasma` or `gnome`)
+- **WHEN** `save_desktop_environment <de>` is called
+- **THEN** it SHALL set `TARGET_DE` in environment and save to `~/.config/setup/desktop-environment`
+
+#### Scenario: Prompting for desktop environment in interactive vs non-interactive mode
+
+- **GIVEN** desktop environment is not active or unknown
+- **WHEN** `prompt_desktop_environment` is called interactively
+- **THEN** it SHALL prompt the user to choose between KDE Plasma and GNOME
+- **AND** when non-interactive, it SHALL return the fallback desktop environment (`plasma` by default)
+
+---
+
+### Requirement: Desktop Application Candidate Resolution
+
+The utility function `resolve_desktop_app` SHALL inspect standard system and user application paths to resolve the first matching `.desktop` entry among provided candidates.
+
+#### Scenario: Resolving candidate desktop application
+
+- **GIVEN** candidate `.desktop` filenames (e.g. `org.mozilla.firefox.desktop` and `firefox.desktop`)
+- **WHEN** `resolve_desktop_app` is called
+- **THEN** it SHALL check `/usr/share/applications`, `/usr/local/share/applications`, `/var/lib/flatpak/exports/share/applications`, `~/.local/share/flatpak/exports/share/applications`, and `~/.local/share/applications`
+- **AND** return the first existing candidate, or fall back to the first argument if none are found
+
+---
+
 ### Requirement: Root Filesystem Detection
 
 The utility function `get_root_filesystem` SHALL determine the filesystem type of the root partition (`/`).
