@@ -8,9 +8,9 @@ source "scripts/_utils.sh" 2> /dev/null || true
 LAZYGIT_API_URL="https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
 
 _fetch_remote_version() {
-  local version=""
-  version="$(fetch_url "$LAZYGIT_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  echo "$version" | tr -d '[:space:]'
+  local ver
+  ver="$(fetch_github_latest_version "jesseduffield/lazygit")"
+  echo "${ver#v}"
 }
 
 _get_local_version() {
@@ -22,18 +22,8 @@ _get_local_version() {
 }
 
 _is_lazygit_up_to_date() {
-  local local_ver remote_ver
-  local_ver="$(_get_local_version)"
-  if [ -z "$local_ver" ]; then
-    return 1
-  fi
-
-  remote_ver="$(_fetch_remote_version)"
-  if [ -n "$remote_ver" ] && [ "$local_ver" = "$remote_ver" ]; then
-    return 0
-  fi
-
-  return 1
+  local target_ver="${1:-$(_fetch_remote_version)}"
+  is_version_up_to_date "$(_get_local_version)" "$target_ver"
 }
 
 _resolve_lazygit_arch() {
@@ -55,7 +45,7 @@ _install_lazygit_binary() {
     echo "Warning: Could not fetch latest lazygit version from GitHub API" >&2
   fi
 
-  if [ -n "$latest_version" ] && _is_lazygit_up_to_date; then
+  if [ -n "$latest_version" ] && _is_lazygit_up_to_date "$latest_version"; then
     echo "lazygit is already up to date (version: ${latest_version}), skipping installation."
     return 0
   fi
@@ -71,33 +61,11 @@ _install_lazygit_binary() {
     fi
   fi
 
-  local arch
+  local arch file_name
   arch="$(_resolve_lazygit_arch)"
-  local file_name="lazygit_${latest_version}_Linux_${arch}.tar.gz"
-  local download_url="https://github.com/jesseduffield/lazygit/releases/download/v${latest_version}/${file_name}"
-  local output_file="/tmp/${file_name}"
-  local extract_dir="/tmp/lazygit-extract"
-  local target_dir="/usr/local/bin"
+  file_name="lazygit_${latest_version}_Linux_${arch}.tar.gz"
 
-  echo "Installing Lazygit ($latest_version)..."
-
-  echo "Removing old build files if they exist..."
-  rm -rf "$output_file" "$extract_dir"
-
-  echo "Downloading Lazygit..."
-  download_file "$download_url" "$output_file"
-
-  echo "Extracting Lazygit..."
-  mkdir -p "$extract_dir"
-  tar -xzf "$output_file" -C "$extract_dir"
-
-  echo "Installing Lazygit to $target_dir..."
-  sudo install "$extract_dir/lazygit" "$target_dir/"
-
-  echo "Cleaning up temporary files..."
-  rm -rf "$output_file" "$extract_dir"
-
-  echo "Lazygit installed successfully at $(command -v lazygit || echo '/usr/local/bin/lazygit')"
+  install_github_binary "Lazygit" "jesseduffield/lazygit" "$latest_version" "$file_name" "lazygit"
 }
 
 _install_lazygit_repo() {
@@ -107,10 +75,7 @@ _install_lazygit_repo() {
 
 _install_lazygit() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch)

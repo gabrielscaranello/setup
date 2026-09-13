@@ -7,33 +7,13 @@ setup() {
   source /setup/scripts/terminal/setup-lazygit.sh
 }
 
-@test "_fetch_remote_version returns trimmed version string using curl" {
-  curl() {
-    echo '{"tag_name": "v0.64.1"}'
-    return 0
-  }
-  command() {
-    if [ "${2:-}" = "curl" ]; then return 0; fi
-    builtin command "$@"
+@test "_fetch_remote_version delegates to fetch_github_latest_version with correct repo" {
+  fetch_github_latest_version() {
+    echo "called with: $*"
   }
   run _fetch_remote_version
   [ "$status" -eq 0 ]
-  [ "$output" = "0.64.1" ]
-}
-
-@test "_fetch_remote_version uses wget when curl is unavailable" {
-  command() {
-    if [ "${2:-}" = "curl" ]; then return 1; fi
-    if [ "${2:-}" = "wget" ]; then return 0; fi
-    builtin command "$@"
-  }
-  wget() {
-    echo '{"tag_name": "v0.64.1"}'
-    return 0
-  }
-  run _fetch_remote_version
-  [ "$status" -eq 0 ]
-  [ "$output" = "0.64.1" ]
+  [[ "$output" =~ "called with: jesseduffield/lazygit" ]]
 }
 
 @test "_get_local_version parses version correctly from lazygit command" {

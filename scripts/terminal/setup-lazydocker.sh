@@ -8,9 +8,9 @@ source "scripts/_utils.sh" 2> /dev/null || true
 LAZYDOCKER_API_URL="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
 
 _fetch_remote_version() {
-  local version=""
-  version="$(fetch_url "$LAZYDOCKER_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  echo "$version" | tr -d '[:space:]'
+  local ver
+  ver="$(fetch_github_latest_version "jesseduffield/lazydocker")"
+  echo "${ver#v}"
 }
 
 _get_local_version() {
@@ -24,18 +24,8 @@ _get_local_version() {
 }
 
 _is_lazydocker_up_to_date() {
-  local local_ver remote_ver
-  local_ver="$(_get_local_version)"
-  if [ -z "$local_ver" ]; then
-    return 1
-  fi
-
-  remote_ver="$(_fetch_remote_version)"
-  if [ -n "$remote_ver" ] && [ "$local_ver" = "$remote_ver" ]; then
-    return 0
-  fi
-
-  return 1
+  local target_ver="${1:-$(_fetch_remote_version)}"
+  is_version_up_to_date "$(_get_local_version)" "$target_ver"
 }
 
 _resolve_lazydocker_arch() {
@@ -56,7 +46,7 @@ _install_lazydocker_binary() {
     echo "Warning: Could not fetch latest lazydocker version from GitHub API" >&2
   fi
 
-  if [ -n "$latest_version" ] && _is_lazydocker_up_to_date; then
+  if [ -n "$latest_version" ] && _is_lazydocker_up_to_date "$latest_version"; then
     echo "lazydocker is already up to date (version: ${latest_version}), skipping installation."
     return 0
   fi
@@ -76,30 +66,7 @@ _install_lazydocker_binary() {
   fi
 
   local file_name="lazydocker_${latest_version}_Linux_${arch}.tar.gz"
-  local download_url="https://github.com/jesseduffield/lazydocker/releases/download/v${latest_version}/${file_name}"
-  local output_file="/tmp/${file_name}"
-  local extract_dir="/tmp/lazydocker-extract"
-  local target_dir="/usr/local/bin"
-
-  echo "Installing Lazydocker ($latest_version)..."
-
-  echo "Removing old build files if they exist..."
-  rm -rf "$output_file" "$extract_dir"
-
-  echo "Downloading Lazydocker..."
-  download_file "$download_url" "$output_file"
-
-  echo "Extracting Lazydocker..."
-  mkdir -p "$extract_dir"
-  tar -xzf "$output_file" -C "$extract_dir"
-
-  echo "Installing Lazydocker to $target_dir..."
-  sudo install "$extract_dir/lazydocker" "$target_dir/"
-
-  echo "Cleaning up temporary files..."
-  rm -rf "$output_file" "$extract_dir"
-
-  echo "Lazydocker installed successfully at $(command -v lazydocker || echo '/usr/local/bin/lazydocker')"
+  install_github_binary "Lazydocker" "jesseduffield/lazydocker" "$latest_version" "$file_name" "lazydocker"
 }
 
 _install_lazydocker_repo() {
@@ -109,10 +76,7 @@ _install_lazydocker_repo() {
 
 _install_lazydocker() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch)
