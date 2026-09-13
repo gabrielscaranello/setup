@@ -124,3 +124,67 @@ The utility functions `download_file` and `fetch_url` SHALL handle remote HTTP/H
 - **WHEN** `download_file <url> <dest>` is called
 - **THEN** it SHALL successfully save the file using `curl` if available, or `wget` as fallback
 - **AND** verify that the destination file was created with non-zero size
+
+---
+
+### Requirement: GitHub Release Version Resolution
+
+The utility function `fetch_github_latest_version` SHALL query the GitHub API for the latest release tag of a repository and fallback to GitHub's HTTP redirect endpoint to remain resilient against API rate limits.
+
+#### Scenario: Resolving latest version tag
+
+- **GIVEN** a GitHub repository slug (`owner/repo`)
+- **WHEN** `fetch_github_latest_version <owner/repo>` is called
+- **THEN** it SHALL return the latest release tag (e.g. `v0.65.1`) without extra whitespace
+- **AND** if the GitHub API returns rate-limit or error, it SHALL fall back to the redirect target of `https://github.com/<owner>/<repo>/releases/latest`
+
+---
+
+### Requirement: Distribution Validation Guard
+
+The utility function `require_supported_distro` SHALL validate that the current operating system is one of `debian`, `fedora`, or `arch`.
+
+#### Scenario: Supported distribution
+
+- **GIVEN** current distribution is `debian`, `fedora`, or `arch`
+- **WHEN** `require_supported_distro` is called
+- **THEN** it SHALL output the distro ID to stdout and return 0
+
+#### Scenario: Unsupported distribution
+
+- **GIVEN** current distribution is not `debian`, `fedora`, or `arch`
+- **WHEN** `require_supported_distro` is called
+- **THEN** it SHALL print an error to stderr and return 1
+
+---
+
+### Requirement: Version Comparison Helper
+
+The utility function `is_version_up_to_date` SHALL compare local and remote version strings idempotently.
+
+#### Scenario: Versions match
+
+- **GIVEN** local version equals remote version and neither is empty
+- **WHEN** `is_version_up_to_date <local> <remote>` is called
+- **THEN** it SHALL return 0
+
+#### Scenario: Versions differ or missing
+
+- **GIVEN** local version is empty or does not equal remote version
+- **WHEN** `is_version_up_to_date <local> <remote>` is called
+- **THEN** it SHALL return 1
+
+---
+
+### Requirement: Idempotent GitHub Release Binary Installation
+
+The utility function `install_github_binary` SHALL download, extract, and install a single binary from a GitHub release tarball into `/usr/local/bin` idempotently.
+
+#### Scenario: Installing release binary
+
+- **GIVEN** a tool name, repo slug, version, archive file name, and binary name
+- **WHEN** `install_github_binary <name> <repo> <version> <file_name> <bin_name>` is called
+- **THEN** it SHALL download the archive using `download_file`
+- **AND** extract the archive into a temporary folder
+- **AND** install the target binary to `/usr/local/bin/<bin_name>`
+- **AND** clean up all temporary files after installation

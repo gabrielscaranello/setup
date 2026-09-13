@@ -30,6 +30,7 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 
 - `install_packages <generic_pkg>...`: Resolves packages across distributions via `packages.conf` and installs them idempotently.
 - `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
+- `require_supported_distro`: Validates that current system is supported (`debian`, `fedora`, `arch`) and prints distro ID; exits 1 otherwise.
 - `is_distro <distro>`: Checks whether current system matches target distribution.
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
@@ -37,11 +38,16 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
 - `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
+- `fetch_github_latest_version <owner/repo>`: Resolves latest release tag from GitHub with resilient fallback against API rate limits.
+- `is_version_up_to_date <local_ver> <remote_ver>`: Compares local and remote version strings idempotently.
+- `install_github_binary <name> <repo> <version> <file_name> <bin_name>`: Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
 
 ### 3. Distribution-Specific Repository Utilities
 
 Third-party repository configurations must reside in their respective distro helper modules:
 
+- **Shared GPU Repositories (`scripts/system/_gpu_utils.sh`)**:
+  - `configure_gpu_repositories`: Idempotently configures non-free, multilib, or RPM Fusion repositories needed for GPU graphics drivers.
 - **Arch Linux (`scripts/system/arch/_repositories.sh`)**:
   - `add_arch_multilib_repo`: Idempotently enables the multilib repository in `/etc/pacman.conf` and updates the pacman database.
 - **Debian (`scripts/system/debian/_repositories.sh`)**:

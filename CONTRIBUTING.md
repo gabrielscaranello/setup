@@ -29,6 +29,7 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 │   ├── apps/                      # Application setup scripts
 │   ├── security/                  # Security setup scripts
 │   ├── system/                    # System & OS setup scripts
+│   │   └── _gpu_utils.sh          # Shared GPU repository utilities (configure_gpu_repositories)
 │   ├── terminal/                  # Terminal tools & fonts setup scripts
 │   └── toolchain/                 # Dev runtimes & toolchains
 └── tests/                         # Test suite
@@ -55,8 +56,9 @@ source "scripts/_utils.sh" 2> /dev/null || true
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
 - **Rule for One-Line Functions**: Do not create trivial one-line proxy functions if called in only one place. Inline the helper or command directly. Only keep one-line functions if reused across multiple locations.
-- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_distro_id`, `is_distro`, `get_desktop_environment`, `get_root_filesystem`, `get_shell_profile`, `install_flatpak_app`, `download_file`, `fetch_url`).
+- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_distro_id`, `require_supported_distro`, `is_distro`, `get_desktop_environment`, `get_root_filesystem`, `get_shell_profile`, `install_flatpak_app`, `download_file`, `fetch_url`, `fetch_github_latest_version`, `is_version_up_to_date`, `install_github_binary`).
 - **Distribution Repository Helpers**: Reuse distro repository utilities for adding upstream or third-party repositories:
+  - GPU Repositories (`scripts/system/_gpu_utils.sh`): `configure_gpu_repositories`.
   - Arch Linux (`scripts/system/arch/_repositories.sh`): `add_arch_multilib_repo`.
   - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.

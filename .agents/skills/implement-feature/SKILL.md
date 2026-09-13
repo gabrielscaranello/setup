@@ -62,8 +62,13 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   7. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
   8. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
   9. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+  10. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`) and prints distro ID; exits 1 otherwise.
+  11. [`fetch_github_latest_version <owner/repo>`](../../../scripts/_utils.sh): Resolves latest release tag from GitHub with resilient fallback against API rate limits.
+  12. [`is_version_up_to_date <local_ver> <remote_ver>`](../../../scripts/_utils.sh): Compares local and remote version strings idempotently.
+  13. [`install_github_binary <name> <repo> <version> <file_name> <bin_name>`](../../../scripts/_utils.sh): Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
 - **Distribution-Specific Repository Utilities**:
   When configuring third-party or upstream repositories, reuse or register functions in:
+  - **Shared GPU Repositories (`scripts/system/_gpu_utils.sh`)**: `configure_gpu_repositories`.
   - **Arch Linux (`scripts/system/arch/_repositories.sh`)**: `add_arch_multilib_repo`.
   - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
