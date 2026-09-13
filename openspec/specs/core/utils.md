@@ -4,6 +4,14 @@
 
 Provides reusable, distribution-agnostic helper functions for system detection, desktop environment detection, root filesystem inspection, package management abstractions, network fetching, and Flatpak application provisioning across Debian, Fedora, and Arch Linux.
 
+The utility architecture adheres to the **Facade Pattern**: `scripts/_utils.sh` acts as an entry point sourcing specialized submodules located under `scripts/utils/`:
+
+- `scripts/utils/_system.sh`: OS distribution, hardware, filesystem, and shell profile utilities.
+- `scripts/utils/_packages.sh`: Generic package resolution (`packages.conf`), native package managers, and Flatpak integration.
+- `scripts/utils/_desktop.sh`: Desktop environment detection, prompts, and configuration persistence.
+- `scripts/utils/_download.sh`: Network downloads, GitHub releases, version checks, and binary installations.
+- `scripts/utils/_terminal.sh`: Terminal integration and XDG wrapper scripts (`xdg-terminal-exec`).
+
 ---
 
 ## Requirements
