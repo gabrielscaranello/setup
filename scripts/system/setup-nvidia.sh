@@ -7,9 +7,7 @@ set -euo pipefail
 # container integration tests. Bare-metal validation on physical NVIDIA/hybrid hardware
 # is pending and will be performed to verify real-world edge cases.
 source "scripts/_utils.sh" 2> /dev/null || true
-source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
-source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 
 _detect_nvidia_gpu() {
   if [ "${NVIDIA_FORCE_DETECT:-0}" = "1" ]; then
@@ -37,23 +35,6 @@ _detect_hybrid_gpu() {
   local other_gpus
   other_gpus="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iv "10de" | grep -iE 'intel|amd|advanced micro devices' || true)"
   [ -n "$other_gpus" ]
-}
-
-_configure_repositories() {
-  local distro="$1"
-
-  case "$distro" in
-    debian)
-      add_debian_nonfree_repo
-      add_debian_backports_repo
-      ;;
-    fedora)
-      add_fedora_rpmfusion_repo
-      ;;
-    arch)
-      add_arch_multilib_repo
-      ;;
-  esac
 }
 
 _install_debian_driver() {
@@ -195,18 +176,7 @@ _setup_hybrid_tools() {
 
 _setup_nvidia() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
-
-  case "$distro" in
-    debian | fedora | arch) ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
-  esac
+  distro="$(require_supported_distro)" || return 1
 
   if ! _detect_nvidia_gpu; then
     echo "No NVIDIA GPU detected. Skipping NVIDIA driver setup."
@@ -214,7 +184,7 @@ _setup_nvidia() {
   fi
 
   echo "NVIDIA GPU detected. Configuring drivers for '$distro'..."
-  _configure_repositories "$distro"
+  configure_gpu_repositories "$distro"
   _install_driver_packages "$distro"
   _configure_power_and_modeset
 

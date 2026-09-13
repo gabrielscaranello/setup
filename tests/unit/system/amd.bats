@@ -49,16 +49,16 @@ setup() {
   add_fedora_rpmfusion_repo() { echo "called rpmfusion"; }
   add_arch_multilib_repo() { echo "called multilib"; }
 
-  run _configure_repositories "debian"
+  run configure_gpu_repositories "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called nonfree" ]]
   [[ "$output" =~ "called backports" ]]
 
-  run _configure_repositories "fedora"
+  run configure_gpu_repositories "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called rpmfusion" ]]
 
-  run _configure_repositories "arch"
+  run configure_gpu_repositories "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called multilib" ]]
 }
@@ -168,7 +168,7 @@ setup() {
 @test "setup-amd main executes full flow when GPU is present" {
   get_distro_id() { echo "fedora"; }
   _detect_amd_gpu() { return 0; }
-  _configure_repositories() { return 0; }
+  configure_gpu_repositories() { return 0; }
   _install_amd_packages() { echo "amd packages installed"; return 0; }
 
   run main

@@ -7,9 +7,7 @@ set -euo pipefail
 # container integration tests. Bare-metal validation on physical AMD GPUs/APUs
 # is pending and will be performed to verify real-world hardware edge cases.
 source "scripts/_utils.sh" 2> /dev/null || true
-source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
-source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 
 _detect_amd_gpu() {
   if [ "${AMD_FORCE_DETECT:-0}" = "1" ]; then
@@ -22,23 +20,6 @@ _detect_amd_gpu() {
 
   lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iq "1002" \
     || lspci 2> /dev/null | grep -iE 'vga|3d|display' | grep -iqE "amd|advanced micro devices|radeon"
-}
-
-_configure_repositories() {
-  local distro="$1"
-
-  case "$distro" in
-    debian)
-      add_debian_nonfree_repo
-      add_debian_backports_repo
-      ;;
-    fedora)
-      add_fedora_rpmfusion_repo
-      ;;
-    arch)
-      add_arch_multilib_repo
-      ;;
-  esac
 }
 
 _install_arch_32bit_packages() {
@@ -134,18 +115,7 @@ _install_amd_packages() {
 
 _setup_amd() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
-
-  case "$distro" in
-    debian | fedora | arch) ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
-  esac
+  distro="$(require_supported_distro)" || return 1
 
   if ! _detect_amd_gpu; then
     echo "No AMD GPU detected. Skipping AMD GPU setup."
@@ -153,7 +123,7 @@ _setup_amd() {
   fi
 
   echo "AMD GPU detected. Configuring drivers and codecs for '$distro'..."
-  _configure_repositories "$distro"
+  configure_gpu_repositories "$distro"
   _install_amd_packages "$distro"
 }
 

@@ -22,7 +22,7 @@ setup_file() {
   apt)
     # In Debian, ensure contrib/non-free is present then check package availability
     source /setup/scripts/system/setup-nvidia.sh
-    _configure_repositories "apt"
+    configure_gpu_repositories "apt"
     apt-cache show nvidia-driver >/dev/null 2>&1 || apt-cache search nvidia-driver | grep -q "nvidia-driver"
     apt-cache show firmware-misc-nonfree >/dev/null 2>&1 || apt-cache search firmware-misc-nonfree | grep -q "firmware-misc-nonfree"
     ;;

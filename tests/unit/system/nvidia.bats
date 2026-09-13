@@ -64,7 +64,7 @@ setup() {
     echo "called add_fedora_rpmfusion_repo"
     return 0
   }
-  run _configure_repositories "fedora"
+  run configure_gpu_repositories "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_fedora_rpmfusion_repo" ]]
 }
@@ -74,7 +74,7 @@ setup() {
     echo "called add_arch_multilib_repo"
     return 0
   }
-  run _configure_repositories "arch"
+  run configure_gpu_repositories "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_arch_multilib_repo" ]]
 }
@@ -95,7 +95,7 @@ EOF
     return 0
   }
 
-  run _configure_repositories "debian"
+  run configure_gpu_repositories "debian"
   [ "$status" -eq 0 ]
   grep -q "contrib non-free" "$APT_DEBIAN_SOURCES"
   [[ "$output" =~ "called add_debian_backports_repo" ]]
@@ -282,7 +282,7 @@ EOF
   get_distro_id() { echo "fedora"; }
   _detect_nvidia_gpu() { return 0; }
   _detect_hybrid_gpu() { return 0; }
-  _configure_repositories() { return 0; }
+  configure_gpu_repositories() { return 0; }
   _install_driver_packages() { return 0; }
   _configure_power_and_modeset() { return 0; }
   _setup_hybrid_tools() { echo "hybrid configured"; return 0; }
