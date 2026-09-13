@@ -9,9 +9,9 @@ source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 TELEGRAM_API_URL="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
 
 _fetch_remote_version() {
-  local version=""
-  version="$(fetch_url "$TELEGRAM_API_URL" | grep -Po '"tag_name":\s*"v\K[^"]*' || true)"
-  echo "$version" | tr -d '[:space:]'
+  local ver
+  ver="$(fetch_github_latest_version "telegramdesktop/tdesktop")"
+  echo "${ver#v}"
 }
 
 _get_local_version() {
@@ -25,18 +25,8 @@ _get_local_version() {
 }
 
 _is_telegram_up_to_date() {
-  local local_ver remote_ver
-  local_ver="$(_get_local_version)"
-  if [ -z "$local_ver" ]; then
-    return 1
-  fi
-
-  remote_ver="$(_fetch_remote_version)"
-  if [ -n "$remote_ver" ] && [ "$local_ver" = "$remote_ver" ]; then
-    return 0
-  fi
-
-  return 1
+  local target_ver="${1:-$(_fetch_remote_version)}"
+  is_version_up_to_date "$(_get_local_version)" "$target_ver"
 }
 
 _setup_desktop_integration() {
@@ -92,8 +82,9 @@ _install_telegram_binary() {
     fi
   fi
 
-  local file_name="tsetup.${latest_version}.tar.xz"
+  local file_name="td-setup-linux-x64-${latest_version}.tar.xz"
   local download_url="https://github.com/telegramdesktop/tdesktop/releases/download/v${latest_version}/${file_name}"
+  local legacy_url="https://github.com/telegramdesktop/tdesktop/releases/download/v${latest_version}/tsetup.${latest_version}.tar.xz"
   local output_dir="/tmp/${file_name}"
   local extract_dir="/tmp/Telegram"
   local opt_dir="$HOME/.local/opt"
@@ -105,7 +96,7 @@ _install_telegram_binary() {
   rm -rf "$output_dir" "$target_dir" "$extract_dir"
 
   echo "Downloading Telegram..."
-  download_file "$download_url" "$output_dir"
+  download_file "$download_url" "$output_dir" || download_file "$legacy_url" "$output_dir" || download_file "https://telegram.org/dl/desktop/linux" "$output_dir"
 
   echo "Extracting Telegram..."
   mkdir -p "$opt_dir"
@@ -131,10 +122,7 @@ _install_telegram_repo() {
 
 _install_telegram() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     fedora | arch)
