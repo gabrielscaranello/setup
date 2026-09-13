@@ -5,8 +5,6 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
 
-LAZYGIT_API_URL="https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
-
 _fetch_remote_version() {
   local ver
   ver="$(fetch_github_latest_version "jesseduffield/lazygit")"

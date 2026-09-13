@@ -6,8 +6,6 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
-TELEGRAM_API_URL="https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest"
-
 _fetch_remote_version() {
   local ver
   ver="$(fetch_github_latest_version "telegramdesktop/tdesktop")"
