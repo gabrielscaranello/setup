@@ -109,18 +109,7 @@ _install_steam_packages() {
 
 _setup_steam() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
-
-  case "$distro" in
-    debian | fedora | arch) ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
-  esac
+  distro="$(require_supported_distro)" || return 1
 
   _install_steam_packages "$distro" || return 1
   _install_proton_manager || return 1

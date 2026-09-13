@@ -151,14 +151,14 @@ teardown() {
   rm -rf "$mock_home"
 }
 
-@test "_fetch_remote_version extracts tag_name from GitHub API response" {
-  fetch_url() {
-    echo '{"tag_name": "v2.0.7", "name": "Release v2.0.7"}'
+@test "_fetch_remote_version delegates to fetch_github_latest_version with correct repo" {
+  fetch_github_latest_version() {
+    echo "called with: $*"
   }
 
   run _fetch_remote_version
   [ "$status" -eq 0 ]
-  [ "$output" = "v2.0.7" ]
+  [[ "$output" =~ "called with: ful1e5/Bibata_Cursor" ]]
 }
 
 @test "_configure_gnome_cursor invokes gsettings" {

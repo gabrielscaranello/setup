@@ -116,10 +116,7 @@ _install_go_packages() {
 
 _install_go() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     fedora | arch)

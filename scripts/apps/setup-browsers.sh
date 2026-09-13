@@ -25,10 +25,7 @@ _install_firefox_repo() {
 
 _install_firefox() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     fedora | arch)
@@ -38,19 +35,12 @@ _install_firefox() {
       install_packages wget || true
       _install_firefox_apt
       ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
   esac
 }
 
 _install_chromium() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     fedora | arch)
@@ -60,10 +50,6 @@ _install_chromium() {
     debian)
       echo "Installing Chromium with flatpak..."
       install_flatpak_app "org.chromium.Chromium" "Chromium"
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

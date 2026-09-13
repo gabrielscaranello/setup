@@ -174,14 +174,14 @@ teardown() {
   rm -rf "$mock_home"
 }
 
-@test "_fetch_remote_version extracts tag_name from GitHub API response" {
-  fetch_url() {
-    echo '{"tag_name": "v6.5", "name": "Release v6.5"}'
+@test "_fetch_remote_version delegates to fetch_github_latest_version with correct repo" {
+  fetch_github_latest_version() {
+    echo "called with: $*"
   }
 
   run _fetch_remote_version
   [ "$status" -eq 0 ]
-  [ "$output" = "v6.5" ]
+  [[ "$output" =~ "called with: lassekongo83/adw-gtk3" ]]
 }
 
 @test "_is_system_package_installed checks package manager on Fedora and Arch" {

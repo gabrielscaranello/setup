@@ -69,10 +69,7 @@ _get_local_papirus_folders_version() {
 }
 
 _fetch_remote_papirus_folders_version() {
-  fetch_url "https://api.github.com/repos/${FOLDERS_UPSTREAM_REPO}/releases/latest" 2> /dev/null \
-    | grep '"tag_name"' \
-    | head -n 1 \
-    | cut -d '"' -f 4 || echo ""
+  fetch_github_latest_version "$FOLDERS_UPSTREAM_REPO"
 }
 
 _is_system_papirus_folders_installed() {

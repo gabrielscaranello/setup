@@ -20,18 +20,8 @@ _get_local_version() {
 }
 
 _is_kitty_up_to_date() {
-  local local_ver remote_ver
-  local_ver="$(_get_local_version)"
-  if [ -z "$local_ver" ]; then
-    return 1
-  fi
-
-  remote_ver="$(_fetch_remote_version)"
-  if [ -n "$remote_ver" ] && [ "$local_ver" = "$remote_ver" ]; then
-    return 0
-  fi
-
-  return 1
+  local target_ver="${1:-$(_fetch_remote_version)}"
+  is_version_up_to_date "$(_get_local_version)" "$target_ver"
 }
 
 _link_binary() {
@@ -137,10 +127,7 @@ _install_kitty_repo() {
 
 _install_kitty() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch | fedora)

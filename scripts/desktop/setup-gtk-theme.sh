@@ -31,10 +31,7 @@ _get_local_version() {
 }
 
 _fetch_remote_version() {
-  fetch_url "https://api.github.com/repos/${UPSTREAM_REPO}/releases/latest" 2> /dev/null \
-    | grep '"tag_name"' \
-    | head -n 1 \
-    | cut -d '"' -f 4 || echo ""
+  fetch_github_latest_version "$UPSTREAM_REPO"
 }
 
 _is_system_package_installed() {

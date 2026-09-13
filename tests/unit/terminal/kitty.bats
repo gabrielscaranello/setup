@@ -3,32 +3,11 @@
 
 # Unit tests for setup-kitty.sh logic and branches
 
-@test "_fetch_remote_version returns trimmed version string using curl" {
-  curl() {
-    echo -e "1.0.0\n"
-    return 0
-  }
-  command() {
-    if [ "${2:-}" = "curl" ]; then return 0; fi
-    builtin command "$@"
-  }
+@test "_fetch_remote_version returns trimmed version string via fetch_url" {
   source /setup/scripts/terminal/setup-kitty.sh
-  run _fetch_remote_version
-  [ "$status" -eq 0 ]
-  [ "$output" = "1.0.0" ]
-}
-
-@test "_fetch_remote_version uses wget when curl is unavailable" {
-  command() {
-    if [ "${2:-}" = "curl" ]; then return 1; fi
-    if [ "${2:-}" = "wget" ]; then return 0; fi
-    builtin command "$@"
-  }
-  wget() {
+  fetch_url() {
     echo -e "1.0.0\n"
-    return 0
   }
-  source /setup/scripts/terminal/setup-kitty.sh
   run _fetch_remote_version
   [ "$status" -eq 0 ]
   [ "$output" = "1.0.0" ]

@@ -34,10 +34,7 @@ _install_vscodium_packages() {
 
 _install_vscodium() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     debian | fedora | arch)
