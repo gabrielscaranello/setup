@@ -95,6 +95,7 @@ _debloat_debian() {
         kwalletmanager
         sweeper
         skanlite
+        drkonqi
       )
       ;;
     *)
@@ -185,6 +186,7 @@ _debloat_fedora() {
         kwalletmanager
         sweeper
         skanlite
+        plasma-drkonqi
       )
       ;;
     *)

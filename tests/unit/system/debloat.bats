@@ -67,7 +67,8 @@ setup() {
     [[ "$args" =~ "korganizer" ]]
     [[ "$args" =~ "kontact" ]]
     [[ "$args" =~ "kdepim" ]]
-    echo "dragonplayer juk konsole akregator kmail korganizer kontact"
+    [[ "$args" =~ "drkonqi" ]]
+    echo "dragonplayer juk konsole akregator kmail korganizer kontact drkonqi"
   }
   sudo() {
     echo "sudo $*"
@@ -76,8 +77,8 @@ setup() {
 
   run _debloat_debian
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Purging unused Debian packages: dragonplayer juk konsole akregator kmail korganizer kontact" ]]
-  [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "Purging unused Debian packages: dragonplayer juk konsole akregator kmail korganizer kontact drkonqi" ]]
+  [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole akregator kmail korganizer kontact drkonqi" ]]
 }
 
 @test "_debloat_debian handles no installed packages gracefully" {
@@ -124,7 +125,8 @@ setup() {
     [[ "$args" =~ "korganizer" ]]
     [[ "$args" =~ "kontact" ]]
     [[ "$args" =~ "kdepim" ]]
-    echo "dragon juk konsole akregator kmail korganizer kontact"
+    [[ "$args" =~ "plasma-drkonqi" ]]
+    echo "dragon juk konsole akregator kmail korganizer kontact plasma-drkonqi"
   }
   sudo() {
     echo "sudo $*"
@@ -133,8 +135,8 @@ setup() {
 
   run _debloat_fedora
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Removing unused Fedora packages: dragon juk konsole akregator kmail korganizer kontact" ]]
-  [[ "$output" =~ "sudo dnf remove -y dragon juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "Removing unused Fedora packages: dragon juk konsole akregator kmail korganizer kontact plasma-drkonqi" ]]
+  [[ "$output" =~ "sudo dnf remove -y dragon juk konsole akregator kmail korganizer kontact plasma-drkonqi" ]]
 }
 
 @test "_debloat_fedora handles no installed packages gracefully" {

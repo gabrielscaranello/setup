@@ -18,6 +18,7 @@ APPS=(
   nm-connection-editor
   org.gnome.Extensions
   org.gnome.Tour
+  org.kde.drkonqi.coredump.gui
   qdbusviewer
   qv4l2
   qvidcap

@@ -34,6 +34,7 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `nm-connection-editor`: Network Connections Editor (redundant with desktop settings)
 - `org.gnome.Extensions`: Standalone GNOME Extensions tool (redundant)
 - `org.gnome.Tour`: GNOME Tour welcome application
+- `org.kde.drkonqi.coredump.gui`: KDE Crash and Coredump Report GUI
 - `qdbusviewer`: Qt D-Bus Viewer
 - `qv4l2`: V4L2 Test Utility
 - `qvidcap`: V4L2 Video Capture Utility

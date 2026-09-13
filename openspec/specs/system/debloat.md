@@ -103,6 +103,7 @@ When the detected Desktop Environment is `plasma`, the script SHALL remove redun
   - `kwalletmanager`
   - `sweeper`
   - `skanlite`
+  - `drkonqi` (Debian) / `plasma-drkonqi` (Fedora) (provides `drkonqi-coredump-gui`)
 
 #### Scenario: Running debloat under KDE Plasma
 
