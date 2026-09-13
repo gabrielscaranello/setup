@@ -3,7 +3,7 @@ FROM fedora:44
 ARG BATS_VERSION=1.11.0
 
 # Install base tools
-RUN dnf install -y sudo curl wget git bash ca-certificates kcov \
+RUN dnf install -y sudo curl wget git bash ca-certificates kcov sqlite \
     && dnf clean all
 
 # Install bats-core from source for a consistent version across all distros

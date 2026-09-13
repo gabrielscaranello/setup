@@ -26,75 +26,33 @@ _plasma_ini_write() {
     touch "$target_file"
   fi
 
-  if command -v python3 > /dev/null 2>&1; then
-    python3 -c '
-import sys, re, os
-
-file_path, group, key, value = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
-target_group = f"[{group}]"
-
-lines = []
-if os.path.exists(file_path):
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-        lines = f.readlines()
-
-group_found = False
-key_found = False
-group_start = -1
-group_end = len(lines)
-
-for idx, line in enumerate(lines):
-    stripped = line.strip()
-    if stripped.startswith("[") and stripped.endswith("]"):
-        if stripped == target_group:
-            group_found = True
-            group_start = idx
-        elif group_found:
-            group_end = idx
-            break
-
-if not group_found:
-    if lines and not lines[-1].endswith("\n"):
-        lines.append("\n")
-    if lines and lines[-1].strip() != "":
-        lines.append("\n")
-    lines.append(f"{target_group}\n")
-    lines.append(f"{key}={value}\n")
-else:
-    for idx in range(group_start + 1, group_end):
-        line = lines[idx]
-        if re.match(rf"^\s*{re.escape(key)}\s*=", line):
-            lines[idx] = f"{key}={value}\n"
-            key_found = True
-            break
-    if not key_found:
-        lines.insert(group_end, f"{key}={value}\n")
-
-with open(file_path, "w", encoding="utf-8") as f:
-    f.writelines(lines)
-' "$target_file" "$group" "$key" "$value"
-  else
-    # Minimal awk fallback
-    awk -v g="[$group]" -v k="$key" -v v="$value" '
-      BEGIN { in_group = 0; replaced = 0; group_seen = 0 }
-      /^\[.*\]$/ {
-        if (in_group && !replaced) { print k "=" v; replaced = 1 }
-        if ($0 == g) { in_group = 1; group_seen = 1 } else { in_group = 0 }
+  awk -v g="[$group]" -v k="$key" -v v="$value" '
+    BEGIN { in_group = 0; replaced = 0; group_seen = 0; has_lines = 0 }
+    /^\[.*\]$/ {
+      if (in_group && !replaced) { print k "=" v; replaced = 1 }
+      if ($0 == g) { in_group = 1; group_seen = 1 } else { in_group = 0 }
+    }
+    {
+      has_lines = 1
+      line = $0
+      sub(/^[ \t]+/, "", line)
+      if (line == "") { last_line_blank = 1 } else { last_line_blank = 0 }
+      if (in_group && substr(line, 1, length(k) + 1) == (k "=")) {
+        print k "=" v
+        replaced = 1
+        next
       }
-      {
-        if (in_group && $0 ~ "^" k "=") {
-          print k "=" v
-          replaced = 1
-          next
-        }
-        print
+      print
+    }
+    END {
+      if (in_group && !replaced) { print k "=" v; replaced = 1 }
+      if (!group_seen) {
+        if (has_lines && !last_line_blank) { print "" }
+        print g
+        print k "=" v
       }
-      END {
-        if (in_group && !replaced) { print k "=" v; replaced = 1 }
-        if (!group_seen) { print "\n" g "\n" k "=" v }
-      }
-    ' "$target_file" > "${target_file}.tmp" && mv "${target_file}.tmp" "$target_file"
-  fi
+    }
+  ' "$target_file" > "${target_file}.tmp" && mv "${target_file}.tmp" "$target_file"
 }
 
 plasma_write_config() {
@@ -468,68 +426,53 @@ _clear_plasma_kickoff_favorites() {
   fi
 
   mkdir -p "$config_dir"
-  if command -v python3 > /dev/null 2>&1; then
-    python3 -c '
-import sys, os
-
-file_path = sys.argv[1]
-lines = []
-if os.path.exists(file_path):
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-        lines = f.readlines()
-
-in_favorites = False
-seen_sections = set()
-for idx, line in enumerate(lines):
-    stripped = line.strip()
-    if stripped.startswith("[") and stripped.endswith("]"):
-        in_favorites = "Favorites" in stripped
-        if in_favorites:
-            seen_sections.add(stripped)
-    elif in_favorites and stripped.startswith("ordering="):
-        lines[idx] = "ordering=\n"
-
-# Ensure all common instance IDs from 1 to 30 exist with ordering=
-for i in range(1, 31):
-    for prefix in ["Favorites-org.kde.plasma.kickoff.favorites.instance-", "Favorites-org.kde.plasma.kicker.favorites.instance-"]:
-        section = f"[{prefix}{i}-global]"
-        if section not in seen_sections:
-            lines.append(f"\n{section}\nordering=\n")
-            seen_sections.add(section)
-
-global_fav = "[Favorites-org.kde.plasma.favorites.applications]"
-if global_fav not in seen_sections:
-    lines.append(f"\n{global_fav}\nordering=\n")
-
-with open(file_path, "w", encoding="utf-8") as f:
-    f.writelines(lines)
-' "$stats_file"
-  else
-    cat << 'EOF' > "$stats_file"
-[Favorites-org.kde.plasma.kickoff.favorites.instance-2-global]
-ordering=
-EOF
+  if [ ! -f "$stats_file" ]; then
+    touch "$stats_file"
   fi
 
-  if [ -f "$db_file" ]; then
-    if command -v python3 > /dev/null 2>&1; then
-      python3 -c '
-import sys, os, sqlite3
+  awk '
+    BEGIN {
+      in_favorites = 0
+      printed_any = 0
+    }
+    /^\[.*\]$/ {
+      if ($0 ~ /Favorites/) {
+        in_favorites = 1
+        seen[$0] = 1
+      } else {
+        in_favorites = 0
+      }
+    }
+    {
+      if (in_favorites && $0 ~ /^ordering=/) {
+        print "ordering="
+        next
+      }
+      print
+      printed_any = 1
+    }
+    function add_section(sec) {
+      if (!seen[sec]) {
+        if (printed_any) {
+          print ""
+        }
+        print sec
+        print "ordering="
+        seen[sec] = 1
+        printed_any = 1
+      }
+    }
+    END {
+      for (i = 1; i <= 30; i++) {
+        add_section("[Favorites-org.kde.plasma.kickoff.favorites.instance-" i "-global]")
+        add_section("[Favorites-org.kde.plasma.kicker.favorites.instance-" i "-global]")
+      }
+      add_section("[Favorites-org.kde.plasma.favorites.applications]")
+    }
+  ' "$stats_file" > "${stats_file}.tmp" && mv "${stats_file}.tmp" "$stats_file"
 
-db_file = sys.argv[1]
-if os.path.exists(db_file):
-    try:
-        conn = sqlite3.connect(db_file)
-        cur = conn.cursor()
-        cur.execute("DELETE FROM ResourceLink WHERE initiatingAgent LIKE \"%favorites%\" OR initiatingAgent LIKE \"%kickoff%\" OR initiatingAgent LIKE \"%kicker%\" OR targettedResource LIKE \"applications:%\";")
-        conn.commit()
-        conn.close()
-    except Exception:
-        pass
-' "$db_file"
-    elif command -v sqlite3 > /dev/null 2>&1; then
-      sqlite3 "$db_file" "DELETE FROM ResourceLink WHERE initiatingAgent LIKE '%favorites%' OR initiatingAgent LIKE '%kickoff%' OR initiatingAgent LIKE '%kicker%' OR targettedResource LIKE 'applications:%';" 2> /dev/null || true
-    fi
+  if [ -f "$db_file" ] && command -v sqlite3 > /dev/null 2>&1; then
+    sqlite3 "$db_file" "DELETE FROM ResourceLink WHERE initiatingAgent LIKE '%favorites%' OR initiatingAgent LIKE '%kickoff%' OR initiatingAgent LIKE '%kicker%' OR targettedResource LIKE 'applications:%';" 2> /dev/null || true
   fi
 
   if [ "$restart_kactivity" -eq 1 ]; then

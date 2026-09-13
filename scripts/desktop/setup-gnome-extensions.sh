@@ -57,8 +57,8 @@ _parse_api_field() {
   local json_str="$1"
   local field="$2"
 
-  if command -v python3 > /dev/null 2>&1; then
-    python3 -c "import sys, json; data=json.loads(sys.argv[1]); val=data.get(sys.argv[2], ''); print(val if val is not None else '')" "$json_str" "$field" 2> /dev/null || true
+  if command -v jq > /dev/null 2>&1; then
+    jq -r --arg f "$field" '.[$f] // empty' <<< "$json_str" 2> /dev/null || true
   else
     grep -oE "\"$field\": *(\"[^\"]+\"|[0-9]+)" <<< "$json_str" | tail -n1 | sed -E "s/\"$field\": *//; s/\"//g" || true
   fi
@@ -84,49 +84,37 @@ _merge_enabled_extensions() {
   shift
   local new_uuids=("$@")
 
-  if command -v python3 > /dev/null 2>&1; then
-    python3 -c '
-import sys, re
-current = sys.argv[1]
-items = re.findall(r"[\x27\x22]([^\x27\x22]+)[\x27\x22]", current)
-seen = set(items)
-for arg in sys.argv[2:]:
-    if arg and arg not in seen:
-        items.append(arg)
-        seen.add(arg)
-print("[" + ", ".join(f"\x27{x}\x27" for x in items) + "]")
-' "$current_raw" "${new_uuids[@]}"
-  else
-    local -a items=()
-    if [ -n "$current_raw" ]; then
-      local line
-      while IFS= read -r line; do
-        [ -n "$line" ] && items+=("$line")
-      done < <(echo "$current_raw" | grep -oE "'[^']+'|\"[^\"]+\"" | tr -d "'\"" || true)
-    fi
-    for arg in "${new_uuids[@]}"; do
-      [ -n "$arg" ] || continue
-      local found=0
-      for it in "${items[@]}"; do
-        if [ "$it" = "$arg" ]; then
-          found=1
-          break
-        fi
-      done
-      if [ "$found" -eq 0 ]; then
-        items+=("$arg")
-      fi
-    done
-    local formatted=""
-    for it in "${items[@]}"; do
-      if [ -z "$formatted" ]; then
-        formatted="'$it'"
-      else
-        formatted="$formatted, '$it'"
-      fi
-    done
-    echo "[$formatted]"
+  local -a items=()
+  if [ -n "$current_raw" ]; then
+    local line
+    while IFS= read -r line; do
+      [ -n "$line" ] && items+=("$line")
+    done < <(echo "$current_raw" | grep -oE "'[^']+'|\"[^\"]+\"" | tr -d "'\"" || true)
   fi
+
+  for arg in "${new_uuids[@]}"; do
+    [ -n "$arg" ] || continue
+    local found=0
+    for it in "${items[@]}"; do
+      if [ "$it" = "$arg" ]; then
+        found=1
+        break
+      fi
+    done
+    if [ "$found" -eq 0 ]; then
+      items+=("$arg")
+    fi
+  done
+
+  local formatted=""
+  for it in "${items[@]}"; do
+    if [ -z "$formatted" ]; then
+      formatted="'$it'"
+    else
+      formatted="$formatted, '$it'"
+    fi
+  done
+  echo "[$formatted]"
 }
 
 _sync_enabled_extensions() {

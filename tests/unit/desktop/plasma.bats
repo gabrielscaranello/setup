@@ -527,29 +527,15 @@ EOF
   local db_dir="$XDG_DATA_HOME/kactivitymanagerd/resources"
   mkdir -p "$db_dir"
 
-  python3 -c '
-import sqlite3, sys
-conn = sqlite3.connect(sys.argv[1])
-cur = conn.cursor()
-cur.execute("CREATE TABLE ResourceLink (initiatingAgent TEXT, targettedResource TEXT);")
-cur.execute("INSERT INTO ResourceLink VALUES (\"org.kde.plasma.favorites.applications\", \"applications:firefox.desktop\");")
-conn.commit()
-conn.close()
-' "$db_dir/database"
+  sqlite3 "$db_dir/database" 'CREATE TABLE ResourceLink (initiatingAgent TEXT, targettedResource TEXT);'
+  sqlite3 "$db_dir/database" 'INSERT INTO ResourceLink VALUES ("org.kde.plasma.favorites.applications", "applications:firefox.desktop");'
 
   run _clear_plasma_kickoff_favorites
   [ "$status" -eq 0 ]
 
-  run python3 -c '
-import sqlite3, sys
-conn = sqlite3.connect(sys.argv[1])
-cur = conn.cursor()
-cur.execute("SELECT COUNT(*) FROM ResourceLink;")
-count = cur.fetchone()[0]
-conn.close()
-sys.exit(0 if count == 0 else 1)
-' "$db_dir/database"
+  run sqlite3 "$db_dir/database" 'SELECT COUNT(*) FROM ResourceLink;'
   [ "$status" -eq 0 ]
+  [ "$output" = "0" ]
 
   rm -rf "$test_dir"
 }

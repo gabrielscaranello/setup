@@ -3,7 +3,7 @@ FROM archlinux:latest
 ARG BATS_VERSION=1.11.0
 
 # Sync and install base tools
-RUN pacman -Sy --noconfirm sudo curl wget git kcov \
+RUN pacman -Sy --noconfirm sudo curl wget git kcov sqlite \
     && pacman -Sc --noconfirm
 
 # Install bats-core from source for a consistent version across all distros

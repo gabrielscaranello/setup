@@ -162,7 +162,7 @@ teardown() {
   [ "$output" = "['ext1@domain', 'ext3@domain', 'ext2@domain']" ]
 }
 
-@test "_merge_enabled_extensions works via fallback when python3 is not available" {
+@test "_merge_enabled_extensions works without python3" {
   command() {
     if [ "$2" = "python3" ]; then return 1; fi
     builtin command "$@"

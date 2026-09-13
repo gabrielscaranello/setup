@@ -5,7 +5,7 @@ ARG BATS_VERSION=1.11.0
 # Install base tools
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends \
-        sudo curl wget git bash ca-certificates kcov \
+        sudo curl wget git bash ca-certificates kcov sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install bats-core from source for a consistent version across all distros
