@@ -31,9 +31,10 @@ run_pipeline() {
 }
 
 COMMON_INITIAL_STEPS=(
+  "system/setup-debloat.sh:System packages debloat and cleanup"
+  "system/setup-update.sh:System packages and repositories update"
   "system/setup-swap.sh:Swap and memory tuning setup"
   "system/setup-packages.sh:Core system packages setup"
-  "system/setup-debloat.sh:System packages debloat and cleanup"
 )
 
 COMMON_POST_STEPS=(

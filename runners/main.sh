@@ -60,6 +60,7 @@ Available Commands:
   swap                    - Configure Swap and VM memory tuning
   telegram                - Install Telegram Desktop
   timeshift               - Install and configure Timeshift (Btrfs / Rsync)
+  update                  - Update package repositories and upgrade system packages
   vscodium                - Install VSCodium (Code - OSS on Arch)
 HELP_EOF
 }
@@ -266,6 +267,10 @@ run_module() {
 
     timeshift)
       bash "$SCRIPTS_DIR/system/setup-timeshift.sh"
+      ;;
+
+    update)
+      bash "$SCRIPTS_DIR/system/setup-update.sh"
       ;;
 
     vscodium)
