@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 
 CURSOR_NAME="Bibata-Modern-Ice"
 CURSOR_ARCHIVE="${CURSOR_NAME}.tar.xz"
@@ -11,22 +12,11 @@ DEFAULT_VERSION="v2.0.7"
 CURSOR_SIZE=20
 
 _is_cursor_installed() {
-  if [ -d "/usr/share/icons/$CURSOR_NAME/cursors" ] \
-    || [ -d "$HOME/.local/share/icons/$CURSOR_NAME/cursors" ] \
-    || [ -d "$HOME/.icons/$CURSOR_NAME/cursors" ]; then
-    return 0
-  fi
-  return 1
+  is_theme_installed "icons" "$CURSOR_NAME" "cursors"
 }
 
 _get_local_version() {
-  if [ -f "$HOME/.local/share/icons/$CURSOR_NAME/.version" ]; then
-    cat "$HOME/.local/share/icons/$CURSOR_NAME/.version"
-  elif [ -f "/usr/share/icons/$CURSOR_NAME/.version" ]; then
-    cat "/usr/share/icons/$CURSOR_NAME/.version"
-  else
-    echo ""
-  fi
+  get_theme_local_version "icons" "$CURSOR_NAME"
 }
 
 _fetch_remote_version() {
@@ -61,17 +51,7 @@ _install_cursor_files() {
     echo "$version" > "$tmp_dir/$CURSOR_NAME/.version"
   fi
 
-  local user_icons_dir="$HOME/.local/share/icons"
-  mkdir -p "$user_icons_dir" "$HOME/.icons"
-  cp -r "$tmp_dir/$CURSOR_NAME" "$user_icons_dir/"
-  ln -sfn "$user_icons_dir/$CURSOR_NAME" "$HOME/.icons/$CURSOR_NAME"
-
-  # Also install system-wide if permissions allow or sudo is non-interactive
-  if [ -w "/usr/share/icons" ]; then
-    cp -r "$tmp_dir/$CURSOR_NAME" "/usr/share/icons/"
-  elif command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
-    sudo cp -r "$tmp_dir/$CURSOR_NAME" "/usr/share/icons/" 2> /dev/null || true
-  fi
+  deploy_theme_directory "$tmp_dir/$CURSOR_NAME" "icons" "$CURSOR_NAME"
 
   rm -rf "$tmp_dir" "$archive_path"
 }

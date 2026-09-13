@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 
 THEME_NAME="Papirus-Dark"
 FOLDER_COLOR="adwaita"
@@ -10,31 +11,11 @@ FOLDERS_UPSTREAM_REPO="PapirusDevelopmentTeam/papirus-folders"
 ICON_UPSTREAM_REPO="PapirusDevelopmentTeam/papirus-icon-theme"
 
 _is_icon_theme_installed() {
-  if [ -d "/usr/share/icons/$THEME_NAME" ] \
-    || [ -d "$HOME/.local/share/icons/$THEME_NAME" ] \
-    || [ -d "$HOME/.icons/$THEME_NAME" ]; then
-    return 0
-  fi
-  return 1
+  is_theme_installed "icons" "$THEME_NAME"
 }
 
 _is_system_icon_package_installed() {
-  local distro
-  distro="$(get_distro_id)"
-  case "$distro" in
-    debian)
-      dpkg -s papirus-icon-theme > /dev/null 2>&1
-      ;;
-    fedora)
-      rpm -q papirus-icon-theme > /dev/null 2>&1
-      ;;
-    arch)
-      pacman -Q papirus-icon-theme > /dev/null 2>&1
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+  is_package_installed "papirus-icon-theme"
 }
 
 _install_icon_package() {
@@ -73,16 +54,7 @@ _fetch_remote_papirus_folders_version() {
 }
 
 _is_system_papirus_folders_installed() {
-  local distro
-  distro="$(get_distro_id)"
-  case "$distro" in
-    arch)
-      pacman -Q papirus-folders > /dev/null 2>&1
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+  is_package_installed "papirus-folders"
 }
 
 _install_papirus_folders_upstream() {

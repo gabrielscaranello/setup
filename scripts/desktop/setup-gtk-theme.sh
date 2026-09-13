@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 
 THEME_NAME="adw-gtk3-dark"
 THEME_LIGHT="adw-gtk3"
@@ -10,24 +11,11 @@ FLATPAK_THEMES=("org.gtk.Gtk3theme.adw-gtk3" "org.gtk.Gtk3theme.adw-gtk3-dark")
 UPSTREAM_REPO="lassekongo83/adw-gtk3"
 
 _is_gtk_theme_installed() {
-  for theme in "$THEME_NAME" "$THEME_LIGHT"; do
-    if [ ! -d "/usr/share/themes/$theme" ] \
-      && [ ! -d "$HOME/.local/share/themes/$theme" ] \
-      && [ ! -d "$HOME/.themes/$theme" ]; then
-      return 1
-    fi
-  done
-  return 0
+  is_theme_installed "themes" "$THEME_NAME" && is_theme_installed "themes" "$THEME_LIGHT"
 }
 
 _get_local_version() {
-  if [ -f "$HOME/.local/share/themes/adw-gtk3/.version" ]; then
-    cat "$HOME/.local/share/themes/adw-gtk3/.version"
-  elif [ -f "/usr/share/themes/adw-gtk3/.version" ]; then
-    cat "/usr/share/themes/adw-gtk3/.version"
-  else
-    echo ""
-  fi
+  get_theme_local_version "themes" "adw-gtk3"
 }
 
 _fetch_remote_version() {
@@ -35,19 +23,7 @@ _fetch_remote_version() {
 }
 
 _is_system_package_installed() {
-  local distro
-  distro="$(get_distro_id)"
-  case "$distro" in
-    fedora)
-      rpm -q adw-gtk3-theme > /dev/null 2>&1
-      ;;
-    arch)
-      pacman -Q adw-gtk-theme > /dev/null 2>&1
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+  is_package_installed "adw-gtk3-theme"
 }
 
 _install_upstream_theme() {
@@ -80,26 +56,8 @@ _install_upstream_theme() {
     echo "$version" > "$tmp_dir/adw-gtk3-dark/.version"
   fi
 
-  local user_themes_dir="$HOME/.local/share/themes"
-  mkdir -p "$user_themes_dir" "$HOME/.themes"
-
-  if [ -d "$tmp_dir/adw-gtk3" ]; then
-    cp -r "$tmp_dir/adw-gtk3" "$user_themes_dir/"
-    ln -sfn "$user_themes_dir/adw-gtk3" "$HOME/.themes/adw-gtk3"
-  fi
-  if [ -d "$tmp_dir/adw-gtk3-dark" ]; then
-    cp -r "$tmp_dir/adw-gtk3-dark" "$user_themes_dir/"
-    ln -sfn "$user_themes_dir/adw-gtk3-dark" "$HOME/.themes/adw-gtk3-dark"
-  fi
-
-  # System-wide installation when permissions or sudo allow
-  if [ -w "/usr/share/themes" ]; then
-    [ -d "$tmp_dir/adw-gtk3" ] && cp -r "$tmp_dir/adw-gtk3" "/usr/share/themes/"
-    [ -d "$tmp_dir/adw-gtk3-dark" ] && cp -r "$tmp_dir/adw-gtk3-dark" "/usr/share/themes/"
-  elif command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
-    [ -d "$tmp_dir/adw-gtk3" ] && sudo cp -r "$tmp_dir/adw-gtk3" "/usr/share/themes/" 2> /dev/null || true
-    [ -d "$tmp_dir/adw-gtk3-dark" ] && sudo cp -r "$tmp_dir/adw-gtk3-dark" "/usr/share/themes/" 2> /dev/null || true
-  fi
+  deploy_theme_directory "$tmp_dir/adw-gtk3" "themes" "adw-gtk3"
+  deploy_theme_directory "$tmp_dir/adw-gtk3-dark" "themes" "adw-gtk3-dark"
 
   rm -rf "$tmp_dir" "$archive_path"
 }

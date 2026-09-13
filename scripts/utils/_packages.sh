@@ -161,3 +161,35 @@ install_flatpak_app() {
   sudo flatpak install -y --noninteractive flathub "$app_id"
   echo "$app_name Flatpak installed successfully."
 }
+
+is_package_installed() {
+  local package="$1"
+  local distro
+  distro="$(get_distro_id 2> /dev/null || true)"
+  local resolved
+  resolved="$(_get_package_name "$package" "$distro" 2> /dev/null || echo "$package")"
+
+  if [ -z "$resolved" ]; then
+    return 1
+  fi
+
+  local item
+  for item in $resolved; do
+    case "$distro" in
+      debian)
+        dpkg -s "$item" > /dev/null 2>&1 || return 1
+        ;;
+      fedora)
+        rpm -q "$item" > /dev/null 2>&1 || return 1
+        ;;
+      arch)
+        pacman -Q "$item" > /dev/null 2>&1 || return 1
+        ;;
+      *)
+        return 1
+        ;;
+    esac
+  done
+
+  return 0
+}
