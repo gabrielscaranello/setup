@@ -92,7 +92,7 @@ When the detected Desktop Environment is `plasma`, the script SHALL remove redun
 - **Audio & Video**: `dragonplayer` (Debian) / `dragon` (Fedora), `juk`.
 - **Terminal**: `konsole` (replaced by Kitty).
 - **Web Browser**: `konqueror` (replaced by Firefox / Chromium).
-- **KDE PIM & Messaging**: `kdepim` (Debian & Fedora), `kmail` (Fedora), `kontact` (Fedora), `konversation`.
+- **KDE PIM & Messaging**: `akregator`, `kdepim`, `kdepim-runtime`, `kmail`, `kontact`, `korganizer`, `konversation`.
 - **Acessibility & Redundant Utilities**:
   - `kamera`
   - `kcalc`
@@ -140,4 +140,4 @@ The script SHALL:
 
 - **GIVEN** Fedora 44 with KDE Plasma
 - **WHEN** `scripts/system/setup-debloat.sh` runs
-- **THEN** common bloat and KDE Plasma bloatware (including `dragon`, `kmail`, `kontact`) SHALL be removed via `dnf remove`
+- **THEN** common bloat and KDE Plasma bloatware (including `dragon`, `akregator`, `kmail`, `kontact`, `korganizer`) SHALL be removed via `dnf remove`

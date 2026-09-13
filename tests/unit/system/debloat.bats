@@ -61,7 +61,13 @@ setup() {
 @test "_debloat_debian purges packages on KDE Plasma when installed" {
   get_desktop_environment() { echo "plasma"; }
   _filter_installed_debian() {
-    echo "dragonplayer juk konsole"
+    local args="$*"
+    [[ "$args" =~ "akregator" ]]
+    [[ "$args" =~ "kmail" ]]
+    [[ "$args" =~ "korganizer" ]]
+    [[ "$args" =~ "kontact" ]]
+    [[ "$args" =~ "kdepim" ]]
+    echo "dragonplayer juk konsole akregator kmail korganizer kontact"
   }
   sudo() {
     echo "sudo $*"
@@ -70,8 +76,8 @@ setup() {
 
   run _debloat_debian
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Purging unused Debian packages: dragonplayer juk konsole" ]]
-  [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole" ]]
+  [[ "$output" =~ "Purging unused Debian packages: dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole akregator kmail korganizer kontact" ]]
 }
 
 @test "_debloat_debian handles no installed packages gracefully" {
@@ -112,7 +118,13 @@ setup() {
 @test "_debloat_fedora removes packages on KDE Plasma when installed" {
   get_desktop_environment() { echo "plasma"; }
   _filter_installed_fedora() {
-    echo "dragon juk konsole kmail kontact"
+    local args="$*"
+    [[ "$args" =~ "akregator" ]]
+    [[ "$args" =~ "kmail" ]]
+    [[ "$args" =~ "korganizer" ]]
+    [[ "$args" =~ "kontact" ]]
+    [[ "$args" =~ "kdepim" ]]
+    echo "dragon juk konsole akregator kmail korganizer kontact"
   }
   sudo() {
     echo "sudo $*"
@@ -121,8 +133,8 @@ setup() {
 
   run _debloat_fedora
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Removing unused Fedora packages: dragon juk konsole kmail kontact" ]]
-  [[ "$output" =~ "sudo dnf remove -y dragon juk konsole kmail kontact" ]]
+  [[ "$output" =~ "Removing unused Fedora packages: dragon juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "sudo dnf remove -y dragon juk konsole akregator kmail korganizer kontact" ]]
 }
 
 @test "_debloat_fedora handles no installed packages gracefully" {

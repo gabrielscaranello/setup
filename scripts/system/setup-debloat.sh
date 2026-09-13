@@ -77,7 +77,12 @@ _debloat_debian() {
         juk
         konsole
         konqueror
+        akregator
         kdepim
+        kdepim-runtime
+        kmail
+        kontact
+        korganizer
         konversation
         kamera
         kcalc
@@ -162,9 +167,12 @@ _debloat_fedora() {
         juk
         konsole
         konqueror
+        akregator
         kdepim
+        kdepim-runtime
         kmail
         kontact
+        korganizer
         konversation
         kamera
         kcalc
