@@ -48,7 +48,7 @@ Essential system utilities and base desktop environments for minimal installatio
 
 Removal of unused default packages and bloatware before installing user apps.
 
-- [ ] Implement unused packages removal / debloat script (Debian and Fedora, differentiated for GNOME and KDE Plasma)
+- [x] Implement unused packages removal / debloat script (Debian and Fedora, differentiated for GNOME and KDE Plasma) — `scripts/system/setup-debloat.sh`
 
 ## 🟣 Phase 5: GUI Applications & Desktop Tools
 

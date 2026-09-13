@@ -10,7 +10,7 @@ Configures default applications across XDG specifications, GNOME desktop environ
 - **ONLYOFFICE** as the default office documents editor
 - **Evince** (GNOME) / **Okular** (KDE Plasma) as the default PDF viewer
 - **Loupe** (GNOME) / **Gwenview** (KDE Plasma) as the default image viewer
-- **GNOME Text Editor** (GNOME) / **Kate** (KDE Plasma) as the default text editor
+- **GNOME Text Editor** (GNOME) / **Ghostwriter** (KDE Plasma) as the default text editor
 - **Added Associations** (`[Added Associations]`) for secondary applications (Chromium, GIMP, VSCodium)
 
 ---
@@ -60,7 +60,7 @@ The script SHALL detect the Desktop Environment to configure tailored default vi
 
 - **PDF**: `org.gnome.Evince.desktop` on GNOME, `org.kde.okular.desktop` on KDE Plasma for `application/pdf`, `application/x-pdf`.
 - **Images**: `org.gnome.Loupe.desktop` on GNOME, `org.kde.gwenview.desktop` on KDE Plasma for `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/bmp`, `image/tiff`, `image/x-png`.
-- **Text / Code**: `org.gnome.TextEditor.desktop` on GNOME, `org.kde.kate.desktop` on KDE Plasma for `text/plain`, `text/markdown`.
+- **Text / Code**: `org.gnome.TextEditor.desktop` on GNOME, `org.kde.ghostwriter.desktop` on KDE Plasma for `text/plain`, `text/markdown`.
 - **Added Associations**: Register GIMP (`image/png`, `image/svg+xml`, `image/x-xcf`) and VSCodium (`text/plain`, `text/markdown`) under `[Added Associations]`.
 
 ---
@@ -77,7 +77,7 @@ The script SHALL detect the Desktop Environment to configure tailored default vi
 
 - **GIVEN** KDE Plasma desktop session
 - **WHEN** `scripts/apps/setup-default-apps.sh` runs
-- **THEN** Kitty SHALL be set as terminal (including `kdeglobals`), VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Okular for PDF, Gwenview for images, and Kate for text in `~/.config/mimeapps.list`
+- **THEN** Kitty SHALL be set as terminal (including `kdeglobals`), VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Okular for PDF, Gwenview for images, and Ghostwriter for text in `~/.config/mimeapps.list`
 
 ### Scenario: Applying defaults on headless or unrecognized environment
 

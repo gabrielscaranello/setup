@@ -319,7 +319,7 @@ EOF
   rm -rf "$test_home"
 }
 
-@test "_set_default_text_editor resolves TextEditor on GNOME and Kate on Plasma" {
+@test "_set_default_text_editor resolves TextEditor on GNOME and Ghostwriter on Plasma" {
   source /setup/scripts/apps/setup-default-apps.sh
   local test_home="/tmp/test-default-apps-text-home"
   mkdir -p "$test_home"
@@ -332,7 +332,7 @@ EOF
 
   get_desktop_environment() { echo "plasma"; }
   HOME="$test_home" _set_default_text_editor
-  grep -q "^text/plain=org.kde.kate.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^text/plain=org.kde.ghostwriter.desktop;" "$test_home/.config/mimeapps.list"
 
   rm -rf "$test_home"
 }

@@ -8,7 +8,7 @@
 # - ONLYOFFICE for office documents (Word, Excel, PowerPoint, OpenDocument)
 # - Evince (GNOME) / Okular (KDE Plasma) for PDF documents
 # - Loupe (GNOME) / Gwenview (KDE Plasma) for images
-# - GNOME Text Editor / Kate (KDE Plasma) for text and markdown files
+# - GNOME Text Editor (GNOME) / Ghostwriter (KDE Plasma) for text and markdown files
 # - Secondary application handlers under [Added Associations] (Chromium, GIMP, VSCodium)
 
 set -euo pipefail
@@ -316,9 +316,9 @@ _set_default_text_editor() {
   local desktop_file
 
   if [ "$de" = "plasma" ]; then
-    desktop_file="$(resolve_desktop_app "org.kde.kate.desktop" "kate.desktop" "org.gnome.TextEditor.desktop" "gedit.desktop")"
+    desktop_file="$(resolve_desktop_app "org.kde.ghostwriter.desktop" "ghostwriter.desktop" "org.gnome.TextEditor.desktop" "gedit.desktop")"
   else
-    desktop_file="$(resolve_desktop_app "org.gnome.TextEditor.desktop" "gedit.desktop" "org.kde.kate.desktop" "kate.desktop")"
+    desktop_file="$(resolve_desktop_app "org.gnome.TextEditor.desktop" "gedit.desktop" "org.kde.ghostwriter.desktop" "ghostwriter.desktop")"
   fi
 
   local text_mimes=(

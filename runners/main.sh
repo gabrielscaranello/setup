@@ -26,6 +26,7 @@ Available Commands:
   codecs                  - Install Multimedia Codecs and A/V Plugins
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
+  debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
   default-apps            - Configure default desktop applications (MIME types, handlers, terminal)
   desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
   desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
@@ -129,6 +130,10 @@ run_module() {
 
     dbeaver)
       bash "$SCRIPTS_DIR/apps/setup-dbeaver.sh"
+      ;;
+
+    debloat)
+      bash "$SCRIPTS_DIR/system/setup-debloat.sh"
       ;;
 
     default-apps)
