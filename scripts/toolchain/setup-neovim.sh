@@ -59,11 +59,6 @@ _install_neovim_from_source() {
   echo "Neovim installed successfully at $(command -v nvim)"
 }
 
-_install_neovim_from_repo() {
-  echo "Installing Neovim from distribution repository..."
-  install_packages neovim
-}
-
 _ensure_nvm() {
   echo "Ensuring nvm is installed (required by neovim toolchain)..."
   bash "${BASH_SOURCE[0]%/*}/setup-nvm.sh"
@@ -89,7 +84,8 @@ _install_neovim() {
 
   case "$distro" in
     fedora | arch)
-      _install_neovim_from_repo
+      echo "Installing Neovim from distribution repository..."
+      install_packages neovim
       ;;
     debian)
       _ensure_rust

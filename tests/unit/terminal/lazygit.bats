@@ -82,13 +82,14 @@ setup() {
 
 @test "_install_lazygit delegates to repo on arch" {
   get_distro_id() { echo "arch"; }
-  _install_lazygit_repo() {
-    echo "installed from arch"
+  require_supported_distro() { echo "arch"; }
+  install_packages() {
+    echo "installed packages: $*"
     return 0
   }
   run _install_lazygit
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ arch ]]
+  [[ "$output" =~ installed\ packages:\ lazygit ]]
 }
 
 @test "_install_lazygit delegates to binary on debian and fedora" {

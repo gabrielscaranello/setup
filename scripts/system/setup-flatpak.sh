@@ -5,11 +5,6 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
 
-_install_flatpak_package() {
-  echo "Installing flatpak package..."
-  install_packages flatpak
-}
-
 _add_flathub_remote() {
   echo "Configuring Flathub remote repository..."
   local flathub_url="https://dl.flathub.org/repo/flathub.flatpakrepo"
@@ -25,7 +20,8 @@ _add_flathub_remote() {
 }
 
 _setup_flatpak() {
-  _install_flatpak_package
+  echo "Installing flatpak package..."
+  install_packages flatpak
   _add_flathub_remote
 }
 

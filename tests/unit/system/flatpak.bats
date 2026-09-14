@@ -7,14 +7,19 @@ setup() {
   source /setup/scripts/system/setup-flatpak.sh
 }
 
-@test "_install_flatpak_package calls install_packages flatpak" {
+@test "_setup_flatpak installs flatpak package and configures flathub remote" {
   install_packages() {
     echo "installed: $*"
     return 0
   }
-  run _install_flatpak_package
+  _add_flathub_remote() {
+    echo "called remote"
+    return 0
+  }
+  run _setup_flatpak
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed:\ flatpak ]]
+  [[ "$output" =~ called\ remote ]]
 }
 
 @test "_add_flathub_remote skips when flathub is already in remotes" {
@@ -48,19 +53,4 @@ setup() {
   run _add_flathub_remote
   [ "$status" -eq 0 ]
   [[ "$output" =~ Flathub\ remote\ repository\ added\ successfully ]]
-}
-
-@test "_setup_flatpak calls install and remote configuration" {
-  _install_flatpak_package() {
-    echo "called install"
-    return 0
-  }
-  _add_flathub_remote() {
-    echo "called remote"
-    return 0
-  }
-  run _setup_flatpak
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ called\ install ]]
-  [[ "$output" =~ called\ remote ]]
 }

@@ -82,13 +82,14 @@ setup() {
 
 @test "_install_lazydocker delegates to repo on arch" {
   get_distro_id() { echo "arch"; }
-  _install_lazydocker_repo() {
-    echo "installed from arch"
+  require_supported_distro() { echo "arch"; }
+  install_packages() {
+    echo "installed packages: $*"
     return 0
   }
   run _install_lazydocker
   [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ arch ]]
+  [[ "$output" =~ installed\ packages:\ lazydocker ]]
 }
 
 @test "_install_lazydocker delegates to binary on debian and fedora" {

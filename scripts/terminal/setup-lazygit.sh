@@ -66,25 +66,17 @@ _install_lazygit_binary() {
   install_github_binary "Lazygit" "jesseduffield/lazygit" "$latest_version" "$file_name" "lazygit"
 }
 
-_install_lazygit_repo() {
-  echo "Installing lazygit from distribution repository..."
-  install_packages lazygit
-}
-
 _install_lazygit() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch)
-      _install_lazygit_repo
+      echo "Installing lazygit from distribution repository..."
+      install_packages lazygit
       ;;
     debian | fedora)
       _install_lazygit_binary
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

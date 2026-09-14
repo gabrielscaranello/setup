@@ -64,10 +64,19 @@ _source_nvm() {
   return 1
 }
 
-_install_arch_nvm() {
-  echo "Detected pacman; installing nvm package from repo..."
-  # pacman-specific install (avoid using install_packages for cross-distro names)
-  install_packages nvm
+_install_nvm() {
+  local distro
+  distro="$(require_supported_distro)" || return 1
+
+  case "$distro" in
+    arch)
+      echo "Detected pacman; installing nvm package from repo..."
+      install_packages nvm
+      ;;
+    debian | fedora)
+      _install_nvm_script
+      ;;
+  esac
 }
 
 _enable_corepack() {
@@ -105,24 +114,6 @@ _install_node() {
   echo "Installing Node ${NODE_VERSION} via nvm"
   nvm install "${NODE_VERSION}"
   nvm alias default "${NODE_VERSION}"
-}
-
-_install_nvm() {
-  local distro
-  distro="$(require_supported_distro)" || return 1
-
-  case "$distro" in
-    arch)
-      _install_arch_nvm
-      ;;
-    debian | fedora)
-      _install_nvm_script
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
-  esac
 }
 
 main() {

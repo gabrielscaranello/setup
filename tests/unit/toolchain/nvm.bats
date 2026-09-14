@@ -68,7 +68,7 @@
 
 @test "_install_nvm returns error on unsupported distribution" {
   source /setup/scripts/toolchain/setup-nvm.sh
-  get_distro_id() { echo "unknown-distro"; return 1; }
+  require_supported_distro() { echo "Unsupported distribution" >&2; return 1; }
   run _install_nvm
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported distribution" ]]

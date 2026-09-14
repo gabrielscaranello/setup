@@ -67,25 +67,17 @@ _install_lazydocker_binary() {
   install_github_binary "Lazydocker" "jesseduffield/lazydocker" "$latest_version" "$file_name" "lazydocker"
 }
 
-_install_lazydocker_repo() {
-  echo "Installing lazydocker from distribution repository..."
-  install_packages lazydocker
-}
-
 _install_lazydocker() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch)
-      _install_lazydocker_repo
+      echo "Installing lazydocker from distribution repository..."
+      install_packages lazydocker
       ;;
     debian | fedora)
       _install_lazydocker_binary
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

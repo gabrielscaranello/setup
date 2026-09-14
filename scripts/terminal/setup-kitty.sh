@@ -118,27 +118,18 @@ _install_kitty_binary() {
   echo "kitty installed successfully at $HOME/.local/kitty.app/bin/kitty"
 }
 
-_install_kitty_repo() {
-  echo "Installing kitty from distribution repository..."
-  install_packages kitty
-
-  ensure_xdg_terminal_exec
-}
-
 _install_kitty() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch | fedora)
-      _install_kitty_repo
+      echo "Installing kitty from distribution repository..."
+      install_packages kitty
+      ensure_xdg_terminal_exec
       ;;
     debian)
       _install_kitty_binary
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

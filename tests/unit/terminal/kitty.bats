@@ -175,28 +175,31 @@ DESKTOP_OPEN
 
 @test "_install_kitty delegates to repo on fedora and arch" {
   source /setup/scripts/terminal/setup-kitty.sh
-  get_distro_id() { echo "fedora"; }
-  _install_kitty_repo() {
-    echo "installed from fedora"
+  require_supported_distro() { echo "fedora"; }
+  install_packages() {
+    echo "install_packages called with: $*"
     return 0
   }
-  run _install_kitty
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed from fedora" ]]
+  ensure_xdg_terminal_exec() {
+    echo "ensure_xdg_terminal_exec called"
+    return 0
+  }
 
-  get_distro_id() { echo "arch"; }
-  _install_kitty_repo() {
-    echo "installed from arch"
-    return 0
-  }
   run _install_kitty
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed from arch" ]]
+  [[ "$output" =~ "install_packages called with: kitty" ]]
+  [[ "$output" =~ "ensure_xdg_terminal_exec called" ]]
+
+  require_supported_distro() { echo "arch"; }
+  run _install_kitty
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "install_packages called with: kitty" ]]
+  [[ "$output" =~ "ensure_xdg_terminal_exec called" ]]
 }
 
 @test "_install_kitty delegates to binary on debian" {
   source /setup/scripts/terminal/setup-kitty.sh
-  get_distro_id() { echo "debian"; }
+  require_supported_distro() { echo "debian"; }
   _install_kitty_binary() {
     echo "installed from binary"
     return 0
@@ -204,23 +207,4 @@ DESKTOP_OPEN
   run _install_kitty
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed from binary" ]]
-}
-
-@test "_install_kitty_repo installs kitty and calls ensure_xdg_terminal_exec" {
-  source /setup/scripts/terminal/setup-kitty.sh
-
-  install_packages() {
-    echo "install_packages called with: $*"
-    return 0
-  }
-
-  ensure_xdg_terminal_exec() {
-    echo "ensure_xdg_terminal_exec called"
-    return 0
-  }
-
-  run _install_kitty_repo
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "install_packages called with: kitty" ]]
-  [[ "$output" =~ "ensure_xdg_terminal_exec called" ]]
 }
