@@ -110,7 +110,7 @@ _install_telegram_binary() {
 
 _install_telegram_repo() {
   local distro="$1"
-  if [ "$distro" = "fedora" ] || [ "$distro" = "dnf" ]; then
+  if [ "$distro" = "fedora" ]; then
     add_fedora_rpmfusion_repo
   fi
 
@@ -128,10 +128,6 @@ _install_telegram() {
       ;;
     debian)
       _install_telegram_binary
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

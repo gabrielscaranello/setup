@@ -3,12 +3,17 @@ set -euo pipefail
 
 source "scripts/_utils.sh" 2> /dev/null || true
 
-_install_plasma_apps() {
-  echo "Installing KDE Plasma desktop applications..."
+_should_skip_package_install() {
   if [ "${DESKTOP_APPS_SKIP_PACKAGE_INSTALL:-0}" = "1" ]; then
     echo "DESKTOP_APPS_SKIP_PACKAGE_INSTALL is active. Skipping package installation step."
     return 0
   fi
+  return 1
+}
+
+_install_plasma_apps() {
+  echo "Installing KDE Plasma desktop applications..."
+  _should_skip_package_install && return 0
   install_packages \
     dolphin dolphin-plugins \
     ark gwenview okular \
@@ -20,10 +25,7 @@ _install_plasma_apps() {
 
 _install_gnome_apps() {
   echo "Installing GNOME desktop applications..."
-  if [ "${DESKTOP_APPS_SKIP_PACKAGE_INSTALL:-0}" = "1" ]; then
-    echo "DESKTOP_APPS_SKIP_PACKAGE_INSTALL is active. Skipping package installation step."
-    return 0
-  fi
+  _should_skip_package_install && return 0
   install_packages \
     nautilus sushi \
     file-roller loupe evince \

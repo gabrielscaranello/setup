@@ -40,10 +40,6 @@ _install_lazydocker_binary() {
   local latest_version
   latest_version="$(_fetch_remote_version)"
 
-  if [ -z "$latest_version" ]; then
-    echo "Warning: Could not fetch latest lazydocker version from GitHub API" >&2
-  fi
-
   if [ -n "$latest_version" ] && _is_lazydocker_up_to_date "$latest_version"; then
     echo "lazydocker is already up to date (version: ${latest_version}), skipping installation."
     return 0

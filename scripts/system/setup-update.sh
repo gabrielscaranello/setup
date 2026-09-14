@@ -11,17 +11,20 @@ source "scripts/_utils.sh" 2> /dev/null || true
 
 _update_debian() {
   echo "Refreshing APT repositories and upgrading Debian packages..."
+  # Justification: install_packages does not abstract full-system upgrade operations
   sudo apt update
   sudo apt upgrade -y
 }
 
 _update_fedora() {
   echo "Refreshing DNF repositories and upgrading Fedora packages..."
+  # Justification: install_packages does not abstract full-system upgrade operations
   sudo dnf upgrade -y --refresh
 }
 
 _update_arch() {
   echo "Refreshing Pacman databases and upgrading Arch Linux packages..."
+  # Justification: install_packages does not abstract full-system upgrade operations
   sudo pacman -Syu --noconfirm
 }
 
@@ -46,10 +49,6 @@ main() {
       ;;
     arch)
       _update_arch
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 

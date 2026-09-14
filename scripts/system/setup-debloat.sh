@@ -30,71 +30,83 @@ _filter_installed_fedora() {
   echo "${installed[@]:-}"
 }
 
+COMMON_DEBLOAT_PACKAGES=(
+  libreoffice-core
+  xterm
+  kate
+  brasero
+  deja-dup
+  transmission-common
+)
+
+COMMON_GNOME_DEBLOAT_PACKAGES=(
+  totem
+  gnome-music
+  rhythmbox
+  cheese
+  snapshot
+  gnome-photos
+  shotwell
+  gnome-terminal
+  ptyxis
+  evolution
+  gnome-boxes
+  gnome-characters
+  gnome-connections
+  gnome-maps
+  gnome-sound-recorder
+  gnome-tour
+  simple-scan
+  gedit
+  remmina
+  polari
+)
+
+COMMON_PLASMA_DEBLOAT_PACKAGES=(
+  juk
+  konsole
+  konqueror
+  akregator
+  kdepim
+  kdepim-runtime
+  kmail
+  kontact
+  korganizer
+  konversation
+  kamera
+  kcalc
+  kfind
+  kmag
+  kmousetool
+  kmouth
+  kontrast
+  kuiviewer
+  kwalletmanager
+  sweeper
+  skanlite
+)
+
 _debloat_debian() {
   local de
   de="$(get_desktop_environment)"
 
   local targets=(
-    libreoffice-core
+    "${COMMON_DEBLOAT_PACKAGES[@]}"
     libreoffice-common
-    xterm
-    kate
-    brasero
-    deja-dup
-    transmission-common
     gimp
   )
 
   case "$de" in
     gnome)
       targets+=(
-        totem
-        gnome-music
-        rhythmbox
-        cheese
+        "${COMMON_GNOME_DEBLOAT_PACKAGES[@]}"
         gnome-snapshot
-        snapshot
-        gnome-photos
-        shotwell
-        gnome-terminal
-        ptyxis
-        evolution
-        gnome-boxes
-        gnome-characters
-        gnome-connections
-        gnome-maps
-        gnome-sound-recorder
-        gnome-tour
-        simple-scan
-        gedit
-        remmina
-        polari
       )
       ;;
     plasma)
       targets+=(
         dragonplayer
-        juk
-        konsole
-        konqueror
-        akregator
-        kdepim
-        kdepim-runtime
-        kmail
-        kontact
-        korganizer
-        konversation
-        kamera
-        kcalc
-        kfind
-        kmag
-        kmousetool
-        kmouth
-        kontrast
-        kuiviewer
-        kwalletmanager
-        sweeper
-        skanlite
+        "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
       )
       ;;
     *)
@@ -124,39 +136,13 @@ _debloat_fedora() {
   local de
   de="$(get_desktop_environment)"
 
-  local targets=(
-    libreoffice-core
-    xterm
-    kate
-    brasero
-    deja-dup
-    transmission-common
-  )
+  local targets=("${COMMON_DEBLOAT_PACKAGES[@]}")
 
   case "$de" in
     gnome)
       targets+=(
-        totem
-        gnome-music
-        rhythmbox
+        "${COMMON_GNOME_DEBLOAT_PACKAGES[@]}"
         decibels
-        cheese
-        snapshot
-        gnome-photos
-        shotwell
-        gnome-terminal
-        ptyxis
-        evolution
-        gnome-boxes
-        gnome-characters
-        gnome-connections
-        gnome-maps
-        gnome-sound-recorder
-        gnome-tour
-        simple-scan
-        gedit
-        remmina
-        polari
         mediawriter
         gnome-shell-extension-background-logo
       )
@@ -164,27 +150,7 @@ _debloat_fedora() {
     plasma)
       targets+=(
         dragon
-        juk
-        konsole
-        konqueror
-        akregator
-        kdepim
-        kdepim-runtime
-        kmail
-        kontact
-        korganizer
-        konversation
-        kamera
-        kcalc
-        kfind
-        kmag
-        kmousetool
-        kmouth
-        kontrast
-        kuiviewer
-        kwalletmanager
-        sweeper
-        skanlite
+        "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
       )
       ;;
     *)

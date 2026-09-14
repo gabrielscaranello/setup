@@ -90,7 +90,7 @@ setup() {
 }
 
 @test "_install_telegram fails when distribution is unsupported" {
-  get_distro_id() { echo "unknown-distro"; return 1; }
+  require_supported_distro() { echo "Unsupported distribution" >&2; return 1; }
   run _install_telegram
   [ "$status" -eq 1 ]
   [[ "$output" =~ Unsupported\ distribution ]]
