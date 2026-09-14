@@ -7,14 +7,14 @@ setup() {
 }
 
 @test "_install_gimp fails when distribution is unsupported" {
-  get_distro_id() { echo "unknown-distro"; return 1; }
+  require_supported_distro() { echo "Unsupported distribution" >&2; return 1; }
   run _install_gimp
   [ "$status" -eq 1 ]
   [[ "$output" =~ "Unsupported distribution" ]]
 }
 
 @test "_install_gimp delegates to repo on arch" {
-  get_distro_id() { echo "arch"; }
+  require_supported_distro() { echo "arch"; }
   install_packages() {
     echo "installed packages: $*"
     return 0
@@ -25,7 +25,7 @@ setup() {
 }
 
 @test "_install_gimp delegates to repo on fedora" {
-  get_distro_id() { echo "fedora"; }
+  require_supported_distro() { echo "fedora"; }
   install_packages() {
     echo "installed packages: $*"
     return 0
@@ -36,7 +36,7 @@ setup() {
 }
 
 @test "_install_gimp delegates to flatpak on debian" {
-  get_distro_id() { echo "debian"; }
+  require_supported_distro() { echo "debian"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
     return 0

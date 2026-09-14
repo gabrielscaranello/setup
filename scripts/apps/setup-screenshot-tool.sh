@@ -6,19 +6,7 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 
 _install_screenshot_tool() {
-  local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
-
-  case "$distro" in
-    debian | fedora | arch) ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
-  esac
+  require_supported_distro > /dev/null || return 1
 
   local de
   de="$(get_desktop_environment)"

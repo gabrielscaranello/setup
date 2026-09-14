@@ -7,30 +7,30 @@ setup() {
   source /setup/scripts/apps/setup-dbeaver.sh
 }
 
-@test "_install_dbeaver fails when distribution is unsupported" {
-  get_distro_id() { echo "unknown-distro"; return 1; }
-  run _install_dbeaver
+@test "main fails when distribution is unsupported" {
+  require_supported_distro() { echo "Unsupported distribution" >&2; return 1; }
+  run main
   [ "$status" -eq 1 ]
   [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_dbeaver delegates to flatpak on arch, debian and fedora" {
-  get_distro_id() { echo "arch"; }
+@test "main installs DBeaver via flatpak on any supported distro" {
+  require_supported_distro() { echo "arch"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
     return 0
   }
-  run _install_dbeaver
+  run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
 
-  get_distro_id() { echo "debian"; }
-  run _install_dbeaver
+  require_supported_distro() { echo "debian"; }
+  run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
 
-  get_distro_id() { echo "fedora"; }
-  run _install_dbeaver
+  require_supported_distro() { echo "fedora"; }
+  run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
 }

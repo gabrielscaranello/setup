@@ -7,10 +7,7 @@ source "scripts/_utils.sh" 2> /dev/null || true
 
 _install_discord() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch)
@@ -20,10 +17,6 @@ _install_discord() {
     debian | fedora)
       echo "Installing Discord with flatpak..."
       install_flatpak_app "com.discordapp.Discord" "Discord"
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

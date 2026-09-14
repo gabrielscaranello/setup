@@ -7,10 +7,7 @@ source "scripts/_utils.sh" 2> /dev/null || true
 
 _install_obsidian() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     arch)
@@ -20,10 +17,6 @@ _install_obsidian() {
     debian | fedora)
       echo "Installing Obsidian with flatpak..."
       install_flatpak_app "md.obsidian.Obsidian" "Obsidian"
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }
