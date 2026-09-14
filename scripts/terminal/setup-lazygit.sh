@@ -36,23 +36,18 @@ _resolve_lazygit_arch() {
 }
 
 _install_lazygit_binary() {
-  local latest_version
-  latest_version="$(_fetch_remote_version)"
-
-  if [ -n "$latest_version" ] && _is_lazygit_up_to_date "$latest_version"; then
-    echo "lazygit is already up to date (version: ${latest_version}), skipping installation."
-    return 0
-  fi
-
   install_packages curl wget tar || true
 
-  # Fallback if latest_version was empty
+  local latest_version
+  latest_version="$(_fetch_remote_version)"
   if [ -z "$latest_version" ]; then
-    latest_version="$(_fetch_remote_version)"
-    if [ -z "$latest_version" ]; then
-      echo "Failed to determine latest lazygit release version" >&2
-      return 1
-    fi
+    echo "Failed to determine latest lazygit release version" >&2
+    return 1
+  fi
+
+  if _is_lazygit_up_to_date "$latest_version"; then
+    echo "lazygit is already up to date (version: ${latest_version}), skipping installation."
+    return 0
   fi
 
   local arch file_name

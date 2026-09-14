@@ -37,29 +37,24 @@ _resolve_lazydocker_arch() {
 }
 
 _install_lazydocker_binary() {
+  install_packages curl wget tar || true
+
   local latest_version
   latest_version="$(_fetch_remote_version)"
+  if [ -z "$latest_version" ]; then
+    echo "Failed to determine latest lazydocker release version" >&2
+    return 1
+  fi
 
-  if [ -n "$latest_version" ] && _is_lazydocker_up_to_date "$latest_version"; then
+  if _is_lazydocker_up_to_date "$latest_version"; then
     echo "lazydocker is already up to date (version: ${latest_version}), skipping installation."
     return 0
   fi
 
-  install_packages curl wget tar || true
-
-  local arch
+  local arch file_name
   arch="$(_resolve_lazydocker_arch)"
+  file_name="lazydocker_${latest_version}_Linux_${arch}.tar.gz"
 
-  # Fallback if latest_version was empty
-  if [ -z "$latest_version" ]; then
-    latest_version="$(_fetch_remote_version)"
-    if [ -z "$latest_version" ]; then
-      echo "Failed to determine latest lazydocker release version" >&2
-      return 1
-    fi
-  fi
-
-  local file_name="lazydocker_${latest_version}_Linux_${arch}.tar.gz"
   install_github_binary "Lazydocker" "jesseduffield/lazydocker" "$latest_version" "$file_name" "lazydocker"
 }
 
