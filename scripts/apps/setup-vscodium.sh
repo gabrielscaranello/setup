@@ -19,25 +19,13 @@ _configure_vscodium_repo() {
   esac
 }
 
-_install_vscodium_packages() {
-  local distro="$1"
-  case "$distro" in
-    debian | fedora)
-      install_packages codium
-      ;;
-    arch)
-      echo "Installing Code (OSS) from Arch repositories..."
-      install_packages code
-      ;;
-  esac
-}
-
 _install_vscodium() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
   _configure_vscodium_repo "$distro"
-  _install_vscodium_packages "$distro"
+  echo "Installing VSCodium..."
+  install_packages vscodium
 }
 
 main() {

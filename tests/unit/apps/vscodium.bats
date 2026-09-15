@@ -21,7 +21,7 @@ setup() {
   }
   run _install_vscodium
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed packages: code" ]]
+  [[ "$output" =~ "installed packages: vscodium" ]]
 }
 
 @test "_install_vscodium on fedora adds repo and installs codium" {
@@ -37,7 +37,7 @@ setup() {
   run _install_vscodium
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_fedora_vscodium_repo" ]]
-  [[ "$output" =~ "installed packages: codium" ]]
+  [[ "$output" =~ "installed packages: vscodium" ]]
 }
 
 @test "_install_vscodium on debian adds repo and installs codium" {
@@ -53,5 +53,5 @@ setup() {
   run _install_vscodium
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_debian_vscodium_repo" ]]
-  [[ "$output" =~ "installed packages: codium" ]]
+  [[ "$output" =~ "installed packages: vscodium" ]]
 }
