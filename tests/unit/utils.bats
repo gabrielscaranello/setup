@@ -472,3 +472,51 @@ setup() {
 
   rm -rf "$test_home" "$mock_sys_bin"
 }
+
+@test "enable_cron_service enables cron.service on debian" {
+  source /setup/scripts/_utils.sh
+  is_distro() { [ "$1" = "debian" ]; }
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  local systemctl_args=()
+  systemctl() { systemctl_args+=("$*"); return 0; }
+  sudo() { "$@"; }
+
+  run enable_cron_service
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling cron scheduler service..." ]]
+}
+
+@test "enable_cron_service enables crond.service on fedora" {
+  source /setup/scripts/_utils.sh
+  is_distro() { [ "$1" = "fedora" ]; }
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  local systemctl_args=()
+  systemctl() { systemctl_args+=("$*"); return 0; }
+  sudo() { "$@"; }
+
+  run enable_cron_service
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling cron scheduler service..." ]]
+}
+
+@test "enable_cron_service enables cronie.service on arch" {
+  source /setup/scripts/_utils.sh
+  is_distro() { [ "$1" = "arch" ]; }
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  local systemctl_args=()
+  systemctl() { systemctl_args+=("$*"); return 0; }
+  sudo() { "$@"; }
+
+  run enable_cron_service
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling cron scheduler service..." ]]
+}
+
+@test "enable_cron_service skips cleanly when systemctl is unavailable" {
+  source /setup/scripts/_utils.sh
+  command() { if [ "${2:-}" = "systemctl" ]; then return 1; fi; builtin command "$@"; }
+
+  run enable_cron_service
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}

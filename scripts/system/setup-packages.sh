@@ -76,14 +76,7 @@ _enable_system_services() {
   echo "Enabling CUPS printing service..."
   sudo systemctl enable --now cups.service 2> /dev/null || sudo systemctl enable cups.service 2> /dev/null || true
 
-  echo "Enabling cron scheduler service..."
-  if is_distro debian; then
-    sudo systemctl enable --now cron.service 2> /dev/null || sudo systemctl enable cron.service 2> /dev/null || true
-  elif is_distro fedora; then
-    sudo systemctl enable --now crond.service 2> /dev/null || sudo systemctl enable crond.service 2> /dev/null || true
-  else
-    sudo systemctl enable --now cronie.service 2> /dev/null || sudo systemctl enable cronie.service 2> /dev/null || true
-  fi
+  enable_cron_service
 
   echo "Enabling periodic SSD TRIM timer..."
   sudo systemctl enable fstrim.timer 2> /dev/null || true
