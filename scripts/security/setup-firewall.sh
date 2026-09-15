@@ -57,10 +57,7 @@ _configure_gui_frontend() {
 
 main() {
   local distro
-  distro="$(get_distro_id)" || {
-    echo "Unsupported distribution" >&2
-    return 1
-  }
+  distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
     debian | arch)
@@ -69,11 +66,6 @@ main() {
 
     fedora)
       _configure_firewalld
-      ;;
-
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 

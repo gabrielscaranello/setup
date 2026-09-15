@@ -72,11 +72,6 @@ _install_fonts_from_upstream() {
   echo "JetBrains Mono Nerd Font installed successfully."
 }
 
-_install_fonts_repo() {
-  echo "Installing JetBrains Mono Nerd Font from repository..."
-  install_packages fonts-jetbrains-mono-nerd
-}
-
 _install_distro_fonts() {
   echo "Installing system font packages from repositories..."
   install_packages fonts-liberation fonts-roboto fonts-carlito fonts-noto fonts-noto-color-emoji
@@ -90,15 +85,12 @@ _install_fonts() {
 
   case "$distro" in
     arch)
-      _install_fonts_repo
+      echo "Installing JetBrains Mono Nerd Font from repository..."
+      install_packages fonts-jetbrains-mono-nerd
       ;;
     debian | fedora)
       install_packages curl wget unzip fontconfig || true
       _install_fonts_from_upstream
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 }

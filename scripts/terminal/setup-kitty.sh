@@ -91,6 +91,8 @@ _setup_desktop_integration() {
 }
 
 _install_kitty_binary() {
+  install_packages curl wget tar xz-utils || true
+
   if _is_kitty_up_to_date; then
     local current_ver
     current_ver="$(_get_local_version)"
@@ -100,7 +102,6 @@ _install_kitty_binary() {
   fi
 
   echo "Installing/updating kitty from upstream binary installer..."
-  install_packages curl wget tar xz-utils || true
 
   local installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
 

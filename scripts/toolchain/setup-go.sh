@@ -89,11 +89,6 @@ _install_go_from_binary() {
   echo "Golang installed successfully at $(command -v go || echo '/usr/local/go/bin/go')"
 }
 
-_install_go_repo() {
-  echo "Installing Golang from distribution repository..."
-  install_packages golang
-}
-
 _install_go_packages() {
   if [ ${#GO_PACKAGES[@]} -eq 0 ]; then
     return 0
@@ -120,15 +115,12 @@ _install_go() {
 
   case "$distro" in
     fedora | arch)
-      _install_go_repo
+      echo "Installing Golang from distribution repository..."
+      install_packages golang
       ;;
     debian)
       install_packages curl wget tar git || true
       _install_go_from_binary
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
       ;;
   esac
 

@@ -36,16 +36,8 @@ _install_vscodium() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
-  case "$distro" in
-    debian | fedora | arch)
-      _configure_vscodium_repo "$distro"
-      _install_vscodium_packages "$distro"
-      ;;
-    *)
-      echo "Unsupported distribution: $distro" >&2
-      return 1
-      ;;
-  esac
+  _configure_vscodium_repo "$distro"
+  _install_vscodium_packages "$distro"
 }
 
 main() {

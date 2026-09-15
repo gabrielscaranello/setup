@@ -76,6 +76,11 @@ add_debian_vscodium_repo() {
   echo "Configuring VSCodium repository for APT..."
   sudo install -d -m 0755 /usr/share/keyrings /etc/apt/sources.list.d
 
+  if ! command -v gpg > /dev/null 2>&1; then
+    echo "Installing gnupg for GPG keyring management..."
+    sudo apt update -qq && sudo apt install -y gnupg 2> /dev/null || true
+  fi
+
   if command -v wget > /dev/null 2>&1; then
     wget -qO - "$gpg_key_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
   elif command -v curl > /dev/null 2>&1; then
