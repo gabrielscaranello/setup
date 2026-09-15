@@ -4,6 +4,7 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
+source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
@@ -41,38 +42,14 @@ _install_fedora_steam() {
 
 _get_arch_steam_gpu_packages() {
   local -a gpu_pkgs=()
-  local has_amd=0
-  local has_intel=0
-  local has_nvidia=0
 
-  if command -v lspci > /dev/null 2>&1; then
-    local pci_display
-    pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
-    if echo "$pci_display" | grep -iq "1002" || echo "$pci_display" | grep -iqE "amd|advanced micro devices|radeon"; then
-      has_amd=1
-    fi
-    if echo "$pci_display" | grep -iq "8086" || echo "$pci_display" | grep -iq "intel"; then
-      has_intel=1
-    fi
-    if echo "$pci_display" | grep -iq "10de" || echo "$pci_display" | grep -iq "nvidia"; then
-      has_nvidia=1
-    fi
-  fi
-
-  # Honor GPU_VENDOR override if explicitly set
-  case "${GPU_VENDOR:-}" in
-    amd) has_amd=1 ;;
-    intel) has_intel=1 ;;
-    nvidia) has_nvidia=1 ;;
-  esac
-
-  if [ "$has_amd" -eq 1 ]; then
+  if has_amd_gpu; then
     gpu_pkgs+=("vulkan-radeon" "lib32-vulkan-radeon" "lib32-mesa")
   fi
-  if [ "$has_intel" -eq 1 ]; then
+  if has_intel_gpu; then
     gpu_pkgs+=("vulkan-intel" "lib32-vulkan-intel" "lib32-mesa")
   fi
-  if [ "$has_nvidia" -eq 1 ]; then
+  if has_nvidia_gpu; then
     gpu_pkgs+=("nvidia-utils" "lib32-nvidia-utils")
   fi
 

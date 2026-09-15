@@ -10,31 +10,11 @@ source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 
 _detect_nvidia_gpu() {
-  if [ "${NVIDIA_FORCE_DETECT:-0}" = "1" ]; then
-    return 0
-  fi
-
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
-  lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iq "10de" \
-    || lspci 2> /dev/null | grep -iE 'vga|3d|display' | grep -iq "nvidia"
+  has_nvidia_gpu
 }
 
 _detect_hybrid_gpu() {
-  if [ "${NVIDIA_FORCE_HYBRID:-0}" = "1" ]; then
-    return 0
-  fi
-
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
-  # Detect presence of secondary integrated GPU (Intel or AMD) alongside the NVIDIA dGPU
-  local other_gpus
-  other_gpus="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iv "10de" | grep -iE 'intel|amd|advanced micro devices' || true)"
-  [ -n "$other_gpus" ]
+  has_hybrid_gpu
 }
 
 _install_debian_driver() {

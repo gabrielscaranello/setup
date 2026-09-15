@@ -70,7 +70,18 @@ get_gpu_vendor() {
     return 0
   fi
 
-  if command -v lspci > /dev/null 2>&1; then
+  if command -v has_nvidia_gpu > /dev/null 2>&1; then
+    if has_nvidia_gpu; then
+      echo "nvidia"
+      return 0
+    elif has_amd_gpu; then
+      echo "amd"
+      return 0
+    elif has_intel_gpu; then
+      echo "intel"
+      return 0
+    fi
+  elif command -v lspci > /dev/null 2>&1; then
     local pci_display
     pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
     if [ -n "$pci_display" ]; then

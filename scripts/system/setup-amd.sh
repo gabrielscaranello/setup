@@ -10,16 +10,7 @@ source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 
 _detect_amd_gpu() {
-  if [ "${AMD_FORCE_DETECT:-0}" = "1" ]; then
-    return 0
-  fi
-
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
-  lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iq "1002" \
-    || lspci 2> /dev/null | grep -iE 'vga|3d|display' | grep -iqE "amd|advanced micro devices|radeon"
+  has_amd_gpu
 }
 
 _install_arch_32bit_packages() {
