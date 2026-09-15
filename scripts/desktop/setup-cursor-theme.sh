@@ -4,6 +4,7 @@ set -euo pipefail
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_plasma.sh" 2> /dev/null || true
 
 CURSOR_NAME="Bibata-Modern-Ice"
 CURSOR_ARCHIVE="${CURSOR_NAME}.tar.xz"
@@ -83,17 +84,8 @@ _configure_gnome_cursor() {
 
 _configure_plasma_cursor() {
   echo "Configuring KDE Plasma cursor theme..."
-  local kw_cmd=""
-  if command -v kwriteconfig6 > /dev/null 2>&1; then
-    kw_cmd="kwriteconfig6"
-  elif command -v kwriteconfig5 > /dev/null 2>&1; then
-    kw_cmd="kwriteconfig5"
-  fi
-
-  if [ -n "$kw_cmd" ]; then
-    "$kw_cmd" --file kcminputrc --group Mouse --key cursorTheme "$CURSOR_NAME" 2> /dev/null || true
-    "$kw_cmd" --file kcminputrc --group Mouse --key cursorSize "$CURSOR_SIZE" 2> /dev/null || true
-  fi
+  plasma_write_config "kcminputrc" "Mouse" "cursorTheme" "$CURSOR_NAME"
+  plasma_write_config "kcminputrc" "Mouse" "cursorSize" "$CURSOR_SIZE"
 
   # Configure XDG default cursor theme
   local default_icon_dir="$HOME/.icons/default"

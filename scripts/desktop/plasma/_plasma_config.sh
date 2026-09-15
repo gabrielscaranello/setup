@@ -72,6 +72,16 @@ plasma_write_config() {
       fi
     done
     kwriteconfig6 --file "$file" "${group_args[@]}" --key "$key" "$value"
+  elif command -v kwriteconfig5 > /dev/null 2>&1; then
+    local group_args=()
+    IFS=']' read -ra parts <<< "$group"
+    for part in "${parts[@]}"; do
+      part="${part#[}"
+      if [ -n "$part" ]; then
+        group_args+=(--group "$part")
+      fi
+    done
+    kwriteconfig5 --file "$file" "${group_args[@]}" --key "$key" "$value"
   else
     _plasma_ini_write "$file" "$group" "$key" "$value"
   fi

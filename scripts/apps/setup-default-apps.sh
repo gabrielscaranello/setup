@@ -15,6 +15,7 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
+source "scripts/desktop/_plasma.sh" 2> /dev/null || true
 
 _update_mimeapps_key() {
   local file="$1"
@@ -101,46 +102,8 @@ _set_default_terminal_gnome() {
 
 _set_default_terminal_plasma() {
   # KDE Plasma terminal configuration in ~/.config/kdeglobals
-  local kdeglobals="$HOME/.config/kdeglobals"
-
-  mkdir -p "$HOME/.config"
-
-  if command -v kwriteconfig6 > /dev/null 2>&1; then
-    kwriteconfig6 --file kdeglobals --group General --key TerminalApplication "kitty" 2> /dev/null || true
-    kwriteconfig6 --file kdeglobals --group General --key TerminalService "kitty.desktop" 2> /dev/null || true
-  elif command -v kwriteconfig5 > /dev/null 2>&1; then
-    kwriteconfig5 --file kdeglobals --group General --key TerminalApplication "kitty" 2> /dev/null || true
-    kwriteconfig5 --file kdeglobals --group General --key TerminalService "kitty.desktop" 2> /dev/null || true
-  else
-    # Fallback to direct file modification if kwriteconfig is not present
-    if [ -f "$kdeglobals" ]; then
-      if grep -q "^\[General\]" "$kdeglobals"; then
-        if grep -q "^TerminalApplication=" "$kdeglobals"; then
-          sed -i "s|^TerminalApplication=.*|TerminalApplication=kitty|" "$kdeglobals"
-        else
-          sed -i "/^\[General\]/a TerminalApplication=kitty" "$kdeglobals"
-        fi
-        if grep -q "^TerminalService=" "$kdeglobals"; then
-          sed -i "s|^TerminalService=.*|TerminalService=kitty.desktop|" "$kdeglobals"
-        else
-          sed -i "/^\[General\]/a TerminalService=kitty.desktop" "$kdeglobals"
-        fi
-      else
-        cat << INNER_EOF >> "$kdeglobals"
-
-[General]
-TerminalApplication=kitty
-TerminalService=kitty.desktop
-INNER_EOF
-      fi
-    else
-      cat << INNER_EOF > "$kdeglobals"
-[General]
-TerminalApplication=kitty
-TerminalService=kitty.desktop
-INNER_EOF
-    fi
-  fi
+  plasma_write_config "kdeglobals" "General" "TerminalApplication" "kitty"
+  plasma_write_config "kdeglobals" "General" "TerminalService" "kitty.desktop"
 }
 
 _set_default_terminal() {
