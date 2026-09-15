@@ -10,7 +10,7 @@ Provides helper functions to detect Debian version codenames and idempotently co
 
 ### Requirement: Codename Detection
 
-The helper SHALL resolve the Debian release codename from `/etc/os-release` (`DEBIAN_CODENAME` or `VERSION_CODENAME`) or `lsb_release`, defaulting to `bookworm` if undetected.
+The helper SHALL resolve the Debian release codename from `/etc/os-release` (`DEBIAN_CODENAME` or `VERSION_CODENAME`) or `lsb_release`, defaulting to `trixie` if undetected.
 
 ### Requirement: Idempotent Backports Configuration
 

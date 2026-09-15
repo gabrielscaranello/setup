@@ -35,6 +35,8 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+- `get_gpu_vendor`: Returns detected physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
+- `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch).
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
 - `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
@@ -42,11 +44,12 @@ Common operations must reuse helper functions from `scripts/_utils.sh`:
 - `is_version_up_to_date <local_ver> <remote_ver>`: Compares local and remote version strings idempotently.
 - `install_github_binary <name> <repo> <version> <file_name> <bin_name>`: Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
 
-### 3. Distribution-Specific Repository Utilities
+### 3. Distribution-Specific Repository & Hardware Utilities
 
-Third-party repository configurations must reside in their respective distro helper modules:
+Third-party repository configurations and hardware primitives must reside in their respective helper modules:
 
-- **Shared GPU Repositories (`scripts/system/_gpu_utils.sh`)**:
+- **Shared GPU Utilities (`scripts/system/_gpu_utils.sh`)**:
+  - `has_nvidia_gpu`, `has_amd_gpu`, `has_intel_gpu`, `has_hybrid_gpu`: Resilient hardware detection via `lspci`.
   - `configure_gpu_repositories`: Idempotently configures non-free, multilib, or RPM Fusion repositories needed for GPU graphics drivers.
 - **Arch Linux (`scripts/system/arch/_repositories.sh`)**:
   - `add_arch_multilib_repo`: Idempotently enables the multilib repository in `/etc/pacman.conf` and updates the pacman database.
@@ -114,7 +117,7 @@ docker run --rm -it -v "$(pwd)":/setup setup-test-fedora bash
 docker run --rm -it -v "$(pwd)":/setup setup-test-archlinux bash
 
 # ❌ NEVER — executes on the developer's workstation, may corrupt their system
-bash scripts/setup-docker.sh
+bash scripts/toolchain/setup-docker.sh
 sudo bash scripts/system/setup-nvidia.sh
 ./scripts/apps/setup-browsers.sh
 ```

@@ -228,3 +228,31 @@ The utility function `install_github_binary` SHALL download, extract, and instal
 - **AND** extract the archive into a temporary folder
 - **AND** install the target binary to `/usr/local/bin/<bin_name>`
 - **AND** clean up all temporary files after installation
+
+---
+
+### Requirement: Distribution Cron Service Activation
+
+The utility function `enable_cron_service` SHALL resolve and activate the distribution-specific cron daemon (`cron` on Debian, `crond` on Fedora, `cronie` on Arch Linux) via `systemctl`.
+
+#### Scenario: Enabling cron daemon on supported distributions
+
+- **GIVEN** `systemctl` is available on the system
+- **WHEN** `enable_cron_service` is called without arguments
+- **THEN** it SHALL resolve `cron.service` on Debian, `crond.service` on Fedora, and `cronie.service` on Arch Linux
+- **AND** enable and start the service idempotently
+- **AND** if `systemctl` is unavailable (e.g. containers or chroot), it SHALL skip gracefully with exit code 0
+
+---
+
+### Requirement: GPU Vendor Detection
+
+The utility function `get_gpu_vendor` SHALL inspect physical PCI devices via `lspci` to detect active GPU hardware, supporting environment override via `GPU_VENDOR`.
+
+#### Scenario: GPU vendor detection via lspci
+
+- **GIVEN** `lspci` outputs display controller lines matching NVIDIA, AMD/ATI, or Intel
+- **WHEN** `get_gpu_vendor` is called
+- **THEN** it SHALL return `nvidia`, `amd`, or `intel` respectively
+- **AND** if no physical GPU matches, it SHALL return `unknown`
+- **AND** if `GPU_VENDOR` is exported in the environment, it SHALL honor the override value
