@@ -110,41 +110,61 @@ EOF
 }
 
 @test "add_debian_vscodium_repo skips when repository files exist" {
-  local test_dir="/tmp/test-vscodium-apt-repo"
+  local test_dir="/tmp/test-vscodium-apt-repo-$$"
   mkdir -p "$test_dir"
   touch "$test_dir/vscodium.sources" "$test_dir/vscodium-archive-keyring.gpg"
-
-  add_debian_vscodium_repo() {
-    local keyring_path="$test_dir/vscodium-archive-keyring.gpg"
-    local sources_path="$test_dir/vscodium.sources"
-    if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
-      echo "VSCodium repository already configured on Debian, skipping."
-      return 0
-    fi
-  }
+  export APT_VSCODIUM_KEYRING="$test_dir/vscodium-archive-keyring.gpg"
+  export APT_VSCODIUM_SOURCES="$test_dir/vscodium.sources"
 
   run add_debian_vscodium_repo
+  rm -rf "$test_dir"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "already configured" ]]
 }
 
+@test "add_debian_vscodium_repo configures repository using fetch_url when missing" {
+  local test_dir="/tmp/test-vscodium-missing-$$"
+  mkdir -p "$test_dir"
+  export APT_VSCODIUM_KEYRING="$test_dir/vscodium-archive-keyring.gpg"
+  export APT_VSCODIUM_SOURCES="$test_dir/vscodium.sources"
+  sudo() { "$@"; }
+  apt() { return 0; }
+  gpg() { cat; }
+  fetch_url() { echo "mock-gpg-key"; }
+
+  run add_debian_vscodium_repo
+  rm -rf "$test_dir"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring VSCodium repository" ]]
+}
+
 @test "add_debian_mozilla_repo skips when repository files exist" {
-  local test_dir="/tmp/test-mozilla-apt-repo"
+  local test_dir="/tmp/test-mozilla-apt-repo-$$"
   mkdir -p "$test_dir"
   touch "$test_dir/mozilla.sources" "$test_dir/packages.mozilla.org.asc"
-
-  add_debian_mozilla_repo() {
-    local keyring_path="$test_dir/packages.mozilla.org.asc"
-    local sources_path="$test_dir/mozilla.sources"
-    if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
-      echo "Mozilla repository already configured, skipping."
-      return 0
-    fi
-  }
+  export APT_MOZILLA_KEYRING="$test_dir/packages.mozilla.org.asc"
+  export APT_MOZILLA_SOURCES="$test_dir/mozilla.sources"
 
   run add_debian_mozilla_repo
+  rm -rf "$test_dir"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "already configured" ]]
+}
+
+@test "add_debian_mozilla_repo configures repository using fetch_url when missing" {
+  local test_dir="/tmp/test-mozilla-missing-$$"
+  mkdir -p "$test_dir"
+  export APT_MOZILLA_KEYRING="$test_dir/packages.mozilla.org.asc"
+  export APT_MOZILLA_SOURCES="$test_dir/mozilla.sources"
+  export APT_MOZILLA_PREFERENCES="$test_dir/mozilla-pin"
+  sudo() { "$@"; }
+  apt() { return 0; }
+  fetch_url() { echo "mock-mozilla-key"; }
+
+  run add_debian_mozilla_repo
+  rm -rf "$test_dir"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring Mozilla repository" ]]
 }
 
 @test "add_debian_nonfree_repo ensures contrib, non-free and non-free-firmware on deb822 sources" {

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Debian-specific repository helper functions (sourced as utility, not executed directly)
+source "$(dirname "${BASH_SOURCE[0]}")/../../_utils.sh" 2> /dev/null || source "scripts/_utils.sh" 2> /dev/null || true
 
 get_debian_codename() {
   if [ -f /etc/os-release ]; then
@@ -64,8 +65,8 @@ EOF
 }
 
 add_debian_vscodium_repo() {
-  local keyring_path="/usr/share/keyrings/vscodium-archive-keyring.gpg"
-  local sources_path="/etc/apt/sources.list.d/vscodium.sources"
+  local keyring_path="${APT_VSCODIUM_KEYRING:-/usr/share/keyrings/vscodium-archive-keyring.gpg}"
+  local sources_path="${APT_VSCODIUM_SOURCES:-/etc/apt/sources.list.d/vscodium.sources}"
   local gpg_key_url="https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg"
 
   if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
@@ -74,21 +75,14 @@ add_debian_vscodium_repo() {
   fi
 
   echo "Configuring VSCodium repository for APT..."
-  sudo install -d -m 0755 /usr/share/keyrings /etc/apt/sources.list.d
+  sudo install -d -m 0755 "$(dirname "$keyring_path")" "$(dirname "$sources_path")"
 
   if ! command -v gpg > /dev/null 2>&1; then
     echo "Installing gnupg for GPG keyring management..."
     sudo apt update -qq && sudo apt install -y gnupg 2> /dev/null || true
   fi
 
-  if command -v wget > /dev/null 2>&1; then
-    wget -qO - "$gpg_key_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
-  elif command -v curl > /dev/null 2>&1; then
-    curl -fsSL "$gpg_key_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
-  else
-    echo "Error: Neither wget nor curl is available to download VSCodium GPG key" >&2
-    return 1
-  fi
+  fetch_url "$gpg_key_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
 
   cat << EOF_SOURCES | sudo tee "$sources_path" > /dev/null
 Types: deb
@@ -103,8 +97,9 @@ EOF_SOURCES
 }
 
 add_debian_mozilla_repo() {
-  local keyring_path="/etc/apt/keyrings/packages.mozilla.org.asc"
-  local sources_path="/etc/apt/sources.list.d/mozilla.sources"
+  local keyring_path="${APT_MOZILLA_KEYRING:-/etc/apt/keyrings/packages.mozilla.org.asc}"
+  local sources_path="${APT_MOZILLA_SOURCES:-/etc/apt/sources.list.d/mozilla.sources}"
+  local preferences_path="${APT_MOZILLA_PREFERENCES:-/etc/apt/preferences.d/mozilla}"
   local repo_url="https://packages.mozilla.org/apt"
 
   if [ -f "$sources_path" ] && [ -f "$keyring_path" ]; then
@@ -113,16 +108,9 @@ add_debian_mozilla_repo() {
   fi
 
   echo "Configuring Mozilla repository for APT..."
-  sudo install -d -m 0755 /etc/apt/keyrings
+  sudo install -d -m 0755 "$(dirname "$keyring_path")" "$(dirname "$sources_path")"
 
-  if command -v wget > /dev/null 2>&1; then
-    wget -q "${repo_url}/repo-signing-key.gpg" -O- | sudo tee "$keyring_path" > /dev/null
-  elif command -v curl > /dev/null 2>&1; then
-    curl -fsSL "${repo_url}/repo-signing-key.gpg" | sudo tee "$keyring_path" > /dev/null
-  else
-    echo "Error: Neither wget nor curl is available to download Mozilla GPG key" >&2
-    return 1
-  fi
+  fetch_url "${repo_url}/repo-signing-key.gpg" | sudo tee "$keyring_path" > /dev/null
 
   cat << EOF_SOURCES | sudo tee "$sources_path" > /dev/null
 Types: deb
@@ -133,7 +121,8 @@ Signed-By: $keyring_path
 EOF_SOURCES
 
   echo "Setting APT pinning priority for Mozilla repository..."
-  cat << EOF_PIN | sudo tee /etc/apt/preferences.d/mozilla > /dev/null
+  sudo install -d -m 0755 "$(dirname "$preferences_path")"
+  cat << EOF_PIN | sudo tee "$preferences_path" > /dev/null
 Package: *
 Pin: origin packages.mozilla.org
 Pin-Priority: 1000
