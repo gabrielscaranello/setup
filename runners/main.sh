@@ -47,6 +47,7 @@ Available Commands:
   kitty                   - Install Kitty terminal emulator
   lazydocker              - Install Lazydocker
   lazygit                 - Install Lazygit
+  look                    - Configure desktop appearance (cursor, GTK theme, icon theme)
   mongodb-compass         - Install MongoDB Compass (Flatpak)
   neovim                  - Install Neovim and build runtime dependencies
   nvidia                  - Install NVIDIA drivers and hybrid GPU tools (switcheroo-control & prime-run)
@@ -215,6 +216,10 @@ run_module() {
 
     lazygit)
       bash "$SCRIPTS_DIR/terminal/setup-lazygit.sh"
+      ;;
+
+    look)
+      bash "$SCRIPTS_DIR/desktop/setup-look.sh"
       ;;
 
     mongodb-compass)
