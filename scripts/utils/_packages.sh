@@ -139,17 +139,19 @@ install_packages() {
 install_flatpak_app() {
   local app_id="$1"
   local app_name="${2:-$app_id}"
-  local script_dir
-
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  if [ -f "$script_dir/system/setup-flatpak.sh" ]; then
-    bash "$script_dir/system/setup-flatpak.sh"
-  elif [ -f "$script_dir/../system/setup-flatpak.sh" ]; then
-    bash "$script_dir/../system/setup-flatpak.sh"
-  elif [ -f "$script_dir/setup-flatpak.sh" ]; then
-    bash "$script_dir/setup-flatpak.sh"
-  elif [ -f "$script_dir/../setup-flatpak.sh" ]; then
-    bash "$script_dir/../setup-flatpak.sh"
+  # Fast-path: check if flatpak is installed and flathub remote is already configured
+  if ! command -v flatpak > /dev/null 2>&1 || ! flatpak remotes --columns=name 2> /dev/null | grep -qx "flathub"; then
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [ -f "$script_dir/system/setup-flatpak.sh" ]; then
+      bash "$script_dir/system/setup-flatpak.sh"
+    elif [ -f "$script_dir/../system/setup-flatpak.sh" ]; then
+      bash "$script_dir/../system/setup-flatpak.sh"
+    elif [ -f "$script_dir/setup-flatpak.sh" ]; then
+      bash "$script_dir/setup-flatpak.sh"
+    elif [ -f "$script_dir/../setup-flatpak.sh" ]; then
+      bash "$script_dir/../setup-flatpak.sh"
+    fi
   fi
 
   if flatpak list --app --columns=application 2> /dev/null | grep -qx "$app_id"; then

@@ -234,6 +234,28 @@ setup() {
   [[ "$output" =~ ExampleApp\ Flatpak\ installed\ successfully ]]
 }
 
+@test "install_flatpak_app uses fast-path when flatpak and flathub remote exist" {
+  flatpak() {
+    if [ "$1" = "remotes" ]; then
+      echo "flathub"
+      return 0
+    fi
+    if [ "$1" = "list" ]; then
+      echo "org.other.App"
+      return 0
+    fi
+    if [ "$1" = "install" ]; then
+      echo "fast-path installed: $*"
+      return 0
+    fi
+    return 1
+  }
+  sudo() { "$@"; }
+  run install_flatpak_app "org.example.App" "ExampleApp"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "fast-path installed: install -y --noninteractive flathub org.example.App" ]]
+}
+
 @test "download_file downloads successfully via curl or wget" {
   curl() {
     echo "curl downloaded: $*"
