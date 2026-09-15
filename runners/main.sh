@@ -40,6 +40,7 @@ Available Commands:
   gnome-extensions        - Install and enable GNOME Shell extensions
   gnome-extensions-config - Configure GNOME Shell extensions via dconf
   go                      - Install Golang programming language
+  graphics                - Install and configure graphics drivers (NVIDIA / AMD)
   gtk-theme               - Install and configure adw-gtk3-dark GTK theme (GNOME)
   hide-apps               - Hide unwanted applications from desktop menus (.desktop files)
   icon-theme              - Install and configure Papirus-Dark icon theme (GNOME)
@@ -188,6 +189,10 @@ run_module() {
 
     go)
       bash "$SCRIPTS_DIR/toolchain/setup-go.sh"
+      ;;
+
+    graphics)
+      bash "$SCRIPTS_DIR/system/setup-graphics.sh"
       ;;
 
     gtk-theme)

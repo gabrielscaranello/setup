@@ -38,8 +38,7 @@ COMMON_INITIAL_STEPS=(
 )
 
 COMMON_POST_STEPS=(
-  "system/setup-nvidia.sh:NVIDIA graphics drivers setup"
-  "system/setup-amd.sh:AMD graphics drivers and codecs setup"
+  "system/setup-graphics.sh:Graphics drivers setup (NVIDIA / AMD)"
   "system/setup-codecs.sh:Multimedia codecs and A/V plugins setup"
   "toolchain/setup-docker.sh:Docker setup"
   "system/setup-flatpak.sh:Flatpak setup"
