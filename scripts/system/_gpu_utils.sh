@@ -82,7 +82,3 @@ configure_gpu_repositories() {
       ;;
   esac
 }
-
-_configure_repositories() {
-  configure_gpu_repositories "$@"
-}

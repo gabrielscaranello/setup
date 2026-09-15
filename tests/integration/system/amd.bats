@@ -34,7 +34,7 @@ setup_file() {
   case "$pm" in
   apt)
     source /setup/scripts/system/setup-amd.sh
-    _configure_repositories "apt"
+    configure_gpu_repositories "apt"
     apt-cache show firmware-amd-graphics >/dev/null 2>&1 || apt-cache search firmware-amd-graphics | grep -q "firmware-amd-graphics"
     apt-cache show mesa-vulkan-drivers >/dev/null 2>&1 || apt-cache search mesa-vulkan-drivers | grep -q "mesa-vulkan-drivers"
     ;;

@@ -59,7 +59,7 @@ setup() {
   [ "$status" -eq 1 ]
 }
 
-@test "_configure_repositories calls add_fedora_rpmfusion_repo on Fedora" {
+@test "configure_gpu_repositories calls add_fedora_rpmfusion_repo on Fedora" {
   add_fedora_rpmfusion_repo() {
     echo "called add_fedora_rpmfusion_repo"
     return 0
@@ -69,7 +69,7 @@ setup() {
   [[ "$output" =~ "called add_fedora_rpmfusion_repo" ]]
 }
 
-@test "_configure_repositories calls add_arch_multilib_repo on Arch Linux" {
+@test "configure_gpu_repositories calls add_arch_multilib_repo on Arch Linux" {
   add_arch_multilib_repo() {
     echo "called add_arch_multilib_repo"
     return 0
@@ -79,7 +79,7 @@ setup() {
   [[ "$output" =~ "called add_arch_multilib_repo" ]]
 }
 
-@test "_configure_repositories ensures contrib, non-free and backports on Debian" {
+@test "configure_gpu_repositories ensures contrib, non-free and backports on Debian" {
   export APT_DEBIAN_SOURCES="/tmp/test_debian_$$.sources"
   cat << 'EOF' > "$APT_DEBIAN_SOURCES"
 Types: deb

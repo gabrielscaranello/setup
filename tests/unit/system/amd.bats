@@ -43,7 +43,7 @@ setup() {
   [ "$status" -eq 1 ]
 }
 
-@test "_configure_repositories calls appropriate repo helper per distro" {
+@test "configure_gpu_repositories calls appropriate repo helper per distro" {
   add_debian_nonfree_repo() { echo "called nonfree"; }
   add_debian_backports_repo() { echo "called backports"; }
   add_fedora_rpmfusion_repo() { echo "called rpmfusion"; }
