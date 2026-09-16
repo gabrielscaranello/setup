@@ -181,6 +181,22 @@ setup() {
   [[ "$output" =~ "Unsupported distribution" ]]
 }
 
+@test "get_repo_root detects repository root directory" {
+  run get_repo_root
+  [ "$status" -eq 0 ]
+  [ -d "$output/scripts" ]
+  [ -f "$output/main.sh" ]
+}
+
+@test "get_repo_root respects REPO_ROOT_DIR environment override" {
+  local mock_root
+  mock_root="$(mktemp -d)"
+  REPO_ROOT_DIR="$mock_root" run get_repo_root
+  [ "$status" -eq 0 ]
+  [ "$output" = "$mock_root" ]
+  rm -rf "$mock_root"
+}
+
 @test "get_root_filesystem detects root filesystem" {
   run get_root_filesystem
   [ "$status" -eq 0 ]

@@ -40,15 +40,12 @@ _get_package_name() {
     target="$(get_distro_id 2> /dev/null || _get_package_manager 2> /dev/null || true)"
   fi
   local config_file=""
-
-  if [ -f "scripts/packages.conf" ]; then
+  local repo_root
+  repo_root="$(get_repo_root)"
+  if [ -f "${repo_root}/scripts/packages.conf" ]; then
+    config_file="${repo_root}/scripts/packages.conf"
+  elif [ -f "scripts/packages.conf" ]; then
     config_file="scripts/packages.conf"
-  elif [ -f "$(dirname "${BASH_SOURCE[0]}")/packages.conf" ]; then
-    config_file="$(dirname "${BASH_SOURCE[0]}")/packages.conf"
-  elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../packages.conf" ]; then
-    config_file="$(dirname "${BASH_SOURCE[0]}")/../packages.conf"
-  elif [ -f "/setup/scripts/packages.conf" ]; then
-    config_file="/setup/scripts/packages.conf"
   fi
 
   if [ -n "$config_file" ] && [ -f "$config_file" ]; then
@@ -141,16 +138,10 @@ install_flatpak_app() {
   local app_name="${2:-$app_id}"
   # Fast-path: check if flatpak is installed and flathub remote is already configured
   if ! command -v flatpak > /dev/null 2>&1 || ! flatpak remotes --columns=name 2> /dev/null | grep -qx "flathub"; then
-    local script_dir
-    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    if [ -f "$script_dir/system/setup-flatpak.sh" ]; then
-      bash "$script_dir/system/setup-flatpak.sh"
-    elif [ -f "$script_dir/../system/setup-flatpak.sh" ]; then
-      bash "$script_dir/../system/setup-flatpak.sh"
-    elif [ -f "$script_dir/setup-flatpak.sh" ]; then
-      bash "$script_dir/setup-flatpak.sh"
-    elif [ -f "$script_dir/../setup-flatpak.sh" ]; then
-      bash "$script_dir/../setup-flatpak.sh"
+    local flatpak_script
+    flatpak_script="$(get_repo_root)/scripts/system/setup-flatpak.sh"
+    if [ -f "$flatpak_script" ]; then
+      bash "$flatpak_script"
     fi
   fi
 

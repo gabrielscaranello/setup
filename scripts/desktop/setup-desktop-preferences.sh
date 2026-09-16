@@ -7,9 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_favorite_apps.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_plasma.sh" 2> /dev/null || true
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CONFIG_DIR="${REPO_ROOT}/config/gnome"
+CONFIG_DIR="$(get_repo_root)/config/gnome"
 
 GNOME_DCONF_FILES=(
   "interface.dconf"
@@ -28,7 +26,7 @@ _setup_gnome_workspace_env() {
   local autostart_dir="${config_dir}/autostart"
   local generators_dir="${config_dir}/systemd/user-environment-generators"
   local repo_root
-  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  repo_root="$(get_repo_root)"
   local template_env="${GNOME_WORKSPACE_ENV_NVM:-${repo_root}/config/gnome/env/nvm.sh}"
   local template_desktop="${GNOME_AUTOSTART_NVM:-${repo_root}/config/gnome/autostart/nvm-env.desktop}"
 

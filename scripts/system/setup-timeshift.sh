@@ -13,7 +13,7 @@ _install_timeshift_packages() {
 }
 
 _get_config_dir() {
-  echo "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/config"
+  echo "$(get_repo_root)/config"
 }
 
 _get_documents_dir_name() {

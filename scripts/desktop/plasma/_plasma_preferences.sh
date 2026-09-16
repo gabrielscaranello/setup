@@ -67,10 +67,7 @@ _setup_plasma_workspace_env() {
   local env_dir="${config_dir}/plasma-workspace/env"
   local target_file="${env_dir}/nvm.sh"
   local repo_root
-  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." 2> /dev/null && pwd || echo "")"
-  if [ ! -d "$repo_root/config" ] && [ -d "/setup/config" ]; then
-    repo_root="/setup"
-  fi
+  repo_root="$(get_repo_root)"
   local template_file="${PLASMA_WORKSPACE_ENV_NVM:-${repo_root}/config/plasma/plasma-workspace/env/nvm.sh}"
 
   if [ -f "$template_file" ]; then
@@ -85,10 +82,7 @@ _setup_plasma_start_icon() {
   local distro
   distro="$(get_distro_id 2> /dev/null || true)"
   local repo_root
-  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." 2> /dev/null && pwd || echo "")"
-  if [ ! -d "$repo_root/assets" ] && [ -d "/setup/assets" ]; then
-    repo_root="/setup"
-  fi
+  repo_root="$(get_repo_root)"
   local assets_dir="${repo_root}/assets/icons"
 
   local src_icon=""

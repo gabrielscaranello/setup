@@ -60,6 +60,35 @@ require_supported_distro() {
   esac
 }
 
+get_repo_root() {
+  if [ -n "${REPO_ROOT_DIR:-}" ] && [ -d "$REPO_ROOT_DIR" ]; then
+    echo "$REPO_ROOT_DIR"
+    return 0
+  fi
+
+  local current_dir
+  current_dir="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+
+  local candidate
+  for candidate in \
+    "$(cd "$current_dir/../.." 2> /dev/null && pwd || true)" \
+    "$(cd "$current_dir/.." 2> /dev/null && pwd || true)" \
+    "/setup" \
+    "$(pwd)"; do
+    if [ -n "$candidate" ] && [ -f "$candidate/main.sh" ] && [ -d "$candidate/scripts" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+
+  if [ -d "/setup" ]; then
+    echo "/setup"
+    return 0
+  fi
+
+  pwd
+}
+
 get_root_filesystem() {
   findmnt -n -o FSTYPE / 2> /dev/null || df -T / 2> /dev/null | awk 'NR==2 {print $2}' || echo "unknown"
 }

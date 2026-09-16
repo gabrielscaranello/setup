@@ -205,7 +205,7 @@ configure_plasma_panel() {
   # 2. Offline / headless / container fallback: deploy template file
   local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
   local repo_root
-  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+  repo_root="$(get_repo_root)"
   local template_file="${PLASMA_PANEL_TEMPLATE:-${repo_root}/config/plasma/plasma-org.kde.plasma.desktop-appletsrc}"
   local target_file="${config_dir}/plasma-org.kde.plasma.desktop-appletsrc"
   local icon_path="${KDE_START_HERE_ICON:-$HOME/.icons/start-here.svg}"

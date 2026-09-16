@@ -5,9 +5,7 @@ set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CONFIG_DIR="${REPO_ROOT}/config/gnome-extensions"
+CONFIG_DIR="$(get_repo_root)/config/gnome-extensions"
 
 COMMON_DCONF_FILES=(
   "alphabetical-app-grid.dconf"
