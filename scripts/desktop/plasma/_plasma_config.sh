@@ -20,40 +20,7 @@ _plasma_ini_write() {
   local key="$3"
   local value="$4"
   local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
-  local target_file="${config_dir}/${file}"
-
-  mkdir -p "$config_dir"
-  if [ ! -f "$target_file" ]; then
-    touch "$target_file"
-  fi
-
-  awk -v g="[$group]" -v k="$key" -v v="$value" '
-    BEGIN { in_group = 0; replaced = 0; group_seen = 0; has_lines = 0 }
-    /^\[.*\]$/ {
-      if (in_group && !replaced) { print k "=" v; replaced = 1 }
-      if ($0 == g) { in_group = 1; group_seen = 1 } else { in_group = 0 }
-    }
-    {
-      has_lines = 1
-      line = $0
-      sub(/^[ \t]+/, "", line)
-      if (line == "") { last_line_blank = 1 } else { last_line_blank = 0 }
-      if (in_group && substr(line, 1, length(k) + 1) == (k "=")) {
-        print k "=" v
-        replaced = 1
-        next
-      }
-      print
-    }
-    END {
-      if (in_group && !replaced) { print k "=" v; replaced = 1 }
-      if (!group_seen) {
-        if (has_lines && !last_line_blank) { print "" }
-        print g
-        print k "=" v
-      }
-    }
-  ' "$target_file" > "${target_file}.tmp" && mv "${target_file}.tmp" "$target_file"
+  write_ini_key "${config_dir}/${file}" "$group" "$key" "$value"
 }
 
 plasma_write_config() {

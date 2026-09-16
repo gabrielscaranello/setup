@@ -203,6 +203,53 @@ setup() {
   [ -n "$output" ]
 }
 
+@test "write_ini_key creates new file and section when file does not exist" {
+  local tmp_file="/tmp/test_write_ini_$$.ini"
+  rm -f "$tmp_file"
+
+  run write_ini_key "$tmp_file" "General" "foo" "bar"
+  [ "$status" -eq 0 ]
+  [ -f "$tmp_file" ]
+  grep -q "^\[General\]" "$tmp_file"
+  grep -q "^foo=bar" "$tmp_file"
+
+  rm -f "$tmp_file"
+}
+
+@test "write_ini_key updates existing key in existing section" {
+  local tmp_file="/tmp/test_write_ini_$$.ini"
+  cat << 'EOF' > "$tmp_file"
+[General]
+foo=old_value
+bar=baz
+EOF
+
+  run write_ini_key "$tmp_file" "General" "foo" "new_value"
+  [ "$status" -eq 0 ]
+  grep -q "^foo=new_value" "$tmp_file"
+  grep -q "^bar=baz" "$tmp_file"
+  [ "$(grep -c "^foo=" "$tmp_file")" -eq 1 ]
+
+  rm -f "$tmp_file"
+}
+
+@test "write_ini_key appends new section without altering existing sections" {
+  local tmp_file="/tmp/test_write_ini_$$.ini"
+  cat << 'EOF' > "$tmp_file"
+[First]
+key1=val1
+EOF
+
+  run write_ini_key "$tmp_file" "Second" "key2" "val2"
+  [ "$status" -eq 0 ]
+  grep -q "^\[First\]" "$tmp_file"
+  grep -q "^key1=val1" "$tmp_file"
+  grep -q "^\[Second\]" "$tmp_file"
+  grep -q "^key2=val2" "$tmp_file"
+
+  rm -f "$tmp_file"
+}
+
 @test "get_shell_profile detects correct profile based on SHELL variable" {
   SHELL=/bin/zsh run get_shell_profile
   [ "$status" -eq 0 ]

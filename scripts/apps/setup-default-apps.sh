@@ -17,44 +17,6 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/desktop/_plasma.sh" 2> /dev/null || true
 
-_update_mimeapps_key() {
-  local file="$1"
-  local section="$2"
-  local key="$3"
-  local val="$4"
-
-  mkdir -p "$(dirname "$file")"
-  [ -f "$file" ] || touch "$file"
-
-  awk -v sec="[$section]" -v k="$key" -v v="$val" '
-    BEGIN { in_sec = 0; replaced = 0; sec_seen = 0; has_lines = 0 }
-    /^\[.*\]$/ {
-      if (in_sec && !replaced) { print k "=" v; replaced = 1 }
-      if ($0 == sec) { in_sec = 1; sec_seen = 1 } else { in_sec = 0 }
-    }
-    {
-      has_lines = 1
-      line = $0
-      sub(/^[ \t]+/, "", line)
-      if (line == "") { last_line_blank = 1 } else { last_line_blank = 0 }
-      if (in_sec && substr(line, 1, length(k) + 1) == (k "=")) {
-        print k "=" v
-        replaced = 1
-        next
-      }
-      print
-    }
-    END {
-      if (in_sec && !replaced) { print k "=" v; replaced = 1 }
-      if (!sec_seen) {
-        if (has_lines && !last_line_blank) { print "" }
-        print sec
-        print k "=" v
-      }
-    }
-  ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
-}
-
 _set_mime_default() {
   local desktop_file="$1"
   shift
@@ -68,7 +30,7 @@ _set_mime_default() {
     if command -v xdg-mime > /dev/null 2>&1; then
       xdg-mime default "$desktop_file" "$mime" 2> /dev/null || true
     fi
-    _update_mimeapps_key "$mimeapps_file" "Default Applications" "$mime" "${desktop_file};"
+    write_ini_key "$mimeapps_file" "Default Applications" "$mime" "${desktop_file};"
   done
 }
 
@@ -313,7 +275,7 @@ _set_added_associations() {
 
   echo "Configuring secondary application associations in Added Associations..."
   for mime in "${browser_mimes[@]}"; do
-    _update_mimeapps_key "$mimeapps_file" "Added Associations" "$mime" "$browser_combo"
+    write_ini_key "$mimeapps_file" "Added Associations" "$mime" "$browser_combo"
   done
 
   local image_mimes=(
@@ -322,11 +284,11 @@ _set_added_associations() {
     "image/x-xcf"
   )
   for mime in "${image_mimes[@]}"; do
-    _update_mimeapps_key "$mimeapps_file" "Added Associations" "$mime" "${gimp_desktop};"
+    write_ini_key "$mimeapps_file" "Added Associations" "$mime" "${gimp_desktop};"
   done
 
-  _update_mimeapps_key "$mimeapps_file" "Added Associations" "text/plain" "${editor_desktop};"
-  _update_mimeapps_key "$mimeapps_file" "Added Associations" "text/markdown" "${editor_desktop};"
+  write_ini_key "$mimeapps_file" "Added Associations" "text/plain" "${editor_desktop};"
+  write_ini_key "$mimeapps_file" "Added Associations" "text/markdown" "${editor_desktop};"
 
   echo "Added associations configured successfully."
 }

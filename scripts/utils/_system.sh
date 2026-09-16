@@ -93,6 +93,47 @@ get_root_filesystem() {
   findmnt -n -o FSTYPE / 2> /dev/null || df -T / 2> /dev/null | awk 'NR==2 {print $2}' || echo "unknown"
 }
 
+# Sets or updates a key=value pair inside a given [section] in an INI or desktop file.
+# Preserves surrounding formatting and creates missing sections or files cleanly.
+# Usage: write_ini_key <file> <section> <key> <value>
+write_ini_key() {
+  local file="$1"
+  local section="$2"
+  local key="$3"
+  local val="$4"
+
+  mkdir -p "$(dirname "$file")"
+  [ -f "$file" ] || touch "$file"
+
+  awk -v sec="[$section]" -v k="$key" -v v="$val" '
+    BEGIN { in_sec = 0; replaced = 0; sec_seen = 0; has_lines = 0 }
+    /^\[.*\]$/ {
+      if (in_sec && !replaced) { print k "=" v; replaced = 1 }
+      if ($0 == sec) { in_sec = 1; sec_seen = 1 } else { in_sec = 0 }
+    }
+    {
+      has_lines = 1
+      line = $0
+      sub(/^[ \t]+/, "", line)
+      if (line == "") { last_line_blank = 1 } else { last_line_blank = 0 }
+      if (in_sec && substr(line, 1, length(k) + 1) == (k "=")) {
+        print k "=" v
+        replaced = 1
+        next
+      }
+      print
+    }
+    END {
+      if (in_sec && !replaced) { print k "=" v; replaced = 1 }
+      if (!sec_seen) {
+        if (has_lines && !last_line_blank) { print "" }
+        print sec
+        print k "=" v
+      }
+    }
+  ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
+}
+
 get_gpu_vendor() {
   if [ -n "${GPU_VENDOR:-}" ]; then
     echo "$GPU_VENDOR"
