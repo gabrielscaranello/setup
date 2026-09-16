@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "husky",
     "format": "prettier --write \"**/*.{md,sh}\" --ignore-path .gitignore",
-    "lint:sh": "shellcheck -x scripts/**/*.sh",
+    "lint:sh": "shellcheck -x scripts/**/*.sh runners/*.sh main.sh tests/run-tests.sh",
     "lint:bats": "shellcheck --severity=warning -e SC2076 tests/**/*.bats",
     "lint": "yarn lint:sh && yarn lint:bats"
   },
