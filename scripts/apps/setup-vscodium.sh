@@ -7,8 +7,10 @@ source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
-_configure_vscodium_repo() {
-  local distro="$1"
+_install_vscodium() {
+  local distro
+  distro="$(require_supported_distro)" || return 1
+
   case "$distro" in
     debian)
       add_debian_vscodium_repo
@@ -17,13 +19,7 @@ _configure_vscodium_repo() {
       add_fedora_vscodium_repo
       ;;
   esac
-}
 
-_install_vscodium() {
-  local distro
-  distro="$(require_supported_distro)" || return 1
-
-  _configure_vscodium_repo "$distro"
   echo "Installing VSCodium..."
   install_packages vscodium
 }

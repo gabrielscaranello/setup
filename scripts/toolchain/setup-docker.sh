@@ -6,17 +6,10 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
-_configure_docker_repositories() {
-  local distro="$1"
-  if [ "$distro" = "fedora" ]; then
-    add_fedora_docker_repo
-  fi
-}
-
 _install_docker_packages() {
   local distro="${1:-}"
-  if [ -n "$distro" ]; then
-    _configure_docker_repositories "$distro"
+  if [ "$distro" = "fedora" ]; then
+    add_fedora_docker_repo
   fi
 
   echo "Installing Docker packages..."
