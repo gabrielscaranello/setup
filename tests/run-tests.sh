@@ -131,18 +131,21 @@ _run_bats_container() {
   read -r -a res_flags <<< "$(_get_docker_resource_flags)"
 
   if [[ "$COVERAGE" -eq 1 ]]; then
+    rm -rf "coverage/$target_name"
     mkdir -p "coverage/$target_name"
     docker run --rm \
       "${res_flags[@]}" \
+      --ulimit "nofile=1024:1024" \
       --cap-add=SYS_PTRACE \
       --security-opt seccomp=unconfined \
-      --user root \
+      -w /setup \
       -v "$ROOT_DIR:/setup" \
       "$image" \
       kcov --include-path=/setup/scripts "/setup/coverage/$target_name" /usr/local/bin/bats "${test_files[@]}"
   else
     docker run --rm \
       "${res_flags[@]}" \
+      -w /setup \
       -v "$ROOT_DIR:/setup" \
       "$image" bats "${test_files[@]}"
   fi
@@ -213,10 +216,16 @@ _merge_coverage() {
         dirs_to_merge=()
         for d in unit archlinux debian fedora; do
           if [[ -d "/setup/coverage/$d" ]]; then
-            dirs_to_merge+=("/setup/coverage/$d")
+            while IFS= read -r cov_db_dir; do
+              dirs_to_merge+=("$cov_db_dir")
+            done < <(find "/setup/coverage/$d" -name "coverage.db" -exec dirname {} \; | sort -u)
           fi
         done
-        if [[ ${#dirs_to_merge[@]} -gt 0 ]]; then
+        if [[ ${#dirs_to_merge[@]} -eq 1 ]]; then
+          cp -r "${dirs_to_merge[0]}"/* /setup/coverage/
+          sed -i "s|\.\./data/bcov\.css|data/bcov.css|g" /setup/coverage/*.html 2>/dev/null || true
+          chmod -R a+rwX /setup/coverage 2>/dev/null || true
+        elif [[ ${#dirs_to_merge[@]} -gt 1 ]]; then
           kcov --merge /setup/coverage/merged "${dirs_to_merge[@]}"
           cp -r /setup/coverage/merged/kcov-merged/* /setup/coverage/
           rm -rf /setup/coverage/merged
