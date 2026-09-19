@@ -61,3 +61,25 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ "pipeline: Fedora Desktop Setup" ]]
 }
+
+@test "runners/_utils.sh COMMON_POST_STEPS orders desktop-apps before default-apps" {
+  source /setup/runners/_utils.sh 2>/dev/null || source runners/_utils.sh 2>/dev/null
+
+  local desktop_apps_idx=-1
+  local default_apps_idx=-1
+  local i=0
+
+  for step in "${COMMON_POST_STEPS[@]}"; do
+    if [[ "$step" =~ ^desktop/setup-desktop-apps\.sh ]]; then
+      desktop_apps_idx=$i
+    elif [[ "$step" =~ ^apps/setup-default-apps\.sh ]]; then
+      default_apps_idx=$i
+    fi
+    i=$((i + 1))
+  done
+
+  [ "$desktop_apps_idx" -ge 0 ]
+  [ "$default_apps_idx" -ge 0 ]
+  [ "$desktop_apps_idx" -lt "$default_apps_idx" ]
+}
+
