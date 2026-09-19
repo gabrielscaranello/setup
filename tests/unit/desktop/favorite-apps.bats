@@ -67,7 +67,7 @@ teardown() {
   [[ "$output" =~ "md.obsidian.Obsidian.desktop" ]]
   [[ "$output" =~ "org.gimp.GIMP.desktop" ]]
   [[ "$output" =~ "org.telegram.desktop.desktop" ]]
-  [[ "$output" =~ "steam.desktop" ]]
+  [[ "$output" =~ "com.valvesoftware.Steam.desktop" ]]
   [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
 }
 

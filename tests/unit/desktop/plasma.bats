@@ -583,7 +583,7 @@ EOF
   run grep "applications:org\.kde\.dolphin\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
-  run grep "steam\.desktop,applications:com\.discordapp\.Discord\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
+  run grep -E "(com\.valvesoftware\.Steam|steam)\.desktop,applications:com\.discordapp\.Discord\.desktop" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"
   [ "$status" -eq 0 ]
 
   run grep "lastScreen=0" "$test_dir/config/plasma-org.kde.plasma.desktop-appletsrc"

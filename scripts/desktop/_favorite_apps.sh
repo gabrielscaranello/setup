@@ -22,7 +22,7 @@ get_favorite_apps() {
     fm="org.gnome.Nautilus.desktop"
   fi
 
-  local editor browser notes gimp chat firefox
+  local editor browser notes gimp chat firefox steam
 
   case "$distro" in
     arch)
@@ -32,6 +32,7 @@ get_favorite_apps() {
       notes="$(_resolve_desktop_app "obsidian.desktop" "md.obsidian.Obsidian.desktop")"
       gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
       chat="$(_resolve_desktop_app "discord.desktop" "com.discordapp.Discord.desktop")"
+      steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
     debian)
       editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
@@ -40,6 +41,7 @@ get_favorite_apps() {
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
       gimp="$(_resolve_desktop_app "org.gimp.GIMP.desktop" "gimp.desktop")"
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
+      steam="$(_resolve_desktop_app "com.valvesoftware.Steam.desktop" "steam.desktop")"
       ;;
     fedora)
       editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
@@ -48,6 +50,7 @@ get_favorite_apps() {
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
       gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
+      steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
     *)
       editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
@@ -56,6 +59,7 @@ get_favorite_apps() {
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
       gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
+      steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
   esac
 
@@ -73,7 +77,7 @@ get_favorite_apps() {
     "$notes" \
     "$gimp" \
     "$telegram" \
-    "steam.desktop" \
+    "$steam" \
     "$chat"
 }
 
