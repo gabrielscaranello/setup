@@ -11,12 +11,12 @@ name='Games'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/System]
-apps=['yelp.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.baobab.desktop', 'nm-connection-editor.desktop', 'gufw.desktop', 'org.gnome.Settings.desktop', 'org.freedesktop.MalcontentControl.desktop', 'org.gnome.DiskUtility.desktop', 'im-config.desktop', 'org.gnome.Logs.desktop']
+apps=['org.gnome.tweaks.desktop', 'org.gnome.baobab.desktop', 'nm-connection-editor.desktop', 'gufw.desktop', 'firewall-config.desktop', 'org.gnome.Settings.desktop', 'org.freedesktop.MalcontentControl.desktop', 'org.gnome.DiskUtility.desktop', 'im-config.desktop', 'org.gnome.Logs.desktop']
 name='X-GNOME-Shell-System.directory'
 translate=true
 
 [org/gnome/desktop/app-folders/folders/Utilities]
-apps=['btop.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.FileRoller.desktop', 'org.flameshot.Flameshot.desktop', 'org.gnome.font-viewer.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'nvim.desktop', 'org.gnome.clocks.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Showtime.desktop', 'timeshift-gtk.desktop', 'org.gnome.Papers.desktop', 'io.github.celluloid_player.Celluloid.desktop', 'org.gnome.Connections.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Loupe.desktop', 'vlc.desktop']
+apps=['btop.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.FileRoller.desktop', 'org.flameshot.Flameshot.desktop', 'org.gnome.font-viewer.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'nvim.desktop', 'org.gnome.clocks.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Showtime.desktop', 'timeshift-gtk.desktop', 'org.gnome.Papers.desktop', 'io.github.celluloid_player.Celluloid.desktop', 'org.gnome.Connections.desktop', 'org.gnome.Evince.desktop', 'org.gnome.Loupe.desktop', 'vlc.desktop', 'org.gnome.Yelp.desktop', 'yelp.desktop']
 name='X-GNOME-Shell-Utilities.directory'
 translate=true
 

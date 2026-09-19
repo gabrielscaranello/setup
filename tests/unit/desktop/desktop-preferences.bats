@@ -119,3 +119,25 @@ teardown() {
   GNOME_WORKSPACE_ENV_NVM="/nonexistent/nvm.sh" run _setup_gnome_workspace_env
   [ "$status" -eq 0 ]
 }
+
+@test "config/gnome/shell.dconf places Help in Utilities and Firewall in System" {
+  local repo_root
+  repo_root="$(get_repo_root)"
+  local shell_dconf="${repo_root}/config/gnome/shell.dconf"
+
+  [ -f "$shell_dconf" ]
+
+  # System app folder: must contain firewall-config and gufw, and must NOT contain yelp
+  local system_apps
+  system_apps="$(awk '/^\[/ { in_sec = ($0 == "[org/gnome/desktop/app-folders/folders/System]") } in_sec && /^apps=/ { print }' "$shell_dconf")"
+  [[ "$system_apps" =~ "firewall-config.desktop" ]]
+  [[ "$system_apps" =~ "gufw.desktop" ]]
+  [[ ! "$system_apps" =~ "yelp.desktop" ]]
+
+  # Utilities app folder: must contain Help (org.gnome.Yelp.desktop and yelp.desktop)
+  local utilities_apps
+  utilities_apps="$(awk '/^\[/ { in_sec = ($0 == "[org/gnome/desktop/app-folders/folders/Utilities]") } in_sec && /^apps=/ { print }' "$shell_dconf")"
+  [[ "$utilities_apps" =~ "org.gnome.Yelp.desktop" ]]
+  [[ "$utilities_apps" =~ "yelp.desktop" ]]
+}
+
