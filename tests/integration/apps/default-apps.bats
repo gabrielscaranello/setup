@@ -33,6 +33,21 @@ setup_file() {
   grep -q "^image/png=" "$HOME/.config/mimeapps.list"
 }
 
+@test "default-apps configures directory file manager in mimeapps.list" {
+  [ -f "$HOME/.config/mimeapps.list" ]
+  grep -q "^inode/directory=" "$HOME/.config/mimeapps.list"
+}
+
+@test "default-apps configures defaults on Cinnamon" {
+  export XDG_CURRENT_DESKTOP="X-Cinnamon"
+  run bash /setup/scripts/apps/setup-default-apps.sh
+  [ "$status" -eq 0 ]
+  [ -f "$HOME/.config/mimeapps.list" ]
+  grep -q "^inode/directory=" "$HOME/.config/mimeapps.list"
+  grep -q "^image/png=" "$HOME/.config/mimeapps.list"
+  grep -q "^text/plain=" "$HOME/.config/mimeapps.list"
+}
+
 @test "setup-default-apps.sh is idempotent (second run succeeds)" {
   run bash /setup/scripts/apps/setup-default-apps.sh
   [ "$status" -eq 0 ]

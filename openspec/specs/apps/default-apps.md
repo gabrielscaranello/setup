@@ -4,13 +4,14 @@
 
 Configures default applications across XDG specifications, GNOME desktop environment, and KDE Plasma desktop environment:
 
-- **Kitty** as the default terminal emulator
+- **Kitty** as the default terminal emulator (xdg-terminals.list, GNOME, KDE Plasma, and Cinnamon)
 - **VLC** as the default video and audio player
 - **Firefox** (with Chromium fallback) as the default web browser
 - **ONLYOFFICE** as the default office documents editor
-- **Evince** (GNOME) / **Okular** (KDE Plasma) as the default PDF viewer
-- **Loupe** (GNOME) / **Gwenview** (KDE Plasma) as the default image viewer
-- **GNOME Text Editor** (GNOME) / **Ghostwriter** (KDE Plasma) as the default text editor
+- **Evince** (GNOME) / **Okular** (KDE Plasma) / **Xreader** (Cinnamon) as the default PDF viewer
+- **Loupe** (GNOME) / **Gwenview** (KDE Plasma) / **Xviewer** (Cinnamon) as the default image viewer
+- **GNOME Text Editor** (GNOME) / **Ghostwriter** (KDE Plasma) / **Xed** (Cinnamon) as the default text editor
+- **Nautilus** (GNOME) / **Dolphin** (KDE Plasma) / **Nemo** (Cinnamon) as the default file manager (`inode/directory`)
 - **Added Associations** (`[Added Associations]`) for secondary applications (Chromium, GIMP, VSCodium)
 
 ---
@@ -27,6 +28,7 @@ The script SHALL detect the active desktop environment using `get_desktop_enviro
 
 - **GNOME**: SHALL set `org.gnome.desktop.default-applications.terminal` schema keys `exec='kitty'` and `exec-arg='-e'` via `gsettings` if schema exists.
 - **KDE Plasma**: SHALL set `TerminalApplication=kitty` and `TerminalService=kitty.desktop` in `~/.config/kdeglobals` via `kwriteconfig6`, `kwriteconfig5`, or direct file manipulation fallback.
+- **Cinnamon**: SHALL set `org.cinnamon.desktop.default-applications.terminal` keys `exec='kitty'` and `exec-arg='-e'` via `dconf` / `gsettings` if available.
 - **Unknown / Unsupported DE**: SHALL skip DE-specific tweaks without error.
 
 ### Requirement: Default Media Players Configuration (VLC)
@@ -58,10 +60,18 @@ The script SHALL configure `org.onlyoffice.desktopeditors.desktop` (or `onlyoffi
 
 The script SHALL detect the Desktop Environment to configure tailored default viewers:
 
-- **PDF**: `org.gnome.Evince.desktop` on GNOME, `org.kde.okular.desktop` on KDE Plasma for `application/pdf`, `application/x-pdf`.
-- **Images**: `org.gnome.Loupe.desktop` on GNOME, `org.kde.gwenview.desktop` on KDE Plasma for `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/bmp`, `image/tiff`, `image/x-png`.
-- **Text / Code**: `org.gnome.TextEditor.desktop` on GNOME, `org.kde.ghostwriter.desktop` on KDE Plasma for `text/plain`, `text/markdown`.
+- **PDF**: `org.gnome.Evince.desktop` on GNOME, `org.kde.okular.desktop` on KDE Plasma, `xreader.desktop` (falling back to Evince) on Cinnamon for `application/pdf`, `application/x-pdf`.
+- **Images**: `org.gnome.Loupe.desktop` on GNOME, `org.kde.gwenview.desktop` on KDE Plasma, `xviewer.desktop` (falling back to Loupe/eog) on Cinnamon for `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/bmp`, `image/tiff`, `image/x-png`.
+- **Text / Code**: `org.gnome.TextEditor.desktop` on GNOME, `org.kde.ghostwriter.desktop` on KDE Plasma, `xed.desktop` (falling back to TextEditor/gedit) on Cinnamon for `text/plain`, `text/markdown`.
 - **Added Associations**: Register GIMP (`image/png`, `image/svg+xml`, `image/x-xcf`) and VSCodium (`text/plain`, `text/markdown`) under `[Added Associations]`.
+
+### Requirement: Default File Manager Configuration (Directories)
+
+The script SHALL detect the Desktop Environment to configure default directory handlers for `inode/directory`:
+
+- **GNOME**: `org.gnome.Nautilus.desktop` (or `nautilus.desktop`).
+- **KDE Plasma**: `org.kde.dolphin.desktop` (or `dolphin.desktop`).
+- **Cinnamon**: `nemo.desktop` (or `org.gnome.Nautilus.desktop`).
 
 ---
 
@@ -71,13 +81,19 @@ The script SHALL detect the Desktop Environment to configure tailored default vi
 
 - **GIVEN** GNOME desktop session
 - **WHEN** `scripts/apps/setup-default-apps.sh` runs
-- **THEN** Kitty SHALL be set as terminal, VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Evince for PDF, Loupe for images, and Text Editor for text in `~/.config/mimeapps.list`
+- **THEN** Kitty SHALL be set as terminal, VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Evince for PDF, Loupe for images, Text Editor for text, and Nautilus for directories in `~/.config/mimeapps.list`
 
 ### Scenario: Applying full defaults on KDE Plasma
 
 - **GIVEN** KDE Plasma desktop session
 - **WHEN** `scripts/apps/setup-default-apps.sh` runs
-- **THEN** Kitty SHALL be set as terminal (including `kdeglobals`), VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Okular for PDF, Gwenview for images, and Ghostwriter for text in `~/.config/mimeapps.list`
+- **THEN** Kitty SHALL be set as terminal (including `kdeglobals`), VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Okular for PDF, Gwenview for images, Ghostwriter for text, and Dolphin for directories in `~/.config/mimeapps.list`
+
+### Scenario: Applying full defaults on Cinnamon
+
+- **GIVEN** Cinnamon desktop session
+- **WHEN** `scripts/apps/setup-default-apps.sh` runs
+- **THEN** Kitty SHALL be set as terminal (including Cinnamon terminal keys in dconf/gsettings), VLC for video and audio, Firefox for web, ONLYOFFICE for documents, Xviewer for images, Xed for text, and Nemo for directories in `~/.config/mimeapps.list`
 
 ### Scenario: Applying defaults on headless or unrecognized environment
 

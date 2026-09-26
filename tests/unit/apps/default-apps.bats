@@ -133,30 +133,84 @@
   source /setup/scripts/apps/setup-default-apps.sh
   local gnome_called=0
   local plasma_called=0
+  local cinnamon_called=0
   _set_default_terminal_xdg() { return 0; }
   _set_default_terminal_gnome() { gnome_called=1; }
   _set_default_terminal_plasma() { plasma_called=1; }
+  _set_default_terminal_cinnamon() { cinnamon_called=1; }
   get_desktop_environment() { echo "plasma"; }
 
   _set_default_terminal
 
   [ "$gnome_called" -eq 0 ]
   [ "$plasma_called" -eq 1 ]
+  [ "$cinnamon_called" -eq 0 ]
 }
 
-@test "_set_default_terminal does not configure gnome or plasma when de is unknown" {
+@test "_set_default_terminal routes only to cinnamon when de is cinnamon" {
   source /setup/scripts/apps/setup-default-apps.sh
   local gnome_called=0
   local plasma_called=0
+  local cinnamon_called=0
   _set_default_terminal_xdg() { return 0; }
   _set_default_terminal_gnome() { gnome_called=1; }
   _set_default_terminal_plasma() { plasma_called=1; }
+  _set_default_terminal_cinnamon() { cinnamon_called=1; }
+  get_desktop_environment() { echo "cinnamon"; }
+
+  _set_default_terminal
+
+  [ "$gnome_called" -eq 0 ]
+  [ "$plasma_called" -eq 0 ]
+  [ "$cinnamon_called" -eq 1 ]
+}
+
+@test "_set_default_terminal_cinnamon writes dconf and gsettings when available" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local dconf_writes=()
+  dconf_exec() {
+    if [ "$1" = "write" ]; then
+      dconf_writes+=("$2=$3")
+    fi
+  }
+  local gsettings_called=0
+  gsettings() {
+    if [ "${1:-}" = "list-schemas" ]; then
+      echo "org.cinnamon.desktop.default-applications.terminal"
+      return 0
+    fi
+    if [ "${1:-}" = "set" ]; then
+      gsettings_called=$((gsettings_called + 1))
+      return 0
+    fi
+  }
+  command() {
+    if [ "${2:-}" = "dconf" ] || [ "${2:-}" = "gsettings" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  _set_default_terminal_cinnamon
+
+  [ "${#dconf_writes[@]}" -eq 2 ]
+  [ "$gsettings_called" -eq 2 ]
+}
+
+@test "_set_default_terminal does not configure gnome, plasma or cinnamon when de is unknown" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local gnome_called=0
+  local plasma_called=0
+  local cinnamon_called=0
+  _set_default_terminal_xdg() { return 0; }
+  _set_default_terminal_gnome() { gnome_called=1; }
+  _set_default_terminal_plasma() { plasma_called=1; }
+  _set_default_terminal_cinnamon() { cinnamon_called=1; }
   get_desktop_environment() { echo "unknown"; }
 
   _set_default_terminal
 
   [ "$gnome_called" -eq 0 ]
   [ "$plasma_called" -eq 0 ]
+  [ "$cinnamon_called" -eq 0 ]
 }
 
 @test "_set_default_video_player creates mimeapps.list and sets vlc.desktop" {
@@ -221,6 +275,7 @@ EOF
 @test "setup-default-apps main runs terminal and video player defaults successfully" {
   source /setup/scripts/apps/setup-default-apps.sh
   _set_default_terminal() { return 0; }
+  _set_default_file_manager() { return 0; }
   _set_default_video_player() { return 0; }
   _set_default_audio_player() { return 0; }
   _set_default_web_browser() { return 0; }
@@ -283,7 +338,29 @@ EOF
   rm -rf "$test_home"
 }
 
-@test "_set_default_pdf_viewer resolves Evince on GNOME and Okular on Plasma" {
+@test "_set_default_file_manager resolves Nemo on Cinnamon, Dolphin on Plasma, Nautilus on GNOME" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-fm-home"
+  mkdir -p "$test_home"
+
+  resolve_desktop_app() { echo "$1"; }
+
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_file_manager
+  grep -q "^inode/directory=nemo.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "plasma"; }
+  HOME="$test_home" _set_default_file_manager
+  grep -q "^inode/directory=org.kde.dolphin.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "gnome"; }
+  HOME="$test_home" _set_default_file_manager
+  grep -q "^inode/directory=org.gnome.Nautilus.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_pdf_viewer resolves Evince on GNOME, Okular on Plasma, and Xreader on Cinnamon" {
   source /setup/scripts/apps/setup-default-apps.sh
   local test_home="/tmp/test-default-apps-pdf-home"
   mkdir -p "$test_home"
@@ -298,10 +375,14 @@ EOF
   HOME="$test_home" _set_default_pdf_viewer
   grep -q "^application/pdf=org.kde.okular.desktop;" "$test_home/.config/mimeapps.list"
 
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_pdf_viewer
+  grep -q "^application/pdf=xreader.desktop;" "$test_home/.config/mimeapps.list"
+
   rm -rf "$test_home"
 }
 
-@test "_set_default_image_viewer resolves Loupe on GNOME and Gwenview on Plasma" {
+@test "_set_default_image_viewer resolves Loupe on GNOME, Gwenview on Plasma, and Xviewer on Cinnamon" {
   source /setup/scripts/apps/setup-default-apps.sh
   local test_home="/tmp/test-default-apps-image-home"
   mkdir -p "$test_home"
@@ -316,10 +397,14 @@ EOF
   HOME="$test_home" _set_default_image_viewer
   grep -q "^image/png=org.kde.gwenview.desktop;" "$test_home/.config/mimeapps.list"
 
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_image_viewer
+  grep -q "^image/png=xviewer.desktop;" "$test_home/.config/mimeapps.list"
+
   rm -rf "$test_home"
 }
 
-@test "_set_default_text_editor resolves TextEditor on GNOME and Ghostwriter on Plasma" {
+@test "_set_default_text_editor resolves TextEditor on GNOME, Ghostwriter on Plasma, and Xed on Cinnamon" {
   source /setup/scripts/apps/setup-default-apps.sh
   local test_home="/tmp/test-default-apps-text-home"
   mkdir -p "$test_home"
@@ -333,6 +418,10 @@ EOF
   get_desktop_environment() { echo "plasma"; }
   HOME="$test_home" _set_default_text_editor
   grep -q "^text/plain=org.kde.ghostwriter.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_text_editor
+  grep -q "^text/plain=xed.desktop;" "$test_home/.config/mimeapps.list"
 
   rm -rf "$test_home"
 }
