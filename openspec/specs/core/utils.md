@@ -20,8 +20,9 @@ The utility architecture adheres to the **Facade Pattern**: `scripts/_utils.sh` 
 
 The utility library SHALL detect the operating system distribution via `/etc/os-release` (with fallback to `/usr/lib/os-release` and configurable via `OS_RELEASE_PATH` for testing), exposing:
 
-- `get_distro_id`: returns the exact distribution identifier (`debian`, `fedora`, `arch`, or derivative/unsupported IDs)
+- `get_distro_id`: returns the exact distribution identifier (`debian`, `fedora`, `arch`, `lmde`, or derivative/unsupported IDs)
 - `is_distro <id>`: returns 0 if the current distribution matches the specified ID
+- `require_supported_distro`: validates that current distribution is one of `debian`, `fedora`, `arch`, or `lmde`
 - `_get_package_manager`: internal helper resolving the package manager command (`apt`, `dnf`, `pacman`) for package execution
 
 All setup scripts and runners SHALL use `get_distro_id` for distribution branching and decision-making, keeping `_get_package_manager` strictly internal to package execution.
@@ -32,13 +33,22 @@ All setup scripts and runners SHALL use `get_distro_id` for distribution branchi
 - **WHEN** `get_distro_id` is invoked
 - **THEN** it returns `debian`, `fedora`, or `arch` respectively
 - **AND** `_get_package_manager` resolves to `apt`, `dnf`, or `pacman`
+- **AND** `require_supported_distro` succeeds returning 0
 
-#### Scenario: Running on a derivative or unsupported distribution
+#### Scenario: Running on LMDE (Linux Mint Debian Edition)
 
-- **GIVEN** `/etc/os-release` indicates a derivative (e.g., `ubuntu`, `linuxmint`, `manjaro`, `nobara`)
+- **GIVEN** `/etc/os-release` contains `NAME="LMDE"` or `ID=linuxmint` with `ID_LIKE=debian` (or `DEBIAN_CODENAME`)
+- **WHEN** `get_distro_id` is invoked
+- **THEN** it returns `lmde`
+- **AND** `_get_package_manager` resolves to `apt`
+- **AND** `require_supported_distro` succeeds returning 0
+
+#### Scenario: Running on an unsupported derivative distribution
+
+- **GIVEN** `/etc/os-release` indicates an unsupported derivative (e.g., `ubuntu`, `linuxmint` based on Ubuntu, `manjaro`, `nobara`)
 - **WHEN** `get_distro_id` is invoked
 - **THEN** it returns the exact identifier (`ubuntu`, `linuxmint`, etc.)
-- **AND** setup scripts and runners SHALL fail-fast or bypass foreign actions since they only target `debian`, `fedora`, and `arch`
+- **AND** `require_supported_distro` fails with exit code 1
 
 ---
 
@@ -51,6 +61,7 @@ The utility function `install_packages` SHALL resolve generic package names agai
 - **GIVEN** a package has different names across distributions (e.g., `build-essential` vs `@development-tools` vs `base-devel`)
 - **WHEN** `install_packages <generic_name>` is called
 - **THEN** the translated package name for the current distro SHALL be passed to the package manager
+- **AND** on `lmde`, generic packages SHALL map to the `debian` package definitions
 - **AND** if mapped to `-` (unsupported), the package SHALL be skipped gracefully
 
 #### Scenario: Installing a package not mapped in `packages.conf`
@@ -76,6 +87,12 @@ The utility function `get_desktop_environment` SHALL detect the active desktop e
 - **GIVEN** `XDG_CURRENT_DESKTOP` contains `KDE` or `DESKTOP_SESSION` contains `plasma`
 - **WHEN** `get_desktop_environment` is called
 - **THEN** it SHALL return `plasma`
+
+#### Scenario: Detecting Cinnamon
+
+- **GIVEN** `XDG_CURRENT_DESKTOP` contains `Cinnamon` or `X-Cinnamon`
+- **WHEN** `get_desktop_environment` is called
+- **THEN** it SHALL return `cinnamon`
 
 #### Scenario: Unrecognized or headless environment
 

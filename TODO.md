@@ -14,10 +14,10 @@ O objetivo principal deste marco é estender todo o ferramental idempotente do p
 
 Adaptação do núcleo de abstração para reconhecer e tratar o LMDE e o ambiente Cinnamon sem quebrar a compatibilidade com Debian, Fedora e Arch Linux.
 
-- [ ] Identificação de distribuição: atualizar `get_distro_id`, `is_distro` e `require_supported_distro` em `scripts/utils/_system.sh` para reconhecer `lmde` (via `ID=linuxmint` e `ID_LIKE=debian` ou `NAME="LMDE"`)
-- [ ] Detecção de Desktop Environment: atualizar `get_desktop_environment` e `prompt_desktop_environment` em `scripts/utils/_desktop.sh` para reconhecer `cinnamon` (`XDG_CURRENT_DESKTOP=X-Cinnamon` / `cinnamon`)
-- [ ] Mapeamento de pacotes: garantir resolução em `scripts/utils/_packages.sh` tratando `lmde` como consumidor da base Debian com extensões próprias, e atualizar `scripts/packages.conf` se houver divergências
-- [ ] Testes unitários do núcleo: atualizar `tests/unit/utils-system.bats` e `tests/unit/utils-desktop.bats` cobrindo cenários do LMDE e Cinnamon
+- [x] Identificação de distribuição: atualizar `get_distro_id`, `is_distro` e `require_supported_distro` em `scripts/utils/_system.sh` para reconhecer `lmde` (via `ID=linuxmint` e `ID_LIKE=debian` ou `NAME="LMDE"`)
+- [x] Detecção de Desktop Environment: atualizar `get_desktop_environment` e `prompt_desktop_environment` em `scripts/utils/_desktop.sh` para reconhecer `cinnamon` (`XDG_CURRENT_DESKTOP=*cinnamon*`)
+- [x] Mapeamento de pacotes: garantir resolução em `scripts/utils/_packages.sh` tratando `lmde` como consumidor da base Debian com extensões próprias, e atualizar `scripts/packages.conf` se houver divergências
+- [x] Testes unitários do núcleo: atualizar `tests/unit/utils.bats` cobrindo cenários do LMDE e Cinnamon
 
 ---
 

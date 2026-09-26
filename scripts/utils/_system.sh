@@ -11,9 +11,18 @@ get_distro_id() {
   fi
 
   if [ -f "$os_release_file" ]; then
-    local distro_id
+    local distro_id name_id id_like_id
     distro_id="$(grep '^ID=' "$os_release_file" 2> /dev/null | head -n 1 | cut -d= -f2 | tr -d '"'\'' ' | tr '[:upper:]' '[:lower:]' || true)"
-    if [ -n "$distro_id" ]; then
+    name_id="$(grep '^NAME=' "$os_release_file" 2> /dev/null | head -n 1 | cut -d= -f2 | tr -d '"'\'' ' | tr '[:upper:]' '[:lower:]' || true)"
+    id_like_id="$(grep '^ID_LIKE=' "$os_release_file" 2> /dev/null | head -n 1 | cut -d= -f2 | tr -d '"'\'' ' | tr '[:upper:]' '[:lower:]' || true)"
+
+    if [ "$distro_id" = "lmde" ] || echo "$name_id" | grep -q "lmde"; then
+      echo "lmde"
+      return 0
+    elif [ "$distro_id" = "linuxmint" ] && (echo "$id_like_id" | grep -q "debian" || grep -q '^DEBIAN_CODENAME=' "$os_release_file" 2> /dev/null); then
+      echo "lmde"
+      return 0
+    elif [ -n "$distro_id" ]; then
       echo "$distro_id"
       return 0
     fi
@@ -22,7 +31,10 @@ get_distro_id() {
   if command -v lsb_release > /dev/null 2>&1; then
     local lsb_id
     lsb_id="$(lsb_release -si 2> /dev/null | tr '[:upper:]' '[:lower:]' || true)"
-    if [ -n "$lsb_id" ]; then
+    if [ "$lsb_id" = "lmde" ]; then
+      echo "lmde"
+      return 0
+    elif [ -n "$lsb_id" ]; then
       echo "$lsb_id"
       return 0
     fi
@@ -39,7 +51,7 @@ is_distro() {
   [ "$current" = "$target" ]
 }
 
-# Validates and returns the current distro if it is one of: debian, fedora, arch.
+# Validates and returns the current distro if it is one of: debian, fedora, arch, lmde.
 # Prints the distro ID to stdout on success; prints error and returns 1 on failure.
 # Usage: distro="$(require_supported_distro)" || return 1
 require_supported_distro() {
@@ -49,7 +61,7 @@ require_supported_distro() {
     return 1
   }
   case "$distro" in
-    debian | fedora | arch)
+    debian | fedora | arch | lmde)
       echo "$distro"
       return 0
       ;;
@@ -185,7 +197,7 @@ enable_cron_service() {
   fi
 
   echo "Enabling cron scheduler service..."
-  if is_distro debian; then
+  if is_distro debian || is_distro lmde; then
     sudo systemctl enable --now cron.service 2> /dev/null || sudo systemctl enable cron.service 2> /dev/null || true
   elif is_distro fedora; then
     sudo systemctl enable --now crond.service 2> /dev/null || sudo systemctl enable crond.service 2> /dev/null || true

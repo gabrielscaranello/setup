@@ -1,6 +1,6 @@
 # 🚀 Desktop Setup
 
-Welcome! This repository automates provisioning a desktop development environment across multiple Linux distributions (Debian, Fedora, Arch Linux).
+Welcome! This repository automates provisioning a desktop development environment across multiple Linux distributions (Debian, Fedora, Arch Linux, LMDE).
 
 🇧🇷 **Documentação em Português (BR):** [README-pt-br.md](README-pt-br.md)
 

@@ -1,6 +1,6 @@
 # 🚀 Desktop Setup
 
-Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux).
+Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux, LMDE).
 
 🇺🇸 **English Documentation:** [README.md](README.md)
 

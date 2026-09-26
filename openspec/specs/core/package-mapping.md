@@ -10,13 +10,13 @@ Establishes a declarative translation table that maps generic software package i
 
 ### Requirement: Declarative Multi-Distro Resolution
 
-The mapping file SHALL maintain pipe-separated (`|`) records with columns: `Generic Name | Debian Package | Fedora Package | Arch Linux Package`, resolved primarily by target distribution identifier (`debian`, `fedora`, `arch`) with backwards-compatible support for package manager aliases (`apt`, `dnf`, `pacman`).
+The mapping file SHALL maintain pipe-separated (`|`) records with columns: `Generic Name | Debian Package | Fedora Package | Arch Linux Package`, resolved primarily by target distribution identifier (`debian`, `fedora`, `arch`, `lmde`) with backwards-compatible support for package manager aliases (`apt`, `dnf`, `pacman`). Systems identified as `lmde` SHALL resolve against the `Debian Package` column.
 
 #### Scenario: Translating package with distro naming differences
 
 - **GIVEN** a package has distinct naming across distributions (e.g. `golang` resolving to `go` on Arch, `akmod-nvidia` on Fedora, `nvidia-driver` on Debian)
 - **WHEN** referenced by its generic name in an installation script via `install_packages`
-- **THEN** it SHALL resolve to the exact distro-native package name specified in `packages.conf` for the active distribution
+- **THEN** it SHALL resolve to the exact distro-native package name specified in `packages.conf` for the active distribution (or the Debian package when running on `lmde`)
 
 #### Scenario: Package unsupported or unnecessary on a specific distro
 
