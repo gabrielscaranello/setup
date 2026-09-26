@@ -129,7 +129,7 @@ _install_kitty() {
       install_packages kitty
       ensure_xdg_terminal_exec
       ;;
-    debian)
+    debian | lmde)
       _install_kitty_binary
       ;;
   esac

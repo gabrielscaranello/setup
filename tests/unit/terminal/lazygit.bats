@@ -110,6 +110,15 @@ setup() {
   run _install_lazygit
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary\ fedora ]]
+
+  get_distro_id() { echo "lmde"; }
+  _install_lazygit_binary() {
+    echo "installed from binary lmde"
+    return 0
+  }
+  run _install_lazygit
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ from\ binary\ lmde ]]
 }
 
 @test "_resolve_lazygit_arch returns correct architecture string" {

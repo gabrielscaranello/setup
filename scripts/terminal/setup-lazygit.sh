@@ -66,7 +66,7 @@ _install_lazygit() {
       echo "Installing lazygit from distribution repository..."
       install_packages lazygit
       ;;
-    debian | fedora)
+    debian | fedora | lmde)
       _install_lazygit_binary
       ;;
   esac

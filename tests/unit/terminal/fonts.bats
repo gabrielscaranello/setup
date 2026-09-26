@@ -60,6 +60,18 @@
   [ "$status" -eq 0 ]
 }
 
+@test "_install_fonts installs system fonts and upstream font on lmde" {
+  source /setup/scripts/terminal/setup-fonts.sh
+  require_supported_distro() { echo "lmde"; }
+  _install_distro_fonts() { echo "called _install_distro_fonts"; }
+  install_packages() { return 0; }
+  _install_fonts_from_upstream() { echo "called _install_fonts_from_upstream"; }
+  run _install_fonts
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _install_distro_fonts" ]]
+  [[ "$output" =~ "called _install_fonts_from_upstream" ]]
+}
+
 @test "_install_fonts fails when distribution is unsupported" {
   source /setup/scripts/terminal/setup-fonts.sh
   get_distro_id() { echo "unknown-distro"; return 1; }
