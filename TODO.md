@@ -47,7 +47,7 @@ Configuração dos aspectos de baixo nível do sistema operacional específicos 
 
 Padronização dos pacotes essenciais e remoção de bloatware do ecossistema Mint.
 
-- [ ] Debloat no LMDE: atualizar `scripts/system/setup-debloat.sh` para remover os bloatwares típicos identificados no LMDE (`celluloid`, `gnome-terminal`, `hypnotix*`, `libreoffice*`, `mintchat`, `rhythmbox`, `simple-scan`, `sticky`, `thingy`, `thunderbird*`, `transmission*`, `xterm*`)
+- [x] Debloat no LMDE: atualizar `scripts/system/setup-debloat.sh` para remover os bloatwares típicos identificados no LMDE (`celluloid`, `gnome-terminal`, `hypnotix*`, `libreoffice*`, `mintchat`, `rhythmbox`, `simple-scan`, `sticky`, `thingy`, `thunderbird*`, `transmission*`, `xterm*`)
 - [ ] Atualização do sistema: adaptar `scripts/system/setup-update.sh` considerando `mintupdate-cli` ou `apt`
 - [ ] Pacotes essenciais do sistema: estender `scripts/system/setup-packages.sh` com utilitários essenciais do LMDE (`nemo-fileroller`, `xclip`, `zram-tools`, `libu2f-udev`, `numlockx`, etc.)
 

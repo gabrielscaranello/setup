@@ -21,6 +21,22 @@ setup() {
   [ "$output" = "installed-pkg" ]
 }
 
+@test "_filter_installed_debian expands wildcard patterns using dpkg-query" {
+  dpkg-query() {
+    if [[ "$*" =~ "wildcard-pkg*" ]]; then
+      echo "wildcard-pkg-1 install ok installed"
+      echo "wildcard-pkg-2 install ok installed"
+      return 0
+    fi
+    return 1
+  }
+
+  run _filter_installed_debian "wildcard-pkg*"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "wildcard-pkg-1" ]]
+  [[ "$output" =~ "wildcard-pkg-2" ]]
+}
+
 @test "_filter_installed_fedora filters packages matching rpm -q" {
   rpm() {
     if [ "$2" = "installed-pkg" ]; then
@@ -78,6 +94,50 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Purging unused Debian packages: dragonplayer juk konsole akregator kmail korganizer kontact" ]]
   [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+}
+
+@test "_debloat_debian purges packages on Cinnamon when installed" {
+  get_desktop_environment() { echo "cinnamon"; }
+  get_distro_id() { echo "debian"; }
+  _filter_installed_debian() {
+    local args="$*"
+    [[ "$args" =~ "celluloid" ]]
+    [[ "$args" =~ "gnome-terminal" ]]
+    [[ "$args" =~ "hypnotix*" ]]
+    [[ "$args" =~ "mintchat" ]]
+    [[ "$args" =~ "sticky" ]]
+    [[ "$args" =~ "thingy" ]]
+    [[ "$args" =~ "thunderbird*" ]]
+    echo "celluloid gnome-terminal hypnotix mintchat sticky thingy"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _debloat_debian
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Purging unused Debian packages: celluloid gnome-terminal hypnotix mintchat sticky thingy" ]]
+  [[ "$output" =~ "sudo apt purge -y celluloid gnome-terminal hypnotix mintchat sticky thingy" ]]
+}
+
+@test "_debloat_debian includes Cinnamon packages on LMDE with generic/unknown DE" {
+  get_desktop_environment() { echo "unknown"; }
+  get_distro_id() { echo "lmde"; }
+  _filter_installed_debian() {
+    local args="$*"
+    [[ "$args" =~ "celluloid" ]]
+    [[ "$args" =~ "mintchat" ]]
+    echo "celluloid mintchat"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _debloat_debian
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Purging unused Debian packages: celluloid mintchat" ]]
 }
 
 @test "_debloat_debian handles no installed packages gracefully" {
@@ -150,6 +210,16 @@ setup() {
 
 @test "main delegates to _debloat_debian on debian" {
   get_distro_id() { echo "debian"; }
+  _debloat_debian() { echo "called debloat debian"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called debloat debian" ]]
+  [[ "$output" =~ "setup-debloat complete" ]]
+}
+
+@test "main delegates to _debloat_debian on lmde" {
+  get_distro_id() { echo "lmde"; }
   _debloat_debian() { echo "called debloat debian"; return 0; }
 
   run main

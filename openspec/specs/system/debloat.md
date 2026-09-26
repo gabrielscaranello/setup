@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Removes unused default packages, redundant applications, legacy utilities, and distro bloatware on **Debian 13** and **Fedora 44**, tailored specifically to the active Desktop Environment (**GNOME** or **KDE Plasma**).
+Removes unused default packages, redundant applications, legacy utilities, and distro bloatware on **Debian 13**, **LMDE 7**, and **Fedora 44**, tailored specifically to the active Desktop Environment (**GNOME**, **KDE Plasma**, or **Cinnamon**).
 
 On **Arch Linux**, this module gracefully bypasses package removal because Arch installations are user-composed and inherently minimal.
 
@@ -14,7 +14,7 @@ On **Arch Linux**, this module gracefully bypasses package removal because Arch 
 
 The script SHALL detect the current distribution using `get_distro_id`:
 
-- On **Debian**: SHALL execute Debian-tailored debloat operations using `apt purge -y` and `apt autoremove --purge -y`.
+- On **Debian & LMDE**: SHALL execute APT-tailored debloat operations using `apt purge -y` and `apt autoremove --purge -y`.
 - On **Fedora**: SHALL execute Fedora-tailored debloat operations using `dnf remove -y` and `dnf autoremove -y`.
 - On **Arch Linux**: SHALL print an informational message indicating debloat is unnecessary on minimal Arch systems and exit cleanly with code 0.
 - On **Unknown / Unsupported Distros**: SHALL print an error to stderr and exit with code 1.
@@ -112,6 +112,25 @@ When the detected Desktop Environment is `plasma`, the script SHALL remove redun
 - **GIVEN** active desktop environment is `plasma`
 - **WHEN** `scripts/system/setup-debloat.sh` executes
 - **THEN** Dragon player, Juk, Konsole, Konqueror, KDE PIM, and legacy KDE accessibility tools SHALL be removed
+
+---
+
+### Requirement: Cinnamon Desktop Environment & LMDE Debloat
+
+When the detected Desktop Environment is `cinnamon` or the distribution is `lmde`, the script SHALL remove redundant Linux Mint and Cinnamon default packages:
+
+- **Media & Players**: `celluloid`, `hypnotix*`, `rhythmbox`.
+- **Terminals**: `gnome-terminal`, `xterm*`.
+- **Mint Applications**: `mintchat`, `sticky`, `thingy`.
+- **Office & Productivity**: `libreoffice*`.
+- **Communication & Scanners**: `thunderbird*`, `simple-scan`.
+- **BitTorrent**: `transmission*`.
+
+#### Scenario: Running debloat under Cinnamon or LMDE
+
+- **GIVEN** active desktop environment is `cinnamon` or distribution is `lmde`
+- **WHEN** `scripts/system/setup-debloat.sh` executes
+- **THEN** Celluloid, Hypnotix, Mintchat, Sticky, Thingy, Thunderbird, Simple Scan, Rhythmbox, and Transmission SHALL be removed via APT
 
 ---
 

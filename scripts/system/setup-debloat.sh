@@ -13,8 +13,22 @@ source "scripts/_utils.sh" 2> /dev/null || true
 _filter_installed_debian() {
   local installed=()
   for pkg in "$@"; do
-    if dpkg -s "$pkg" 2> /dev/null | grep -q "Status: install ok installed"; then
-      installed+=("$pkg")
+    if [[ "$pkg" == *"*"* ]]; then
+      local matching
+      matching="$(dpkg-query -W -f='${Package} ${Status}\n' "$pkg" 2> /dev/null | grep ' install ok installed$' | awk '{print $1}' || true)"
+      if [ -n "$matching" ]; then
+        while IFS= read -r p; do
+          local pat=" ${p} "
+          if [ -n "$p" ] && [[ ! " ${installed[*]:-} " =~ $pat ]]; then
+            installed+=("$p")
+          fi
+        done <<< "$matching"
+      fi
+    elif dpkg -s "$pkg" 2> /dev/null | grep -q "Status: install ok installed"; then
+      local pkg_pat=" ${pkg} "
+      if [[ ! " ${installed[*]:-} " =~ $pkg_pat ]]; then
+        installed+=("$pkg")
+      fi
     fi
   done
   echo "${installed[@]:-}"
@@ -37,6 +51,21 @@ COMMON_DEBLOAT_PACKAGES=(
   brasero
   deja-dup
   transmission-common
+)
+
+COMMON_CINNAMON_DEBLOAT_PACKAGES=(
+  celluloid
+  gnome-terminal
+  "hypnotix*"
+  "libreoffice*"
+  mintchat
+  rhythmbox
+  simple-scan
+  sticky
+  thingy
+  "thunderbird*"
+  "transmission*"
+  "xterm*"
 )
 
 COMMON_GNOME_DEBLOAT_PACKAGES=(
@@ -109,8 +138,21 @@ _debloat_debian() {
         "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
       )
       ;;
+    cinnamon)
+      targets+=(
+        "${COMMON_CINNAMON_DEBLOAT_PACKAGES[@]}"
+      )
+      ;;
     *)
-      echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
+      local distro
+      distro="$(get_distro_id)"
+      if [ "$distro" = "lmde" ]; then
+        targets+=(
+          "${COMMON_CINNAMON_DEBLOAT_PACKAGES[@]}"
+        )
+      else
+        echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
+      fi
       ;;
   esac
 
@@ -183,7 +225,7 @@ main() {
   distro="$(get_distro_id)"
 
   case "$distro" in
-    debian)
+    debian | lmde)
       _debloat_debian
       ;;
     fedora)
