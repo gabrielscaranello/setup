@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs or builds the latest Neovim editor, ensuring pre-requisite toolchains (NVM, Node.js, and on Debian: Rust/Cargo for tree-sitter requirements), build dependencies, clipboard providers, and ecosystem runtime dependencies (`ripgrep`, `fd-find`, `imagemagick`, `sqlite`, `tidy`, `protobuf`, etc.) are satisfied across all supported distributions.
+Installs or builds the latest Neovim editor, ensuring pre-requisite toolchains (NVM, Node.js, and on Debian / LMDE: Rust/Cargo for tree-sitter requirements), build dependencies, clipboard providers, and ecosystem runtime dependencies (`ripgrep`, `fd-find`, `imagemagick`, `sqlite`, `tidy`, `protobuf`, etc.) are satisfied across all supported distributions.
 
 ---
 
@@ -14,7 +14,7 @@ The script SHALL ensure that `scripts/toolchain/setup-nvm.sh` and `scripts/toolc
 
 #### Scenario: Running setup across any supported distribution
 
-- **GIVEN** any supported Linux distribution (Arch Linux, Fedora, or Debian)
+- **GIVEN** any supported Linux distribution (Arch Linux, Fedora, Debian, or LMDE)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` is executed
 - **THEN** it SHALL invoke `setup-nvm.sh` and `setup-go.sh` first to guarantee Node.js, npm, and Go toolchains are present
 
@@ -27,15 +27,15 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 - **Common across all distributions**:
   - `jq`, `ripgrep`, `fd-find`, `clipboard`, `imagemagick`, `sqlite`, `tidy`, `protobuf-compiler`, `unzip`
 - **Distro-specific independent dependencies**:
-  - **Debian (`debian`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`)
+  - **Debian / LMDE (`debian`, `lmde`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`)
   - **Fedora (`fedora`)**: `luarocks`, `cargo`, `lua-5.1`
   - **Arch Linux (`arch`)**: `build-tools` (`base-devel`), `rust`, `tree-sitter-cli`, `luarocks`
 
-#### Scenario: Installing runtime packages on Debian
+#### Scenario: Installing runtime packages on Debian or LMDE
 
-- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
+- **GIVEN** a Debian or LMDE system (`get_distro_id` returns `debian` or `lmde`)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` installs runtime dependencies
-- **THEN** common packages (`jq`, `fd-find`, `xclip`, `imagemagick`, `sqlite3`, `libsqlite3-dev`, `tidy`, `protobuf-compiler`, `ripgrep`, `unzip`) and Debian-specific packages (`luarocks`, `python3`, `python3-venv`) SHALL be installed
+- **THEN** common packages (`jq`, `fd-find`, `xclip`, `imagemagick`, `sqlite3`, `libsqlite3-dev`, `tidy`, `protobuf-compiler`, `ripgrep`, `unzip`) and Debian/LMDE-specific packages (`luarocks`, `python3`, `python3-venv`) SHALL be installed
 
 #### Scenario: Installing runtime packages on Fedora
 
@@ -56,7 +56,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 The script SHALL determine the Neovim binary installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Fedora (`fedora`) & Arch Linux (`arch`)**: SHALL install `neovim` directly from official repositories using `install_packages neovim`.
-- **Debian (`debian`)**: SHALL ensure `scripts/toolchain/setup-rust.sh` is executed (for `tree-sitter-cli`), install required build dependencies (`build-tools`, `ninja-build`, `gcc-cxx`, `cmake`, `gettext-tools`, `curl`, `git`, `file`), clone Neovim `stable` branch into `/tmp/neovim`, build using `make -j$(nproc) CMAKE_BUILD_TYPE=RelWithDebInfo`, generate a Debian package using `cpack -G DEB`, and install the resulting `.deb` package via `dpkg -i`.
+- **Debian (`debian`) & LMDE (`lmde`)**: SHALL ensure `scripts/toolchain/setup-rust.sh` is executed (for `tree-sitter-cli`), install required build dependencies (`build-tools`, `ninja-build`, `gcc-cxx`, `cmake`, `gettext-tools`, `curl`, `git`, `file`), clone Neovim `stable` branch into `/tmp/neovim`, build using `make -j$(nproc) CMAKE_BUILD_TYPE=RelWithDebInfo`, generate a Debian package using `cpack -G DEB`, and install the resulting `.deb` package via `dpkg -i`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
 #### Scenario: Running on Fedora or Arch Linux
@@ -68,9 +68,9 @@ The script SHALL determine the Neovim binary installation mechanism based on the
 - **AND** runtime dependencies are installed via `install_packages`
 - **AND** `install_packages neovim` is called directly
 
-#### Scenario: Running on Debian
+#### Scenario: Running on Debian or LMDE
 
-- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
+- **GIVEN** a Debian or LMDE system (`get_distro_id` returns `debian` or `lmde`)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` is executed
 - **THEN** `_ensure_nvm` is executed
 - **AND** `_ensure_go` is executed

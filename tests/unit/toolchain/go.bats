@@ -55,6 +55,18 @@
   [ "$status" -eq 0 ]
 }
 
+@test "_install_go installs from binary on lmde" {
+  source /setup/scripts/toolchain/setup-go.sh
+  require_supported_distro() { echo "lmde"; }
+  install_packages() { return 0; }
+  _install_go_from_binary() { echo "called _install_go_from_binary"; }
+  _install_go_packages() { echo "called _install_go_packages"; }
+  run _install_go
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _install_go_from_binary" ]]
+  [[ "$output" =~ "called _install_go_packages" ]]
+}
+
 @test "_install_go fails when distribution is unsupported" {
   source /setup/scripts/toolchain/setup-go.sh
   get_distro_id() { echo "unknown-distro"; return 1; }

@@ -57,7 +57,7 @@ Padronização dos pacotes essenciais e remoção de bloatware do ecossistema Mi
 
 Garantir funcionamento pleno da suite completa de desenvolvimento e produtividade no LMDE.
 
-- [ ] Toolchain de desenvolvimento: validar e garantir execução dos scripts em `scripts/toolchain/` no LMDE (`setup-docker.sh`, `setup-neovim.sh`, `setup-nvm.sh`, `setup-go.sh`, `setup-gitflow.sh`)
+- [x] Toolchain de desenvolvimento: validar e garantir execução dos scripts em `scripts/toolchain/` no LMDE (`setup-docker.sh`, `setup-neovim.sh`, `setup-nvm.sh`, `setup-go.sh`, `setup-gitflow.sh`, `setup-rust.sh`) — `scripts/toolchain/*.sh`
 - [ ] Terminal e fontes: validar `scripts/terminal/setup-fonts.sh`, `setup-kitty.sh`, `setup-lazygit.sh` e `setup-lazydocker.sh` no LMDE
 - [ ] Navegadores web: adaptar `scripts/apps/setup-browsers.sh` para o LMDE (Mint já empacota Firefox vanilla nativo `.deb` via repositório próprio)
 - [ ] Aplicativos GUI: validar funcionamento dos scripts de apps (`setup-vscodium.sh`, `setup-onlyoffice.sh`, `setup-obsidian.sh`, `setup-dbeaver.sh`, `setup-steam.sh`, `setup-discord.sh`, etc.) via apt/flatpak

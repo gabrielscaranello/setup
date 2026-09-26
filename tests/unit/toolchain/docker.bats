@@ -16,6 +16,16 @@ setup() {
   [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
 }
 
+@test "_install_docker_packages calls install_packages with unified docker package list on lmde" {
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
+  run _install_docker_packages "lmde"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
+}
+
 @test "_install_docker_packages calls add_fedora_docker_repo on Fedora" {
   add_fedora_docker_repo() {
     echo "called add_fedora_docker_repo"
