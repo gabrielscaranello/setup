@@ -16,6 +16,21 @@ _update_debian() {
   sudo apt upgrade -y
 }
 
+_update_lmde() {
+  echo "Refreshing APT repositories and upgrading LMDE packages..."
+  if command -v mintupdate-cli > /dev/null 2>&1; then
+    echo "Applying updates via mintupdate-cli..."
+    sudo mintupdate-cli upgrade -r -y || {
+      echo "mintupdate-cli exited with error; falling back to apt upgrade..."
+      sudo apt update
+      sudo apt upgrade -y
+    }
+  else
+    sudo apt update
+    sudo apt upgrade -y
+  fi
+}
+
 _update_fedora() {
   echo "Refreshing DNF repositories and upgrading Fedora packages..."
   # Justification: install_packages does not abstract full-system upgrade operations
@@ -43,6 +58,9 @@ main() {
   case "$distro" in
     debian)
       _update_debian
+      ;;
+    lmde)
+      _update_lmde
       ;;
     fedora)
       _update_fedora

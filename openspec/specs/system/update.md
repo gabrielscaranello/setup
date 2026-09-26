@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Refreshes distribution package repositories and upgrades all installed system packages to their latest versions across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**).
+Refreshes distribution package repositories and upgrades all installed system packages to their latest versions across supported distributions (**Debian 13**, **LMDE 7**, **Fedora 44**, and **Arch Linux**).
 
 This module runs early in the setup sequence, immediately following the debloat cleanup step, ensuring all subsequent installations occur on an up-to-date system base.
 
@@ -15,6 +15,7 @@ This module runs early in the setup sequence, immediately following the debloat 
 The script SHALL detect the current operating system using `require_supported_distro` or `get_distro_id`:
 
 - On **Debian**: SHALL refresh APT metadata (`sudo apt update`) and perform a non-interactive package upgrade (`sudo apt upgrade -y`).
+- On **LMDE**: SHALL perform updates via `mintupdate-cli upgrade -r -y` when `mintupdate-cli` is available, falling back to `sudo apt update` and `sudo apt upgrade -y` if missing or if execution fails.
 - On **Fedora**: SHALL refresh DNF repository metadata and perform a non-interactive package upgrade (`sudo dnf upgrade -y --refresh`).
 - On **Arch Linux**: SHALL refresh Pacman package databases and upgrade system packages (`sudo pacman -Syu --noconfirm`).
 - On **Unsupported Distros**: SHALL print an error to stderr and exit with code 1.
@@ -24,6 +25,12 @@ The script SHALL detect the current operating system using `require_supported_di
 - **GIVEN** Debian 13 (Trixie)
 - **WHEN** `scripts/system/setup-update.sh` runs
 - **THEN** APT cache SHALL be updated and packages upgraded via `apt upgrade -y`
+
+#### Scenario: Updating system on LMDE
+
+- **GIVEN** LMDE 7
+- **WHEN** `scripts/system/setup-update.sh` runs
+- **THEN** system SHALL be upgraded via `mintupdate-cli` when available, or via APT cache update and upgrade
 
 #### Scenario: Updating system on Fedora
 

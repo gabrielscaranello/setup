@@ -19,6 +19,64 @@ setup() {
   [[ "$output" =~ "sudo apt upgrade -y" ]]
 }
 
+@test "_update_lmde invokes mintupdate-cli when available" {
+  command() {
+    if [ "$1" = "-v" ] && [ "$2" = "mintupdate-cli" ]; then
+      return 0
+    fi
+    builtin command "$@"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _update_lmde
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Applying updates via mintupdate-cli..." ]]
+  [[ "$output" =~ "sudo mintupdate-cli upgrade -r -y" ]]
+}
+
+@test "_update_lmde falls back to apt when mintupdate-cli is absent" {
+  command() {
+    if [ "$1" = "-v" ] && [ "$2" = "mintupdate-cli" ]; then
+      return 1
+    fi
+    builtin command "$@"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _update_lmde
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo apt update" ]]
+  [[ "$output" =~ "sudo apt upgrade -y" ]]
+}
+
+@test "_update_lmde falls back to apt when mintupdate-cli fails" {
+  command() {
+    if [ "$1" = "-v" ] && [ "$2" = "mintupdate-cli" ]; then
+      return 0
+    fi
+    builtin command "$@"
+  }
+  sudo() {
+    if [ "$1" = "mintupdate-cli" ]; then
+      return 1
+    fi
+    echo "sudo $*"
+    return 0
+  }
+
+  run _update_lmde
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "mintupdate-cli exited with error; falling back to apt upgrade..." ]]
+  [[ "$output" =~ "sudo apt update" ]]
+  [[ "$output" =~ "sudo apt upgrade -y" ]]
+}
+
 @test "_update_fedora invokes dnf upgrade -y --refresh" {
   sudo() {
     echo "sudo $*"
@@ -55,6 +113,16 @@ setup() {
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called _update_debian" ]]
+  [[ "$output" =~ "setup-update complete" ]]
+}
+
+@test "main delegates to _update_lmde on lmde" {
+  require_supported_distro() { echo "lmde"; }
+  _update_lmde() { echo "called _update_lmde"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _update_lmde" ]]
   [[ "$output" =~ "setup-update complete" ]]
 }
 
