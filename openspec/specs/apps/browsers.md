@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs Chromium and official Mozilla Firefox browsers across all supported distributions, removing legacy ESR variants on Debian, configuring the official Mozilla APT repository, and using Flatpak for Chromium on Debian.
+Installs Chromium and official Mozilla Firefox browsers across all supported distributions, removing legacy ESR variants and configuring the official Mozilla APT repository on Debian, installing vanilla Firefox and Chromium natively on LMDE, Arch Linux, and Fedora, and using Flatpak for Chromium on Debian.
 
 ---
 
@@ -12,13 +12,13 @@ Installs Chromium and official Mozilla Firefox browsers across all supported dis
 
 The script SHALL determine the installation mechanism for Chromium based on the target distribution (`get_distro_id`):
 
-- **Arch Linux (`arch`) & Fedora (`fedora`)**: SHALL install `chromium` directly from official repositories via `install_packages chromium`.
+- **Arch Linux (`arch`), Fedora (`fedora`) & LMDE (`lmde`)**: SHALL install `chromium` directly from official repositories via `install_packages chromium`.
 - **Debian (`debian`)**: SHALL install the official Flatpak package `org.chromium.Chromium` via Flathub (`install_flatpak_app "org.chromium.Chromium" "Chromium"`).
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
-#### Scenario: Running on Fedora or Arch Linux
+#### Scenario: Running on Fedora, Arch Linux or LMDE
 
-- **GIVEN** a Fedora or Arch Linux system (`get_distro_id` returns `fedora` or `arch`)
+- **GIVEN** a Fedora, Arch Linux, or LMDE system (`get_distro_id` returns `fedora`, `arch`, or `lmde`)
 - **WHEN** `scripts/apps/setup-browsers.sh` runs
 - **THEN** `chromium` SHALL be installed from native repositories
 
@@ -32,9 +32,10 @@ The script SHALL determine the installation mechanism for Chromium based on the 
 
 ### Requirement: Firefox Distribution Packaging Strategy
 
-The script SHALL install modern Firefox using distribution-native packaging on Arch Linux and Fedora, and official Mozilla APT repository on Debian:
+The script SHALL install modern Firefox using distribution-native packaging on Arch Linux, Fedora, and LMDE, and official Mozilla APT repository on Debian:
 
 - **Arch Linux (`arch`) & Fedora (`fedora`)**: SHALL install `firefox` and `firefox-i18n-pt-br` directly from repositories.
+- **LMDE (`lmde`)**: SHALL install `firefox` and `firefox-l10n-pt` directly from distribution repositories without adding third-party Mozilla APT sources.
 - **Debian (`debian`)**: SHALL purge `firefox-esr`, configure the official `packages.mozilla.org` APT repository with keyring and pinning priority 1000, and install `firefox` and `firefox-i18n-pt-br`.
 
 #### Scenario: Running on Fedora or Arch Linux
@@ -42,6 +43,13 @@ The script SHALL install modern Firefox using distribution-native packaging on A
 - **GIVEN** a Fedora or Arch Linux system (`get_distro_id` returns `fedora` or `arch`)
 - **WHEN** `scripts/apps/setup-browsers.sh` runs
 - **THEN** `firefox` and `firefox-i18n-pt-br` SHALL be installed directly via `install_packages`
+
+#### Scenario: Running on LMDE
+
+- **GIVEN** an LMDE system (`get_distro_id` returns `lmde`)
+- **WHEN** `scripts/apps/setup-browsers.sh` runs
+- **THEN** `firefox` and `firefox-l10n-pt` SHALL be installed directly from native repositories
+- **AND** external Mozilla APT repositories SHALL NOT be configured
 
 #### Scenario: Running on Debian
 

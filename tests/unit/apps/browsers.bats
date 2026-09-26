@@ -55,6 +55,40 @@
   [[ "$output" =~ "installing packages: firefox firefox-i18n-pt-br" ]]
 }
 
+@test "_install_firefox delegates to repo install on LMDE with firefox-l10n-pt" {
+  source /setup/scripts/apps/setup-browsers.sh
+  get_distro_id() { echo "lmde"; }
+  _install_firefox_repo() {
+    echo "called repo install with: $*"
+    return 0
+  }
+  run _install_firefox
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called repo install with: firefox-l10n-pt" ]]
+}
+
+@test "_install_firefox_repo defaults to firefox-i18n-pt-br" {
+  source /setup/scripts/apps/setup-browsers.sh
+  install_packages() {
+    echo "installing packages: $*"
+    return 0
+  }
+  run _install_firefox_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing packages: firefox firefox-i18n-pt-br" ]]
+}
+
+@test "_install_firefox_repo accepts custom language package" {
+  source /setup/scripts/apps/setup-browsers.sh
+  install_packages() {
+    echo "installing packages: $*"
+    return 0
+  }
+  run _install_firefox_repo "firefox-l10n-pt"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing packages: firefox firefox-l10n-pt" ]]
+}
+
 @test "_install_firefox fails when distribution is unsupported" {
   source /setup/scripts/apps/setup-browsers.sh
   get_distro_id() { echo "unknown-distro"; return 1; }
@@ -87,6 +121,18 @@
   [[ "$output" =~ "installing package: chromium" ]]
 }
 
+@test "_install_chromium calls install_packages chromium on LMDE" {
+  source /setup/scripts/apps/setup-browsers.sh
+  get_distro_id() { echo "lmde"; }
+  install_packages() {
+    echo "installing package: $*"
+    return 0
+  }
+  run _install_chromium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing package: chromium" ]]
+}
+
 @test "_install_chromium calls install_flatpak_app on Debian" {
   source /setup/scripts/apps/setup-browsers.sh
   get_distro_id() { echo "debian"; }
@@ -99,6 +145,14 @@
   [[ "$output" =~ "installing flatpak app: org.chromium.Chromium Chromium" ]]
 }
 
+@test "_install_chromium fails when distribution is unsupported" {
+  source /setup/scripts/apps/setup-browsers.sh
+  get_distro_id() { echo "unknown-distro"; return 1; }
+  run _install_chromium
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported distribution" ]]
+}
+
 @test "_install_browsers calls both chromium and firefox installers" {
   source /setup/scripts/apps/setup-browsers.sh
   _install_chromium() { echo "called chromium install"; return 0; }
@@ -107,4 +161,13 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called chromium install" ]]
   [[ "$output" =~ "called firefox install" ]]
+}
+
+@test "main executes successfully and reports complete" {
+  source /setup/scripts/apps/setup-browsers.sh
+  _install_browsers() { echo "called _install_browsers"; return 0; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up browsers..." ]]
+  [[ "$output" =~ "setup-browsers complete" ]]
 }
