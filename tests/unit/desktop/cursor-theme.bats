@@ -50,6 +50,18 @@ teardown() {
   [[ "$output" =~ "Cursor theme setup completed successfully." ]]
 }
 
+@test "main proceeds when desktop environment is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  _is_cursor_installed() { return 0; }
+  _configure_cinnamon_cursor() { echo "configured cinnamon cursor"; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Bibata-Modern-Ice cursor theme for cinnamon..." ]]
+  [[ "$output" =~ "configured cinnamon cursor" ]]
+  [[ "$output" =~ "Cursor theme setup completed successfully." ]]
+}
+
 @test "_is_cursor_installed returns 0 when cursors exist in user directory" {
   local mock_home
   mock_home="$(mktemp -d)"
@@ -206,5 +218,27 @@ teardown() {
   run _configure_plasma_cursor
   [ "$status" -eq 0 ]
   [[ "$output" =~ "kwriteconfig5 called: --file kcminputrc --group Mouse --key cursorTheme Bibata-Modern-Ice" ]]
+  rm -rf "$mock_home"
+}
+
+@test "_configure_cinnamon_cursor invokes dconf and gsettings" {
+  local mock_home
+  mock_home="$(mktemp -d)"
+  HOME="$mock_home"
+
+  dconf() {
+    echo "dconf called: $*"
+  }
+  gsettings() {
+    echo "gsettings called: $*"
+  }
+
+  run _configure_cinnamon_cursor
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "dconf called: write /org/cinnamon/desktop/interface/cursor-theme 'Bibata-Modern-Ice'" ]]
+  [[ "$output" =~ "dconf called: write /org/cinnamon/desktop/interface/cursor-size 20" ]]
+  [[ "$output" =~ "gsettings called: set org.cinnamon.desktop.interface cursor-theme Bibata-Modern-Ice" ]]
+  [[ "$output" =~ "gsettings called: set org.cinnamon.desktop.interface cursor-size 20" ]]
+  [ -f "$mock_home/.icons/default/index.theme" ]
   rm -rf "$mock_home"
 }

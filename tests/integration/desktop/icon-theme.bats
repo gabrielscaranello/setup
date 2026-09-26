@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
-@test "setup-icon-theme.sh completes gracefully when DE is not GNOME" {
+@test "setup-icon-theme.sh completes gracefully when DE is unsupported" {
+  export XDG_CURRENT_DESKTOP="KDE"
   run bash /setup/scripts/desktop/setup-icon-theme.sh
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Skipping icon theme setup." ]]
@@ -11,11 +12,20 @@
 
   run bash /setup/scripts/desktop/setup-icon-theme.sh
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Setting up Papirus-Dark icon theme for GNOME..." ]]
+  [[ "$output" =~ "Setting up Papirus-Dark icon theme for gnome..." ]]
   [[ "$output" =~ "Icon theme setup completed successfully." ]]
 
   # Idempotency / Up to date: second run should detect already installed or managed
   run bash /setup/scripts/desktop/setup-icon-theme.sh
   [ "$status" -eq 0 ]
   [[ "$output" =~ "is managed by system package manager" || "$output" =~ "is already installed" || "$output" =~ "is up to date" ]]
+}
+
+@test "setup-icon-theme.sh installs icon theme when DE is Cinnamon" {
+  export XDG_CURRENT_DESKTOP="X-Cinnamon"
+
+  run bash /setup/scripts/desktop/setup-icon-theme.sh
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Papirus-Dark icon theme for cinnamon..." ]]
+  [[ "$output" =~ "Icon theme setup completed successfully." ]]
 }

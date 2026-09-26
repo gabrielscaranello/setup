@@ -69,7 +69,7 @@ Garantir funcionamento pleno da suite completa de desenvolvimento e produtividad
 
 Personalização completa da interface gráfica Cinnamon para manter a mesma consistência visual e ergonômica de GNOME e KDE Plasma.
 
-- [ ] Tema de cursores e ícones: adaptar `scripts/desktop/setup-cursor-theme.sh` (`Bibata-Modern-Ice`, tam 20) e `setup-icon-theme.sh` (`Papirus-Dark` + `cat-mocha-lavender`) para Cinnamon via `gsettings` (`org.cinnamon.desktop.interface`)
+- [x] Tema de cursores e ícones: adaptar `scripts/desktop/setup-cursor-theme.sh` (`Bibata-Modern-Ice`, tam 20) e `setup-icon-theme.sh` (`Papirus-Dark` + `cat-mocha-lavender`) para Cinnamon via `gsettings` (`org.cinnamon.desktop.interface`) — `scripts/desktop/setup-cursor-theme.sh` e `scripts/desktop/setup-icon-theme.sh`
 - [ ] Tema GTK: adaptar `scripts/desktop/setup-gtk-theme.sh` para aplicar `Colloid-Dark-Catppuccin` no Cinnamon (`org.cinnamon.desktop.interface gtk-theme`, `org.cinnamon.desktop.wm.preferences theme` e `org.cinnamon.theme name`)
 - [ ] Orquestrador de aparência: atualizar `scripts/desktop/setup-look.sh` para coordenar cursor, ícones e GTK no Cinnamon
 - [ ] Applets e Extensões (Cinnamon Spices): implementar download e instalação de spices via API do Linux Mint (`color-picker@fmete`, `transparent-panels-reloaded@marcelovbcfilho`) em `scripts/desktop/setup-cinnamon-applets.sh`

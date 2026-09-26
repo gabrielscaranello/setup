@@ -15,7 +15,7 @@ teardown() {
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Desktop Environment is 'unknown' (not GNOME). Skipping icon theme setup." ]]
+  [[ "$output" =~ "Desktop Environment is 'unknown' (unsupported or unrecognized). Skipping icon theme setup." ]]
 }
 
 @test "main skips when desktop environment is plasma" {
@@ -23,7 +23,7 @@ teardown() {
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Desktop Environment is 'plasma' (not GNOME). Skipping icon theme setup." ]]
+  [[ "$output" =~ "Desktop Environment is 'plasma' (unsupported or unrecognized). Skipping icon theme setup." ]]
 }
 
 @test "main proceeds when desktop environment is gnome" {
@@ -32,15 +32,33 @@ teardown() {
   _is_system_icon_package_installed() { return 0; }
   _ensure_papirus_folders() { echo "ensured papirus folders"; }
   _apply_papirus_folders_color() { echo "applied folder color"; }
-  _configure_gnome_icon_theme() { echo "configured gnome icon theme"; }
+  _configure_icon_theme() { echo "configured $1 icon theme"; }
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Setting up Papirus-Dark icon theme for GNOME..." ]]
+  [[ "$output" =~ "Setting up Papirus-Dark icon theme for gnome..." ]]
   [[ "$output" =~ "Icon theme 'Papirus-Dark' is managed by system package manager." ]]
   [[ "$output" =~ "ensured papirus folders" ]]
   [[ "$output" =~ "applied folder color" ]]
   [[ "$output" =~ "configured gnome icon theme" ]]
+  [[ "$output" =~ "Icon theme setup completed successfully." ]]
+}
+
+@test "main proceeds when desktop environment is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  _is_icon_theme_installed() { return 0; }
+  _is_system_icon_package_installed() { return 0; }
+  _ensure_papirus_folders() { echo "ensured papirus folders"; }
+  _apply_papirus_folders_color() { echo "applied folder color ($FOLDER_COLOR)"; }
+  _configure_icon_theme() { echo "configured $1 icon theme"; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Papirus-Dark icon theme for cinnamon..." ]]
+  [[ "$output" =~ "Icon theme 'Papirus-Dark' is managed by system package manager." ]]
+  [[ "$output" =~ "ensured papirus folders" ]]
+  [[ "$output" =~ "applied folder color (cat-mocha-lavender)" ]]
+  [[ "$output" =~ "configured cinnamon icon theme" ]]
   [[ "$output" =~ "Icon theme setup completed successfully." ]]
 }
 
@@ -232,4 +250,68 @@ teardown() {
   run _configure_gnome_icon_theme
   [ "$status" -eq 0 ]
   [[ "$output" =~ "gsettings called: set org.gnome.desktop.interface icon-theme Papirus-Dark" ]]
+}
+
+@test "_configure_cinnamon_icon_theme invokes dconf and gsettings" {
+  dconf() {
+    echo "dconf called: $*"
+  }
+  gsettings() {
+    echo "gsettings called: $*"
+  }
+
+  run _configure_cinnamon_icon_theme
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "dconf called: write /org/cinnamon/desktop/interface/icon-theme 'Papirus-Dark'" ]]
+  [[ "$output" =~ "gsettings called: set org.cinnamon.desktop.interface icon-theme Papirus-Dark" ]]
+}
+
+@test "_is_catppuccin_folders_installed checks svg existence" {
+  _get_papirus_icons_dir() { echo "/tmp/nonexistent_papirus"; }
+  run _is_catppuccin_folders_installed
+  [ "$status" -eq 1 ]
+
+  local mock_papirus
+  mock_papirus="$(mktemp -d)"
+  mkdir -p "$mock_papirus/48x48/places"
+  touch "$mock_papirus/48x48/places/folder-cat-mocha-lavender-documents.svg"
+  _get_papirus_icons_dir() { echo "$mock_papirus"; }
+
+  run _is_catppuccin_folders_installed
+  [ "$status" -eq 0 ]
+  rm -rf "$mock_papirus"
+}
+
+@test "_install_catppuccin_papirus_folders downloads and copies assets" {
+  local mock_papirus
+  mock_papirus="$(mktemp -d)"
+  _get_papirus_icons_dir() { echo "$mock_papirus"; }
+
+  download_file() {
+    touch "$2"
+  }
+  tar() {
+    local tmp_dir="$4"
+    mkdir -p "$tmp_dir/papirus-folders-main/src/48x48/places"
+    touch "$tmp_dir/papirus-folders-main/src/48x48/places/folder-cat-mocha-lavender-documents.svg"
+  }
+
+  run _install_catppuccin_papirus_folders
+  [ "$status" -eq 0 ]
+  [ -f "$mock_papirus/48x48/places/folder-cat-mocha-lavender-documents.svg" ]
+  rm -rf "$mock_papirus"
+}
+
+@test "_apply_papirus_folders_color invokes papirus-folders and installs catppuccin if needed" {
+  papirus-folders() {
+    echo "papirus-folders called: $*"
+  }
+  _is_catppuccin_folders_installed() { return 1; }
+  _install_catppuccin_papirus_folders() { echo "installed catppuccin folders"; }
+
+  FOLDER_COLOR="cat-mocha-lavender"
+  run _apply_papirus_folders_color
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed catppuccin folders" ]]
+  [[ "$output" =~ "papirus-folders called: -C cat-mocha-lavender" ]]
 }
