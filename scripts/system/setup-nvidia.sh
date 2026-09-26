@@ -48,7 +48,7 @@ _install_driver_packages() {
   fi
 
   case "$distro" in
-    debian) _install_debian_driver ;;
+    debian | lmde) _install_debian_driver ;;
     fedora) _install_fedora_driver ;;
     arch) _install_arch_driver ;;
   esac

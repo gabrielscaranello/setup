@@ -34,9 +34,9 @@ _configure_gui_frontend() {
   local de="$2"
 
   case "$de" in
-    gnome)
-      if [ "$distro" = "debian" ] || [ "$distro" = "arch" ]; then
-        echo "Installing GUFW for GNOME..."
+    gnome | cinnamon)
+      if [ "$distro" = "debian" ] || [ "$distro" = "arch" ] || [ "$distro" = "lmde" ]; then
+        echo "Installing GUFW..."
         install_packages gufw
       elif [ "$distro" = "fedora" ]; then
         echo "Installing firewall-config for GNOME..."
@@ -60,7 +60,7 @@ main() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    debian | arch)
+    debian | arch | lmde)
       _configure_ufw
       ;;
 

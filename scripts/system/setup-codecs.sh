@@ -19,6 +19,13 @@ _setup_fedora_repos() {
 }
 
 _install_codec_packages() {
+  local distro="$1"
+
+  if [ "$distro" = "lmde" ]; then
+    echo "Installing Linux Mint multimedia meta-codecs package..."
+    install_packages mint-meta-codecs || true
+  fi
+
   # Install multimedia packages using cross-distro abstraction
   install_packages ffmpeg \
     gstreamer-plugins-base \
@@ -44,7 +51,7 @@ main() {
     _setup_fedora_repos
   fi
 
-  _install_codec_packages
+  _install_codec_packages "$distro"
 
   echo "Codecs installed successfully!"
 }

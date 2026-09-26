@@ -9,12 +9,14 @@ Install multimedia codecs and audio/video plugins across all supported distribut
 ### Supported Distributions
 
 - **Debian 13 (Trixie)**
+- **LMDE 7 (Debian 13 Trixie)**
 - **Fedora 44**
 - **Arch Linux**
 
 ### Packages to Install
 
 - **Debian**: `ffmpeg`, `gstreamer1.0-plugins-base`, `gstreamer1.0-plugins-good`, `gstreamer1.0-plugins-bad`, `gstreamer1.0-plugins-ugly`, `gstreamer1.0-libav`, `libavcodec-extra`
+- **LMDE**: `mint-meta-codecs`, `ffmpeg`, `gstreamer1.0-plugins-base`, `gstreamer1.0-plugins-good`, `gstreamer1.0-plugins-bad`, `gstreamer1.0-plugins-ugly`, `gstreamer1.0-libav`, `libavcodec-extra`
 - **Fedora**: `ffmpeg`, `gstreamer1-plugins-base`, `gstreamer1-plugins-good`, `gstreamer1-plugins-bad-free`, `gstreamer1-plugins-bad-freeworld`, `gstreamer1-plugins-ugly`, `gstreamer1-libav`, `gstreamer1-plugin-openh264`
 - **Arch Linux**: `ffmpeg`, `gst-plugins-base`, `gst-plugins-good`, `gst-plugins-bad`, `gst-plugins-ugly`, `gst-libav`
 
@@ -33,6 +35,12 @@ Install multimedia codecs and audio/video plugins across all supported distribut
 - **GIVEN** the system is Debian
 - **WHEN** the codecs setup script is executed
 - **THEN** it should install the Debian-specific codec packages via `install_packages`
+
+**Scenario: Install codecs on LMDE**
+
+- **GIVEN** the system is LMDE
+- **WHEN** the codecs setup script is executed
+- **THEN** it should install `mint-meta-codecs` and Debian codec packages via `install_packages`
 
 **Scenario: Install codecs on Fedora**
 

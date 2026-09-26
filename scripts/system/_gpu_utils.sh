@@ -6,6 +6,7 @@
 source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+source "scripts/system/lmde/_repositories.sh" 2> /dev/null || true
 
 # Configures the third-party repositories required for GPU driver installation
 # on the current distribution.
@@ -70,7 +71,7 @@ configure_gpu_repositories() {
   local distro="$1"
 
   case "$distro" in
-    debian | apt)
+    debian | apt | lmde)
       add_debian_nonfree_repo
       add_debian_backports_repo
       ;;

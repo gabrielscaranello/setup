@@ -35,11 +35,11 @@ Provisionamento do ambiente Docker para validação segura de scripts e execuç�
 
 Configuração dos aspectos de baixo nível do sistema operacional específicos para o ecossistema Mint/Debian.
 
-- [ ] Repositórios e fontes de pacotes: criar `scripts/system/lmde/_repositories.sh` (configuração idempotente de repositórios oficiais Mint, Debian e Backports)
-- [ ] Codecs e multimídia: adaptar `scripts/system/setup-codecs.sh` para utilizar `mint-meta-codecs` ou pacotes específicos quando executado no LMDE
-- [ ] Drivers gráficos e aceleração: validar/adaptar `scripts/system/setup-graphics.sh`, `setup-nvidia.sh` e `setup-amd.sh` no contexto do LMDE
-- [ ] Firewall e segurança: adaptar `scripts/security/setup-firewall.sh` para suporte a `gufw` e regras de firewall adequadas ao desktop Cinnamon
-- [ ] Gerenciamento de snapshots (Timeshift): adaptar `scripts/system/setup-timeshift.sh` para o LMDE, aplicando os filtros e agendamentos refinados (retenção horária/diária/semanal, exclusão de steam/node_modules/cache/docker e inclusão de `.**`, `Code/`, documentos)
+- [x] Repositórios e fontes de pacotes: criar `scripts/system/lmde/_repositories.sh` (configuração idempotente de repositórios oficiais Mint, Debian e Backports)
+- [x] Codecs e multimídia: adaptar `scripts/system/setup-codecs.sh` para utilizar `mint-meta-codecs` ou pacotes específicos quando executado no LMDE
+- [x] Drivers gráficos e aceleração: validar/adaptar `scripts/system/setup-graphics.sh`, `setup-nvidia.sh` e `setup-amd.sh` no contexto do LMDE
+- [x] Firewall e segurança: adaptar `scripts/security/setup-firewall.sh` para suporte a `gufw` e regras de firewall adequadas ao desktop Cinnamon
+- [x] Gerenciamento de snapshots (Timeshift): adaptar `scripts/system/setup-timeshift.sh` para o LMDE, aplicando os filtros e agendamentos refinados (retenção horária/diária/semanal, exclusão de steam/node_modules/cache/docker e inclusão de `.**`, `Code/`, documentos)
 
 ---
 

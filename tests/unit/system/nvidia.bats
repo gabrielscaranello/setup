@@ -134,6 +134,10 @@ EOF
   run _install_driver_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "apt called: install -y -t trixie-backports nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings" ]]
+
+  run _install_driver_packages "lmde"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "apt called: install -y -t trixie-backports nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings" ]]
 }
 
 @test "_configure_power_and_modeset configures modprobe, RTD3 rules and systemd services" {

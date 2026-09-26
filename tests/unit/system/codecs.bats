@@ -93,3 +93,22 @@ setup() {
   [[ ! "$output" =~ "FAIL" ]]
   [[ "$output" =~ "packages installed" ]]
 }
+
+@test "main installs mint-meta-codecs on LMDE" {
+  get_distro_id() { echo "lmde"; }
+
+  add_fedora_rpmfusion_repo() {
+    echo "FAIL: Should not be called on LMDE"
+    return 1
+  }
+
+  install_packages() {
+    echo "packages installed: $*"
+  }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ ! "$output" =~ "FAIL" ]]
+  [[ "$output" =~ "packages installed: mint-meta-codecs" ]]
+}
+
