@@ -60,8 +60,7 @@ Garantir funcionamento pleno da suite completa de desenvolvimento e produtividad
 - [x] Toolchain de desenvolvimento: validar e garantir execução dos scripts em `scripts/toolchain/` no LMDE (`setup-docker.sh`, `setup-neovim.sh`, `setup-nvm.sh`, `setup-go.sh`, `setup-gitflow.sh`, `setup-rust.sh`) — `scripts/toolchain/*.sh`
 - [x] Terminal e fontes: validar e garantir execução de `scripts/terminal/setup-fonts.sh`, `setup-kitty.sh`, `setup-lazygit.sh` e `setup-lazydocker.sh` no LMDE — `scripts/terminal/*.sh`
 - [x] Navegadores web: adaptar `scripts/apps/setup-browsers.sh` para o LMDE (Mint já empacota Firefox vanilla nativo `.deb` via repositório próprio) — `scripts/apps/setup-browsers.sh`
-- [x] Aplicativos GUI: validar funcionamento dos scripts de apps (`setup-vscodium.sh`, `setup-onlyoffice.sh`, `setup-obsidian.sh`, `setup-dbeaver.sh`, `setup-steam.sh`, `setup-discord.sh`, etc.) via apt/flatpak — `scripts/apps/*.sh`
-- [ ] Captura de tela: adaptar `scripts/apps/setup-screenshot-tool.sh` para Cinnamon (`flameshot` com atalhos do Cinnamon)
+- [x] Captura de tela: adaptar `scripts/apps/setup-screenshot-tool.sh` para Cinnamon (`flameshot` com atalhos do Cinnamon)
 - [ ] Associações de aplicativos padrão (MIME): adaptar `scripts/apps/setup-default-apps.sh` com suporte a Cinnamon/LMDE (VLC para mídia, Xviewer para imagens, OnlyOffice para documentos, Xed para texto e Nemo para diretórios)
 
 ---

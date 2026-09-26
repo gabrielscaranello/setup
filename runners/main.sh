@@ -57,7 +57,7 @@ Available Commands:
   onlyoffice              - Install ONLYOFFICE Desktop Editors (Flatpak)
   packages                - Install core system packages and CLI utilities
   rust                    - Install Rust, Cargo and tools (tree-sitter-cli)
-  screenshot              - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
+  screenshot              - Configure Screenshot Tool (Flameshot on GNOME/Cinnamon, Spectacle on Plasma)
   steam                   - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
   swap                    - Configure Swap and VM memory tuning
   telegram                - Install Telegram Desktop

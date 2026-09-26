@@ -6,7 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 
 ensure_dconf() {
-  if ! command -v dconf > /dev/null 2>&1; then
+  if ! command -v dconf > /dev/null 2>&1 || (! command -v dbus-run-session > /dev/null 2>&1 && [ ! -x "/usr/sbin/dbus-run-session" ]); then
     echo "dconf not found in PATH, attempting to install..."
     install_packages dconf || true
   fi
@@ -18,16 +18,26 @@ ensure_dconf() {
 }
 
 dconf_exec() {
-  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session > /dev/null 2>&1; then
-    dbus-run-session -- dconf "$@"
+  local dbus_cmd="dbus-run-session"
+  if ! command -v "$dbus_cmd" > /dev/null 2>&1 && [ -x "/usr/sbin/dbus-run-session" ]; then
+    dbus_cmd="/usr/sbin/dbus-run-session"
+  fi
+
+  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v "$dbus_cmd" > /dev/null 2>&1; then
+    "$dbus_cmd" -- dconf "$@"
   else
     dconf "$@"
   fi
 }
 
 gsettings_exec() {
-  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session > /dev/null 2>&1; then
-    dbus-run-session -- gsettings "$@"
+  local dbus_cmd="dbus-run-session"
+  if ! command -v "$dbus_cmd" > /dev/null 2>&1 && [ -x "/usr/sbin/dbus-run-session" ]; then
+    dbus_cmd="/usr/sbin/dbus-run-session"
+  fi
+
+  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v "$dbus_cmd" > /dev/null 2>&1; then
+    "$dbus_cmd" -- gsettings "$@"
   else
     gsettings "$@"
   fi

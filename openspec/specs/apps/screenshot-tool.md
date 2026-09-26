@@ -6,6 +6,7 @@ Installs and configures the appropriate desktop screenshot utility based on the 
 
 - **GNOME**: Installs **Flameshot** (`flameshot`) via `install_packages flameshot`.
 - **KDE Plasma**: Installs **Spectacle** (`spectacle` / `kde-spectacle`) via `install_packages spectacle`.
+- **Cinnamon**: Installs **Flameshot** (`flameshot`) via `install_packages flameshot` and configures custom keybindings (`Print`, `<Primary><Alt>s`) via dconf while disabling conflicting default screenshot shortcuts.
 - **Unknown Desktop Environment**: Does nothing, adhering strictly to the repository's DE handling policy.
 
 ---
@@ -18,6 +19,7 @@ The script SHALL detect the active desktop environment via `get_desktop_environm
 
 - **GNOME (`gnome`)**: SHALL install `flameshot` using `install_packages flameshot`.
 - **KDE Plasma (`plasma`)**: SHALL install `spectacle` using `install_packages spectacle`.
+- **Cinnamon (`cinnamon`)**: SHALL install `flameshot` using `install_packages flameshot` and configure Cinnamon keybindings.
 - **Unknown / Headless / Unsupported DE (`unknown`)**: SHALL output a skip notice, do nothing, and exit cleanly with code 0.
 
 #### Scenario: Running on GNOME
@@ -31,6 +33,14 @@ The script SHALL detect the active desktop environment via `get_desktop_environm
 - **GIVEN** a desktop running KDE Plasma (`get_desktop_environment` returns `plasma`)
 - **WHEN** `scripts/apps/setup-screenshot-tool.sh` is executed
 - **THEN** it SHALL call `install_packages spectacle`
+
+#### Scenario: Running on Cinnamon
+
+- **GIVEN** a desktop running Cinnamon (`get_desktop_environment` returns `cinnamon`)
+- **WHEN** `scripts/apps/setup-screenshot-tool.sh` is executed
+- **THEN** it SHALL call `install_packages flameshot`
+- **AND** it SHALL configure Flameshot shortcut bindings in dconf under `/org/cinnamon/desktop/keybindings/`
+- **AND** it SHALL disable the default screenshot shortcut under `/org/cinnamon/desktop/keybindings/media-keys/screenshot`
 
 #### Scenario: Running on an unknown or unrecognized desktop environment
 
