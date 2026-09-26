@@ -18,7 +18,7 @@ _show_help() {
   echo "  --unit                Run fast unit test suite only (mocked / logic tests)"
   echo "  --integration         Run container integration test suite only"
   echo "  --coverage            Generate code coverage reports with kcov"
-  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora)"
+  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|lmde)"
   echo "  --filter=<pattern>    Run only tests matching pattern (e.g. nvm, neovim, utils)"
   echo "  -h, --help            Show this help message"
   echo ""
@@ -214,7 +214,7 @@ _merge_coverage() {
       "$image" \
       bash -c '
         dirs_to_merge=()
-        for d in unit archlinux debian fedora; do
+        for d in unit archlinux debian fedora lmde; do
           if [[ -d "/setup/coverage/$d" ]]; then
             while IFS= read -r cov_db_dir; do
               dirs_to_merge+=("$cov_db_dir")
@@ -254,8 +254,9 @@ main() {
         archlinux | arch) _run_integration_distro "archlinux" ;;
         debian) _run_integration_distro "debian" ;;
         fedora) _run_integration_distro "fedora" ;;
+        lmde) _run_integration_distro "lmde" ;;
         *)
-          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora" >&2
+          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, lmde" >&2
           exit 1
           ;;
       esac
@@ -265,6 +266,8 @@ main() {
       _run_integration_distro "debian"
       echo ""
       _run_integration_distro "fedora"
+      echo ""
+      _run_integration_distro "lmde"
     fi
   fi
 

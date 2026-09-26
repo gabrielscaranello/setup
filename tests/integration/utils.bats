@@ -15,7 +15,7 @@ setup() {
 @test "get_distro_id identifies supported distro in container environment" {
   run get_distro_id
   [ "$status" -eq 0 ]
-  [ "$output" = "debian" ] || [ "$output" = "fedora" ] || [ "$output" = "arch" ]
+  [ "$output" = "debian" ] || [ "$output" = "fedora" ] || [ "$output" = "arch" ] || [ "$output" = "lmde" ]
 }
 
 @test "install_packages can successfully install a lightweight utility" {

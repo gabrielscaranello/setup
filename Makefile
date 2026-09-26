@@ -1,5 +1,5 @@
 # Makefile — Light wrapper around ./main.sh and ./tests/run-tests.sh
-.PHONY: help all test test-coverage test-integration test-unit clean lint format
+.PHONY: help all test test-coverage test-integration test-integration-lmde test-unit clean lint format
 .DEFAULT_GOAL := help
 
 SHELL := /bin/bash
@@ -24,6 +24,9 @@ test-coverage:
 
 test-integration:
 	@./$(TESTS_DIR)/run-tests.sh --integration $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER))
+
+test-integration-lmde:
+	@./$(TESTS_DIR)/run-tests.sh --integration --distro=lmde $(if $(FILTER),--filter=$(FILTER))
 
 test-unit:
 	@./$(TESTS_DIR)/run-tests.sh --unit $(if $(FILTER),--filter=$(FILTER))

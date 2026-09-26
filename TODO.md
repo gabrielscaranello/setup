@@ -25,9 +25,9 @@ Adaptação do núcleo de abstração para reconhecer e tratar o LMDE e o ambien
 
 Provisionamento do ambiente Docker para validação segura de scripts e execução de testes de integração sem executar comandos na máquina host.
 
-- [ ] Criar Dockerfile de testes para LMDE: `tests/docker/lmde.Dockerfile` baseado na imagem oficial de Debian Trixie com repositórios Mint ou imagem base LMDE
-- [ ] Integrar LMDE ao harness de testes: atualizar `tests/run-tests.sh` e `Makefile` (`test-integration-lmde`)
-- [ ] Validar execução de suite de testes unitários e de integração dentro do novo container LMDE
+- [x] Criar Dockerfile de testes para LMDE: `tests/docker/lmde.Dockerfile` baseado na imagem oficial de Debian Trixie com repositórios Mint ou imagem base LMDE
+- [x] Integrar LMDE ao harness de testes: atualizar `tests/run-tests.sh` e `Makefile` (`test-integration-lmde`)
+- [x] Validar execução de suite de testes unitários e de integração dentro do novo container LMDE
 
 ---
 
