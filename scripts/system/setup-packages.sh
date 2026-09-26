@@ -10,7 +10,7 @@ _install_cli_tools() {
 
 _install_hardware_tools() {
   echo "Installing hardware, energy, and firmware tools..."
-  install_packages power-profiles-daemon numlockx fwupd bluez cups cron
+  install_packages power-profiles-daemon numlockx fwupd bluez cups cron zram libu2f-udev
 }
 
 _install_filesystem_tools() {
@@ -20,7 +20,18 @@ _install_filesystem_tools() {
 
 _install_session_tools() {
   echo "Installing XDG standards, connectivity, and session utilities..."
-  install_packages xdg-user-dirs xdg-utils openssh dialog keychain
+  install_packages xdg-user-dirs xdg-utils openssh dialog keychain clipboard
+}
+
+_install_desktop_integration_tools() {
+  local de distro
+  de="$(get_desktop_environment)"
+  distro="$(get_distro_id)"
+
+  if [ "$distro" = "lmde" ] || [ "$de" = "cinnamon" ]; then
+    echo "Installing Cinnamon desktop utilities (nemo-fileroller)..."
+    install_packages nemo-fileroller
+  fi
 }
 
 _install_spelling_dictionaries() {
@@ -80,6 +91,11 @@ _enable_system_services() {
 
   echo "Enabling periodic SSD TRIM timer..."
   sudo systemctl enable fstrim.timer 2> /dev/null || true
+
+  if is_distro debian || is_distro lmde; then
+    echo "Enabling zram swap service..."
+    sudo systemctl enable --now zramswap.service 2> /dev/null || sudo systemctl enable zramswap.service 2> /dev/null || true
+  fi
 }
 
 main() {
@@ -88,6 +104,7 @@ main() {
   _install_hardware_tools
   _install_filesystem_tools
   _install_session_tools
+  _install_desktop_integration_tools
   _install_spelling_dictionaries
   _initialize_xdg_dirs
   _configure_bluetooth

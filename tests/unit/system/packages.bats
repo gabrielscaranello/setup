@@ -23,22 +23,41 @@ setup() {
   }
   run _install_hardware_tools
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed: power-profiles-daemon numlockx fwupd bluez cups cron" ]]
+  [[ "$output" =~ "installed: power-profiles-daemon numlockx fwupd bluez cups cron zram libu2f-udev" ]]
 }
 
-_install_filesystem_tools() {
-  echo "Installing filesystem compatibility tools..."
-  install_packages dosfstools mtools ntfs-3g
+@test "_install_session_tools installs XDG standards, connectivity, and clipboard utilities" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+  run _install_session_tools
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
 }
 
-_install_session_tools() {
-  echo "Installing XDG standards, connectivity, and session utilities..."
-  install_packages xdg-user-dirs xdg-utils openssh dialog keychain
-}
+@test "_install_desktop_integration_tools installs nemo-fileroller on LMDE or Cinnamon" {
+  get_distro_id() { echo "lmde"; }
+  get_desktop_environment() { echo "unknown"; }
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+  run _install_desktop_integration_tools
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed: nemo-fileroller" ]]
 
-_install_spelling_dictionaries() {
-  echo "Installing spelling dictionaries..."
-  install_packages spell-pt-br spell-en
+  get_distro_id() { echo "debian"; }
+  get_desktop_environment() { echo "cinnamon"; }
+  run _install_desktop_integration_tools
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed: nemo-fileroller" ]]
+
+  get_distro_id() { echo "debian"; }
+  get_desktop_environment() { echo "gnome"; }
+  run _install_desktop_integration_tools
+  [ "$status" -eq 0 ]
+  [[ ! "$output" =~ "installed: nemo-fileroller" ]]
 }
 
 _initialize_xdg_dirs() {
@@ -100,6 +119,7 @@ EOF
   [[ "$output" =~ "Enabling CUPS printing service" ]]
   [[ "$output" =~ "Enabling cron scheduler service" ]]
   [[ "$output" =~ "Enabling periodic SSD TRIM timer" ]]
+  [[ "$output" =~ "Enabling zram swap service" ]]
 }
 
 @test "_enable_system_services enables tuned on Fedora" {
@@ -137,6 +157,8 @@ EOF
 }
 
 @test "main runs all setup steps in order" {
+  get_distro_id() { echo "lmde"; }
+  get_desktop_environment() { echo "cinnamon"; }
   install_packages() {
     echo "mock installed: $*"
     return 0
@@ -158,9 +180,10 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Setting up core system packages" ]]
   [[ "$output" =~ "mock installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
-  [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron" ]]
+  [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron zram libu2f-udev" ]]
   [[ "$output" =~ "mock installed: dosfstools mtools ntfs-3g" ]]
-  [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils openssh dialog keychain" ]]
+  [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
+  [[ "$output" =~ "mock installed: nemo-fileroller" ]]
   [[ "$output" =~ "mock installed: spell-pt-br spell-en" ]]
   [[ "$output" =~ "mock bluetooth configured" ]]
   [[ "$output" =~ "mock services enabled" ]]
