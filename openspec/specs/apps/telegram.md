@@ -14,23 +14,23 @@ The script SHALL determine the installation mechanism based on the target distri
 
 - **Arch Linux (`arch`)**: SHALL install `telegram-desktop` directly from official repositories using `install_packages telegram-desktop`.
 - **Fedora (`fedora`)**: SHALL verify if `rpmfusion-free` repository is present in `dnf repolist`; if missing, it SHALL query the Fedora version (`rpm -E %fedora`, with fallback to `41` if undefined) and install `rpmfusion-free-release-<version>.noarch.rpm` before installing `telegram-desktop` via `install_packages`.
-- **Debian (`debian`)**: SHALL ensure utility packages (`curl`, `wget`, `tar`, `xz-utils`) are present, query GitHub API (`https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest`) to discover latest version, download `tsetup.<version>.tar.xz`, extract the archive to `~/.local/opt/telegram-desktop`, create a symlink in `~/.local/bin/telegram-desktop`, and configure the XDG desktop entry `~/.local/share/applications/telegramdesktop.desktop`.
+- **Debian (`debian`) & LMDE (`lmde`)**: SHALL ensure utility packages (`curl`, `wget`, `tar`, `xz-utils`) are present, query GitHub API (`https://api.github.com/repos/telegramdesktop/tdesktop/releases/latest`) to discover latest version, download `tsetup.<version>.tar.xz`, extract the archive to `~/.local/opt/telegram-desktop`, create a symlink in `~/.local/bin/telegram-desktop`, and configure the XDG desktop entry `~/.local/share/applications/telegramdesktop.desktop`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
 ---
 
 ### Requirement: Version Verification & Idempotency
 
-On Debian, the script SHALL check if Telegram is already installed (`~/.local/opt/telegram-desktop/Telegram`, `command -v telegram-desktop`, or `~/.local/bin/telegram-desktop`) and parse its local version (`grep -Po 'Telegram Desktop \K[^ ]*'`).
+On Debian and LMDE, the script SHALL check if Telegram is already installed (`~/.local/opt/telegram-desktop/Telegram`, `command -v telegram-desktop`, or `~/.local/bin/telegram-desktop`) and parse its local version (`grep -Po 'Telegram Desktop \K[^ ]*'`).
 
 - If the local version matches the latest GitHub release tag, downloading and extracting the tarball SHALL be skipped.
 - Desktop integration (symlinks and desktop entry) SHALL still be ensured.
 
 ---
 
-### Requirement: Desktop Integration & MIME Handlers (Debian Upstream)
+### Requirement: Desktop Integration & MIME Handlers (Debian / LMDE Upstream)
 
-On Debian standalone binary installation, the script SHALL:
+On Debian and LMDE standalone binary installation, the script SHALL:
 
 - Create `~/.local/bin` and `~/.local/share/applications` directories if missing.
 - Create symlink `~/.local/bin/telegram-desktop` -> `~/.local/opt/telegram-desktop/Telegram`.

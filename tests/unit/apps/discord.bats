@@ -44,3 +44,26 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ com.discordapp.Discord\ Discord ]]
 }
+
+@test "_install_discord delegates to flatpak on lmde" {
+  require_supported_distro() { echo "lmde"; }
+  install_flatpak_app() {
+    echo "installed flatpak: $*"
+    return 0
+  }
+  run _install_discord
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ flatpak:\ com.discordapp.Discord\ Discord ]]
+}
+
+@test "main executes successfully and reports complete" {
+  _install_discord() {
+    echo "called _install_discord"
+    return 0
+  }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Discord..." ]]
+  [[ "$output" =~ "called _install_discord" ]]
+  [[ "$output" =~ "setup-discord complete" ]]
+}

@@ -13,8 +13,8 @@ _install_proton_manager() {
   de="$(get_desktop_environment)"
 
   case "$de" in
-    gnome)
-      echo "Desktop environment is GNOME: installing ProtonPlus (GTK4/Libadwaita)..."
+    gnome | cinnamon)
+      echo "Desktop environment is GNOME / Cinnamon: installing ProtonPlus (GTK4/Libadwaita)..."
       install_flatpak_app "com.vysp3r.ProtonPlus" "ProtonPlus"
       ;;
     plasma)
@@ -78,7 +78,7 @@ _install_steam_packages() {
   local distro="$1"
 
   case "$distro" in
-    debian) _install_debian_steam ;;
+    debian | lmde) _install_debian_steam ;;
     fedora) _install_fedora_steam ;;
     arch) _install_arch_steam ;;
   esac

@@ -12,7 +12,7 @@ _install_vscodium() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    debian)
+    debian | lmde)
       add_debian_vscodium_repo
       ;;
     fedora)

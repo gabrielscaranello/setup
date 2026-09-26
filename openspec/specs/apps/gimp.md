@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs the GIMP GNU Image Manipulation Program across supported distributions (Arch Linux, Fedora, Debian), using official distribution repository packages on Fedora and Arch Linux, and Flatpak from Flathub on Debian.
+Installs the GIMP GNU Image Manipulation Program across supported distributions (Arch Linux, Fedora, Debian, LMDE), using official distribution repository packages on Fedora and Arch Linux, and Flatpak from Flathub on Debian and LMDE.
 
 ---
 
@@ -13,7 +13,7 @@ Installs the GIMP GNU Image Manipulation Program across supported distributions 
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`) & Fedora (`fedora`)**: SHALL install `gimp` directly from official repositories via `install_packages gimp`.
-- **Debian (`debian`)**: SHALL install the official Flatpak package `org.gimp.GIMP` via Flathub (`install_flatpak_app "org.gimp.GIMP" "GIMP"`).
+- **Debian (`debian`) & LMDE (`lmde`)**: SHALL install the official Flatpak package `org.gimp.GIMP` via Flathub (`install_flatpak_app "org.gimp.GIMP" "GIMP"`).
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
 #### Scenario: Running on Arch Linux
@@ -30,9 +30,9 @@ The script SHALL determine the installation mechanism based on the target distri
 - **THEN** it SHALL call `install_packages gimp`
 - **AND** it SHALL NOT attempt to install via Flatpak
 
-#### Scenario: Running on Debian
+#### Scenario: Running on Debian or LMDE
 
-- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
+- **GIVEN** a Debian or LMDE system (`get_distro_id` returns `debian` or `lmde`)
 - **WHEN** `scripts/apps/setup-gimp.sh` is executed
 - **THEN** it SHALL invoke `install_flatpak_app "org.gimp.GIMP" "GIMP"`
 - **AND** ensure Flatpak and Flathub are configured

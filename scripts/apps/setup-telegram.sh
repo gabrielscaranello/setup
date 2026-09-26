@@ -126,7 +126,7 @@ _install_telegram() {
     fedora | arch)
       _install_telegram_repo "$distro"
       ;;
-    debian)
+    debian | lmde)
       _install_telegram_binary
       ;;
   esac
