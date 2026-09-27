@@ -1,0 +1,6 @@
+[org/cinnamon/settings-daemon/plugins/color]
+night-light-enabled=true
+night-light-schedule-mode='manual'
+night-light-schedule-from=4.0
+night-light-schedule-to=4.0
+night-light-temperature=uint32 4400

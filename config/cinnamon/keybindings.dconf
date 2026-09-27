@@ -1,0 +1,15 @@
+[org/cinnamon/desktop/keybindings/wm]
+move-to-workspace-left=['<Control><Shift><Alt>Left', '<Shift><Super>Page_Up']
+move-to-workspace-right=['<Control><Shift><Alt>Right', '<Shift><Super>Page_Down']
+switch-to-workspace-left=['<Control><Alt>Left', '<Super>Page_Up']
+switch-to-workspace-right=['<Control><Alt>Right', '<Super>Page_Down']
+toggle-maximized=['<Alt>F10', '<Super>m']
+
+[org/cinnamon/desktop/keybindings/media-keys]
+screensaver=['<Control><Alt>l', '<Super>l']
+
+[org/cinnamon/desktop/notifications]
+bottom-notifications=true
+display-notifications=true
+notification-duration=5
+remove-old=true

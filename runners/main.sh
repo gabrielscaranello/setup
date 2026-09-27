@@ -26,12 +26,13 @@ Available Commands:
   codecs                  - Install Multimedia Codecs and A/V Plugins
   cinnamon-applets        - Install Cinnamon applets and extensions (Spices)
   cinnamon-applets-config - Configure Cinnamon panel layout and applets
+  cinnamon-preferences    - Configure Cinnamon desktop preferences and ergonomics
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
   debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
   default-apps            - Configure default desktop applications (MIME types, handlers, terminal)
   desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
-  desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
+  desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma, Cinnamon)
   discord                 - Install Discord
   docker                  - Install Docker engine and plugins (buildx, compose)
   firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
@@ -135,6 +136,10 @@ run_module() {
 
     cinnamon-applets-config)
       bash "$SCRIPTS_DIR/desktop/setup-cinnamon-applets-config.sh"
+      ;;
+
+    cinnamon-preferences)
+      bash "$SCRIPTS_DIR/desktop/setup-cinnamon-preferences.sh"
       ;;
 
     cursor)
