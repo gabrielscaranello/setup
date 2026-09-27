@@ -28,6 +28,45 @@
   [[ "$output" =~ "Rustup is already installed" ]]
 }
 
+@test "_install_rustup installs via curl when available" {
+  source /setup/scripts/toolchain/setup-rust.sh
+  local marker="$BATS_TMPDIR/curl_called_$$"
+  rm -f "$marker"
+  command() {
+    if [ "${2:-}" = "rustup" ]; then return 1; fi
+    if [ "${2:-}" = "curl" ]; then return 0; fi
+    builtin command "$@"
+  }
+  curl() {
+    touch "$marker"
+    echo "true"
+  }
+  run _install_rustup
+  [ "$status" -eq 0 ]
+  [ -f "$marker" ]
+  rm -f "$marker"
+}
+
+@test "_install_rustup falls back to wget when curl is unavailable" {
+  source /setup/scripts/toolchain/setup-rust.sh
+  local marker="$BATS_TMPDIR/wget_called_$$"
+  rm -f "$marker"
+  command() {
+    if [ "${2:-}" = "rustup" ]; then return 1; fi
+    if [ "${2:-}" = "curl" ]; then return 1; fi
+    if [ "${2:-}" = "wget" ]; then return 0; fi
+    builtin command "$@"
+  }
+  wget() {
+    touch "$marker"
+    echo "true"
+  }
+  run _install_rustup
+  [ "$status" -eq 0 ]
+  [ -f "$marker" ]
+  rm -f "$marker"
+}
+
 @test "_source_cargo succeeds when cargo command exists without ~/.cargo/env" {
   source /setup/scripts/toolchain/setup-rust.sh
   command() {

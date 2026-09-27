@@ -74,7 +74,7 @@ add_lmde_official_repo() {
     local keyring_tmp="/tmp/linuxmint-keyring.deb"
     download_file "http://packages.linuxmint.com/pool/main/l/linuxmint-keyring/linuxmint-keyring_2022.06.21_all.deb" "$keyring_tmp" || true
     if [ -f "$keyring_tmp" ]; then
-      sudo apt-get install -y --no-install-recommends "$keyring_tmp" 2> /dev/null || sudo dpkg -i "$keyring_tmp" 2> /dev/null || true
+      sudo apt install -y --no-install-recommends "$keyring_tmp" 2> /dev/null || sudo dpkg -i "$keyring_tmp" 2> /dev/null || true
       rm -f "$keyring_tmp"
     fi
   fi

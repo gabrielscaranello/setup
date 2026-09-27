@@ -169,7 +169,7 @@ is_package_installed() {
   local item
   for item in $resolved; do
     case "$distro" in
-      debian)
+      debian | lmde)
         dpkg -s "$item" > /dev/null 2>&1 || return 1
         ;;
       fedora)

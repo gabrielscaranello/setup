@@ -50,14 +50,13 @@ The script SHALL install hardware management, power profiling, firmware update, 
 - `bluez`: Official Linux Bluetooth protocol stack and tools (`bluez` on Debian/Fedora, `bluez` and `bluez-utils` on Arch Linux).
 - `cups`: OpenPrinting CUPS daemon and printing system.
 - `cron`: Job scheduler daemon (`cron` on Debian/LMDE, `cronie` on Fedora and Arch Linux).
-- `zram`: Dynamic compressed swap memory (`zram-tools` on Debian/LMDE, `zram-generator` on Fedora and Arch Linux).
 - `libu2f-udev`: U2F/FIDO security keys udev rules on Debian/LMDE.
 
 #### Scenario: Installing hardware and power utilities across distros
 
 - **GIVEN** a supported distribution (Debian, LMDE, Fedora, Arch Linux)
 - **WHEN** hardware package installation executes
-- **THEN** `power-profiles-daemon`, `numlockx`, `fwupd`, `bluez`, `cups`, `cron`, `zram`, and `libu2f-udev` SHALL be installed via `install_packages`
+- **THEN** `power-profiles-daemon`, `numlockx`, `fwupd`, `bluez`, `cups`, `cron`, and `libu2f-udev` SHALL be installed via `install_packages`
 
 ---
 
@@ -85,14 +84,13 @@ The script SHALL enable systemd services and timers via `_enable_system_services
 - Printing subsystem: `cups.service` across all distributions.
 - Cron scheduler: `cron.service` on Debian/LMDE; `cronie.service` on Fedora and Arch Linux.
 - Storage maintenance: `fstrim.timer` for periodic SSD TRIM across all distributions.
-- Compressed RAM swap: `zramswap.service` on Debian and LMDE.
 - When `systemctl` is not available, service enablement steps SHALL be bypassed cleanly.
 
 #### Scenario: Enabling services on systemd environment
 
 - **GIVEN** system running systemd
 - **WHEN** `_enable_system_services` executes
-- **THEN** power management service, `bluetooth.service`, `cups.service`, cron service, `fstrim.timer`, and (on Debian/LMDE) `zramswap.service` SHALL be enabled
+- **THEN** power management service, `bluetooth.service`, `cups.service`, cron service, and `fstrim.timer` SHALL be enabled
 
 ---
 

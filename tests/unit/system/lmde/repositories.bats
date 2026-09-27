@@ -131,6 +131,39 @@ EOF
   [[ "$output" =~ "Updating APT package cache for Linux Mint..." ]]
 }
 
+@test "add_lmde_official_repo installs linuxmint-keyring via apt when missing" {
+  _is_lmde_official_repo_configured() {
+    return 1
+  }
+  get_lmde_codename() {
+    echo "gigi"
+  }
+  dpkg() {
+    return 1 # keyring missing
+  }
+  download_file() {
+    touch "$2"
+    return 0
+  }
+  local marker="$BATS_TMPDIR/apt_keyring_called_$$"
+  rm -f "$marker"
+  sudo() {
+    if [ "$1" = "apt" ] && [ "$2" = "install" ]; then
+      touch "$marker"
+      return 0
+    elif [ "$1" = "mkdir" ] || [ "$1" = "tee" ] || [ "$1" = "apt" ]; then
+      return 0
+    fi
+    "$@"
+  }
+
+  run add_lmde_official_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Ensuring linuxmint-keyring is installed..." ]]
+  [ -f "$marker" ]
+  rm -f "$marker"
+}
+
 @test "add_lmde_backports_repo skips when already configured" {
   _is_debian_backports_configured() {
     return 0

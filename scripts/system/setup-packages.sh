@@ -10,7 +10,7 @@ _install_cli_tools() {
 
 _install_hardware_tools() {
   echo "Installing hardware, energy, and firmware tools..."
-  install_packages power-profiles-daemon numlockx fwupd bluez cups cron zram libu2f-udev
+  install_packages power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev
 }
 
 _install_filesystem_tools() {
@@ -91,11 +91,6 @@ _enable_system_services() {
 
   echo "Enabling periodic SSD TRIM timer..."
   sudo systemctl enable fstrim.timer 2> /dev/null || true
-
-  if is_distro debian || is_distro lmde; then
-    echo "Enabling zram swap service..."
-    sudo systemctl enable --now zramswap.service 2> /dev/null || sudo systemctl enable zramswap.service 2> /dev/null || true
-  fi
 }
 
 main() {

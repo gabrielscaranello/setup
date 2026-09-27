@@ -87,8 +87,13 @@ teardown() {
   [ "$status" -eq 0 ]
 }
 
-@test "is_package_installed checks package manager on Debian, Fedora, and Arch" {
+@test "is_package_installed checks package manager on Debian, LMDE, Fedora, and Arch" {
   get_distro_id() { echo "debian"; }
+  dpkg() { return 0; }
+  run is_package_installed "papirus-icon-theme"
+  [ "$status" -eq 0 ]
+
+  get_distro_id() { echo "lmde"; }
   dpkg() { return 0; }
   run is_package_installed "papirus-icon-theme"
   [ "$status" -eq 0 ]

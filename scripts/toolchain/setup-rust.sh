@@ -15,7 +15,11 @@ _install_rustup() {
   fi
 
   echo "Installing rust via rustup..."
-  curl --proto '=https' --tlsv1.2 -sSf "$RUSTUP_URL" | sh -s -- -y --default-toolchain stable --no-modify-path
+  if command -v curl > /dev/null 2>&1; then
+    curl --proto '=https' --tlsv1.2 -sSf "$RUSTUP_URL" | sh -s -- -y --default-toolchain stable --no-modify-path
+  else
+    wget -qO- "$RUSTUP_URL" | sh -s -- -y --default-toolchain stable --no-modify-path
+  fi
 }
 
 _setup_shell_profile() {

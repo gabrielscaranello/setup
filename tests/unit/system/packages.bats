@@ -23,7 +23,7 @@ setup() {
   }
   run _install_hardware_tools
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed: power-profiles-daemon numlockx fwupd bluez cups cron zram libu2f-udev" ]]
+  [[ "$output" =~ "installed: power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev" ]]
 }
 
 @test "_install_session_tools installs XDG standards, connectivity, and clipboard utilities" {
@@ -119,7 +119,6 @@ EOF
   [[ "$output" =~ "Enabling CUPS printing service" ]]
   [[ "$output" =~ "Enabling cron scheduler service" ]]
   [[ "$output" =~ "Enabling periodic SSD TRIM timer" ]]
-  [[ "$output" =~ "Enabling zram swap service" ]]
 }
 
 @test "_enable_system_services enables tuned on Fedora" {
@@ -180,7 +179,7 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Setting up core system packages" ]]
   [[ "$output" =~ "mock installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
-  [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron zram libu2f-udev" ]]
+  [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev" ]]
   [[ "$output" =~ "mock installed: dosfstools mtools ntfs-3g" ]]
   [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
   [[ "$output" =~ "mock installed: nemo-fileroller" ]]
