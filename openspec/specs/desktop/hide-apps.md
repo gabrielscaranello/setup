@@ -18,7 +18,7 @@ In compliance with the **XDG Desktop Entry Specification**, this module copies t
 
 ### 2. Compiled Target Applications
 
-The consolidated list covers unwanted menu entries across Debian, Fedora, and Arch Linux:
+The consolidated list covers unwanted menu entries across Debian, Fedora, Arch Linux, and LMDE (GNOME, KDE Plasma, and Cinnamon):
 
 - `assistant`: Qt Assistant
 - `avahi-discover`: Avahi Zeroconf Discovery
@@ -26,6 +26,8 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `bssh`: Avahi SSH Server Browser
 - `bvnc`: Avahi VNC Server Browser
 - `cups`: CUPS Web Administration Interface
+- `debian-uxterm`: Debian UXTerm terminal launcher
+- `debian-xterm`: Debian XTerm terminal launcher
 - `designer`: Qt Designer
 - `display-im7.q16`: ImageMagick Display GUI
 - `linguist`: Qt Linguist
@@ -35,10 +37,13 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `org.gnome.Extensions`: Standalone GNOME Extensions tool (redundant)
 - `org.gnome.Tour`: GNOME Tour welcome application
 - `org.kde.drkonqi.coredump.gui`: KDE Crash and Coredump Report GUI
+- `python3*`: Python interactive CLI launchers (`python3`, `python3.11`, `python3.12`, `python3.13`)
 - `qdbusviewer`: Qt D-Bus Viewer
 - `qv4l2`: V4L2 Test Utility
 - `qvidcap`: V4L2 Video Capture Utility
 - `system-config-printer`: Print Settings / Printer configuration GUI (redundant with desktop settings)
+- `uxterm`: UXTerm terminal launcher
+- `xterm`: XTerm terminal launcher
 
 > [!NOTE]
 > Developer tools with desired desktop menu presence (such as `nvim` and `btop`) must NOT be hidden.

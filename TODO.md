@@ -75,7 +75,7 @@ Personalização completa da interface gráfica Cinnamon para manter a mesma con
 - [x] Applets e Extensões (Cinnamon Spices): implementar download e instalação de spices via API do Linux Mint (`color-picker@fmete`, `transparent-panels-reloaded@marcelovbcfilho`) em `scripts/desktop/setup-cinnamon-applets.sh` — `scripts/desktop/setup-cinnamon-applets.sh`
 - [x] Configuração do Painel e Applets: implementar `scripts/desktop/setup-cinnamon-applets-config.sh` (layout do painel com menu, agrupador de janelas à esquerda e bandeja, relógio, color-picker à direita) — `scripts/desktop/setup-cinnamon-applets-config.sh`
 - [x] Preferências do Cinnamon Desktop: implementar `scripts/desktop/setup-cinnamon-preferences.sh` (layout minimalista de botões `:close`, centralização de novas janelas no Muffin, Night Light, hotcorners expo/scale e Nemo sem ícones no desktop) — `scripts/desktop/setup-cinnamon-preferences.sh`
-- [ ] Ocultar aplicativos desnecessários no menu: adaptar `scripts/desktop/setup-hide-apps.sh` para garantir compatibilidade com o menu do Cinnamon
+- [x] Ocultar aplicativos desnecessários no menu: adaptar `scripts/desktop/setup-hide-apps.sh` para garantir compatibilidade com o menu do Cinnamon — `scripts/desktop/setup-hide-apps.sh`
 
 ---
 

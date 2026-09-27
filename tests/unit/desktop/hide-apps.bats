@@ -244,3 +244,56 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "mocked _hide_desktop_apps" ]]
 }
+
+@test "APPS contains xterm, uxterm, debian-xterm, debian-uxterm, and python entries" {
+  local has_xterm=0
+  local has_uxterm=0
+  local has_debian_xterm=0
+  local has_python=0
+
+  local app
+  for app in "${APPS[@]}"; do
+    if [ "$app" = "xterm" ]; then has_xterm=1; fi
+    if [ "$app" = "uxterm" ]; then has_uxterm=1; fi
+    if [ "$app" = "debian-xterm" ]; then has_debian_xterm=1; fi
+    if [ "$app" = "python3" ]; then has_python=1; fi
+  done
+
+  [ "$has_xterm" -eq 1 ]
+  [ "$has_uxterm" -eq 1 ]
+  [ "$has_debian_xterm" -eq 1 ]
+  [ "$has_python" -eq 1 ]
+}
+
+@test "_hide_app handles wildcard patterns and creates hidden desktop file" {
+  local mock_sys_dir="$TEST_DIR/sys_wildcard"
+  mkdir -p "$mock_sys_dir"
+  cat << 'EOF' > "$mock_sys_dir/python3.13.desktop"
+[Desktop Entry]
+Type=Application
+Name=Python 3.13
+Exec=python3.13
+NoDisplay=false
+EOF
+
+  local target_dir
+  target_dir="$(_get_target_dir)"
+  mkdir -p "$target_dir"
+
+  SYSTEM_APPLICATIONS_DIR="$mock_sys_dir" run _hide_app "python3*"
+  [ "$status" -eq 0 ]
+  [ -f "$target_dir/python3.13.desktop" ]
+  grep -q "NoDisplay=true" "$target_dir/python3.13.desktop"
+}
+
+@test "_hide_desktop_apps calls update-desktop-database when available" {
+  local mock_called="$TEST_DIR/mock_called"
+  _hide_app() { :; }
+  _unhide_app() { :; }
+  command() { return 0; }
+  update-desktop-database() { touch "$mock_called"; }
+
+  run _hide_desktop_apps
+  [ "$status" -eq 0 ]
+  [ -f "$mock_called" ]
+}

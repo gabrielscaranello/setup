@@ -10,6 +10,8 @@ APPS=(
   bssh
   bvnc
   cups
+  debian-uxterm
+  debian-xterm
   designer
   display-im7.q16
   linguist
@@ -19,10 +21,16 @@ APPS=(
   org.gnome.Extensions
   org.gnome.Tour
   org.kde.drkonqi.coredump.gui
+  python3
+  python3.11
+  python3.12
+  python3.13
   qdbusviewer
   qv4l2
   qvidcap
   system-config-printer
+  uxterm
+  xterm
 )
 
 UNHIDE_APPS=(
@@ -38,24 +46,36 @@ _hide_app() {
   local app="$1"
   local default_dir="${SYSTEM_APPLICATIONS_DIR:-/usr/share/applications}"
   local local_dir="${LOCAL_APPLICATIONS_DIR:-/usr/local/share/applications}"
-  local default_location="${default_dir}/${app}.desktop"
 
-  if [ ! -f "${default_location}" ] && [ -f "${local_dir}/${app}.desktop" ]; then
-    default_location="${local_dir}/${app}.desktop"
-  fi
+  local -a candidates=()
+  local dir
+  for dir in "$default_dir" "$local_dir"; do
+    if [ -f "${dir}/${app}.desktop" ]; then
+      candidates+=("${dir}/${app}.desktop")
+    elif compgen -G "${dir}/${app}.desktop" > /dev/null 2>&1; then
+      local match
+      for match in ${dir}/${app}.desktop; do
+        [ -f "$match" ] && candidates+=("$match")
+      done
+    fi
+  done
 
-  if [ -f "${default_location}" ]; then
-    local target_dir
-    target_dir="$(_get_target_dir)"
+  local target_dir
+  target_dir="$(_get_target_dir)"
+
+  local file
+  for file in "${candidates[@]}"; do
+    local base_name
+    base_name="$(basename "$file")"
     mkdir -p "${target_dir}"
 
-    local home_location="${target_dir}/${app}.desktop"
+    local home_location="${target_dir}/${base_name}"
     rm -f "${home_location}"
-    cp "${default_location}" "${home_location}"
+    cp "${file}" "${home_location}"
     chmod u+w "${home_location}"
     sed -i "s/NoDisplay=\(true\|false\)//g" "${home_location}" > /dev/null
     echo "NoDisplay=true" >> "${home_location}"
-  fi
+  done
 }
 
 _unhide_app() {
@@ -84,6 +104,10 @@ _hide_desktop_apps() {
   for app in "${UNHIDE_APPS[@]}"; do
     _unhide_app "$app"
   done
+
+  if command -v update-desktop-database > /dev/null 2>&1; then
+    update-desktop-database "${target_dir}" > /dev/null 2>&1 || true
+  fi
 
   echo "Desktop applications hidden."
 }
