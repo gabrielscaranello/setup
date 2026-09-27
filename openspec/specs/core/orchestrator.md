@@ -1,0 +1,69 @@
+# Central Orchestrator & CLI Dispatcher (`main.sh` & `runners/main.sh`)
+
+## Overview
+
+The central CLI orchestrator provides a single, unified entry point (`./main.sh` and `make <target>`) for running setup modules individually or orchestrating the complete desktop setup pipeline with automatic distribution detection across **Debian**, **Fedora**, **Arch Linux**, and **LMDE** (Linux Mint Debian Edition).
+
+## Requirements
+
+### 1. Unified Dispatching (`main.sh` & `runners/main.sh`)
+
+- `main.sh` acts as root launcher forwarding all parameters to `runners/main.sh`.
+- When invoked without arguments, it defaults to displaying interactive CLI help (`show_help`).
+- `show_help` documents all supported modules, available distro commands (`arch`, `debian`, `fedora`, `lmde`), and the global setup target (`all`).
+
+### 2. Automatic Distribution Delegation (`run_all`)
+
+- Queries `get_distro_id` to detect the running Linux distribution.
+- Delegates full setup pipeline to the dedicated runner:
+  - `lmde`: executes `runners/lmde.sh`
+  - `debian`: executes `runners/debian.sh`
+  - `fedora`: executes `runners/fedora.sh`
+  - `arch`: executes `runners/arch.sh`
+- When the distribution is unrecognized or unsupported, outputs an informative error message and exits with status 1.
+
+### 3. Direct Module and Runner Invocations (`run_module`)
+
+- Supports direct invocation of individual toolchain, desktop, and app scripts.
+- Supports direct invocation of distro runners (`arch`, `debian`, `fedora`, `lmde`) to allow explicit target overrides.
+- For unknown commands or targets, outputs an error message and shows help with exit status 1.
+
+## Test Scenarios
+
+### Feature: Central CLI Dispatcher
+
+**Scenario: Display help by default or when requested**
+
+- **GIVEN** `runners/main.sh` is invoked with no arguments, `help`, or `--help`
+- **WHEN** execution starts
+- **THEN** it displays available setup commands including `all`, `arch`, `debian`, `fedora`, and `lmde`
+- **AND** exits with status 0
+
+**Scenario: Auto-delegation to LMDE runner**
+
+- **GIVEN** `get_distro_id` returns `lmde`
+- **WHEN** `run_all` is executed
+- **THEN** it outputs delegation to the LMDE runner
+- **AND** invokes `runners/lmde.sh`
+- **AND** exits with status 0
+
+**Scenario: Auto-delegation to Debian, Fedora, and Arch runners**
+
+- **GIVEN** `get_distro_id` returns `debian`, `fedora`, or `arch`
+- **WHEN** `run_all` is executed
+- **THEN** it delegates to `runners/debian.sh`, `runners/fedora.sh`, or `runners/arch.sh` respectively
+- **AND** exits with status 0
+
+**Scenario: Direct distro runner execution**
+
+- **GIVEN** a specific runner target is passed (e.g. `lmde`, `arch`, `debian`, `fedora`)
+- **WHEN** `run_module` is called
+- **THEN** it executes the corresponding runner script
+- **AND** exits with status 0
+
+**Scenario: Unsupported distribution error handling**
+
+- **GIVEN** `get_distro_id` returns an unsupported distribution (e.g. `ubuntu`)
+- **WHEN** `run_all` is executed
+- **THEN** it outputs an error stating unsupported distribution and supported options
+- **AND** exits with status 1

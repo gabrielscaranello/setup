@@ -13,6 +13,7 @@ setup() {
   [[ "$output" =~ "all" ]]
   [[ "$output" =~ "neovim" ]]
   [[ "$output" =~ "firewall" ]]
+  [[ "$output" =~ "lmde" ]]
 }
 
 @test "run_module help / --help displays help" {
@@ -61,6 +62,39 @@ setup() {
   run run_module "hide-apps"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-hide-apps.sh" ]]
+}
+
+@test "run_module dispatches to distro runners directly" {
+  bash() {
+    echo "executed: $*"
+    return 0
+  }
+
+  run run_module "lmde"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "lmde.sh" ]]
+
+  run run_module "arch"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "arch.sh" ]]
+
+  run run_module "debian"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "debian.sh" ]]
+
+  run run_module "fedora"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "fedora.sh" ]]
+}
+
+@test "run_all dispatches to lmde runner when distribution is lmde" {
+  get_distro_id() { echo "lmde"; }
+  bash() { echo "executed: $*"; return 0; }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Delegating complete setup to LMDE runner..." ]]
+  [[ "$output" =~ "lmde.sh" ]]
 }
 
 @test "run_all dispatches to debian runner when distribution is debian" {

@@ -21,21 +21,24 @@ Available Commands:
   help                    - Show this help message
   all                     - Run complete desktop setup pipeline for current distribution
   amd                     - Install AMD GPU drivers, firmware and codecs
+  arch                    - Run complete setup pipeline for Arch Linux
   arch-de                 - Provision Desktop Environment (GNOME, KDE Plasma) on Arch Linux
   browsers                - Install Web Browsers (Chromium, Firefox)
-  codecs                  - Install Multimedia Codecs and A/V Plugins
   cinnamon-applets        - Install Cinnamon applets and extensions (Spices)
   cinnamon-applets-config - Configure Cinnamon panel layout and applets
   cinnamon-preferences    - Configure Cinnamon desktop preferences and ergonomics
+  codecs                  - Install Multimedia Codecs and A/V Plugins
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
-  debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
+  debian                  - Run complete setup pipeline for Debian
+  debloat                 - Remove unused default packages and bloatware (Debian, Fedora, LMDE)
   default-apps            - Configure default desktop applications (MIME types, handlers, terminal)
-  desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
+  desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma / Cinnamon)
   desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma, Cinnamon)
   discord                 - Install Discord
   docker                  - Install Docker engine and plugins (buildx, compose)
-  firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
+  fedora                  - Run complete setup pipeline for Fedora
+  firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch/LMDE) and GUI
   flatpak                 - Configure Flatpak and Flathub repository
   fonts                   - Install JetBrains Mono Nerd Font
   gimp                    - Install GIMP image editor
@@ -44,13 +47,14 @@ Available Commands:
   gnome-extensions-config - Configure GNOME Shell extensions via dconf
   go                      - Install Golang programming language
   graphics                - Install and configure graphics drivers (NVIDIA / AMD)
-  gtk-theme               - Install and configure adw-gtk3-dark GTK theme (GNOME)
+  gtk-theme               - Install and configure GTK theme (adw-gtk3-dark / Colloid-Dark)
   hide-apps               - Hide unwanted applications from desktop menus (.desktop files)
-  icon-theme              - Install and configure Papirus-Dark icon theme (GNOME)
+  icon-theme              - Install and configure Papirus-Dark icon theme
   kernel-debian           - Install latest Linux kernel and headers from Debian backports
   kitty                   - Install Kitty terminal emulator
   lazydocker              - Install Lazydocker
   lazygit                 - Install Lazygit
+  lmde                    - Run complete setup pipeline for LMDE (Linux Mint Debian Edition)
   look                    - Configure desktop appearance (cursor, GTK theme, icon theme)
   mongodb-compass         - Install MongoDB Compass (Flatpak)
   neovim                  - Install Neovim and build runtime dependencies
@@ -75,6 +79,11 @@ run_all() {
   distro="$(get_distro_id 2> /dev/null || true)"
 
   case "$distro" in
+    lmde)
+      echo "Delegating complete setup to LMDE runner..."
+      bash "$RUNNERS_DIR/lmde.sh"
+      ;;
+
     debian)
       echo "Delegating complete setup to Debian runner..."
       bash "$RUNNERS_DIR/debian.sh"
@@ -92,9 +101,9 @@ run_all() {
 
     *)
       if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
-        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', and 'arch' are currently supported." >&2
+        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', and 'lmde' are currently supported." >&2
       else
-        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch)." >&2
+        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, lmde)." >&2
       fi
       return 1
       ;;
@@ -115,6 +124,10 @@ run_module() {
 
     amd)
       bash "$SCRIPTS_DIR/system/setup-amd.sh"
+      ;;
+
+    arch)
+      bash "$RUNNERS_DIR/arch.sh"
       ;;
 
     arch-de | desktop-environment)
@@ -150,6 +163,10 @@ run_module() {
       bash "$SCRIPTS_DIR/apps/setup-dbeaver.sh"
       ;;
 
+    debian)
+      bash "$RUNNERS_DIR/debian.sh"
+      ;;
+
     debloat)
       bash "$SCRIPTS_DIR/system/setup-debloat.sh"
       ;;
@@ -172,6 +189,10 @@ run_module() {
 
     docker)
       bash "$SCRIPTS_DIR/toolchain/setup-docker.sh"
+      ;;
+
+    fedora)
+      bash "$RUNNERS_DIR/fedora.sh"
       ;;
 
     firewall)
@@ -236,6 +257,10 @@ run_module() {
 
     lazygit)
       bash "$SCRIPTS_DIR/terminal/setup-lazygit.sh"
+      ;;
+
+    lmde)
+      bash "$RUNNERS_DIR/lmde.sh"
       ;;
 
     look)
