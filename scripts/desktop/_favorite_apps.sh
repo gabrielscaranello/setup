@@ -86,17 +86,8 @@ get_favorite_apps() {
 configure_gnome_favorite_apps() {
   local -a apps=()
   mapfile -t apps < <(get_favorite_apps "gnome")
-
-  local formatted=""
-  for app in "${apps[@]}"; do
-    [ -n "$app" ] || continue
-    if [ -z "$formatted" ]; then
-      formatted="'$app'"
-    else
-      formatted="$formatted, '$app'"
-    fi
-  done
-  local gvariant_array="[$formatted]"
+  local gvariant_array
+  gvariant_array="$(format_gvariant_array "${apps[@]}")"
 
   echo "  Configuring GNOME favorite dock applications..."
   if command -v dconf > /dev/null 2>&1; then
@@ -110,17 +101,8 @@ configure_gnome_favorite_apps() {
 configure_cinnamon_favorite_apps() {
   local -a apps=()
   mapfile -t apps < <(get_favorite_apps "cinnamon")
-
-  local formatted=""
-  for app in "${apps[@]}"; do
-    [ -n "$app" ] || continue
-    if [ -z "$formatted" ]; then
-      formatted="'$app'"
-    else
-      formatted="$formatted, '$app'"
-    fi
-  done
-  local gvariant_array="[$formatted]"
+  local gvariant_array
+  gvariant_array="$(format_gvariant_array "${apps[@]}")"
 
   echo "  Configuring Cinnamon favorite applications..."
   if command -v dconf > /dev/null 2>&1; then

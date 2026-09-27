@@ -45,41 +45,7 @@ _install_extension_archive() {
 }
 
 _merge_enabled_extensions() {
-  local current_raw="$1"
-  shift
-  local new_uuids=("$@")
-
-  local -a items=()
-  if [ -n "$current_raw" ]; then
-    local line
-    while IFS= read -r line; do
-      [ -n "$line" ] && items+=("$line")
-    done < <(echo "$current_raw" | grep -oE "'[^']+'|\"[^\"]+\"" | tr -d "'\"" || true)
-  fi
-
-  for arg in "${new_uuids[@]}"; do
-    [ -n "$arg" ] || continue
-    local found=0
-    for it in "${items[@]}"; do
-      if [ "$it" = "$arg" ]; then
-        found=1
-        break
-      fi
-    done
-    if [ "$found" -eq 0 ]; then
-      items+=("$arg")
-    fi
-  done
-
-  local formatted=""
-  for it in "${items[@]}"; do
-    if [ -z "$formatted" ]; then
-      formatted="'$it'"
-    else
-      formatted="$formatted, '$it'"
-    fi
-  done
-  echo "[$formatted]"
+  merge_gvariant_array "$@"
 }
 
 _sync_enabled_extensions() {

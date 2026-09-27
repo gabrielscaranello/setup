@@ -71,3 +71,49 @@ load_dconf_files() {
     load_dconf_file "${base_dir}/${file}"
   done
 }
+
+format_gvariant_array() {
+  local formatted=""
+  local item
+  for item in "$@"; do
+    [ -n "$item" ] || continue
+    if [ -z "$formatted" ]; then
+      formatted="'$item'"
+    else
+      formatted="$formatted, '$item'"
+    fi
+  done
+  echo "[$formatted]"
+}
+
+merge_gvariant_array() {
+  local current_raw="$1"
+  shift
+  local new_items=("$@")
+
+  local -a items=()
+  if [ -n "$current_raw" ]; then
+    local line
+    while IFS= read -r line; do
+      [ -n "$line" ] && items+=("$line")
+    done < <(echo "$current_raw" | grep -oE "'[^']+'|\"[^\"]+\"" | tr -d "'\"" || true)
+  fi
+
+  local arg
+  for arg in "${new_items[@]}"; do
+    [ -n "$arg" ] || continue
+    local found=0
+    local it
+    for it in "${items[@]}"; do
+      if [ "$it" = "$arg" ]; then
+        found=1
+        break
+      fi
+    done
+    if [ "$found" -eq 0 ]; then
+      items+=("$arg")
+    fi
+  done
+
+  format_gvariant_array "${items[@]}"
+}

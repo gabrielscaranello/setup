@@ -18,20 +18,6 @@ source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/desktop/_plasma.sh" 2> /dev/null || true
 source "scripts/desktop/_dconf.sh" 2> /dev/null || true
 
-if ! command -v dconf_exec > /dev/null 2>&1; then
-  dconf_exec() {
-    local dbus_cmd="dbus-run-session"
-    if ! command -v "$dbus_cmd" > /dev/null 2>&1 && [ -x "/usr/sbin/dbus-run-session" ]; then
-      dbus_cmd="/usr/sbin/dbus-run-session"
-    fi
-    if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v "$dbus_cmd" > /dev/null 2>&1; then
-      "$dbus_cmd" -- dconf "$@"
-    else
-      dconf "$@"
-    fi
-  }
-fi
-
 _set_mime_default() {
   local desktop_file="$1"
   shift

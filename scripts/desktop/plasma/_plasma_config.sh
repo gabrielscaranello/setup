@@ -29,17 +29,14 @@ plasma_write_config() {
   local key="$3"
   local value="$4"
 
+  local kwcmd=""
   if command -v kwriteconfig6 > /dev/null 2>&1; then
-    local group_args=()
-    IFS=']' read -ra parts <<< "$group"
-    for part in "${parts[@]}"; do
-      part="${part#[}"
-      if [ -n "$part" ]; then
-        group_args+=(--group "$part")
-      fi
-    done
-    kwriteconfig6 --file "$file" "${group_args[@]}" --key "$key" "$value"
+    kwcmd="kwriteconfig6"
   elif command -v kwriteconfig5 > /dev/null 2>&1; then
+    kwcmd="kwriteconfig5"
+  fi
+
+  if [ -n "$kwcmd" ]; then
     local group_args=()
     IFS=']' read -ra parts <<< "$group"
     for part in "${parts[@]}"; do
@@ -48,7 +45,7 @@ plasma_write_config() {
         group_args+=(--group "$part")
       fi
     done
-    kwriteconfig5 --file "$file" "${group_args[@]}" --key "$key" "$value"
+    "$kwcmd" --file "$file" "${group_args[@]}" --key "$key" "$value"
   else
     _plasma_ini_write "$file" "$group" "$key" "$value"
   fi

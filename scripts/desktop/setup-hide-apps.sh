@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-source "scripts/_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || source "scripts/_utils.sh" 2> /dev/null || true
 
 APPS=(
   assistant
@@ -73,8 +73,7 @@ _hide_app() {
     rm -f "${home_location}"
     cp "${file}" "${home_location}"
     chmod u+w "${home_location}"
-    sed -i "s/NoDisplay=\(true\|false\)//g" "${home_location}" > /dev/null
-    echo "NoDisplay=true" >> "${home_location}"
+    write_ini_key "${home_location}" "Desktop Entry" "NoDisplay" "true"
   done
 }
 

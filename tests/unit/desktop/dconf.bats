@@ -192,3 +192,34 @@ teardown() {
 
   rm -rf "$mock_dir"
 }
+
+# ── format_gvariant_array & merge_gvariant_array Tests ────────────────────────
+
+@test "format_gvariant_array formats empty array as []" {
+  run format_gvariant_array
+  [ "$status" -eq 0 ]
+  [ "$output" = "[]" ]
+}
+
+@test "format_gvariant_array formats single and multiple items correctly" {
+  run format_gvariant_array "foo.desktop"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['foo.desktop']" ]
+
+  run format_gvariant_array "foo.desktop" "bar.desktop"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['foo.desktop', 'bar.desktop']" ]
+}
+
+@test "merge_gvariant_array merges items into empty string" {
+  run merge_gvariant_array "" "ext1@domain" "ext2@domain"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['ext1@domain', 'ext2@domain']" ]
+}
+
+@test "merge_gvariant_array preserves existing items and deduplicates" {
+  run merge_gvariant_array "['ext1@domain', 'ext2@domain']" "ext2@domain" "ext3@domain"
+  [ "$status" -eq 0 ]
+  [ "$output" = "['ext1@domain', 'ext2@domain', 'ext3@domain']" ]
+}
+
