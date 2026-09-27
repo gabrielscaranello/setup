@@ -22,6 +22,7 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 │   ├── arch.sh                    # Arch Linux setup pipeline
 │   ├── debian.sh                  # Debian setup pipeline
 │   ├── fedora.sh                  # Fedora setup pipeline
+│   ├── lmde.sh                    # LMDE (Linux Mint Debian Edition) setup pipeline
 │   └── main.sh                    # Central CLI dispatcher and module runner
 ├── scripts/                       # Modular setup scripts (organized by domain)
 │   ├── _utils.sh                  # Core abstraction (install_packages, etc.)
@@ -30,11 +31,15 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 │   ├── desktop/                   # Desktop environment & theming setup scripts
 │   ├── security/                  # Security setup scripts
 │   ├── system/                    # System & OS setup scripts
-│   │   └── _gpu_utils.sh          # Shared GPU utilities (hardware detection & repositories)
+│   │   ├── _gpu_utils.sh          # Shared GPU utilities (hardware detection & repositories)
+│   │   ├── arch/                  # Arch-specific setup & repo scripts
+│   │   ├── debian/                # Debian-specific setup & repo scripts
+│   │   ├── fedora/                # Fedora-specific repo scripts
+│   │   └── lmde/                  # LMDE-specific repo scripts
 │   ├── terminal/                  # Terminal tools & fonts setup scripts
 │   └── toolchain/                 # Dev runtimes & toolchains
 └── tests/                         # Test suite
-    ├── docker/                    # Base Dockerfiles per distro
+    ├── docker/                    # Base Dockerfiles per distro (archlinux, debian, fedora, lmde)
     ├── integration/               # Integration tests per domain/feature
     ├── unit/                      # Fast Bats unit tests per domain/feature
     └── run-tests.sh               # Master test orchestrator
@@ -63,7 +68,8 @@ source "scripts/_utils.sh" 2> /dev/null || true
   - Arch Linux (`scripts/system/arch/_repositories.sh`): `add_arch_multilib_repo`.
   - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
-- **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps. When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
+  - LMDE (`scripts/system/lmde/_repositories.sh`): `get_lmde_codename`, `get_lmde_debian_codename`, `add_lmde_official_repo`, `add_lmde_backports_repo`.
+- **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps (GNOME, KDE Plasma, Cinnamon). When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
 - **SOLID Design Principles**: All scripts and helpers must adhere to SOLID principles:
   - **S (Single Responsibility)**: Small, cohesive private functions (`_`) where each function has one reason to change (decouple detection, repos, installation, 32-bit compatibility, service management).
   - **O (Open/Closed)**: Open for extension via `packages.conf` and clean dispatchers (`case "$(get_distro_id)" in ...`) without modifying core logic.
@@ -89,6 +95,7 @@ fi
   - **Debian 13 (Trixie)** (`apt`)
   - **Fedora 44** (`dnf`)
   - **Arch Linux** (`pacman` / Rolling)
+  - **LMDE 7 (Linux Mint Debian Edition)** (`apt`)
 - Branch by distribution ID via `get_distro_id` from `_utils.sh` — do not hard-code.
 
 - Use `/tmp/<package>` for temporary builds and ensure `make clean` removes artifacts.
@@ -117,13 +124,13 @@ if a script depends on another (e.g., neovim depends on nvm), document or instal
 
 ## 🧪 Integration Tests
 
-Tests live under `tests/` and use [bats-core](https://github.com/bats-core/bats-core). Each test runs inside Docker to guarantee a clean, distro-specific environment across all supported distributions (Arch Linux, Debian, Fedora).
+Tests live under `tests/` and use [bats-core](https://github.com/bats-core/bats-core). Each test runs inside Docker to guarantee a clean, distro-specific environment across all supported distributions (Arch Linux, Debian, Fedora, LMDE).
 
 ### Directory structure pattern
 
 ```
 tests/
-├── docker/                        # Generic base Dockerfiles (one per distro)
+├── docker/                        # Generic base Dockerfiles (one per distro: archlinux, debian, fedora, lmde)
 │   ├── <distro>.Dockerfile
 │   └── ...
 ├── unit/                          # Fast unit tests (mocked, testing internal functions)
@@ -143,14 +150,14 @@ tests/
   - Run quickly via `make test-unit`.
 - **Integration tests** (`tests/integration/<feature>.bats`):
   - Use `setup_file()` to run the script once per test file in a clean container.
-  - Shared across all supported distributions (Arch Linux, Debian, Fedora) to avoid duplication.
+  - Shared across all supported distributions (Arch Linux, Debian, Fedora, LMDE) to avoid duplication.
   - Implement tests (`@test`) verifying that required binaries, packages, configs, or outputs exist.
   - Always include an idempotency check (running the script a second time should exit with status 0).
 - **Running tests**:
   - Run all tests: `make test` (or `./tests/run-tests.sh`)
   - Run unit tests only: `make test-unit` (or `./tests/run-tests.sh --unit`)
   - Run integration tests only: `make test-integration` (or `./tests/run-tests.sh --integration`)
-  - Target a specific distro: `make test DISTRO=debian` (or `./tests/run-tests.sh --distro=debian`)
+  - Target a specific distro: `make test DISTRO=debian` (or `./tests/run-tests.sh --distro=debian` / `--distro=lmde`)
   - Filter specific tests: `make test FILTER=nvm` (or `./tests/run-tests.sh --filter=nvm`)
 - **Code coverage**: Run `make test-coverage` (or `./tests/run-tests.sh --coverage`) to generate unified code coverage reports in `coverage/` using `kcov`.
 

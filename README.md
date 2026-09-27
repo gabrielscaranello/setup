@@ -40,29 +40,52 @@ This project was created to unify and centralize several standalone distribution
 - Keep scripts generic and idempotent with a package-manager shim.
 - Make scripts modular and testable for reuse.
 
+🐧 Supported Distributions & Desktops
+-------------------------------------
+
+| Distribution                           | Package Manager | Desktop Environments | Dedicated Runner                         |
+| :------------------------------------- | :-------------- | :------------------- | :--------------------------------------- |
+| **Debian 13 (Trixie)**                 | `apt`           | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`) |
+| **Fedora 44**                          | `dnf`           | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`) |
+| **Arch Linux**                         | `pacman`        | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)     |
+| **LMDE 7 (Linux Mint Debian Edition)** | `apt`           | Cinnamon             | `runners/lmde.sh` (`./main.sh lmde`)     |
+
 ⚡ Quick start
 -------------
 
-Run full setup or inspect available module commands:
+Run full setup with automatic distribution detection, invoke specific distro pipelines, or run individual modules:
 
 ```sh
-make help              # Show all available setup commands and modules (./main.sh help)
-make all               # Run full desktop setup (./main.sh)
-make <module>          # Run a specific module (e.g. make neovim, make docker, make firewall)
-make lint              # Run shellcheck on scripts and bats tests (yarn lint:sh & yarn lint:bats)
-make format            # Format markdown and shell scripts via Prettier (yarn format)
-make test              # Run all tests (e.g. DISTRO=debian FILTER=nvm)
-make test-unit         # Run fast unit tests only
-make test-integration  # Run container integration tests only
-make test-coverage     # Run tests with code coverage reports (kcov)
-make clean             # Remove temporary artifacts
+# Complete setup with auto-detection (Debian, Fedora, Arch, LMDE):
+make all # Or: ./main.sh all / ./main.sh
+
+# Explicit distribution pipelines:
+./main.sh lmde   # Run full LMDE 7 pipeline
+./main.sh debian # Run full Debian 13 pipeline
+./main.sh fedora # Run full Fedora 44 pipeline
+./main.sh arch   # Run full Arch Linux pipeline
+
+# Individual modules:
+make neovim   # Or: ./main.sh neovim
+make docker   # Or: ./main.sh docker
+make firewall # Or: ./main.sh firewall
+
+# Development, testing, and inspection:
+make help             # Show all available setup commands and modules (./main.sh help)
+make lint             # Run shellcheck on scripts and bats tests (yarn lint:sh & yarn lint:bats)
+make format           # Format markdown and shell scripts via Prettier (yarn format)
+make test             # Run all tests (e.g. DISTRO=debian FILTER=nvm)
+make test-unit        # Run fast unit tests only
+make test-integration # Run container integration tests only
+make test-coverage    # Run tests with code coverage reports (kcov)
+make clean            # Remove temporary artifacts
 ```
 
 📁 Architecture & Directory Structure
 ------------------------------------
 
 - `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
-- `runners/` — Distro-specific setup pipelines and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
+- `runners/` — Distro-specific setup pipelines and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `lmde.sh`, `main.sh`, `_utils.sh`)
 - `Makefile` — Convenience wrapper for `./main.sh`, test runners, and code quality tools
 - `scripts/` — Modular setup scripts organized by domain (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Package manager and system helper abstractions

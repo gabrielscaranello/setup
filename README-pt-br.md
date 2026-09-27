@@ -40,29 +40,52 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 - Manter scripts genéricos, reutilizáveis e distribuídos por gerenciador de pacotes.
 - Facilitar testes e manutenção com scripts modulares.
 
+🐧 Distribuições & Ambientes Gráficos Suportados
+------------------------------------------------
+
+| Distribuição                           | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                          |
+| :------------------------------------- | :--------------------- | :---------------------- | :--------------------------------------- |
+| **Debian 13 (Trixie)**                 | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`) |
+| **Fedora 44**                          | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`) |
+| **Arch Linux**                         | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)     |
+| **LMDE 7 (Linux Mint Debian Edition)** | `apt`                  | Cinnamon                | `runners/lmde.sh` (`./main.sh lmde`)     |
+
 ⚡️ Começando (rápido)
 ---------------------
 
-Execute o setup completo ou consulte os módulos disponíveis:
+Execute o setup completo com detecção automática de distribuição, dispare pipelines específicos ou execute módulos isolados:
 
 ```sh
-make help              # Ver todos os comandos e módulos disponíveis (./main.sh help)
-make all               # Executa todo o setup (./main.sh)
-make <modulo>          # Executa um módulo específico (ex: make neovim, make docker, make firewall)
-make lint              # Executa shellcheck nos scripts e testes bats (yarn lint:sh & yarn lint:bats)
-make format            # Formata markdown e shell scripts via Prettier (yarn format)
-make test              # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
-make test-unit         # Executa apenas testes unitários rápidos
-make test-integration  # Executa apenas testes de integração em containers
-make test-coverage     # Executa testes e gera relatórios de cobertura (kcov)
-make clean             # Limpa artefatos temporários
+# Setup completo com autodetecção (Debian, Fedora, Arch, LMDE):
+make all # Ou: ./main.sh all / ./main.sh
+
+# Pipelines explícitos por distribuição:
+./main.sh lmde   # Executa o pipeline completo do LMDE 7
+./main.sh debian # Executa o pipeline completo do Debian 13
+./main.sh fedora # Executa o pipeline completo do Fedora 44
+./main.sh arch   # Executa o pipeline completo do Arch Linux
+
+# Módulos ou ferramentas individuais:
+make neovim   # Ou: ./main.sh neovim
+make docker   # Ou: ./main.sh docker
+make firewall # Ou: ./main.sh firewall
+
+# Desenvolvimento, testes e inspeção:
+make help             # Ver todos os comandos e módulos disponíveis (./main.sh help)
+make lint             # Executa shellcheck nos scripts e testes bats (yarn lint:sh & yarn lint:bats)
+make format           # Formata markdown e shell scripts via Prettier (yarn format)
+make test             # Executa todos os testes (ex: DISTRO=debian FILTER=nvm)
+make test-unit        # Executa apenas testes unitários rápidos
+make test-integration # Executa apenas testes de integração em containers
+make test-coverage    # Executa testes e gera relatórios de cobertura (kcov)
+make clean            # Limpa artefatos temporários
 ```
 
 📂 Arquitetura & Estrutura de Diretórios
 ---------------------------------------
 
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
-- `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
+- `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `lmde.sh`, `main.sh`, `_utils.sh`)
 - `Makefile` — Runner e alias de conveniência para `./main.sh`, testes e ferramentas de qualidade de código
 - `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes

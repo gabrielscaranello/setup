@@ -4,9 +4,9 @@ Este documento acompanha os marcos de desenvolvimento, tarefas em andamento e fu
 
 ---
 
-## 🎯 Milestone 2.0: Suporte ao LMDE (Linux Mint Debian Edition) & Cinnamon (Em Andamento)
+## 🎯 Milestone 2.0: Suporte ao LMDE (Linux Mint Debian Edition) & Cinnamon [Concluído]
 
-O objetivo principal deste marco é estender todo o ferramental idempotente do projeto para fornecer suporte nativo de primeira classe ao **LMDE 7** (baseado em **Debian 13 Trixie**) com o ambiente de desktop **Cinnamon**.
+O objetivo principal deste marco foi estender todo o ferramental idempotente do projeto para fornecer suporte nativo de primeira classe ao **LMDE 7** (baseado em **Debian 13 Trixie**) com o ambiente de desktop **Cinnamon**.
 
 ---
 
@@ -86,7 +86,7 @@ Criação dos pontos de entrada, documentação e especificações OpenSpec.
 - [x] Criar runner dedicado para LMDE: `runners/lmde.sh` seguindo o padrão modular (`_run_stage`, pipeline de execução sequencial) — `runners/lmde.sh`
 - [x] Atualizar despachante central: registrar suporte a `lmde` em `runners/main.sh` e `main.sh` (incluindo help e autodirecionamento por distro) — `runners/main.sh` e `main.sh`
 - [x] Especificações OpenSpec: criar/atualizar especificações em `openspec/specs/` documentando os novos requisitos e cenários GIVEN/WHEN/THEN para LMDE e Cinnamon — `openspec/specs/`
-- [ ] Documentação: atualizar `README.md` e `README-pt-br.md` incluindo o LMDE na lista de distribuições suportadas e instruções de uso
+- [x] Documentação: atualizar `README.md` e `README-pt-br.md` incluindo o LMDE na lista de distribuições suportadas e instruções de uso — `README.md` e `README-pt-br.md`
 
 ---
 
