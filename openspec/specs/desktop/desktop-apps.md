@@ -14,6 +14,7 @@ The script SHALL inspect the current desktop environment using `get_desktop_envi
 
 - When `plasma`: SHALL install the curated KDE Plasma application suite via `_install_plasma_apps`.
 - When `gnome`: SHALL install the curated GNOME application suite via `_install_gnome_apps`.
+- When `cinnamon`: SHALL report an informative message and exit cleanly with code 0 without errors, as Cinnamon already ships with its native suite (`nemo`, `xed`, `xviewer`, etc., supplemented by `setup-packages.sh`).
 - When `unknown` and interactive (`[ -t 0 ]`): SHALL prompt the user to select between KDE Plasma and GNOME, persist the choice via `save_desktop_environment`, and proceed with installation.
 - When `unknown` and non-interactive: SHALL report an informative message and exit cleanly with code 0 without attempting desktop-specific package installation.
 - When desktop environment is resolved: SHALL persist the environment via `save_desktop_environment`.
@@ -31,6 +32,12 @@ The script SHALL inspect the current desktop environment using `get_desktop_envi
 - **WHEN** `scripts/desktop/setup-desktop-apps.sh` executes
 - **THEN** GNOME application suite SHALL be installed
 - **AND** desktop environment SHALL be persisted via `save_desktop_environment`
+
+#### Scenario: Running under Cinnamon
+
+- **GIVEN** active desktop environment is `cinnamon` (`get_desktop_environment` returns `cinnamon`)
+- **WHEN** `scripts/desktop/setup-desktop-apps.sh` executes
+- **THEN** execution terminates cleanly with exit code 0 without modifying packages
 
 #### Scenario: Running under unknown environment interactively
 

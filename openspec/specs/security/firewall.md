@@ -2,17 +2,18 @@
 
 ## 📌 Feature Overview
 
-Installs and enables the appropriate firewall service and optional Desktop Environment GUI frontend across supported Linux distributions (Debian 13, Fedora 44, and Arch Linux).
+Installs and enables the appropriate firewall service and optional Desktop Environment GUI frontend across supported Linux distributions (Debian 13, Fedora 44, Arch Linux, and LMDE 7).
 
 ---
 
 ## 🎯 Distro & Desktop Environment Matrix
 
-| Distribution           | Backend Service | Default Rules                 | GNOME GUI         | KDE Plasma GUI    |
-| :--------------------- | :-------------- | :---------------------------- | :---------------- | :---------------- |
-| **Debian 13 (Trixie)** | `ufw`           | deny incoming, allow outgoing | `gufw`            | `plasma-firewall` |
-| **Fedora 44**          | `firewalld`     | default active                | `firewall-config` | `plasma-firewall` |
-| **Arch Linux**         | `ufw`           | deny incoming, allow outgoing | `gufw`            | `plasma-firewall` |
+| Distribution           | Backend Service | Default Rules                 | GNOME GUI         | KDE Plasma GUI    | Cinnamon GUI |
+| :--------------------- | :-------------- | :---------------------------- | :---------------- | :---------------- | :----------- |
+| **Debian 13 (Trixie)** | `ufw`           | deny incoming, allow outgoing | `gufw`            | `plasma-firewall` | `gufw`       |
+| **Fedora 44**          | `firewalld`     | default active                | `firewall-config` | `plasma-firewall` | `gufw`       |
+| **Arch Linux**         | `ufw`           | deny incoming, allow outgoing | `gufw`            | `plasma-firewall` | `gufw`       |
+| **LMDE 7**             | `ufw`           | deny incoming, allow outgoing | `gufw`            | `plasma-firewall` | `gufw`       |
 
 _Note: Headless or unknown desktop environments configure only the CLI backend service without installing GUI frontends._
 
@@ -22,7 +23,7 @@ _Note: Headless or unknown desktop environments configure only the CLI backend s
 
 1. **Distribution Dispatch & Backend Installation**:
    - Detect target distribution via `get_distro_id`.
-   - On **Debian (`debian`)** & **Arch Linux (`arch`)**: Install `ufw` via `install_packages ufw`.
+   - On **Debian (`debian`)**, **Arch Linux (`arch`)**, and **LMDE (`lmde`)**: Install `ufw` via `install_packages ufw`.
    - On **Fedora (`fedora`)**: Install `firewalld` via `install_packages firewalld`.
    - On **Unsupported Distros / Derivatives**: Exit with code 1 and write error to `stderr`.
 2. **Service Enablement & Fail-Safe Configuration**:
@@ -30,7 +31,7 @@ _Note: Headless or unknown desktop environments configure only the CLI backend s
      - Enable and start `ufw.service` explicitly via systemd (`sudo systemctl enable --now ufw.service` or `sudo systemctl enable ufw.service`).
      - Enable `ufw` rules engine (`sudo ufw --force enable`).
      - Set default policies: incoming `deny`, outgoing `allow` (`sudo ufw default deny incoming`, `sudo ufw default allow outgoing`).
-   - On **Debian 13**:
+   - On **Debian 13** & **LMDE 7**:
      - Enable `ufw` (`sudo ufw --force enable`).
      - Set default policies: incoming `deny`, outgoing `allow` (`sudo ufw default deny incoming`, `sudo ufw default allow outgoing`).
      - Enable systemd service (`sudo systemctl enable ufw.service` or `sudo systemctl enable --now ufw.service` if systemd is active).
@@ -38,11 +39,11 @@ _Note: Headless or unknown desktop environments configure only the CLI backend s
      - Enable systemd service (`sudo systemctl enable --now firewalld.service` or `sudo systemctl enable firewalld.service` if systemd is active).
 3. **Desktop Environment Frontend Integration**:
    - Detect DE using `get_desktop_environment` from `scripts/_utils.sh`.
-   - When DE is `gnome`:
-     - On **Debian** or **Arch Linux**: Install `gufw` (`install_packages gufw`).
-     - On **Fedora**: Install `firewall-config` (`install_packages firewall-config`).
+   - When DE is `gnome` or `cinnamon`:
+     - On **Debian**, **Arch Linux**, or **LMDE**: Install `gufw` (`install_packages gufw`).
+     - On **Fedora**: Install `firewall-config` for GNOME (`install_packages firewall-config`) or `gufw` if present.
    - When DE is `plasma`:
-     - On **Debian**, **Fedora**, or **Arch Linux**: Install `plasma-firewall` (`install_packages plasma-firewall`).
+     - On **Debian**, **Fedora**, **Arch Linux**, or **LMDE**: Install `plasma-firewall` (`install_packages plasma-firewall`).
    - When DE is `unknown` or unrecognized: Do not install GUI packages.
 4. **Idempotency**:
    - Running the script repeatedly must preserve rules, avoid errors, and not corrupt firewall configuration.
@@ -95,20 +96,27 @@ _Note: Headless or unknown desktop environments configure only the CLI backend s
 - **THEN** `ufw` and `plasma-firewall` packages are installed
 - **AND** `ufw.service` is enabled and started.
 
-### Scenario 7: Setup on Headless / CLI environment (Debian / Fedora / Arch)
+### Scenario 7: Setup on LMDE 7 with Cinnamon
 
-- **GIVEN** any supported system (`get_distro_id` returns `debian`, `fedora`, or `arch`) with `get_desktop_environment` returning `unknown`
+- **GIVEN** an LMDE 7 system (`get_distro_id` returns `lmde`) with `XDG_CURRENT_DESKTOP=X-Cinnamon` (`get_desktop_environment` returns `cinnamon`)
+- **WHEN** `scripts/security/setup-firewall.sh` is executed
+- **THEN** `ufw` and `gufw` packages are installed
+- **AND** `ufw` is enabled with default incoming deny and outgoing allow rules.
+
+### Scenario 8: Setup on Headless / CLI environment (Debian / Fedora / Arch / LMDE)
+
+- **GIVEN** any supported system (`get_distro_id` returns `debian`, `fedora`, `arch`, or `lmde`) with `get_desktop_environment` returning `unknown`
 - **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** the appropriate CLI firewall backend (`ufw` or `firewalld`) is installed and configured
 - **AND** no GUI frontends (`gufw` / `firewall-config` / `plasma-firewall`) are installed.
 
-### Scenario 8: Running on an unsupported distribution
+### Scenario 9: Running on an unsupported distribution
 
 - **GIVEN** an unsupported distribution or derivative (`get_distro_id` returns an unsupported ID or fails)
 - **WHEN** `scripts/security/setup-firewall.sh` is executed
 - **THEN** it SHALL exit with code 1 and write an error message to `stderr`
 
-### Scenario 9: Idempotent Execution
+### Scenario 10: Idempotent Execution
 
 - **GIVEN** any supported system where firewall is already configured
 - **WHEN** `scripts/security/setup-firewall.sh` is executed a second time

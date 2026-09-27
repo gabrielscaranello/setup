@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs the official MongoDB Compass GUI across all supported distributions (Arch Linux, Debian, Fedora) using the official Flatpak package (`com.mongodb.Compass`) from Flathub to guarantee compatibility and seamless cross-platform updates.
+Installs the official MongoDB Compass GUI across all supported distributions (Arch Linux, Debian, Fedora, LMDE) using the official Flatpak package (`com.mongodb.Compass`) from Flathub to guarantee compatibility and seamless cross-platform updates.
 
 ---
 
@@ -12,12 +12,12 @@ Installs the official MongoDB Compass GUI across all supported distributions (Ar
 
 The script SHALL install MongoDB Compass via Flatpak across all supported distributions:
 
-- **All Supported Distros (`debian`, `fedora`, `arch`)**: SHALL invoke `install_flatpak_app "com.mongodb.Compass" "MongoDB Compass"`.
+- **All Supported Distros (`debian`, `fedora`, `arch`, `lmde`)**: SHALL invoke `install_flatpak_app "com.mongodb.Compass" "MongoDB Compass"`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
-#### Scenario: Running on Debian, Fedora, or Arch Linux
+#### Scenario: Running on Debian, Fedora, Arch Linux, or LMDE
 
-- **GIVEN** a supported distribution (`get_distro_id` returns `debian`, `fedora`, or `arch`)
+- **GIVEN** a supported distribution (`get_distro_id` returns `debian`, `fedora`, `arch`, or `lmde`)
 - **WHEN** `scripts/apps/setup-mongodb-compass.sh` is executed
 - **THEN** it SHALL call `install_flatpak_app "com.mongodb.Compass" "MongoDB Compass"`
 - **AND** ensure Flatpak runtime and Flathub remote are configured

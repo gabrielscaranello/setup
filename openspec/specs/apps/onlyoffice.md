@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs ONLYOFFICE Desktop Editors across all supported distributions (Arch Linux, Debian, Fedora) using the official Flatpak package (`org.onlyoffice.desktopeditors`) from Flathub to guarantee consistent office suite functionality, font rendering, and seamless updates.
+Installs ONLYOFFICE Desktop Editors across all supported distributions (Arch Linux, Debian, Fedora, LMDE) using the official Flatpak package (`org.onlyoffice.desktopeditors`) from Flathub to guarantee consistent office suite functionality, font rendering, and seamless updates.
 
 ---
 
@@ -12,12 +12,12 @@ Installs ONLYOFFICE Desktop Editors across all supported distributions (Arch Lin
 
 The script SHALL install ONLYOFFICE Desktop Editors via Flatpak across all supported distributions:
 
-- **All Supported Distros (`debian`, `fedora`, `arch`)**: SHALL invoke `install_flatpak_app "org.onlyoffice.desktopeditors" "ONLYOFFICE"`.
+- **All Supported Distros (`debian`, `fedora`, `arch`, `lmde`)**: SHALL invoke `install_flatpak_app "org.onlyoffice.desktopeditors" "ONLYOFFICE"`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
-#### Scenario: Running on Debian, Fedora, or Arch Linux
+#### Scenario: Running on Debian, Fedora, Arch Linux, or LMDE
 
-- **GIVEN** a supported distribution (`get_distro_id` returns `debian`, `fedora`, or `arch`)
+- **GIVEN** a supported distribution (`get_distro_id` returns `debian`, `fedora`, `arch`, or `lmde`)
 - **WHEN** `scripts/apps/setup-onlyoffice.sh` is executed
 - **THEN** it SHALL call `install_flatpak_app "org.onlyoffice.desktopeditors" "ONLYOFFICE"`
 - **AND** ensure Flatpak runtime and Flathub remote are configured

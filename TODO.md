@@ -85,7 +85,7 @@ Criação dos pontos de entrada, documentação e especificações OpenSpec.
 
 - [x] Criar runner dedicado para LMDE: `runners/lmde.sh` seguindo o padrão modular (`_run_stage`, pipeline de execução sequencial) — `runners/lmde.sh`
 - [x] Atualizar despachante central: registrar suporte a `lmde` em `runners/main.sh` e `main.sh` (incluindo help e autodirecionamento por distro) — `runners/main.sh` e `main.sh`
-- [ ] Especificações OpenSpec: criar/atualizar especificações em `openspec/specs/` documentando os novos requisitos e cenários GIVEN/WHEN/THEN para LMDE e Cinnamon
+- [x] Especificações OpenSpec: criar/atualizar especificações em `openspec/specs/` documentando os novos requisitos e cenários GIVEN/WHEN/THEN para LMDE e Cinnamon — `openspec/specs/`
 - [ ] Documentação: atualizar `README.md` e `README-pt-br.md` incluindo o LMDE na lista de distribuições suportadas e instruções de uso
 
 ---

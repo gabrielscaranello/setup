@@ -230,6 +230,11 @@ CONF
   [ "$status" -eq 0 ]
   [ "$output" = "tools-zram" ]
 
+  get_distro_id() { echo "lmde"; }
+  run _configure_zram
+  [ "$status" -eq 0 ]
+  [ "$output" = "tools-zram" ]
+
   get_distro_id() { echo "fedora"; }
   run _configure_zram
   [ "$status" -eq 0 ]

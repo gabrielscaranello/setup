@@ -90,7 +90,7 @@ _configure_zram() {
   _install_zram_packages
 
   case "$distro" in
-    debian)
+    debian | lmde)
       _configure_zram_tools
       ;;
     fedora | arch)
