@@ -67,3 +67,18 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Desktop appearance setup completed successfully." ]]
 }
+
+@test "_setup_look executes sub-scripts when DE is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  bash() {
+    echo "called: $(basename "$1")"
+    return 0
+  }
+
+  run _setup_look
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called: setup-cursor-theme.sh" ]]
+  [[ "$output" =~ "called: setup-gtk-theme.sh" ]]
+  [[ "$output" =~ "called: setup-icon-theme.sh" ]]
+  [[ "$output" =~ "Desktop appearance setup completed successfully." ]]
+}

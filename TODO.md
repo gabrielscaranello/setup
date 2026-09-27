@@ -71,7 +71,7 @@ Personalização completa da interface gráfica Cinnamon para manter a mesma con
 
 - [x] Tema de cursores e ícones: adaptar `scripts/desktop/setup-cursor-theme.sh` (`Bibata-Modern-Ice`, tam 20) e `setup-icon-theme.sh` (`Papirus-Dark` + `cat-mocha-lavender`) para Cinnamon via `gsettings` (`org.cinnamon.desktop.interface`) — `scripts/desktop/setup-cursor-theme.sh` e `scripts/desktop/setup-icon-theme.sh`
 - [x] Tema GTK: adaptar `scripts/desktop/setup-gtk-theme.sh` para aplicar `Colloid-Dark-Catppuccin` no Cinnamon (`org.cinnamon.desktop.interface gtk-theme`, `org.cinnamon.desktop.wm.preferences theme` e `org.cinnamon.theme name`) — `scripts/desktop/setup-gtk-theme.sh`
-- [ ] Orquestrador de aparência: atualizar `scripts/desktop/setup-look.sh` para coordenar cursor, ícones e GTK no Cinnamon
+- [x] Orquestrador de aparência: atualizar `scripts/desktop/setup-look.sh` para coordenar cursor, ícones e GTK no Cinnamon — `scripts/desktop/setup-look.sh`
 - [ ] Applets e Extensões (Cinnamon Spices): implementar download e instalação de spices via API do Linux Mint (`color-picker@fmete`, `transparent-panels-reloaded@marcelovbcfilho`) em `scripts/desktop/setup-cinnamon-applets.sh`
 - [ ] Configuração do Painel e Applets: implementar `scripts/desktop/setup-cinnamon-applets-config.sh` (layout do painel com menu, agrupador de janelas à esquerda e bandeja, relógio, color-picker à direita)
 - [ ] Preferências do Cinnamon Desktop: implementar `scripts/desktop/setup-cinnamon-preferences.sh` (layout minimalista de botões `:close`, centralização de novas janelas no Muffin, Night Light, hotcorners expo/scale e Nemo sem ícones no desktop)
