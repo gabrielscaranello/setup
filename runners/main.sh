@@ -25,6 +25,7 @@ Available Commands:
   browsers                - Install Web Browsers (Chromium, Firefox)
   codecs                  - Install Multimedia Codecs and A/V Plugins
   cinnamon-applets        - Install Cinnamon applets and extensions (Spices)
+  cinnamon-applets-config - Configure Cinnamon panel layout and applets
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
   debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
@@ -130,6 +131,10 @@ run_module() {
 
     cinnamon-applets)
       bash "$SCRIPTS_DIR/desktop/setup-cinnamon-applets.sh"
+      ;;
+
+    cinnamon-applets-config)
+      bash "$SCRIPTS_DIR/desktop/setup-cinnamon-applets-config.sh"
       ;;
 
     cursor)

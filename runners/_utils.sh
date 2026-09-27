@@ -67,6 +67,8 @@ COMMON_POST_STEPS=(
   "desktop/setup-look.sh:Desktop appearance setup (cursor, GTK theme, icon theme)"
   "desktop/setup-gnome-extensions.sh:GNOME extensions setup"
   "desktop/setup-gnome-extensions-config.sh:GNOME extensions configuration"
+  "desktop/setup-cinnamon-applets.sh:Cinnamon applets and extensions setup"
+  "desktop/setup-cinnamon-applets-config.sh:Cinnamon panel layout and applets configuration"
   "desktop/setup-desktop-preferences.sh:Desktop environment preferences"
   "desktop/setup-hide-apps.sh:Hide unwanted desktop applications"
 )

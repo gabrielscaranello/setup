@@ -73,7 +73,7 @@ Personalização completa da interface gráfica Cinnamon para manter a mesma con
 - [x] Tema GTK: adaptar `scripts/desktop/setup-gtk-theme.sh` para aplicar `Colloid-Dark-Catppuccin` no Cinnamon (`org.cinnamon.desktop.interface gtk-theme`, `org.cinnamon.desktop.wm.preferences theme` e `org.cinnamon.theme name`) — `scripts/desktop/setup-gtk-theme.sh`
 - [x] Orquestrador de aparência: atualizar `scripts/desktop/setup-look.sh` para coordenar cursor, ícones e GTK no Cinnamon — `scripts/desktop/setup-look.sh`
 - [x] Applets e Extensões (Cinnamon Spices): implementar download e instalação de spices via API do Linux Mint (`color-picker@fmete`, `transparent-panels-reloaded@marcelovbcfilho`) em `scripts/desktop/setup-cinnamon-applets.sh` — `scripts/desktop/setup-cinnamon-applets.sh`
-- [ ] Configuração do Painel e Applets: implementar `scripts/desktop/setup-cinnamon-applets-config.sh` (layout do painel com menu, agrupador de janelas à esquerda e bandeja, relógio, color-picker à direita)
+- [x] Configuração do Painel e Applets: implementar `scripts/desktop/setup-cinnamon-applets-config.sh` (layout do painel com menu, agrupador de janelas à esquerda e bandeja, relógio, color-picker à direita) — `scripts/desktop/setup-cinnamon-applets-config.sh`
 - [ ] Preferências do Cinnamon Desktop: implementar `scripts/desktop/setup-cinnamon-preferences.sh` (layout minimalista de botões `:close`, centralização de novas janelas no Muffin, Night Light, hotcorners expo/scale e Nemo sem ícones no desktop)
 - [ ] Ocultar aplicativos desnecessários no menu: adaptar `scripts/desktop/setup-hide-apps.sh` para garantir compatibilidade com o menu do Cinnamon
 

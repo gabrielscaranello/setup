@@ -18,6 +18,8 @@ get_favorite_apps() {
   local fm
   if [ "$de" = "plasma" ]; then
     fm="org.kde.dolphin.desktop"
+  elif [ "$de" = "cinnamon" ]; then
+    fm="nemo.desktop"
   else
     fm="org.gnome.Nautilus.desktop"
   fi
@@ -102,6 +104,30 @@ configure_gnome_favorite_apps() {
   fi
   if command -v gsettings > /dev/null 2>&1; then
     gsettings_exec set org.gnome.shell favorite-apps "$gvariant_array" 2> /dev/null || true
+  fi
+}
+
+configure_cinnamon_favorite_apps() {
+  local -a apps=()
+  mapfile -t apps < <(get_favorite_apps "cinnamon")
+
+  local formatted=""
+  for app in "${apps[@]}"; do
+    [ -n "$app" ] || continue
+    if [ -z "$formatted" ]; then
+      formatted="'$app'"
+    else
+      formatted="$formatted, '$app'"
+    fi
+  done
+  local gvariant_array="[$formatted]"
+
+  echo "  Configuring Cinnamon favorite applications..."
+  if command -v dconf > /dev/null 2>&1; then
+    dconf_exec write /org/cinnamon/favorite-apps "$gvariant_array" || true
+  fi
+  if command -v gsettings > /dev/null 2>&1; then
+    gsettings_exec set org.cinnamon favorite-apps "$gvariant_array" 2> /dev/null || true
   fi
 }
 
