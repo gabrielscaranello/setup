@@ -15,11 +15,13 @@
 }
 
 @test "current distro runner file exists and is executable" {
-  if command -v pacman >/dev/null 2>&1; then
+  if [ -f /etc/linuxmint/info ] || grep -q "ID=linuxmint" /etc/os-release 2> /dev/null; then
+    [ -x "/setup/runners/lmde.sh" ]
+  elif command -v pacman > /dev/null 2>&1; then
     [ -x "/setup/runners/arch.sh" ]
-  elif command -v apt >/dev/null 2>&1; then
+  elif command -v apt > /dev/null 2>&1; then
     [ -x "/setup/runners/debian.sh" ]
-  elif command -v dnf >/dev/null 2>&1; then
+  elif command -v dnf > /dev/null 2>&1; then
     [ -x "/setup/runners/fedora.sh" ]
   fi
 }
