@@ -39,7 +39,7 @@ teardown() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
   [[ "$output" =~ "codium.desktop" || "$output" =~ "code-oss.desktop" ]]
-  [[ "$output" =~ "steam.desktop" ]]
+  [[ "$output" =~ "steam.desktop" || "$output" =~ "com.valvesoftware.Steam.desktop" ]]
   [[ "$output" =~ "com.discordapp.Discord.desktop" || "$output" =~ "discord.desktop" ]]
 
   # Idempotent second execution

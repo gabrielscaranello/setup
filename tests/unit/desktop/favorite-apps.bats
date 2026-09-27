@@ -71,6 +71,25 @@ teardown() {
   [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
 }
 
+@test "get_favorite_apps resolves expected desktop apps on LMDE" {
+  get_distro_id() { echo "lmde"; }
+
+  run get_favorite_apps "gnome"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
+  [[ "$output" =~ "kitty.desktop" ]]
+  [[ "$output" =~ "codium.desktop" ]]
+  [[ "$output" =~ "firefox.desktop" ]]
+  [[ "$output" =~ "org.chromium.Chromium.desktop" ]]
+  [[ "$output" =~ "io.dbeaver.DBeaverCommunity.desktop" ]]
+  [[ "$output" =~ "org.onlyoffice.desktopeditors.desktop" ]]
+  [[ "$output" =~ "md.obsidian.Obsidian.desktop" ]]
+  [[ "$output" =~ "org.gimp.GIMP.desktop" ]]
+  [[ "$output" =~ "org.telegram.desktop.desktop" ]]
+  [[ "$output" =~ "com.valvesoftware.Steam.desktop" ]]
+  [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
+}
+
 @test "get_favorite_apps resolves expected desktop apps on Fedora" {
   get_distro_id() { echo "fedora"; }
 

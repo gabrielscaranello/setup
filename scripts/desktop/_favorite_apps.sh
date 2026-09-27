@@ -36,7 +36,7 @@ get_favorite_apps() {
       chat="$(_resolve_desktop_app "discord.desktop" "com.discordapp.Discord.desktop")"
       steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
-    debian)
+    debian | lmde)
       editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
       firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
       browser="$(_resolve_desktop_app "org.chromium.Chromium.desktop" "chromium.desktop" "chromium-browser.desktop")"
