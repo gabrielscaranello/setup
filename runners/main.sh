@@ -24,6 +24,7 @@ Available Commands:
   arch-de                 - Provision Desktop Environment (GNOME, KDE Plasma) on Arch Linux
   browsers                - Install Web Browsers (Chromium, Firefox)
   codecs                  - Install Multimedia Codecs and A/V Plugins
+  cinnamon-applets        - Install Cinnamon applets and extensions (Spices)
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
   debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
@@ -125,6 +126,10 @@ run_module() {
 
     codecs)
       bash "$SCRIPTS_DIR/system/setup-codecs.sh"
+      ;;
+
+    cinnamon-applets)
+      bash "$SCRIPTS_DIR/desktop/setup-cinnamon-applets.sh"
       ;;
 
     cursor)
