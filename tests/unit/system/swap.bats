@@ -167,12 +167,14 @@ SYSCTL
   rm -f "$test_fstab"
 }
 
-@test "_install_zram_packages calls install_packages zram" {
+@test "_configure_zram calls install_packages zram" {
   install_packages() {
     echo "install_packages called for: $*"
     return 0
   }
-  run _install_zram_packages
+  _configure_zram_tools() { return 0; }
+  get_distro_id() { echo "debian"; }
+  run _configure_zram
   [ "$status" -eq 0 ]
   [[ "$output" =~ install_packages\ called\ for:\ zram ]]
 }
@@ -221,27 +223,27 @@ CONF
 }
 
 @test "_configure_zram routes appropriately per distribution" {
-  _install_zram_packages() { return 0; }
+  install_packages() { return 0; }
   _configure_zram_tools() { echo "tools-zram"; return 0; }
   _configure_zram_generator() { echo "generator-zram"; return 0; }
 
   get_distro_id() { echo "debian"; }
   run _configure_zram
   [ "$status" -eq 0 ]
-  [ "$output" = "tools-zram" ]
+  [[ "$output" =~ "tools-zram" ]]
 
   get_distro_id() { echo "lmde"; }
   run _configure_zram
   [ "$status" -eq 0 ]
-  [ "$output" = "tools-zram" ]
+  [[ "$output" =~ "tools-zram" ]]
 
   get_distro_id() { echo "fedora"; }
   run _configure_zram
   [ "$status" -eq 0 ]
-  [ "$output" = "generator-zram" ]
+  [[ "$output" =~ "generator-zram" ]]
 
   get_distro_id() { echo "arch"; }
   run _configure_zram
   [ "$status" -eq 0 ]
-  [ "$output" = "generator-zram" ]
+  [[ "$output" =~ "generator-zram" ]]
 }

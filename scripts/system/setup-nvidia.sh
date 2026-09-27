@@ -9,14 +9,6 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 
-_detect_nvidia_gpu() {
-  has_nvidia_gpu
-}
-
-_detect_hybrid_gpu() {
-  has_hybrid_gpu
-}
-
 _install_debian_driver() {
   local codename
   codename="$(get_debian_codename)"
@@ -158,7 +150,7 @@ _setup_nvidia() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
-  if ! _detect_nvidia_gpu; then
+  if ! has_nvidia_gpu; then
     echo "No NVIDIA GPU detected. Skipping NVIDIA driver setup."
     return 0
   fi
@@ -168,7 +160,7 @@ _setup_nvidia() {
   _install_driver_packages "$distro"
   _configure_power_and_modeset
 
-  if _detect_hybrid_gpu; then
+  if has_hybrid_gpu; then
     echo "Hybrid graphics detected (laptop configuration)."
     _setup_hybrid_tools
   else

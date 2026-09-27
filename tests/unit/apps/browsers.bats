@@ -153,21 +153,14 @@
   [[ "$output" =~ "Unsupported distribution" ]]
 }
 
-@test "_install_browsers calls both chromium and firefox installers" {
+@test "main executes successfully and calls both chromium and firefox installers" {
   source /setup/scripts/apps/setup-browsers.sh
   _install_chromium() { echo "called chromium install"; return 0; }
   _install_firefox() { echo "called firefox install"; return 0; }
-  run _install_browsers
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called chromium install" ]]
-  [[ "$output" =~ "called firefox install" ]]
-}
-
-@test "main executes successfully and reports complete" {
-  source /setup/scripts/apps/setup-browsers.sh
-  _install_browsers() { echo "called _install_browsers"; return 0; }
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Setting up browsers..." ]]
+  [[ "$output" =~ "called chromium install" ]]
+  [[ "$output" =~ "called firefox install" ]]
   [[ "$output" =~ "setup-browsers complete" ]]
 }

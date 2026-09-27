@@ -18,7 +18,7 @@ setup() {
 
 @test "_setup_amd skips and exits 0 when no AMD GPU is detected" {
   get_distro_id() { echo "fedora"; }
-  _detect_amd_gpu() { return 1; }
+  has_amd_gpu() { return 1; }
 
   run _setup_amd
   [ "$status" -eq 0 ]
@@ -26,20 +26,20 @@ setup() {
   [[ ! "$output" =~ "Configuring drivers" ]]
 }
 
-@test "_detect_amd_gpu detects GPU by vendor id 1002 or name" {
+@test "has_amd_gpu detects GPU by vendor id 1002 or name" {
   lspci() {
     echo "03:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 32 [Radeon RX 7700 XT / 7800 XT] [1002:747e] (rev c8)"
   }
-  run _detect_amd_gpu
+  run has_amd_gpu
   [ "$status" -eq 0 ]
 }
 
-@test "_detect_amd_gpu returns 1 when no AMD device is listed" {
+@test "has_amd_gpu returns 1 when no AMD device is listed" {
   lspci() {
     echo "00:02.0 VGA compatible controller [0300]: Intel Corporation Raptor Lake-P [Iris Xe Graphics] [8086:a7a0] (rev 04)"
     echo "01:00.0 3D controller [0302]: NVIDIA Corporation AD106M [GeForce RTX 4070 Max-Q] [10de:2860] (rev a1)"
   }
-  run _detect_amd_gpu
+  run has_amd_gpu
   [ "$status" -eq 1 ]
 }
 
@@ -172,7 +172,7 @@ setup() {
 
 @test "setup-amd main executes full flow when GPU is present" {
   get_distro_id() { echo "fedora"; }
-  _detect_amd_gpu() { return 0; }
+  has_amd_gpu() { return 0; }
   configure_gpu_repositories() { return 0; }
   _install_amd_packages() { echo "amd packages installed"; return 0; }
 

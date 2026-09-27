@@ -58,14 +58,10 @@ _install_chromium() {
   esac
 }
 
-_install_browsers() {
-  _install_chromium
-  _install_firefox
-}
-
 main() {
   echo "Setting up browsers..."
-  _install_browsers
+  _install_chromium
+  _install_firefox
   echo "setup-browsers complete"
 }
 

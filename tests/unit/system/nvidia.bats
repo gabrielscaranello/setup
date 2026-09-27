@@ -18,7 +18,7 @@ setup() {
 
 @test "_setup_nvidia skips and exits 0 when no NVIDIA GPU is detected" {
   get_distro_id() { echo "fedora"; }
-  _detect_nvidia_gpu() { return 1; }
+  has_nvidia_gpu() { return 1; }
 
   run _setup_nvidia
   [ "$status" -eq 0 ]
@@ -26,36 +26,36 @@ setup() {
   [[ ! "$output" =~ "Configuring drivers" ]]
 }
 
-@test "_detect_nvidia_gpu detects GPU by vendor id 10de or name" {
+@test "has_nvidia_gpu detects GPU by vendor id 10de or name" {
   lspci() {
     echo "01:00.0 VGA compatible controller [0300]: NVIDIA Corporation AD106M [GeForce RTX 4070 Max-Q] [10de:2860] (rev a1)"
   }
-  run _detect_nvidia_gpu
+  run has_nvidia_gpu
   [ "$status" -eq 0 ]
 }
 
-@test "_detect_nvidia_gpu returns 1 when no NVIDIA device is listed" {
+@test "has_nvidia_gpu returns 1 when no NVIDIA device is listed" {
   lspci() {
     echo "00:02.0 VGA compatible controller [0300]: Intel Corporation Raptor Lake-P [Iris Xe Graphics] [8086:a7a0] (rev 04)"
   }
-  run _detect_nvidia_gpu
+  run has_nvidia_gpu
   [ "$status" -eq 1 ]
 }
 
-@test "_detect_hybrid_gpu returns true when Intel/AMD iGPU is present alongside dGPU" {
+@test "has_hybrid_gpu returns true when Intel/AMD iGPU is present alongside dGPU" {
   lspci() {
     echo "00:02.0 VGA compatible controller [0300]: Intel Corporation Iris Xe Graphics [8086:a7a0]"
     echo "01:00.0 3D controller [0302]: NVIDIA Corporation RTX 4070 [10de:2860]"
   }
-  run _detect_hybrid_gpu
+  run has_hybrid_gpu
   [ "$status" -eq 0 ]
 }
 
-@test "_detect_hybrid_gpu returns false on single dedicated NVIDIA GPU system" {
+@test "has_hybrid_gpu returns false on single dedicated NVIDIA GPU system" {
   lspci() {
     echo "01:00.0 VGA compatible controller [0300]: NVIDIA Corporation RTX 4090 [10de:2684]"
   }
-  run _detect_hybrid_gpu
+  run has_hybrid_gpu
   [ "$status" -eq 1 ]
 }
 
@@ -284,8 +284,8 @@ EOF
 
 @test "setup-nvidia main executes full flow when GPU is present" {
   get_distro_id() { echo "fedora"; }
-  _detect_nvidia_gpu() { return 0; }
-  _detect_hybrid_gpu() { return 0; }
+  has_nvidia_gpu() { return 0; }
+  has_hybrid_gpu() { return 0; }
   configure_gpu_repositories() { return 0; }
   _install_driver_packages() { return 0; }
   _configure_power_and_modeset() { return 0; }

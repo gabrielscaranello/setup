@@ -37,11 +37,6 @@ EOF
   fi
 }
 
-_install_zram_packages() {
-  echo "Installing zram packages..."
-  install_packages zram || true
-}
-
 _configure_zram_generator() {
   local zram_conf="/etc/systemd/zram-generator.conf"
   echo "Configuring zram-generator in $zram_conf..."
@@ -87,7 +82,8 @@ _configure_zram() {
   local distro
   distro="$(get_distro_id)" || return 0
 
-  _install_zram_packages
+  echo "Installing zram packages..."
+  install_packages zram || true
 
   case "$distro" in
     debian | lmde)

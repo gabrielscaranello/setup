@@ -9,10 +9,6 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 
-_detect_amd_gpu() {
-  has_amd_gpu
-}
-
 _install_arch_32bit_packages() {
   echo "Installing 32-bit Mesa and Vulkan packages on Arch Linux..."
   install_packages lib32-mesa lib32-vulkan-radeon
@@ -108,7 +104,7 @@ _setup_amd() {
   local distro
   distro="$(require_supported_distro)" || return 1
 
-  if ! _detect_amd_gpu; then
+  if ! has_amd_gpu; then
     echo "No AMD GPU detected. Skipping AMD GPU setup."
     return 0
   fi
