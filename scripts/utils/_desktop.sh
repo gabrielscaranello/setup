@@ -73,14 +73,25 @@ ensure_desktop_environment() {
 resolve_desktop_app() {
   local candidate
   for candidate in "$@"; do
-    if [ -f "/usr/share/applications/$candidate" ] \
-      || [ -f "/usr/local/share/applications/$candidate" ] \
-      || [ -f "/var/lib/flatpak/exports/share/applications/$candidate" ] \
-      || [ -f "$HOME/.local/share/flatpak/exports/share/applications/$candidate" ] \
-      || [ -f "$HOME/.local/share/applications/$candidate" ]; then
-      echo "$candidate"
-      return 0
-    fi
+    local dir
+    for dir in "/usr/share/applications" \
+      "/usr/local/share/applications" \
+      "/var/lib/flatpak/exports/share/applications" \
+      "$HOME/.local/share/flatpak/exports/share/applications" \
+      "$HOME/.local/share/applications"; do
+      if [ -f "$dir/$candidate" ]; then
+        echo "$candidate"
+        return 0
+      elif [[ "$candidate" == *"*"* ]] && compgen -G "$dir/$candidate" > /dev/null 2>&1; then
+        local match
+        for match in $dir/$candidate; do
+          if [ -f "$match" ]; then
+            basename "$match"
+            return 0
+          fi
+        done
+      fi
+    done
   done
   echo "$1"
 }

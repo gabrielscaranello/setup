@@ -29,9 +29,10 @@ teardown() {
 
 # ── Configuration Array Definition Tests ──────────────────────────────────────
 
-@test "GNOME_DCONF_FILES contains all 8 expected configuration files" {
-  [ "${#GNOME_DCONF_FILES[@]}" -eq 8 ]
+@test "GNOME_DCONF_FILES contains all 9 expected configuration files" {
+  [ "${#GNOME_DCONF_FILES[@]}" -eq 9 ]
   [[ " ${GNOME_DCONF_FILES[*]} " =~ " interface.dconf " ]]
+  [[ " ${GNOME_DCONF_FILES[*]} " =~ " gtk.dconf " ]]
   [[ " ${GNOME_DCONF_FILES[*]} " =~ " peripherals.dconf " ]]
   [[ " ${GNOME_DCONF_FILES[*]} " =~ " window-manager.dconf " ]]
   [[ " ${GNOME_DCONF_FILES[*]} " =~ " night-light.dconf " ]]
@@ -55,7 +56,7 @@ teardown() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Starting GNOME desktop preferences configuration..." ]]
   [[ "$output" =~ "Applying GNOME desktop environment preferences..." ]]
-  [[ "$output" =~ "load_dconf_files called with dir: $CONFIG_DIR, count: 8" ]]
+  [[ "$output" =~ "load_dconf_files called with dir: $CONFIG_DIR, count: 9" ]]
   [[ "$output" =~ "GNOME desktop preferences configuration completed successfully." ]]
 }
 

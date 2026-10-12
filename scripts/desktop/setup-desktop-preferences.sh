@@ -11,6 +11,7 @@ CONFIG_DIR="$(get_repo_root)/config/gnome"
 
 GNOME_DCONF_FILES=(
   "interface.dconf"
+  "gtk.dconf"
   "peripherals.dconf"
   "window-manager.dconf"
   "night-light.dconf"

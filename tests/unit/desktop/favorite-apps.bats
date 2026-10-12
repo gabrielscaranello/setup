@@ -31,6 +31,20 @@ teardown() {
   rm -rf "$mock_home"
 }
 
+@test "_resolve_desktop_app matches wildcard patterns when present" {
+  local mock_home
+  mock_home="$(mktemp -d)"
+  HOME="$mock_home"
+  mkdir -p "$mock_home/.local/share/applications"
+  touch "$mock_home/.local/share/applications/org.telegram.desktop._12345.desktop"
+
+  run _resolve_desktop_app "org.telegram.desktop.desktop" "org.telegram.desktop.*.desktop"
+  [ "$status" -eq 0 ]
+  [ "$output" = "org.telegram.desktop._12345.desktop" ]
+
+  rm -rf "$mock_home"
+}
+
 # ── get_favorite_apps Tests ───────────────────────────────────────────────────
 
 @test "get_favorite_apps resolves expected desktop apps on Arch Linux" {

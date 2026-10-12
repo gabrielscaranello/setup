@@ -42,9 +42,13 @@ Configuration settings are organized into individual `.dconf` dump files within 
    - `restore-state=true`
    - `duration-timer=2`
    - `countdown-timer=0`
-   - `indicator-position-max=2`
+   - `indicator-position-max=1`
 
-4. **Coverflow Alt-Tab** (`coverflow-alt-tab.dconf`):
+4. **Copyous** (`copyous.dconf`):
+   - Schema paths: `[org/gnome/shell/extensions/copyous]`, `[.../file-item]`, `[.../link-item]`, `[.../theme]`
+   - `clipboard-size=400`, `database-backend='sqlite'`, `auto-hide-search=true`, `color-scheme='dark'`.
+
+5. **Coverflow Alt-Tab** (`coverflow-alt-tab.dconf`):
    - Schema path: `[org/gnome/shell/extensions/coverflowalttab]`
    - `switcher-style='Coverflow'`
    - `switcher-looping-method='Flip Stack'`
@@ -56,7 +60,7 @@ Configuration settings are organized into individual `.dconf` dump files within 
    - `icon-style='Overlay'`
    - `overlay-icon-size=128.0`
 
-5. **Logo Menu Base** (`logo-menu.dconf`):
+6. **Logo Menu Base** (`logo-menu.dconf`):
    - Schema path: `[org/gnome/shell/extensions/Logo-menu]`
    - `menu-button-terminal='kitty'`
    - `menu-button-icon-size=20`
@@ -65,18 +69,18 @@ Configuration settings are organized into individual `.dconf` dump files within 
    - `symbolic-icon=true`
    - `use-custom-icon=false`
 
-6. **Status Tray** (`status-tray.dconf`):
+7. **Status Tray** (`status-tray.dconf`):
    - Schema path: `[org/gnome/shell/extensions/status-tray]`
-   - `icon-mode='original'`
+   - `icon-mode='original'`, `app-order`, `icon-padding=4`, `overflow-enabled=false`.
 
-7. **Top Bar Organizer** (`top-bar-organizer.dconf`):
+8. **Top Bar Organizer** (`top-bar-organizer.dconf`):
    - Schema path: `[org/gnome/shell/extensions/top-bar-organizer]`
    - Panel box ordering:
      - `left-box-order=['LogoMenu', 'vitalsMenu', 'activities']`
      - `center-box-order=['dateMenu']`
-     - `right-box-order`: status tray, media/screen recording, and quick settings indicators.
+     - `right-box-order`: status tray, Copyous clipboard indicator (`copyous@boerdereinar.dev`), media/screen recording, and quick settings indicators.
 
-8. **Vitals** (`vitals.dconf`):
+9. **Vitals** (`vitals.dconf`):
    - Schema path: `[org/gnome/shell/extensions/vitals]`
    - `alphabetize=true`
    - `fixed-widths=true`

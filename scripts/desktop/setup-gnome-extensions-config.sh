@@ -11,6 +11,7 @@ COMMON_DCONF_FILES=(
   "alphabetical-app-grid.dconf"
   "blur-my-shell.dconf"
   "caffeine.dconf"
+  "copyous.dconf"
   "coverflow-alt-tab.dconf"
   "logo-menu.dconf"
   "status-tray.dconf"

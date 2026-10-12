@@ -51,11 +51,13 @@ Supports both primary desktop environments:
 6. **Nautilus File Manager** (`nautilus.dconf`):
    - Default zoom `small-plus`, tree view navigation enabled in list view.
 7. **Shell & App Folders** (`shell.dconf`):
-   - Dash favorite apps: Dynamically resolved based on distribution and installed desktop entries: Nautilus, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on Debian/Fedora), Firefox (`org.mozilla.firefox.desktop` on Fedora, `firefox.desktop` on Arch/Debian), Chromium (`chromium-browser.desktop` on Fedora, `chromium.desktop` on Arch, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Telegram, Steam, Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora).
+   - Dash favorite apps: Dynamically resolved based on distribution and installed desktop entries: Nautilus, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on Debian/Fedora), Firefox (`org.mozilla.firefox.desktop` on Fedora, `firefox.desktop` on Arch/Debian), Chromium (`chromium-browser.desktop` on Fedora, `chromium.desktop` on Arch, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Steam, Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora), Telegram.
    - App picker folders: Games (`ProtonPlus`, `MangoJuice`, `Steam`), Develop (`DBeaver`, `Compass`), System (including `gufw`, `firewall-config`), Utilities (including `VLC`, `Yelp`/Help).
 8. **Applications** (`apps.dconf`):
    - GNOME Text Editor: highlight current line, space indentation, dark style scheme.
    - System Monitor: custom CPU core colors, resources tab default, user processes filter.
+9. **GTK & File Chooser** (`gtk.dconf`):
+   - GTK4 / GTK3 file chooser dialogs: show hidden files (`show-hidden=true`), sort directories first (`sort-directories-first=true`).
 
 #### GNOME Workspace Startup Environment Script for NVM
 
@@ -302,7 +304,7 @@ Supports both primary desktop environments:
 - **GIVEN** `get_desktop_environment` returns `gnome`
 - **WHEN** `setup-desktop-preferences.sh` is executed
 - **THEN** it should ensure `dconf` is available
-- **AND** load all 8 `.dconf` files from `config/gnome/`
+- **AND** load all 9 `.dconf` files from `config/gnome/`
 - **AND** exit with return code 0
 
 **Scenario: KDE Plasma 6 Desktop Environment Preferences Application**

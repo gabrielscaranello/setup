@@ -66,7 +66,7 @@ get_favorite_apps() {
   esac
 
   local telegram
-  telegram="$(_resolve_desktop_app "org.telegram.desktop.desktop" "telegramdesktop.desktop")"
+  telegram="$(_resolve_desktop_app "org.telegram.desktop.desktop" "org.telegram.desktop.*.desktop" "telegramdesktop.desktop")"
 
   printf "%s\n" \
     "$fm" \
@@ -78,9 +78,9 @@ get_favorite_apps() {
     "org.onlyoffice.desktopeditors.desktop" \
     "$notes" \
     "$gimp" \
-    "$telegram" \
     "$steam" \
-    "$chat"
+    "$chat" \
+    "$telegram"
 }
 
 configure_gnome_favorite_apps() {

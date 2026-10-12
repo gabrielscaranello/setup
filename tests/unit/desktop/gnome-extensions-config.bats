@@ -29,11 +29,12 @@ teardown() {
 
 # ── Configuration Array Definition Tests ──────────────────────────────────────
 
-@test "COMMON_DCONF_FILES contains all 8 expected common configuration files" {
-  [ "${#COMMON_DCONF_FILES[@]}" -eq 8 ]
+@test "COMMON_DCONF_FILES contains all 9 expected common configuration files" {
+  [ "${#COMMON_DCONF_FILES[@]}" -eq 9 ]
   [[ " ${COMMON_DCONF_FILES[*]} " =~ " alphabetical-app-grid.dconf " ]]
   [[ " ${COMMON_DCONF_FILES[*]} " =~ " blur-my-shell.dconf " ]]
   [[ " ${COMMON_DCONF_FILES[*]} " =~ " caffeine.dconf " ]]
+  [[ " ${COMMON_DCONF_FILES[*]} " =~ " copyous.dconf " ]]
   [[ " ${COMMON_DCONF_FILES[*]} " =~ " coverflow-alt-tab.dconf " ]]
   [[ " ${COMMON_DCONF_FILES[*]} " =~ " logo-menu.dconf " ]]
   [[ " ${COMMON_DCONF_FILES[*]} " =~ " status-tray.dconf " ]]
