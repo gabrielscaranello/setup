@@ -13,7 +13,7 @@
   "count_weekly": "4",
   "count_daily": "5",
   "count_hourly": "5",
-  "count_boot": "5",
+  "count_boot": "3",
   "date_format": "%Y-%m-%d %H:%M:%S",
   "exclude": [
     ":home:/.local/shared/Trash",

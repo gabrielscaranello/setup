@@ -26,6 +26,7 @@ The script SHALL inspect the root partition (`/`) filesystem type using `get_roo
 
 - **Btrfs root filesystem**: SHALL deploy `config/timeshift-btrfs.json`.
 - **Non-Btrfs (ext4/etc) root filesystem**: SHALL inspect `~/.config/user-dirs.dirs` for `XDG_DOCUMENTS_DIR` (defaulting to `Documents` if unset) and render `config/timeshift-rsync.json` by replacing `:home:` with `$HOME` and `:documents_dir:` with the resolved documents directory name.
+- **Backup Device Preservation**: If `/etc/timeshift/timeshift.json` already exists and has a configured `backup_device_uuid` and `parent_device_uuid`, deployment SHALL preserve these device identifiers while updating the rest of the configuration.
 
 #### Scenario: Deploying configuration on Btrfs
 
@@ -38,6 +39,7 @@ The script SHALL inspect the root partition (`/`) filesystem type using `get_roo
 - **GIVEN** root partition formatted with ext4 and user documents directory resolved
 - **WHEN** configuration deployment executes
 - **THEN** `/etc/timeshift/timeshift.json` SHALL contain RSYNC snapshot settings with the user's home path substituted
+- **AND** preserve existing backup device UUID if previously configured
 
 ---
 

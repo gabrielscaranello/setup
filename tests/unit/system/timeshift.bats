@@ -128,6 +128,46 @@ setup() {
   rm -rf "$test_target_dir"
 }
 
+@test "_preserve_backup_device_uuid returns content as-is when target file does not exist" {
+  local non_existent="/tmp/non-existent-timeshift.json"
+  rm -f "$non_existent"
+
+  run _preserve_backup_device_uuid "$non_existent" '{"schedule_daily": "true"}'
+  [ "$status" -eq 0 ]
+  [ "$output" = '{"schedule_daily": "true"}' ]
+}
+
+@test "_preserve_backup_device_uuid preserves existing backup_device_uuid and parent_device_uuid" {
+  local mock_file="/tmp/mock-timeshift.json"
+  cat <<'EOF' > "$mock_file"
+{
+  "backup_device_uuid": "abc-123",
+  "parent_device_uuid": "parent-456",
+  "count_daily": "2"
+}
+EOF
+
+  local new_content='{"count_daily": "5", "count_boot": "3"}'
+  run _preserve_backup_device_uuid "$mock_file" "$new_content"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ \"backup_device_uuid\":\ \"abc-123\" ]]
+  [[ "$output" =~ \"parent_device_uuid\":\ \"parent-456\" ]]
+  [[ "$output" =~ \"count_daily\":\ \"5\" ]]
+  [[ "$output" =~ \"count_boot\":\ \"3\" ]]
+  rm -f "$mock_file"
+}
+
+@test "_preserve_backup_device_uuid returns content as-is when existing file has no backup_device_uuid" {
+  local mock_file="/tmp/mock-timeshift-empty.json"
+  echo '{"count_daily": "2"}' > "$mock_file"
+
+  run _preserve_backup_device_uuid "$mock_file" '{"count_daily": "5"}'
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ \"count_daily\":\ \"5\" ]]
+  [[ ! "$output" =~ "backup_device_uuid" ]]
+  rm -f "$mock_file"
+}
+
 @test "_patch_grub_btrfsd_service replaces ExecStart with --timeshift-auto" {
   local test_service="/tmp/test-patch-grub-btrfsd.service"
   echo "ExecStart=/usr/bin/grub-btrfsd /.snapshots" > "$test_service"

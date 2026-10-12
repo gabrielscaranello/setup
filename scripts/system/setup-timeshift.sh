@@ -52,10 +52,45 @@ _render_timeshift_config() {
   fi
 }
 
+_preserve_backup_device_uuid() {
+  local target_file="$1"
+  local content="$2"
+
+  if [ -f "$target_file" ] && command -v python3 > /dev/null 2>&1; then
+    local preserved
+    preserved="$(python3 -c '
+import json, sys
+target_path, new_content = sys.argv[1], sys.argv[2]
+try:
+    with open(target_path) as f:
+        existing = json.load(f)
+    dev_uuid = existing.get("backup_device_uuid", "")
+    parent_uuid = existing.get("parent_device_uuid", "")
+    if dev_uuid:
+        new_data = json.loads(new_content)
+        result = {"backup_device_uuid": dev_uuid, "parent_device_uuid": parent_uuid}
+        result.update(new_data)
+        print(json.dumps(result, indent=2))
+        sys.exit(0)
+except Exception:
+    pass
+print(new_content)
+' "$target_file" "$content" 2> /dev/null || true)"
+    if [ -n "$preserved" ]; then
+      echo "$preserved"
+      return 0
+    fi
+  fi
+
+  echo "$content"
+}
+
 _write_timeshift_config() {
   local content="$1"
   local target_dir="/etc/timeshift"
   local target_file="$target_dir/timeshift.json"
+
+  content="$(_preserve_backup_device_uuid "$target_file" "$content")"
 
   sudo mkdir -p "$target_dir"
   echo "$content" | sudo tee "$target_file" > /dev/null
