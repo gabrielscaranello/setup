@@ -30,6 +30,7 @@ APPS=(
   qvidcap
   system-config-printer
   uxterm
+  vim
   xterm
 )
 

@@ -9,8 +9,10 @@ teardown() {
   # Remove test files if created
   sudo rm -f "/usr/share/applications/bottom.desktop" 2> /dev/null || true
   sudo rm -f "/usr/share/applications/cups.desktop" 2> /dev/null || true
+  sudo rm -f "/usr/share/applications/vim.desktop" 2> /dev/null || true
   rm -f "$HOME/.local/share/applications/bottom.desktop" 2> /dev/null || true
   rm -f "$HOME/.local/share/applications/cups.desktop" 2> /dev/null || true
+  rm -f "$HOME/.local/share/applications/vim.desktop" 2> /dev/null || true
   rm -f "$HOME/.local/share/applications/nvim.desktop" 2> /dev/null || true
   rm -f "$HOME/.local/share/applications/btop.desktop" 2> /dev/null || true
 }
@@ -27,6 +29,11 @@ teardown() {
     sudo chmod 444 /usr/share/applications/cups.desktop
   fi
 
+  # Create a temporary desktop entry simulating vim.desktop
+  if sudo touch /usr/share/applications/vim.desktop 2> /dev/null; then
+    echo -e "[Desktop Entry]\nType=Application\nName=Vim\nExec=vim\nNoDisplay=false" | sudo tee /usr/share/applications/vim.desktop > /dev/null
+  fi
+
   run bash /setup/scripts/desktop/setup-hide-apps.sh
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Hiding unwanted desktop applications..." ]]
@@ -41,6 +48,11 @@ teardown() {
     [ -f "$HOME/.local/share/applications/cups.desktop" ]
     [ -w "$HOME/.local/share/applications/cups.desktop" ]
     grep -q "NoDisplay=true" "$HOME/.local/share/applications/cups.desktop"
+  fi
+
+  if [ -f "/usr/share/applications/vim.desktop" ]; then
+    [ -f "$HOME/.local/share/applications/vim.desktop" ]
+    grep -q "NoDisplay=true" "$HOME/.local/share/applications/vim.desktop"
   fi
 
   # Idempotent re-run

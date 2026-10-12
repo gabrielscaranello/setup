@@ -179,6 +179,15 @@ EOF
   [ "$has_printer" -eq 1 ]
 }
 
+@test "APPS contains vim" {
+  local has_vim=0
+  local app
+  for app in "${APPS[@]}"; do
+    if [ "$app" = "vim" ]; then has_vim=1; fi
+  done
+  [ "$has_vim" -eq 1 ]
+}
+
 @test "_unhide_app removes local desktop file when NoDisplay=true is present" {
   local target_dir
   target_dir="$(_get_target_dir)"

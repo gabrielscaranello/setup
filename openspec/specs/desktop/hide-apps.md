@@ -43,6 +43,7 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, Arch L
 - `qvidcap`: V4L2 Video Capture Utility
 - `system-config-printer`: Print Settings / Printer configuration GUI (redundant with desktop settings)
 - `uxterm`: UXTerm terminal launcher
+- `vim`: Vim text editor launcher (prefer nvim)
 - `xterm`: XTerm terminal launcher
 
 > [!NOTE]
