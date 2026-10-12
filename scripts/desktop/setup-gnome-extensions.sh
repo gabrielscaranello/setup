@@ -166,6 +166,15 @@ _get_target_extensions() {
   printf "%s\n" "${extensions[@]}"
 }
 
+_install_extension_dependencies() {
+  if [ "${GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL:-0}" = "1" ]; then
+    echo "GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL is active. Skipping extension dependencies installation."
+    return 0
+  fi
+  echo "Installing GNOME extension dependencies (libgda, gsound)..."
+  install_packages libgda gsound
+}
+
 main() {
   local de
   de="$(get_desktop_environment)"
@@ -176,6 +185,8 @@ main() {
   fi
 
   echo "Setting up GNOME Shell extensions..."
+
+  _install_extension_dependencies
 
   local shell_ver
   shell_ver="$(_get_gnome_shell_major_version)"

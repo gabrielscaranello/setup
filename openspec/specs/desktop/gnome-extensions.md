@@ -20,6 +20,7 @@ Automate the downloading, installation, updating, and activation of essential GN
 - `gnome-shell` and `gnome-extensions` command line tool available.
 - `curl` or `wget` for downloading extension archives (handled via `_utils.sh` helpers).
 - Python 3 with `json` module or `grep`/`sed` fallback for parsing GNOME Extensions API responses.
+- Extension dependencies: `libgda` and `gsound` (required by Copyous for SQLite clipboard database and audio events) resolved via `scripts/packages.conf` and installed via `install_packages`.
 
 ### Target Extension Catalog
 
@@ -84,7 +85,8 @@ Automate the downloading, installation, updating, and activation of essential GN
 - **GIVEN** `get_desktop_environment` returns `gnome`
 - **AND** `get_distro_id` returns `debian` or `fedora`
 - **WHEN** `setup-gnome-extensions.sh` is executed
-- **THEN** it should install and enable the 12 common extensions
+- **THEN** it should install extension dependencies (`libgda`, `gsound`) via `install_packages`
+- **AND** install and enable the 12 common extensions
 - **AND** persist the enabled extension UUIDs in dconf and GSettings
 - **AND** set `disable-user-extensions` to `false`
 - **AND** skip Arch Linux Updates Indicator (ID: 1010)
@@ -94,7 +96,8 @@ Automate the downloading, installation, updating, and activation of essential GN
 - **GIVEN** `get_desktop_environment` returns `gnome`
 - **AND** `get_distro_id` returns `arch`
 - **WHEN** `setup-gnome-extensions.sh` is executed
-- **THEN** it should install and enable the 12 common extensions
+- **THEN** it should install extension dependencies (`libgda`, `gsound`) via `install_packages`
+- **AND** install and enable the 12 common extensions
 - **AND** persist the enabled extension UUIDs in dconf and GSettings
 - **AND** set `disable-user-extensions` to `false`
 - **AND** install and enable Arch Linux Updates Indicator (ID: 1010)

@@ -56,6 +56,7 @@ teardown() {
   run bash /setup/scripts/desktop/setup-gnome-extensions.sh
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Setting up GNOME Shell extensions..." ]]
+  [[ "$output" =~ "Installing GNOME extension dependencies (libgda, gsound)..." ]]
   [[ "$output" =~ "Detected GNOME Shell major version: 47" ]]
   [[ "$output" =~ "GNOME extensions setup completed successfully." ]]
 

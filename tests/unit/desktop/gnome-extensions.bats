@@ -2,11 +2,12 @@
 # shellcheck disable=SC2218
 
 setup() {
+  export GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL=1
   source /setup/scripts/desktop/setup-gnome-extensions.sh
 }
 
 teardown() {
-  :
+  unset GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL
 }
 
 # ── Desktop Environment Skip Policy Tests ─────────────────────────────────────
@@ -146,6 +147,32 @@ teardown() {
   run _install_extension_archive "/tmp/dummy.zip"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: /tmp/dummy.zip" ]]
+}
+
+# ── Extension Dependencies Tests (SRP / DIP) ──────────────────────────────────
+
+@test "_install_extension_dependencies skips when GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL is set" {
+  GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL=1
+  install_packages() {
+    echo "install_packages called: $*"
+  }
+
+  run _install_extension_dependencies
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL is active. Skipping extension dependencies installation." ]]
+  [[ ! "$output" =~ "install_packages called" ]]
+}
+
+@test "_install_extension_dependencies calls install_packages with libgda and gsound" {
+  GNOME_EXTENSIONS_SKIP_PACKAGE_INSTALL=0
+  install_packages() {
+    echo "install_packages called: $*"
+  }
+
+  run _install_extension_dependencies
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing GNOME extension dependencies (libgda, gsound)..." ]]
+  [[ "$output" =~ "install_packages called: libgda gsound" ]]
 }
 
 # ── Extensions Persistence & Synchronization Tests (SRP / DIP) ────────────────

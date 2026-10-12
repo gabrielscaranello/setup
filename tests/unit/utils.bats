@@ -145,6 +145,16 @@ setup() {
   [ "$(_get_package_name "partitionmanager" "pacman")" = "partitionmanager" ]
 }
 
+@test "_get_package_name resolves gnome extension dependencies for distros" {
+  [ "$(_get_package_name "gsound" "apt")" = "gir1.2-gsound-1.0" ]
+  [ "$(_get_package_name "gsound" "dnf")" = "gsound" ]
+  [ "$(_get_package_name "gsound" "pacman")" = "gsound" ]
+
+  [ "$(_get_package_name "libgda" "apt")" = "gir1.2-gda-5.0" ]
+  [ "$(_get_package_name "libgda" "dnf")" = "libgda libgda-sqlite" ]
+  [ "$(_get_package_name "libgda" "pacman")" = "libgda6" ]
+}
+
 @test "_get_package_name resolves nvidia driver package for distros" {
   [ "$(_get_package_name "nvidia-driver" "apt")" = "nvidia-driver" ]
   [ "$(_get_package_name "nvidia-driver" "dnf")" = "akmod-nvidia" ]
