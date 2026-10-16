@@ -19,7 +19,8 @@ ARG USERNAME=setupuser
 
 # Create non-root user with passwordless sudo
 RUN useradd -m -s /bin/bash "$USERNAME" \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
+    && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers \
+    && sed -i 's|secure_path=".*"|secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"|' /etc/sudoers
 
 WORKDIR /setup
 
