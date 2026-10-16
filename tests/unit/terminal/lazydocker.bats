@@ -110,15 +110,6 @@ setup() {
   run _install_lazydocker
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary\ fedora ]]
-
-  get_distro_id() { echo "lmde"; }
-  _install_lazydocker_binary() {
-    echo "installed from binary lmde"
-    return 0
-  }
-  run _install_lazydocker
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ binary\ lmde ]]
 }
 
 @test "_resolve_lazydocker_arch maps x86 and arm64 architectures" {

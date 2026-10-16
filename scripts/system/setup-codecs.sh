@@ -18,24 +18,6 @@ _setup_fedora_repos() {
   _swap_fedora_ffmpeg
 }
 
-_install_codec_packages() {
-  local distro="$1"
-
-  if [ "$distro" = "lmde" ]; then
-    echo "Installing Linux Mint multimedia meta-codecs package..."
-    install_packages mint-meta-codecs || true
-  fi
-
-  # Install multimedia packages using cross-distro abstraction
-  install_packages ffmpeg \
-    gstreamer-plugins-base \
-    gstreamer-plugins-good \
-    gstreamer-plugins-bad \
-    gstreamer-plugins-ugly \
-    gstreamer-libav \
-    codec-openh264
-}
-
 main() {
   local distro
   distro="$(get_distro_id)"
@@ -51,7 +33,14 @@ main() {
     _setup_fedora_repos
   fi
 
-  _install_codec_packages "$distro"
+  # Install multimedia packages using cross-distro abstraction
+  install_packages ffmpeg \
+    gstreamer-plugins-base \
+    gstreamer-plugins-good \
+    gstreamer-plugins-bad \
+    gstreamer-plugins-ugly \
+    gstreamer-libav \
+    codec-openh264
 
   echo "Codecs installed successfully!"
 }

@@ -53,21 +53,6 @@ COMMON_DEBLOAT_PACKAGES=(
   transmission-common
 )
 
-COMMON_CINNAMON_DEBLOAT_PACKAGES=(
-  celluloid
-  gnome-terminal
-  "hypnotix*"
-  "libreoffice*"
-  mintchat
-  rhythmbox
-  simple-scan
-  sticky
-  thingy
-  "thunderbird*"
-  "transmission*"
-  "xterm*"
-)
-
 COMMON_GNOME_DEBLOAT_PACKAGES=(
   totem
   gnome-music
@@ -138,21 +123,8 @@ _debloat_debian() {
         "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
       )
       ;;
-    cinnamon)
-      targets+=(
-        "${COMMON_CINNAMON_DEBLOAT_PACKAGES[@]}"
-      )
-      ;;
     *)
-      local distro
-      distro="$(get_distro_id)"
-      if [ "$distro" = "lmde" ]; then
-        targets+=(
-          "${COMMON_CINNAMON_DEBLOAT_PACKAGES[@]}"
-        )
-      else
-        echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
-      fi
+      echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
       ;;
   esac
 
@@ -225,7 +197,7 @@ main() {
   distro="$(get_distro_id)"
 
   case "$distro" in
-    debian | lmde)
+    debian)
       _debloat_debian
       ;;
     fedora)

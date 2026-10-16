@@ -13,12 +13,12 @@ Installs Lazydocker terminal UI for Docker container management.
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`)**: Install `lazydocker` from distribution repositories via `install_packages lazydocker`.
-- **Debian (`debian`), Fedora (`fedora`) & LMDE (`lmde`)**: Query the GitHub API (`jesseduffield/lazydocker`) for the latest release, detect CPU architecture (`x86_64`, `arm64`, `x86`), download and extract tarball to `/usr/local/bin/lazydocker`.
+- **Debian (`debian`) & Fedora (`fedora`)**: Query the GitHub API (`jesseduffield/lazydocker`) for the latest release, detect CPU architecture (`x86_64`, `arm64`, `x86`), download and extract tarball to `/usr/local/bin/lazydocker`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
 ### Requirement: Idempotency
 
-On Debian/Fedora/LMDE, if `lazydocker --version` matches the latest GitHub release, download and extraction SHALL be skipped.
+On Debian/Fedora, if `lazydocker --version` matches the latest GitHub release, download and extraction SHALL be skipped.
 
 #### Scenario: Running on Arch Linux
 
@@ -26,9 +26,9 @@ On Debian/Fedora/LMDE, if `lazydocker --version` matches the latest GitHub relea
 - **WHEN** `scripts/terminal/setup-lazydocker.sh` runs
 - **THEN** `install_packages lazydocker` is called
 
-#### Scenario: Running on Fedora, Debian or LMDE
+#### Scenario: Running on Fedora or Debian
 
-- **GIVEN** a Fedora, Debian or LMDE system (`get_distro_id` returns `fedora`, `debian` or `lmde`)
+- **GIVEN** a Fedora or Debian system (`get_distro_id` returns `fedora` or `debian`)
 - **WHEN** `scripts/terminal/setup-lazydocker.sh` runs
 - **THEN** latest binary release is downloaded and installed to `/usr/local/bin/lazydocker`
 

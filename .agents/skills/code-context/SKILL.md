@@ -31,18 +31,17 @@ scripts/
 │   ├── _gpu_utils.sh            ← Shared GPU utilities (hardware detection & configure_gpu_repositories)
 │   ├── arch/_repositories.sh    ← Arch-specific repo helpers
 │   ├── debian/_repositories.sh  ← Debian-specific repo helpers
-│   ├── fedora/_repositories.sh  ← Fedora-specific repo helpers
-│   └── lmde/_repositories.sh    ← LMDE-specific repo helpers
+│   └── fedora/_repositories.sh  ← Fedora-specific repo helpers
 ├── terminal/          ← Terminal emulators, fonts
 └── toolchain/         ← Dev runtimes (nvm, go, rust, etc.)
 
 runners/
 ├── _utils.sh            ← Shared steps (COMMON_INITIAL_STEPS, COMMON_POST_STEPS) & run_pipeline
 ├── main.sh              ← Central CLI dispatcher (single source of truth for commands)
-├── arch.sh / debian.sh / fedora.sh / lmde.sh  ← Distro-specific pipelines
+├── arch.sh / debian.sh / fedora.sh  ← Distro-specific pipelines
 
 tests/
-├── docker/            ← Base Dockerfiles: archlinux.Dockerfile, debian.Dockerfile, fedora.Dockerfile, lmde.Dockerfile
+├── docker/            ← Base Dockerfiles: archlinux.Dockerfile, debian.Dockerfile, fedora.Dockerfile
 ├── unit/              ← Fast Bats unit tests (mocked, no real installs)
 └── integration/       ← E2E Bats tests (run inside Docker containers)
 ```
@@ -70,7 +69,6 @@ make test-integration
 docker run --rm -it -v "$(pwd)":/setup setup-test-debian bash
 docker run --rm -it -v "$(pwd)":/setup setup-test-fedora bash
 docker run --rm -it -v "$(pwd)":/setup setup-test-archlinux bash
-docker run --rm -it -v "$(pwd)":/setup setup-test-lmde bash
 
 # ❌ NEVER — runs on the developer's host machine, may corrupt their system
 bash scripts/toolchain/setup-docker.sh
@@ -224,23 +222,23 @@ install_packages pkg # resolves to: pacman --needed, apt install -y, dnf install
 
 ### `scripts/_utils.sh` — Core Helpers
 
-| Function                      | Signature                                                | Purpose                                                  |
-| ----------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
-| `get_distro_id`               | `get_distro_id`                                          | Returns `debian`, `fedora`, `arch`, `lmde`, or `unknown` |
-| `require_supported_distro`    | `require_supported_distro`                               | Validates supported distro (`debian/fedora/arch/lmde`)   |
-| `is_distro`                   | `is_distro <name>`                                       | Returns 0 if current distro matches                      |
-| `install_packages`            | `install_packages <pkg>...`                              | Cross-distro package install via packages.conf           |
-| `get_desktop_environment`     | `get_desktop_environment`                                | Returns `gnome`, `plasma`, `cinnamon`, or `unknown`      |
-| `get_root_filesystem`         | `get_root_filesystem`                                    | Returns `btrfs`, `ext4`, etc.                            |
-| `get_shell_profile`           | `get_shell_profile`                                      | Returns `~/.zshrc`, `~/.bashrc`, or `~/.profile`         |
-| `get_gpu_vendor`              | `get_gpu_vendor`                                         | Returns `nvidia`, `amd`, `intel`, or `unknown`           |
-| `enable_cron_service`         | `enable_cron_service [service]`                          | Enables and starts distribution cron service             |
-| `install_flatpak_app`         | `install_flatpak_app <app_id> [name]`                    | Idempotently installs a Flatpak app from Flathub         |
-| `download_file`               | `download_file <url> <dest>`                             | Downloads file (curl/wget fallback)                      |
-| `fetch_url`                   | `fetch_url <url>`                                        | Fetches URL to stdout (curl/wget fallback)               |
-| `fetch_github_latest_version` | `fetch_github_latest_version <owner/repo>`               | Resolves release tag from GitHub (rate-limit resilient)  |
-| `is_version_up_to_date`       | `is_version_up_to_date <local> <remote>`                 | Compares versions idempotently                           |
-| `install_github_binary`       | `install_github_binary <name> <repo> <ver> <file> <bin>` | Installs GitHub release archive binary                   |
+| Function                      | Signature                                                | Purpose                                                 |
+| ----------------------------- | -------------------------------------------------------- | ------------------------------------------------------- |
+| `get_distro_id`               | `get_distro_id`                                          | Returns `debian`, `fedora`, `arch`, or `unknown`        |
+| `require_supported_distro`    | `require_supported_distro`                               | Validates supported distro (`debian/fedora/arch`)       |
+| `is_distro`                   | `is_distro <name>`                                       | Returns 0 if current distro matches                     |
+| `install_packages`            | `install_packages <pkg>...`                              | Cross-distro package install via packages.conf          |
+| `get_desktop_environment`     | `get_desktop_environment`                                | Returns `gnome`, `plasma`, or `unknown`                 |
+| `get_root_filesystem`         | `get_root_filesystem`                                    | Returns `btrfs`, `ext4`, etc.                           |
+| `get_shell_profile`           | `get_shell_profile`                                      | Returns `~/.zshrc`, `~/.bashrc`, or `~/.profile`        |
+| `get_gpu_vendor`              | `get_gpu_vendor`                                         | Returns `nvidia`, `amd`, `intel`, or `unknown`          |
+| `enable_cron_service`         | `enable_cron_service [service]`                          | Enables and starts distribution cron service            |
+| `install_flatpak_app`         | `install_flatpak_app <app_id> [name]`                    | Idempotently installs a Flatpak app from Flathub        |
+| `download_file`               | `download_file <url> <dest>`                             | Downloads file (curl/wget fallback)                     |
+| `fetch_url`                   | `fetch_url <url>`                                        | Fetches URL to stdout (curl/wget fallback)              |
+| `fetch_github_latest_version` | `fetch_github_latest_version <owner/repo>`               | Resolves release tag from GitHub (rate-limit resilient) |
+| `is_version_up_to_date`       | `is_version_up_to_date <local> <remote>`                 | Compares versions idempotently                          |
+| `install_github_binary`       | `install_github_binary <name> <repo> <ver> <file> <bin>` | Installs GitHub release archive binary                  |
 
 ### Distro-Specific Repo & Hardware Helpers
 
@@ -250,7 +248,6 @@ install_packages pkg # resolves to: pacman --needed, apt install -y, dnf install
 | Arch Linux | `scripts/system/arch/_repositories.sh`   | `add_arch_multilib_repo`                                                                                                             |
 | Debian     | `scripts/system/debian/_repositories.sh` | `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo` |
 | Fedora     | `scripts/system/fedora/_repositories.sh` | `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`                                                    |
-| LMDE       | `scripts/system/lmde/_repositories.sh`   | `get_lmde_codename`, `get_lmde_debian_codename`, `add_lmde_official_repo`, `add_lmde_backports_repo`                                 |
 
 ---
 

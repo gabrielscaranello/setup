@@ -10,7 +10,6 @@ Automate installation and configuration of the modern `Bibata-Modern-Ice` cursor
 
 - **GNOME**: Configures cursor theme and size via `gsettings` (`org.gnome.desktop.interface cursor-theme` and `cursor-size`).
 - **KDE Plasma**: Configures cursor theme and size via `kwriteconfig6` / `kwriteconfig5` in `kcminputrc`, configures XDG `default/index.theme`, and invokes `kapplymousetheme` if available.
-- **Cinnamon**: Configures cursor theme (`Bibata-Modern-Ice`) and size (`20`) via `gsettings` (`org.cinnamon.desktop.interface cursor-theme` and `cursor-size`), `dconf` (`/org/cinnamon/desktop/interface/cursor-theme` and `cursor-size`), and XDG `default/index.theme`.
 - **Unknown / Unsupported DE**: Per project governance, when `get_desktop_environment` returns `unknown` or an unsupported desktop environment, the script must **NOT** install or guess configurations, and must gracefully exit 0.
 
 ### Upstream Assets & Installation
@@ -49,15 +48,6 @@ Automate installation and configuration of the modern `Bibata-Modern-Ice` cursor
 - **AND** configure `kcminputrc` via `kwriteconfig6` or `kwriteconfig5`
 - **AND** configure XDG default cursor theme
 - **AND** apply mouse theme if `kapplymousetheme` is available
-
-**Scenario: Cinnamon Desktop Environment**
-
-- **GIVEN** `get_desktop_environment` returns `cinnamon`
-- **WHEN** `setup-cursor-theme.sh` is executed
-- **THEN** it should download and install `Bibata-Modern-Ice`
-- **AND** configure Cinnamon cursor theme to "Bibata-Modern-Ice" via `gsettings` and `dconf`
-- **AND** configure Cinnamon cursor size to 20 via `gsettings` and `dconf`
-- **AND** configure XDG default cursor theme
 
 **Scenario: Idempotent Execution**
 

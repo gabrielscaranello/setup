@@ -28,12 +28,3 @@
   [[ "$output" =~ "Setting up Bibata-Modern-Ice cursor theme for plasma..." ]]
   [[ "$output" =~ "Cursor theme setup completed successfully." ]]
 }
-
-@test "setup-cursor-theme.sh configures cursor theme when DE is Cinnamon" {
-  export XDG_CURRENT_DESKTOP="X-Cinnamon"
-
-  run bash /setup/scripts/desktop/setup-cursor-theme.sh
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Setting up Bibata-Modern-Ice cursor theme for cinnamon..." ]]
-  [[ "$output" =~ "Cursor theme setup completed successfully." ]]
-}

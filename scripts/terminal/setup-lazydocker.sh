@@ -67,7 +67,7 @@ _install_lazydocker() {
       echo "Installing lazydocker from distribution repository..."
       install_packages lazydocker
       ;;
-    debian | fedora | lmde)
+    debian | fedora)
       _install_lazydocker_binary
       ;;
   esac

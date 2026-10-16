@@ -78,24 +78,12 @@
   [[ "$output" =~ "luarocks python3 python-venv" ]]
 }
 
-@test "_install_runtime_deps installs common and debian specific dependencies on lmde" {
-  source /setup/scripts/toolchain/setup-neovim.sh
-  install_packages() {
-    echo "installing packages: $*"
-    return 0
-  }
-  run _install_runtime_deps "lmde"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
-  [[ "$output" =~ "luarocks python3 python-venv" ]]
-}
-
-@test "_install_neovim builds from source on lmde" {
+@test "_install_neovim builds from source on debian" {
   source /setup/scripts/toolchain/setup-neovim.sh
   _ensure_rust() { echo "step: ensure_rust"; }
   _install_build_deps() { echo "step: install_build_deps"; }
   _install_neovim_from_source() { echo "step: install_neovim_from_source"; }
-  run _install_neovim "lmde"
+  run _install_neovim "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "step: ensure_rust" ]]
   [[ "$output" =~ "step: install_build_deps" ]]

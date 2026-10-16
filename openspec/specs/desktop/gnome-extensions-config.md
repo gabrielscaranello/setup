@@ -14,7 +14,7 @@ Each extension's settings are isolated into dedicated `.dconf` files under `conf
   - The script checks the current desktop environment using `get_desktop_environment`.
   - **GNOME Only**: When `get_desktop_environment` returns `gnome`, the script proceeds with applying the modular `dconf` configurations and distribution-tailored extension keys.
 - **Non-GNOME Skip Invariant**:
-  - Whenever `get_desktop_environment` returns anything other than `gnome` (such as `plasma`, `xfce`, `cinnamon`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all configuration steps.
+  - Whenever `get_desktop_environment` returns anything other than `gnome` (such as `plasma`, `xfce`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all configuration steps.
   - It prints an informative log message indicating that GNOME is not the active desktop environment and **exits with return code 0** without modifying any dconf settings, files, or executing system commands.
 
 ### Prerequisites

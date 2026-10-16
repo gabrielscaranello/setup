@@ -13,7 +13,7 @@ Installs Go (via official binary archive or distribution repositories), exports 
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Fedora (`fedora`) & Arch Linux (`arch`)**: Install `golang` from native package repositories via `install_packages golang`.
-- **Debian (`debian`) & LMDE (`lmde`)**: Download and extract official `go<version>.linux-amd64.tar.gz` to `/usr/local/go`.
+- **Debian (`debian`)**: Download and extract official `go<version>.linux-amd64.tar.gz` to `/usr/local/go`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
 ### Requirement: Shell Profile PATH Integration
@@ -31,9 +31,9 @@ The script SHALL install required global Go utilities (e.g. `github.com/reteps/d
 - **THEN** `golang` is installed via native package manager
 - **AND** global Go tools are installed
 
-#### Scenario: Running on Debian or LMDE
+#### Scenario: Running on Debian
 
-- **GIVEN** a Debian or LMDE system (`get_distro_id` returns `debian` or `lmde`)
+- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/toolchain/setup-go.sh` runs
 - **THEN** official Go binary archive is installed in `/usr/local/go`
 - **AND** shell profile contains Go PATH export

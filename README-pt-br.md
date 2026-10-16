@@ -1,6 +1,6 @@
 # 🚀 Desktop Setup
 
-Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux, LMDE).
+Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux).
 
 🇺🇸 **English Documentation:** [README.md](README.md)
 
@@ -43,12 +43,11 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 🐧 Distribuições & Ambientes Gráficos Suportados
 ------------------------------------------------
 
-| Distribuição                           | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                          |
-| :------------------------------------- | :--------------------- | :---------------------- | :--------------------------------------- |
-| **Debian 13 (Trixie)**                 | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`) |
-| **Fedora 44**                          | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`) |
-| **Arch Linux**                         | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)     |
-| **LMDE 7 (Linux Mint Debian Edition)** | `apt`                  | Cinnamon                | `runners/lmde.sh` (`./main.sh lmde`)     |
+| Distribuição           | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                          |
+| :--------------------- | :--------------------- | :---------------------- | :--------------------------------------- |
+| **Debian 13 (Trixie)** | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`) |
+| **Fedora 44**          | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`) |
+| **Arch Linux**         | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)     |
 
 ⚡️ Começando (rápido)
 ---------------------
@@ -56,11 +55,10 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 Execute o setup completo com detecção automática de distribuição, dispare pipelines específicos ou execute módulos isolados:
 
 ```sh
-# Setup completo com autodetecção (Debian, Fedora, Arch, LMDE):
+# Setup completo com autodetecção (Debian, Fedora, Arch):
 make all # Ou: ./main.sh all / ./main.sh
 
 # Pipelines explícitos por distribuição:
-./main.sh lmde   # Executa o pipeline completo do LMDE 7
 ./main.sh debian # Executa o pipeline completo do Debian 13
 ./main.sh fedora # Executa o pipeline completo do Fedora 44
 ./main.sh arch   # Executa o pipeline completo do Arch Linux
@@ -85,7 +83,7 @@ make clean            # Limpa artefatos temporários
 ---------------------------------------
 
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
-- `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `lmde.sh`, `main.sh`, `_utils.sh`)
+- `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
 - `Makefile` — Runner e alias de conveniência para `./main.sh`, testes e ferramentas de qualidade de código
 - `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes

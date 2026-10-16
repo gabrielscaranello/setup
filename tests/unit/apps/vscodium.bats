@@ -56,22 +56,6 @@ setup() {
   [[ "$output" =~ "installed packages: vscodium" ]]
 }
 
-@test "_install_vscodium on lmde adds repo and installs codium" {
-  get_distro_id() { echo "lmde"; }
-  add_debian_vscodium_repo() {
-    echo "called add_debian_vscodium_repo"
-    return 0
-  }
-  install_packages() {
-    echo "installed packages: $*"
-    return 0
-  }
-  run _install_vscodium
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called add_debian_vscodium_repo" ]]
-  [[ "$output" =~ "installed packages: vscodium" ]]
-}
-
 @test "main executes successfully and reports complete" {
   _install_vscodium() {
     echo "called _install_vscodium"

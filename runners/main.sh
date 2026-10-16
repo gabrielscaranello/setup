@@ -24,21 +24,18 @@ Available Commands:
   arch                    - Run complete setup pipeline for Arch Linux
   arch-de                 - Provision Desktop Environment (GNOME, KDE Plasma) on Arch Linux
   browsers                - Install Web Browsers (Chromium, Firefox)
-  cinnamon-applets        - Install Cinnamon applets and extensions (Spices)
-  cinnamon-applets-config - Configure Cinnamon panel layout and applets
-  cinnamon-preferences    - Configure Cinnamon desktop preferences and ergonomics
   codecs                  - Install Multimedia Codecs and A/V Plugins
   cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
   dbeaver                 - Install DBeaver
   debian                  - Run complete setup pipeline for Debian
-  debloat                 - Remove unused default packages and bloatware (Debian, Fedora, LMDE)
+  debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
   default-apps            - Configure default desktop applications (MIME types, handlers, terminal)
-  desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma / Cinnamon)
-  desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma, Cinnamon)
+  desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
+  desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
   discord                 - Install Discord
   docker                  - Install Docker engine and plugins (buildx, compose)
   fedora                  - Run complete setup pipeline for Fedora
-  firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch/LMDE) and GUI
+  firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
   flatpak                 - Configure Flatpak and Flathub repository
   fonts                   - Install JetBrains Mono Nerd Font
   gimp                    - Install GIMP image editor
@@ -47,14 +44,13 @@ Available Commands:
   gnome-extensions-config - Configure GNOME Shell extensions via dconf
   go                      - Install Golang programming language
   graphics                - Install and configure graphics drivers (NVIDIA / AMD)
-  gtk-theme               - Install and configure GTK theme (adw-gtk3-dark / Colloid-Dark)
+  gtk-theme               - Install and configure GTK theme (adw-gtk3-dark)
   hide-apps               - Hide unwanted applications from desktop menus (.desktop files)
   icon-theme              - Install and configure Papirus-Dark icon theme
   kernel-debian           - Install latest Linux kernel and headers from Debian backports
   kitty                   - Install Kitty terminal emulator
   lazydocker              - Install Lazydocker
   lazygit                 - Install Lazygit
-  lmde                    - Run complete setup pipeline for LMDE (Linux Mint Debian Edition)
   look                    - Configure desktop appearance (cursor, GTK theme, icon theme)
   mongodb-compass         - Install MongoDB Compass (Flatpak)
   neovim                  - Install Neovim and build runtime dependencies
@@ -64,7 +60,7 @@ Available Commands:
   onlyoffice              - Install ONLYOFFICE Desktop Editors (Flatpak)
   packages                - Install core system packages and CLI utilities
   rust                    - Install Rust, Cargo and tools (tree-sitter-cli)
-  screenshot              - Configure Screenshot Tool (Flameshot on GNOME/Cinnamon, Spectacle on Plasma)
+  screenshot              - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
   steam                   - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
   swap                    - Configure Swap and VM memory tuning
   telegram                - Install Telegram Desktop
@@ -79,11 +75,6 @@ run_all() {
   distro="$(get_distro_id 2> /dev/null || true)"
 
   case "$distro" in
-    lmde)
-      echo "Delegating complete setup to LMDE runner..."
-      bash "$RUNNERS_DIR/lmde.sh"
-      ;;
-
     debian)
       echo "Delegating complete setup to Debian runner..."
       bash "$RUNNERS_DIR/debian.sh"
@@ -101,9 +92,9 @@ run_all() {
 
     *)
       if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
-        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', and 'lmde' are currently supported." >&2
+        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', and 'arch' are currently supported." >&2
       else
-        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, lmde)." >&2
+        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch)." >&2
       fi
       return 1
       ;;
@@ -141,18 +132,6 @@ run_module() {
 
     codecs)
       bash "$SCRIPTS_DIR/system/setup-codecs.sh"
-      ;;
-
-    cinnamon-applets)
-      bash "$SCRIPTS_DIR/desktop/setup-cinnamon-applets.sh"
-      ;;
-
-    cinnamon-applets-config)
-      bash "$SCRIPTS_DIR/desktop/setup-cinnamon-applets-config.sh"
-      ;;
-
-    cinnamon-preferences)
-      bash "$SCRIPTS_DIR/desktop/setup-cinnamon-preferences.sh"
       ;;
 
     cursor)
@@ -257,10 +236,6 @@ run_module() {
 
     lazygit)
       bash "$SCRIPTS_DIR/terminal/setup-lazygit.sh"
-      ;;
-
-    lmde)
-      bash "$RUNNERS_DIR/lmde.sh"
       ;;
 
     look)

@@ -8,7 +8,7 @@ _get_package_manager() {
   local distro
   distro="$(get_distro_id 2> /dev/null || true)"
   case "$distro" in
-    debian | lmde)
+    debian)
       echo "apt"
       return 0
       ;;
@@ -51,7 +51,7 @@ _get_package_name() {
   if [ -n "$config_file" ] && [ -f "$config_file" ]; then
     local field_idx=0
     case "$target" in
-      debian | apt | lmde) field_idx=2 ;;
+      debian | apt) field_idx=2 ;;
       fedora | dnf) field_idx=3 ;;
       arch | pacman) field_idx=4 ;;
       *) field_idx=0 ;;
@@ -169,7 +169,7 @@ is_package_installed() {
   local item
   for item in $resolved; do
     case "$distro" in
-      debian | lmde)
+      debian)
         dpkg -s "$item" > /dev/null 2>&1 || return 1
         ;;
       fedora)

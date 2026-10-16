@@ -2,10 +2,10 @@
 
 ## Purpose
 
-Detects NVIDIA graphics hardware, configures appropriate distribution repositories (including Debian backports for driver and firmware), installs NVIDIA display drivers, sets up Wayland modesetting and power management systemd services, and configures modern hybrid GPU management via **`switcheroo-control`**, **`prime-run`**, and PCIe Runtime D3 (RTD3) dynamic power management for laptops with dual Intel/AMD + NVIDIA graphics across **Debian 13 (Trixie)**, **Fedora 44**, **Arch Linux**, and **LMDE 7**, completely replacing legacy Optimus and archived switching mechanisms.
+Detects NVIDIA graphics hardware, configures appropriate distribution repositories (including Debian backports for driver and firmware), installs NVIDIA display drivers, sets up Wayland modesetting and power management systemd services, and configures modern hybrid GPU management via **`switcheroo-control`**, **`prime-run`**, and PCIe Runtime D3 (RTD3) dynamic power management for laptops with dual Intel/AMD + NVIDIA graphics across **Debian 13 (Trixie)**, **Fedora 44**, and **Arch Linux**, completely replacing legacy Optimus and archived switching mechanisms.
 
 > [!NOTE]
-> **Hardware Testing Status**: This implementation has been thoroughly verified via unit tests and containerized integration test environments across Debian, Fedora, Arch Linux, and LMDE. Real-world bare-metal hardware validation on physical NVIDIA/hybrid hardware is pending and will be conducted soon to identify any machine-specific adjustments.
+> **Hardware Testing Status**: This implementation has been thoroughly verified via unit tests and containerized integration test environments across Debian, Fedora, and Arch Linux. Real-world bare-metal hardware validation on physical NVIDIA/hybrid hardware is pending and will be conducted soon to identify any machine-specific adjustments.
 
 ---
 
@@ -23,9 +23,9 @@ The script SHALL strictly inspect hardware before attempting any driver installa
 
 When an NVIDIA GPU is confirmed, the script SHALL configure native repositories and install packages per distribution based on `get_distro_id`:
 
-1. **Debian 13 (Trixie) (`debian`) & LMDE 7 (`lmde`)**:
+1. **Debian 13 (Trixie) (`debian`)**:
    - SHALL ensure `contrib`, `non-free`, and `non-free-firmware` are enabled in APT sources.
-   - SHALL configure Debian backports repository via `add_debian_backports_repo` on Debian or `add_lmde_backports_repo` on LMDE.
+   - SHALL configure Debian backports repository via `add_debian_backports_repo`.
    - Driver, firmware, and headers SHALL be installed targeting backports (`-t "${codename}-backports"`): `nvidia-driver`, `firmware-misc-nonfree`, `linux-headers-amd64`, `nvidia-smi`, `nvidia-settings`.
    - In case backports installation encounters missing packages for a specific codename, SHALL fallback to standard package installation.
 

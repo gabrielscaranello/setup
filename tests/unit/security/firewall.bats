@@ -62,21 +62,6 @@ setup() {
   [[ "$output" =~ installed:\ gufw ]]
 }
 
-@test "_configure_gui_frontend handles Cinnamon with gufw" {
-  install_packages() {
-    echo "installed: $*"
-    return 0
-  }
-
-  run _configure_gui_frontend "lmde" "cinnamon"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ installed:\ gufw ]]
-
-  run _configure_gui_frontend "debian" "cinnamon"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ installed:\ gufw ]]
-}
-
 @test "_configure_gui_frontend handles GNOME on fedora with firewall-config" {
   install_packages() {
     echo "installed: $*"
@@ -183,20 +168,6 @@ setup() {
   [[ "$output" =~ installed:\ ufw ]]
   [[ ! "$output" =~ installed:\ plasma-firewall ]]
   [[ ! "$output" =~ installed:\ gufw ]]
-  [[ "$output" =~ "Firewall setup completed successfully." ]]
-}
-
-@test "main configures ufw and cinnamon GUI on lmde" {
-  get_distro_id() { echo "lmde"; }
-  get_desktop_environment() { echo "cinnamon"; }
-  install_packages() { echo "installed: $*"; }
-  sudo() { echo "sudo: $*"; }
-  command() { return 0; }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ installed:\ ufw ]]
-  [[ "$output" =~ installed:\ gufw ]]
   [[ "$output" =~ "Firewall setup completed successfully." ]]
 }
 

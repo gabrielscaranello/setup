@@ -368,14 +368,6 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "plasma" ]
 
-  XDG_CURRENT_DESKTOP="X-Cinnamon" run get_desktop_environment
-  [ "$status" -eq 0 ]
-  [ "$output" = "cinnamon" ]
-
-  XDG_CURRENT_DESKTOP="cinnamon" run get_desktop_environment
-  [ "$status" -eq 0 ]
-  [ "$output" = "cinnamon" ]
-
   TARGET_DE="gnome" XDG_CURRENT_DESKTOP="KDE" run get_desktop_environment
   [ "$status" -eq 0 ]
   [ "$output" = "gnome" ]
@@ -416,11 +408,6 @@ EOF
   run prompt_desktop_environment "Test prompt"
   [ "$status" -eq 0 ]
   [ "$output" = "plasma" ]
-
-  get_distro_id() { echo "lmde"; }
-  run prompt_desktop_environment "Test prompt"
-  [ "$status" -eq 0 ]
-  [ "$output" = "cinnamon" ]
 }
 
 @test "ensure_desktop_environment resolves and saves DE" {
@@ -461,34 +448,6 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "ubuntu" ]
 
-  cat << 'EOF' > "$test_os_release"
-NAME="LMDE"
-VERSION="7"
-ID=linuxmint
-ID_LIKE=debian
-DEBIAN_CODENAME=trixie
-EOF
-  OS_RELEASE_PATH="$test_os_release" run get_distro_id
-  [ "$status" -eq 0 ]
-  [ "$output" = "lmde" ]
-
-  cat << 'EOF' > "$test_os_release"
-ID=lmde
-EOF
-  OS_RELEASE_PATH="$test_os_release" run get_distro_id
-  [ "$status" -eq 0 ]
-  [ "$output" = "lmde" ]
-
-  cat << 'EOF' > "$test_os_release"
-NAME="Linux Mint"
-VERSION="22"
-ID=linuxmint
-ID_LIKE="ubuntu"
-EOF
-  OS_RELEASE_PATH="$test_os_release" run get_distro_id
-  [ "$status" -eq 0 ]
-  [ "$output" = "linuxmint" ]
-
   rm -f "$test_os_release"
 }
 
@@ -519,11 +478,6 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "debian" ]
 
-  get_distro_id() { echo "lmde"; }
-  run require_supported_distro
-  [ "$status" -eq 0 ]
-  [ "$output" = "lmde" ]
-
   get_distro_id() { echo "fedora"; }
   run require_supported_distro
   [ "$status" -eq 0 ]
@@ -546,37 +500,30 @@ EOF
 
 @test "_get_package_name resolves packages using distro names" {
   [ "$(_get_package_name "golang" "debian")" = "golang" ]
-  [ "$(_get_package_name "golang" "lmde")" = "golang" ]
   [ "$(_get_package_name "golang" "fedora")" = "golang" ]
   [ "$(_get_package_name "golang" "arch")" = "go" ]
 
   [ "$(_get_package_name "build-tools" "debian")" = "build-essential" ]
-  [ "$(_get_package_name "build-tools" "lmde")" = "build-essential" ]
   [ "$(_get_package_name "build-tools" "fedora")" = "@development-tools" ]
   [ "$(_get_package_name "build-tools" "arch")" = "base-devel" ]
 
   [ "$(_get_package_name "nvidia-driver" "debian")" = "nvidia-driver" ]
-  [ "$(_get_package_name "nvidia-driver" "lmde")" = "nvidia-driver" ]
   [ "$(_get_package_name "nvidia-driver" "fedora")" = "akmod-nvidia" ]
   [ "$(_get_package_name "nvidia-driver" "arch")" = "nvidia-open-dkms nvidia-utils" ]
 
   [ "$(_get_package_name "power-profiles-daemon" "debian")" = "power-profiles-daemon" ]
-  [ "$(_get_package_name "power-profiles-daemon" "lmde")" = "power-profiles-daemon" ]
   [ "$(_get_package_name "power-profiles-daemon" "fedora")" = "tuned-ppd" ]
   [ "$(_get_package_name "power-profiles-daemon" "arch")" = "power-profiles-daemon" ]
 
   [ "$(_get_package_name "bluez" "debian")" = "bluez" ]
-  [ "$(_get_package_name "bluez" "lmde")" = "bluez" ]
   [ "$(_get_package_name "bluez" "fedora")" = "bluez" ]
   [ "$(_get_package_name "bluez" "arch")" = "bluez bluez-utils" ]
 
   [ "$(_get_package_name "cron" "debian")" = "cron" ]
-  [ "$(_get_package_name "cron" "lmde")" = "cron" ]
   [ "$(_get_package_name "cron" "fedora")" = "cronie" ]
   [ "$(_get_package_name "cron" "arch")" = "cronie" ]
 
   [ "$(_get_package_name "extension-manager" "debian")" = "" ]
-  [ "$(_get_package_name "extension-manager" "lmde")" = "" ]
   [ "$(_get_package_name "extension-manager" "fedora")" = "" ]
   [ "$(_get_package_name "extension-manager" "arch")" = "extension-manager" ]
 }
@@ -646,19 +593,6 @@ EOF
 @test "enable_cron_service enables cron.service on debian" {
   source /setup/scripts/_utils.sh
   is_distro() { [ "$1" = "debian" ]; }
-  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
-  local systemctl_args=()
-  systemctl() { systemctl_args+=("$*"); return 0; }
-  sudo() { "$@"; }
-
-  run enable_cron_service
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Enabling cron scheduler service..." ]]
-}
-
-@test "enable_cron_service enables cron.service on lmde" {
-  source /setup/scripts/_utils.sh
-  is_distro() { [ "$1" = "lmde" ]; }
   command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
   local systemctl_args=()
   systemctl() { systemctl_args+=("$*"); return 0; }

@@ -18,7 +18,7 @@ In compliance with the **XDG Desktop Entry Specification**, this module copies t
 
 ### 2. Compiled Target Applications
 
-The consolidated list covers unwanted menu entries across Debian, Fedora, Arch Linux, and LMDE (GNOME, KDE Plasma, and Cinnamon):
+The consolidated list covers unwanted menu entries across Debian, Fedora, and Arch Linux (GNOME and KDE Plasma):
 
 - `assistant`: Qt Assistant
 - `avahi-discover`: Avahi Zeroconf Discovery

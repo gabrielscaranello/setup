@@ -20,12 +20,3 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ "is managed by system package manager" || "$output" =~ "is already installed" || "$output" =~ "is up to date" ]]
 }
-
-@test "setup-icon-theme.sh installs icon theme when DE is Cinnamon" {
-  export XDG_CURRENT_DESKTOP="X-Cinnamon"
-
-  run bash /setup/scripts/desktop/setup-icon-theme.sh
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Setting up Papirus-Dark icon theme for cinnamon..." ]]
-  [[ "$output" =~ "Icon theme setup completed successfully." ]]
-}

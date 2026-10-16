@@ -90,7 +90,7 @@ _setup_plasma_start_icon() {
     arch)
       src_icon="${assets_dir}/arch.svg"
       ;;
-    debian | lmde)
+    debian)
       src_icon="${assets_dir}/debian.svg"
       ;;
     fedora)

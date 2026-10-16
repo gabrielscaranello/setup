@@ -46,17 +46,6 @@ setup() {
   [[ "$output" =~ "installed flatpak: md.obsidian.Obsidian Obsidian" ]]
 }
 
-@test "_install_obsidian delegates to flatpak on lmde" {
-  require_supported_distro() { echo "lmde"; }
-  install_flatpak_app() {
-    echo "installed flatpak: $*"
-    return 0
-  }
-  run _install_obsidian
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed flatpak: md.obsidian.Obsidian Obsidian" ]]
-}
-
 @test "main executes successfully and reports complete" {
   _install_obsidian() {
     echo "called _install_obsidian"

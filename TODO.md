@@ -4,92 +4,6 @@ Este documento acompanha os marcos de desenvolvimento, tarefas em andamento e fu
 
 ---
 
-## 🎯 Milestone 2.0: Suporte ao LMDE (Linux Mint Debian Edition) & Cinnamon [Concluído]
-
-O objetivo principal deste marco foi estender todo o ferramental idempotente do projeto para fornecer suporte nativo de primeira classe ao **LMDE 7** (baseado em **Debian 13 Trixie**) com o ambiente de desktop **Cinnamon**.
-
----
-
-### 🟢 Fase 1: Fundação & Identificação do LMDE e Cinnamon
-
-Adaptação do núcleo de abstração para reconhecer e tratar o LMDE e o ambiente Cinnamon sem quebrar a compatibilidade com Debian, Fedora e Arch Linux.
-
-- [x] Identificação de distribuição: atualizar `get_distro_id`, `is_distro` e `require_supported_distro` em `scripts/utils/_system.sh` para reconhecer `lmde` (via `ID=linuxmint` e `ID_LIKE=debian` ou `NAME="LMDE"`)
-- [x] Detecção de Desktop Environment: atualizar `get_desktop_environment` e `prompt_desktop_environment` em `scripts/utils/_desktop.sh` para reconhecer `cinnamon` (`XDG_CURRENT_DESKTOP=*cinnamon*`)
-- [x] Mapeamento de pacotes: garantir resolução em `scripts/utils/_packages.sh` tratando `lmde` como consumidor da base Debian com extensões próprias, e atualizar `scripts/packages.conf` se houver divergências
-- [x] Testes unitários do núcleo: atualizar `tests/unit/utils.bats` cobrindo cenários do LMDE e Cinnamon
-
----
-
-### 🐳 Fase 2: Infraestrutura de Testes & Container LMDE
-
-Provisionamento do ambiente Docker para validação segura de scripts e execução de testes de integração sem executar comandos na máquina host.
-
-- [x] Criar Dockerfile de testes para LMDE: `tests/docker/lmde.Dockerfile` baseado na imagem oficial de Debian Trixie com repositórios Mint ou imagem base LMDE
-- [x] Integrar LMDE ao harness de testes: atualizar `tests/run-tests.sh` e `Makefile` (`test-integration-lmde`)
-- [x] Validar execução de suite de testes unitários e de integração dentro do novo container LMDE
-
----
-
-### ⚙️ Fase 3: Sistema, Repositórios, Codecs & Hardware no LMDE
-
-Configuração dos aspectos de baixo nível do sistema operacional específicos para o ecossistema Mint/Debian.
-
-- [x] Repositórios e fontes de pacotes: criar `scripts/system/lmde/_repositories.sh` (configuração idempotente de repositórios oficiais Mint, Debian e Backports)
-- [x] Codecs e multimídia: adaptar `scripts/system/setup-codecs.sh` para utilizar `mint-meta-codecs` ou pacotes específicos quando executado no LMDE
-- [x] Drivers gráficos e aceleração: validar/adaptar `scripts/system/setup-graphics.sh`, `setup-nvidia.sh` e `setup-amd.sh` no contexto do LMDE
-- [x] Firewall e segurança: adaptar `scripts/security/setup-firewall.sh` para suporte a `gufw` e regras de firewall adequadas ao desktop Cinnamon
-- [x] Gerenciamento de snapshots (Timeshift): adaptar `scripts/system/setup-timeshift.sh` para o LMDE, aplicando os filtros e agendamentos refinados (retenção horária/diária/semanal, exclusão de steam/node_modules/cache/docker e inclusão de `.**`, `Code/`, documentos)
-
----
-
-### 🧹 Fase 4: Limpeza, Debloat e Pacotes Base
-
-Padronização dos pacotes essenciais e remoção de bloatware do ecossistema Mint.
-
-- [x] Debloat no LMDE: atualizar `scripts/system/setup-debloat.sh` para remover os bloatwares típicos identificados no LMDE (`celluloid`, `gnome-terminal`, `hypnotix*`, `libreoffice*`, `mintchat`, `rhythmbox`, `simple-scan`, `sticky`, `thingy`, `thunderbird*`, `transmission*`, `xterm*`)
-- [x] Atualização do sistema: adaptar `scripts/system/setup-update.sh` considerando `mintupdate-cli` ou `apt`
-- [x] Pacotes essenciais do sistema: estender `scripts/system/setup-packages.sh` com utilitários essenciais do LMDE (`nemo-fileroller`, `xclip`, `zram-tools`, `libu2f-udev`, `numlockx`, etc.)
-
----
-
-### 💻 Fase 5: Ferramentas de Desenvolvimento e Aplicativos GUI
-
-Garantir funcionamento pleno da suite completa de desenvolvimento e produtividade no LMDE.
-
-- [x] Toolchain de desenvolvimento: validar e garantir execução dos scripts em `scripts/toolchain/` no LMDE (`setup-docker.sh`, `setup-neovim.sh`, `setup-nvm.sh`, `setup-go.sh`, `setup-gitflow.sh`, `setup-rust.sh`) — `scripts/toolchain/*.sh`
-- [x] Terminal e fontes: validar e garantir execução de `scripts/terminal/setup-fonts.sh`, `setup-kitty.sh`, `setup-lazygit.sh` e `setup-lazydocker.sh` no LMDE — `scripts/terminal/*.sh`
-- [x] Navegadores web: adaptar `scripts/apps/setup-browsers.sh` para o LMDE (Mint já empacota Firefox vanilla nativo `.deb` via repositório próprio) — `scripts/apps/setup-browsers.sh`
-- [x] Captura de tela: adaptar `scripts/apps/setup-screenshot-tool.sh` para Cinnamon (`flameshot` com atalhos do Cinnamon)
-- [x] Associações de aplicativos padrão (MIME): adaptar `scripts/apps/setup-default-apps.sh` com suporte a Cinnamon/LMDE (VLC para mídia, Xviewer para imagens, OnlyOffice para documentos, Xed para texto e Nemo para diretórios)
-
----
-
-### 🌿 Fase 6: Customização do Cinnamon Desktop Environment
-
-Personalização completa da interface gráfica Cinnamon para manter a mesma consistência visual e ergonômica de GNOME e KDE Plasma.
-
-- [x] Tema de cursores e ícones: adaptar `scripts/desktop/setup-cursor-theme.sh` (`Bibata-Modern-Ice`, tam 20) e `setup-icon-theme.sh` (`Papirus-Dark` + `cat-mocha-lavender`) para Cinnamon via `gsettings` (`org.cinnamon.desktop.interface`) — `scripts/desktop/setup-cursor-theme.sh` e `scripts/desktop/setup-icon-theme.sh`
-- [x] Tema GTK: adaptar `scripts/desktop/setup-gtk-theme.sh` para aplicar `Colloid-Dark-Catppuccin` no Cinnamon (`org.cinnamon.desktop.interface gtk-theme`, `org.cinnamon.desktop.wm.preferences theme` e `org.cinnamon.theme name`) — `scripts/desktop/setup-gtk-theme.sh`
-- [x] Orquestrador de aparência: atualizar `scripts/desktop/setup-look.sh` para coordenar cursor, ícones e GTK no Cinnamon — `scripts/desktop/setup-look.sh`
-- [x] Applets e Extensões (Cinnamon Spices): implementar download e instalação de spices via API do Linux Mint (`color-picker@fmete`, `transparent-panels-reloaded@marcelovbcfilho`) em `scripts/desktop/setup-cinnamon-applets.sh` — `scripts/desktop/setup-cinnamon-applets.sh`
-- [x] Configuração do Painel e Applets: implementar `scripts/desktop/setup-cinnamon-applets-config.sh` (layout do painel com menu, agrupador de janelas à esquerda e bandeja, relógio, color-picker à direita) — `scripts/desktop/setup-cinnamon-applets-config.sh`
-- [x] Preferências do Cinnamon Desktop: implementar `scripts/desktop/setup-cinnamon-preferences.sh` (layout minimalista de botões `:close`, centralização de novas janelas no Muffin, Night Light, hotcorners expo/scale e Nemo sem ícones no desktop) — `scripts/desktop/setup-cinnamon-preferences.sh`
-- [x] Ocultar aplicativos desnecessários no menu: adaptar `scripts/desktop/setup-hide-apps.sh` para garantir compatibilidade com o menu do Cinnamon — `scripts/desktop/setup-hide-apps.sh`
-
----
-
-### 🚀 Fase 7: Orquestração, Runner do LMDE & Documentação
-
-Criação dos pontos de entrada, documentação e especificações OpenSpec.
-
-- [x] Criar runner dedicado para LMDE: `runners/lmde.sh` seguindo o padrão modular (`_run_stage`, pipeline de execução sequencial) — `runners/lmde.sh`
-- [x] Atualizar despachante central: registrar suporte a `lmde` em `runners/main.sh` e `main.sh` (incluindo help e autodirecionamento por distro) — `runners/main.sh` e `main.sh`
-- [x] Especificações OpenSpec: criar/atualizar especificações em `openspec/specs/` documentando os novos requisitos e cenários GIVEN/WHEN/THEN para LMDE e Cinnamon — `openspec/specs/`
-- [x] Documentação: atualizar `README.md` e `README-pt-br.md` incluindo o LMDE na lista de distribuições suportadas e instruções de uso — `README.md` e `README-pt-br.md`
-
----
-
 ## 🏆 Milestone 1.0: Arch Linux, Fedora & Debian (GNOME & KDE Plasma) [Concluído]
 
 <details>
@@ -168,9 +82,8 @@ Criação dos pontos de entrada, documentação e especificações OpenSpec.
 
 ---
 
-## 🔮 Futuras Distribuições Secundárias (Post-LMDE)
+## 🔮 Futuras Distribuições Secundárias
 
-- [ ] Linux Mint (base Ubuntu)
 - [ ] Ubuntu puro (GNOME)
 - [ ] openSUSE Tumbleweed / Leap
 - [ ] Zorin OS

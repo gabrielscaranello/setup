@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Detects AMD graphics hardware (discrete Radeon GPUs and integrated Ryzen APUs) across **Arch Linux**, **Fedora**, **Debian 13 (Trixie)**, and **LMDE 7**, and configures the required open-source user-space driver stack, non-free firmwares, hardware-accelerated video decoding codecs (VA-API/VDPAU), 32-bit multilib libraries for gaming/Steam, and Vulkan (RADV) runtime support.
+Detects AMD graphics hardware (discrete Radeon GPUs and integrated Ryzen APUs) across **Arch Linux**, **Fedora**, and **Debian 13 (Trixie)**, and configures the required open-source user-space driver stack, non-free firmwares, hardware-accelerated video decoding codecs (VA-API/VDPAU), 32-bit multilib libraries for gaming/Steam, and Vulkan (RADV) runtime support.
 
 ---
 
@@ -52,9 +52,9 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
      - `sudo dnf swap -y mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686`
    - SHALL ensure `mesa-vulkan-drivers`, `vulkan-loader`, `libva-utils`, and `vulkan-tools` are installed.
 
-3. **Debian 13 (Trixie) (`debian`) & LMDE 7 (`lmde`)**:
+3. **Debian 13 (Trixie) (`debian`)**:
    - SHALL ensure `non-free-firmware` component is enabled in APT sources.
-   - SHALL ensure Debian backports repository is configured (`add_debian_backports_repo` on Debian, `add_lmde_backports_repo` on LMDE).
+   - SHALL ensure Debian backports repository is configured (`add_debian_backports_repo`).
    - SHALL install `firmware-amd-graphics` and Mesa drivers (`mesa-va-drivers`, `mesa-vdpau-drivers`, `mesa-vulkan-drivers`, `libgl1-mesa-dri`, `libglx-mesa0`, `libegl-mesa0`, `libgbm1`) from backports if available, falling back to main release.
    - SHALL install diagnostic and utility tools: `libvulkan1`, `vainfo`, `vulkan-tools`.
    - On systems with `i386` multiarch enabled: install `mesa-vulkan-drivers:i386`, `libgl1-mesa-dri:i386` (from backports if available).

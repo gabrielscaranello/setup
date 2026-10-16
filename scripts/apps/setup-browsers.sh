@@ -19,9 +19,8 @@ _install_firefox_apt() {
 }
 
 _install_firefox_repo() {
-  local lang_pkg="${1:-firefox-i18n-pt-br}"
   echo "Installing Firefox from distribution repository..."
-  install_packages firefox "$lang_pkg"
+  install_packages firefox firefox-i18n-pt-br
 }
 
 _install_firefox() {
@@ -31,9 +30,6 @@ _install_firefox() {
   case "$distro" in
     fedora | arch)
       _install_firefox_repo
-      ;;
-    lmde)
-      _install_firefox_repo "firefox-l10n-pt"
       ;;
     debian)
       install_packages wget || true
@@ -47,7 +43,7 @@ _install_chromium() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch | lmde)
+    fedora | arch)
       echo "Installing Chromium from distribution repository..."
       install_packages chromium
       ;;

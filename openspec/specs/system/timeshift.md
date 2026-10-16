@@ -10,11 +10,11 @@ Installs and configures Timeshift for automated and on-demand desktop backup sna
 
 ### Requirement: Timeshift Package Installation
 
-The script SHALL install the `timeshift` and `xhost` packages across supported distributions via `install_packages timeshift xhost` (providing Wayland root GUI launcher support via `xorg-xhost` on Arch, `x11-xserver-utils` on Debian/LMDE, and `xhost` on Fedora).
+The script SHALL install the `timeshift` and `xhost` packages across supported distributions via `install_packages timeshift xhost` (providing Wayland root GUI launcher support via `xorg-xhost` on Arch, `x11-xserver-utils` on Debian, and `xhost` on Fedora).
 
 #### Scenario: Installing package
 
-- **GIVEN** a supported distribution (Debian, Fedora, Arch Linux, LMDE)
+- **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** `scripts/system/setup-timeshift.sh` runs
 - **THEN** `timeshift` and `xhost` packages SHALL be installed
 
@@ -49,7 +49,7 @@ When the root filesystem is `btrfs`, the script SHALL configure GRUB bootloader 
 
 - **Dependencies**: SHALL install `btrfs-progs`, `gawk`, and `inotify-tools`.
 - **Arch Linux (`arch`)**: SHALL install `grub-btrfs` directly via package manager (`install_packages`).
-- **Fedora (`fedora`), Debian (`debian`) & LMDE (`lmde`)**: SHALL clone `https://github.com/Antynea/grub-btrfs.git` to `/tmp/grub-btrfs`, configure Fedora-specific GRUB paths (`GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig`, `GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"`, `GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check`) when running on `fedora`, run `make install`, clean up `/tmp/grub-btrfs`, and execute `systemctl daemon-reload`.
+- **Fedora (`fedora`) & Debian (`debian`)**: SHALL clone `https://github.com/Antynea/grub-btrfs.git` to `/tmp/grub-btrfs`, configure Fedora-specific GRUB paths (`GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig`, `GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"`, `GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check`) when running on `fedora`, run `make install`, clean up `/tmp/grub-btrfs`, and execute `systemctl daemon-reload`.
 
 #### Scenario: Running on Btrfs on Arch Linux
 
@@ -57,9 +57,9 @@ When the root filesystem is `btrfs`, the script SHALL configure GRUB bootloader 
 - **WHEN** boot integration executes
 - **THEN** `grub-btrfs` package is installed from repository
 
-#### Scenario: Running on Btrfs on Fedora, Debian or LMDE
+#### Scenario: Running on Btrfs on Fedora or Debian
 
-- **GIVEN** Fedora, Debian, or LMDE with Btrfs root (`get_distro_id` returns `fedora`, `debian`, or `lmde`)
+- **GIVEN** Fedora or Debian with Btrfs root (`get_distro_id` returns `fedora` or `debian`)
 - **WHEN** boot integration executes
 - **THEN** `grub-btrfs` is built and installed from upstream Git repository with paths tailored to the active distribution
 

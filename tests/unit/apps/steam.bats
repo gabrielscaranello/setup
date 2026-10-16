@@ -29,19 +29,6 @@ setup() {
   [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.gamescope (Gamescope Vulkan Layer)" ]]
 }
 
-@test "_install_steam_packages installs Flatpaks on LMDE" {
-  install_flatpak_app() {
-    echo "installed flatpak: $1 ($2)"
-    return 0
-  }
-  run _install_steam_packages "lmde"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Installing Steam, MangoHud, and Gamescope via Flatpak on Debian" ]]
-  [[ "$output" =~ "installed flatpak: com.valvesoftware.Steam (Steam)" ]]
-  [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.MangoHud (MangoHud Vulkan Layer)" ]]
-  [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.gamescope (Gamescope Vulkan Layer)" ]]
-}
-
 @test "_install_steam_packages calls add_fedora_rpmfusion_repo on Fedora" {
   add_fedora_rpmfusion_repo() {
     echo "called add_fedora_rpmfusion_repo"
@@ -174,21 +161,7 @@ setup() {
   }
   run _install_proton_manager
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Desktop environment is GNOME / Cinnamon: installing ProtonPlus" ]]
-  [[ "$output" =~ "installed flatpak: com.vysp3r.ProtonPlus (ProtonPlus)" ]]
-}
-
-@test "_install_proton_manager installs ProtonPlus on Cinnamon" {
-  get_desktop_environment() {
-    echo "cinnamon"
-  }
-  install_flatpak_app() {
-    echo "installed flatpak: $1 ($2)"
-    return 0
-  }
-  run _install_proton_manager
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Desktop environment is GNOME / Cinnamon: installing ProtonPlus" ]]
+  [[ "$output" =~ "Desktop environment is GNOME: installing ProtonPlus" ]]
   [[ "$output" =~ "installed flatpak: com.vysp3r.ProtonPlus (ProtonPlus)" ]]
 }
 

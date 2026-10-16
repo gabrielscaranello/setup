@@ -60,9 +60,9 @@
   [ "$status" -eq 0 ]
 }
 
-@test "_install_fonts installs system fonts and upstream font on lmde" {
+@test "_install_fonts installs system fonts and upstream font on debian" {
   source /setup/scripts/terminal/setup-fonts.sh
-  require_supported_distro() { echo "lmde"; }
+  require_supported_distro() { echo "debian"; }
   _install_distro_fonts() { echo "called _install_distro_fonts"; }
   install_packages() { return 0; }
   _install_fonts_from_upstream() { echo "called _install_fonts_from_upstream"; }

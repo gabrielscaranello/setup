@@ -29,12 +29,12 @@ The script SHALL create `/etc/sysctl.d/00-custom.conf` and apply VM parameters i
 
 The script SHALL install the appropriate `zram` package and configure compressed RAM swap equal to half of total RAM (`RAM / 2`, compression `zstd`, priority `100`) based on `get_distro_id`:
 
-- **Debian (`debian`) & LMDE (`lmde`)**: SHALL configure `/etc/default/zramswap` with `ALGO=zstd`, `PERCENT=50`, `PRIORITY=100`, and restart `zramswap.service`.
+- **Debian (`debian`)**: SHALL configure `/etc/default/zramswap` with `ALGO=zstd`, `PERCENT=50`, `PRIORITY=100`, and restart `zramswap.service`.
 - **Fedora (`fedora`) & Arch Linux (`arch`)**: SHALL configure `/etc/systemd/zram-generator.conf` under `[zram0]` (`zram-size = ram / 2`, `compression-algorithm = zstd`, `swap-priority = 100`), reload systemd daemon, and restart `systemd-zram-setup@zram0.service` / start `/dev/zram0`.
 
-#### Scenario: Running on Debian or LMDE
+#### Scenario: Running on Debian
 
-- **GIVEN** a Debian or LMDE system (`get_distro_id` returns `debian` or `lmde`)
+- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/system/setup-swap.sh` runs
 - **THEN** `zram-tools` is configured via `/etc/default/zramswap` and service restarted
 

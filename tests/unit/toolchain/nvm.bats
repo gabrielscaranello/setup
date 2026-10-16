@@ -66,9 +66,9 @@
   [[ "$output" =~ "No global npm packages" ]]
 }
 
-@test "_install_nvm calls _install_nvm_script on lmde" {
+@test "_install_nvm calls _install_nvm_script on debian" {
   source /setup/scripts/toolchain/setup-nvm.sh
-  require_supported_distro() { echo "lmde"; }
+  require_supported_distro() { echo "debian"; }
   _install_nvm_script() { echo "called _install_nvm_script"; }
   run _install_nvm
   [ "$status" -eq 0 ]

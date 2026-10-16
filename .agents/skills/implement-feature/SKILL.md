@@ -12,7 +12,7 @@ description: >-
 This skill defines the canonical step-by-step procedure for introducing new configurations, tools, applications, or setup modules into this repository.
 
 > [!NOTE]
-> **Skill Lifecycle & Scope**: All initial roadmap tasks (Phases 1–7) tracked in [TODO.md](../../../TODO.md) have been completed. This skill now governs ongoing maintenance, incremental enhancements, refactoring workflows, and future milestone implementations (such as secondary distributions and Cinnamon support).
+> **Skill Lifecycle & Scope**: All initial roadmap tasks (Phases 1–7) tracked in [TODO.md](../../../TODO.md) have been completed. This skill now governs ongoing maintenance, incremental enhancements, refactoring workflows, and future milestone implementations.
 
 ---
 
@@ -53,18 +53,18 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
 - **Helper Sourcing**: Source helpers near the top: `source "scripts/_utils.sh" 2>/dev/null || true`.
 - **Public Utilities & Helper Catalog (`scripts/_utils.sh`)**:
   Always reuse existing helpers from `scripts/_utils.sh` instead of reimplementing or calling raw tools directly:
-  1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, `lmde`, or `unknown`).
+  1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
   2. [`is_distro <distro>`](../../../scripts/_utils.sh): Checks whether current system matches target distribution.
-  3. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`, `lmde`) and installs them idempotently.
+  3. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`) and installs them idempotently.
   4. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
   5. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
   6. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
-  7. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, `cinnamon`, or `unknown`).
+  7. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
   8. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
   9. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
   10. [`get_gpu_vendor`](../../../scripts/_utils.sh): Detects physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
-  11. [`enable_cron_service [service_name]`](../../../scripts/_utils.sh): Enables and starts distribution cron service (`cron` on Debian/LMDE, `crond` on Fedora, `cronie` on Arch).
-  12. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`, `lmde`) and prints distro ID; exits 1 otherwise.
+  11. [`enable_cron_service [service_name]`](../../../scripts/_utils.sh): Enables and starts distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch).
+  12. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`) and prints distro ID; exits 1 otherwise.
   13. [`fetch_github_latest_version <owner/repo>`](../../../scripts/_utils.sh): Resolves latest release tag from GitHub with resilient fallback against API rate limits.
   14. [`is_version_up_to_date <local_ver> <remote_ver>`](../../../scripts/_utils.sh): Compares local and remote version strings idempotently.
   15. [`install_github_binary <name> <repo> <version> <file_name> <bin_name>`](../../../scripts/_utils.sh): Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
@@ -74,11 +74,10 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   - **Arch Linux (`scripts/system/arch/_repositories.sh`)**: `add_arch_multilib_repo`.
   - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
-  - **LMDE (`scripts/system/lmde/_repositories.sh`)**: `get_lmde_codename`, `get_lmde_debian_codename`, `add_lmde_official_repo`, `add_lmde_backports_repo`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
-  - **Desktop Environment Handling**: When a step depends on DE, check `get_desktop_environment` (`gnome`, `plasma`, `cinnamon`). If `unknown`, do not execute DE-specific actions.
+  - **Desktop Environment Handling**: When a step depends on DE, check `get_desktop_environment` (`gnome`, `plasma`). If `unknown`, do not execute DE-specific actions.
   - **SOLID Principles**: All scripts must strictly apply SOLID (Single Responsibility per function, Open/Closed via packages.conf and `get_distro_id` dispatch, Liskov Substitution across distros, Interface Segregation via granular repo helpers, and Dependency Inversion via `_utils.sh` abstractions).
 - **Entrypoint & Execution Guard**: Expose `main()` and guard direct execution with `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`.
 
@@ -210,7 +209,7 @@ Before marking any implementation as finished or reporting completion to the use
    ./tests/run-tests.sh --integration --filter=<feature>
    ```
 
-   _Validate execution inside Debian 13, Fedora 44, Arch Linux, and LMDE containers. All distro containers must succeed._
+   _Validate execution inside Debian 13, Fedora 44, and Arch Linux containers. All distro containers must succeed._
 
 3. **Full Unit Test Suite (Regression Prevention)** _(safe on host — mocked)_:
 

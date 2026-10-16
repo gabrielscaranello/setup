@@ -101,22 +101,6 @@ teardown() {
   [ "$status" -ne 0 ]
 }
 
-# ── End-to-End Cinnamon Pipeline Tests ────────────────────────────────────────
-
-@test "main executes successfully on Cinnamon" {
-  get_desktop_environment() { echo "cinnamon"; }
-  bash() {
-    echo "bash invoked with: $*"
-    return 0
-  }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Starting Cinnamon desktop preferences configuration..." ]]
-  [[ "$output" =~ "setup-cinnamon-preferences.sh" ]]
-  [[ "$output" =~ "Cinnamon desktop preferences configuration completed successfully." ]]
-}
-
 @test "_setup_gnome_workspace_env deploys nvm.sh and autostart desktop entry" {
   local test_home="/tmp/test-gnome-workspace-env-home"
   mkdir -p "$test_home/.config"

@@ -88,7 +88,7 @@ _install_fonts() {
       echo "Installing JetBrains Mono Nerd Font from repository..."
       install_packages fonts-jetbrains-mono-nerd
       ;;
-    debian | fedora | lmde)
+    debian | fedora)
       install_packages curl wget unzip fontconfig || true
       _install_fonts_from_upstream
       ;;

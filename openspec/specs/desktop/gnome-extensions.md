@@ -12,7 +12,7 @@ Automate the downloading, installation, updating, and activation of essential GN
   - The script checks the current desktop environment using `get_desktop_environment`.
   - **GNOME Only**: When `get_desktop_environment` returns `gnome`, the script proceeds with detecting the GNOME Shell version via `gnome-shell --version` (extracting major version, e.g. 47, 48), querying the official GNOME Extensions API, installing missing or updated extensions, and enabling them.
 - **Non-GNOME Skip Invariant**:
-  - Whenever `get_desktop_environment` returns anything other than `gnome` (such as `plasma`, `xfce`, `cinnamon`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all extension processing.
+  - Whenever `get_desktop_environment` returns anything other than `gnome` (such as `plasma`, `xfce`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all extension processing.
   - It prints an informative log message indicating that GNOME is not the active desktop environment and **exits with return code 0** without modifying any user files, running package manager commands, querying the network API, or executing `gnome-extensions`.
 
 ### Prerequisites

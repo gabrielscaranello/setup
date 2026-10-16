@@ -9,8 +9,7 @@ Automate installation and configuration of the modern `adw-gtk3` theme and its d
 ### Desktop Environment Support
 
 - **GNOME**: Installs theme packages/assets (`adw-gtk3-dark`), configures Flatpak theme runtime, and sets GNOME preferences via `gsettings`.
-- **Cinnamon**: Installs `Colloid-Dark-Catppuccin` theme from `vinceliuice/Colloid-gtk-theme` with Catppuccin tweaks, links GTK-4.0 styles in `~/.config/gtk-4.0`, and sets Cinnamon preferences via `gsettings` and `dconf` (`org.cinnamon.desktop.interface gtk-theme`, `org.cinnamon.desktop.wm.preferences theme`, `org.cinnamon.theme name`, and `org.cinnamon.desktop.interface color-scheme`).
-- **Unsupported / Unknown DE**: Per project governance, when `get_desktop_environment` returns anything other than supported desktop environments (`gnome`, `cinnamon`), the script must **NOT** install or configure anything, and must gracefully exit 0.
+- **Unsupported / Unknown DE**: Per project governance, when `get_desktop_environment` returns anything other than `gnome`, the script must **NOT** install or configure anything, and must gracefully exit 0.
 
 ### Theme Assets & Package Management
 
@@ -66,17 +65,6 @@ Automate installation and configuration of the modern `adw-gtk3` theme and its d
 - **THEN** it should download and extract the upstream release
 - **AND** install Flatpak themes `org.gtk.Gtk3theme.adw-gtk3` and `org.gtk.Gtk3theme.adw-gtk3-dark`
 - **AND** configure GNOME GSettings to "adw-gtk3-dark" and "prefer-dark"
-
-**Scenario: Cinnamon Desktop Environment**
-
-- **GIVEN** `get_desktop_environment` returns `cinnamon`
-- **WHEN** `setup-gtk-theme.sh` is executed
-- **THEN** it should install `Colloid-Dark-Catppuccin`
-- **AND** configure GTK-4.0 theme links in `~/.config/gtk-4.0`
-- **AND** configure Cinnamon GTK theme to "Colloid-Dark-Catppuccin" via `gsettings` and `dconf`
-- **AND** configure Cinnamon window manager theme to "Colloid-Dark-Catppuccin" via `gsettings` and `dconf`
-- **AND** configure Cinnamon desktop theme to "Colloid-Dark-Catppuccin" via `gsettings` and `dconf`
-- **AND** configure color-scheme to 'prefer-dark'
 
 **Scenario: Idempotent Execution**
 

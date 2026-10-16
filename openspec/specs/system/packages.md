@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provisions foundational operating system packages, modern command-line productivity tools, hardware and power management daemons, multi-filesystem drivers, XDG directory standards, and language dictionaries across supported distributions (**Debian 13**, **LMDE 7**, **Fedora 44**, and **Arch Linux**). This module is strictly decoupled from any Desktop Environment (GNOME or KDE Plasma), providing desktop integration helpers for Cinnamon / LMDE where appropriate.
+Provisions foundational operating system packages, modern command-line productivity tools, hardware and power management daemons, multi-filesystem drivers, XDG directory standards, and language dictionaries across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**). This module is strictly decoupled from any Desktop Environment (GNOME or KDE Plasma).
 
 ---
 
@@ -49,12 +49,12 @@ The script SHALL install hardware management, power profiling, firmware update, 
 - `fwupd`: Linux Vendor Firmware Service (LVFS) client (including `fwupd-efi` on Arch Linux).
 - `bluez`: Official Linux Bluetooth protocol stack and tools (`bluez` on Debian/Fedora, `bluez` and `bluez-utils` on Arch Linux).
 - `cups`: OpenPrinting CUPS daemon and printing system.
-- `cron`: Job scheduler daemon (`cron` on Debian/LMDE, `cronie` on Fedora and Arch Linux).
-- `libu2f-udev`: U2F/FIDO security keys udev rules on Debian/LMDE.
+- `cron`: Job scheduler daemon (`cron` on Debian, `cronie` on Fedora and Arch Linux).
+- `libu2f-udev`: U2F/FIDO security keys udev rules on Debian.
 
 #### Scenario: Installing hardware and power utilities across distros
 
-- **GIVEN** a supported distribution (Debian, LMDE, Fedora, Arch Linux)
+- **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** hardware package installation executes
 - **THEN** `power-profiles-daemon`, `numlockx`, `fwupd`, `bluez`, `cups`, `cron`, and `libu2f-udev` SHALL be installed via `install_packages`
 
@@ -79,10 +79,10 @@ The script SHALL ensure that the Bluetooth controller is configured to power on 
 
 The script SHALL enable systemd services and timers via `_enable_system_services` when `systemctl` is present:
 
-- Power management: `tuned.service` on Fedora; `power-profiles-daemon.service` on Debian, LMDE, and Arch Linux.
+- Power management: `tuned.service` on Fedora; `power-profiles-daemon.service` on Debian and Arch Linux.
 - Bluetooth stack: `bluetooth.service` across all distributions.
 - Printing subsystem: `cups.service` across all distributions.
-- Cron scheduler: `cron.service` on Debian/LMDE; `cronie.service` on Fedora and Arch Linux.
+- Cron scheduler: `cron.service` on Debian; `cronie.service` on Fedora and Arch Linux.
 - Storage maintenance: `fstrim.timer` for periodic SSD TRIM across all distributions.
 - When `systemctl` is not available, service enablement steps SHALL be bypassed cleanly.
 
@@ -104,7 +104,7 @@ The script SHALL install filesystem drivers and manipulation utilities to ensure
 
 #### Scenario: Installing filesystem tools
 
-- **GIVEN** a supported distribution (Debian, LMDE, Fedora, Arch Linux)
+- **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** filesystem package installation executes
 - **THEN** `dosfstools`, `mtools`, and `ntfs-3g` SHALL be installed via `install_packages`
 
@@ -116,30 +116,16 @@ The script SHALL install standard desktop integration utilities, SSH connectivit
 
 - `xdg-user-dirs`: Tool to create and manage localized user directories (`~/Downloads`, `~/Documents`, etc.).
 - `xdg-utils`: Command-line tools for desktop integration tasks (`xdg-open`, `xdg-mime`, etc.).
-- `openssh`: SSH client utilities (`openssh-client` on Debian/LMDE, `openssh-clients` on Fedora, `openssh` on Arch Linux).
+- `openssh`: SSH client utilities (`openssh-client` on Debian, `openssh-clients` on Fedora, `openssh` on Arch Linux).
 - `dialog`: Utility for displaying friendly dialog boxes from shell scripts.
 - `keychain`: SSH agent and GPG agent manager for shells.
-- `clipboard`: System clipboard provider (`xclip` on Debian/LMDE, `xsel` on Fedora, `wl-clipboard` on Arch Linux).
+- `clipboard`: System clipboard provider (`xclip` on Debian, `xsel` on Fedora, `wl-clipboard` on Arch Linux).
 
 #### Scenario: Installing XDG, connectivity, and clipboard utilities
 
-- **GIVEN** a supported distribution (Debian, LMDE, Fedora, Arch Linux)
+- **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** connectivity package installation executes
 - **THEN** `xdg-user-dirs`, `xdg-utils`, `openssh`, `dialog`, `keychain`, and `clipboard` SHALL be installed via `install_packages`
-
----
-
-### Requirement: Desktop Integration Utilities (Cinnamon / LMDE)
-
-When the detected Desktop Environment is `cinnamon` or the distribution is `lmde`, the script SHALL install file manager integration utilities:
-
-- `nemo-fileroller`: File Roller archive manager integration for Nemo file manager.
-
-#### Scenario: Installing Cinnamon desktop utilities
-
-- **GIVEN** active desktop environment is `cinnamon` or distribution is `lmde`
-- **WHEN** desktop integration package installation executes
-- **THEN** `nemo-fileroller` SHALL be installed via `install_packages`
 
 ---
 
@@ -184,7 +170,7 @@ Package differences across distributions SHALL be declared in `scripts/packages.
 - `zram`: `zram | zram-tools | zram-generator | zram-generator`
 - `zsh-completions`: `zsh-completions | - | - | zsh-completions`
 
-Packages with identical names (`bat`, `btop`, `dialog`, `dosfstools`, `eza`, `gdu`, `keychain`, `man-db`, `mtools`, `nemo-fileroller`, `ntfs-3g`, `numlockx`, `power-profiles-daemon`, `xdg-user-dirs`, `xdg-utils`, `zsh`) SHALL NOT be added to `packages.conf` and SHALL resolve automatically via fallback.
+Packages with identical names (`bat`, `btop`, `dialog`, `dosfstools`, `eza`, `gdu`, `keychain`, `man-db`, `mtools`, `ntfs-3g`, `numlockx`, `power-profiles-daemon`, `xdg-user-dirs`, `xdg-utils`, `zsh`) SHALL NOT be added to `packages.conf` and SHALL resolve automatically via fallback.
 
 #### Scenario: Resolving mapped packages
 

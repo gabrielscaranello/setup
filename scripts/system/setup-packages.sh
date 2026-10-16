@@ -23,17 +23,6 @@ _install_session_tools() {
   install_packages xdg-user-dirs xdg-utils openssh dialog keychain clipboard
 }
 
-_install_desktop_integration_tools() {
-  local de distro
-  de="$(get_desktop_environment)"
-  distro="$(get_distro_id)"
-
-  if [ "$distro" = "lmde" ] || [ "$de" = "cinnamon" ]; then
-    echo "Installing Cinnamon desktop utilities (nemo-fileroller)..."
-    install_packages nemo-fileroller
-  fi
-}
-
 _install_spelling_dictionaries() {
   echo "Installing spelling dictionaries..."
   install_packages spell-pt-br spell-en
@@ -99,7 +88,6 @@ main() {
   _install_hardware_tools
   _install_filesystem_tools
   _install_session_tools
-  _install_desktop_integration_tools
   _install_spelling_dictionaries
   _initialize_xdg_dirs
   _configure_bluetooth

@@ -101,26 +101,6 @@ EOF
   fi
 }
 
-_configure_cinnamon_cursor() {
-  echo "Configuring Cinnamon cursor theme..."
-  if command -v dconf > /dev/null 2>&1; then
-    dconf write /org/cinnamon/desktop/interface/cursor-theme "'$CURSOR_NAME'" 2> /dev/null || true
-    dconf write /org/cinnamon/desktop/interface/cursor-size "$CURSOR_SIZE" 2> /dev/null || true
-  fi
-  if command -v gsettings > /dev/null 2>&1; then
-    gsettings set org.cinnamon.desktop.interface cursor-theme "$CURSOR_NAME" 2> /dev/null || true
-    gsettings set org.cinnamon.desktop.interface cursor-size "$CURSOR_SIZE" 2> /dev/null || true
-  fi
-
-  # Configure XDG default cursor theme
-  local default_icon_dir="$HOME/.icons/default"
-  mkdir -p "$default_icon_dir"
-  cat << EOF > "$default_icon_dir/index.theme"
-[Icon Theme]
-Inherits=$CURSOR_NAME
-EOF
-}
-
 _configure_cursor_theme() {
   local de="$1"
   case "$de" in
@@ -129,9 +109,6 @@ _configure_cursor_theme() {
       ;;
     plasma)
       _configure_plasma_cursor
-      ;;
-    cinnamon)
-      _configure_cinnamon_cursor
       ;;
     *)
       return 0
@@ -143,7 +120,7 @@ main() {
   local de
   de="$(get_desktop_environment)"
 
-  if [ "$de" != "gnome" ] && [ "$de" != "plasma" ] && [ "$de" != "cinnamon" ]; then
+  if [ "$de" != "gnome" ] && [ "$de" != "plasma" ]; then
     echo "Desktop Environment is '$de' (unsupported or unrecognized). Skipping cursor theme setup."
     return 0
   fi

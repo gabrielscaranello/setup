@@ -2,7 +2,7 @@
 
 ## Overview
 
-Convenience orchestrator that sequentially applies cursor theme, GTK theme, and icon theme configurations across supported Desktop Environments (GNOME, KDE Plasma, and Cinnamon).
+Convenience orchestrator that sequentially applies cursor theme, GTK theme, and icon theme configurations across supported Desktop Environments (GNOME and KDE Plasma).
 
 ## Requirements
 
@@ -10,9 +10,9 @@ Convenience orchestrator that sequentially applies cursor theme, GTK theme, and 
 
 - **Sequential Execution**:
   1. Invokes `scripts/desktop/setup-cursor-theme.sh` to configure cursor theme (`Bibata-Modern-Ice`).
-  2. Invokes `scripts/desktop/setup-gtk-theme.sh` to configure GTK theme (`adw-gtk3-dark` on GNOME, `Colloid-Dark-Catppuccin` on Cinnamon).
-  3. Invokes `scripts/desktop/setup-icon-theme.sh` to configure icon theme (`Papirus-Dark` with `adwaita` folders on GNOME, `cat-mocha-lavender` on Cinnamon).
-- **Desktop Environment Support**: Coordinates appearance across GNOME, KDE Plasma, and Cinnamon.
+  2. Invokes `scripts/desktop/setup-gtk-theme.sh` to configure GTK theme (`adw-gtk3-dark` on GNOME).
+  3. Invokes `scripts/desktop/setup-icon-theme.sh` to configure icon theme (`Papirus-Dark` with `adwaita` folders on GNOME).
+- **Desktop Environment Support**: Coordinates appearance across GNOME and KDE Plasma.
 - **Idempotency**: Inherits idempotency from each underlying appearance script; safe to re-run multiple times.
 - **Error Handling**: Fails fast with non-zero exit code if any of the underlying scripts fail.
 
@@ -33,14 +33,6 @@ Convenience orchestrator that sequentially applies cursor theme, GTK theme, and 
 - **WHEN** `setup-look.sh` is executed
 - **THEN** it halts execution
 - **AND** exits with a non-zero return code
-
-**Scenario: Cinnamon Desktop Environment**
-
-- **GIVEN** `get_desktop_environment` returns `cinnamon`
-- **WHEN** `setup-look.sh` is executed
-- **THEN** it executes `setup-cursor-theme.sh`, `setup-gtk-theme.sh`, and `setup-icon-theme.sh` in order
-- **AND** configures Bibata cursor, Colloid-Dark-Catppuccin GTK theme, and Papirus-Dark with cat-mocha-lavender icons
-- **AND** exits with return code 0
 
 **Scenario: Idempotent execution**
 

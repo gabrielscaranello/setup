@@ -36,30 +36,6 @@ setup() {
   [[ "$output" =~ "installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
 }
 
-@test "_install_desktop_integration_tools installs nemo-fileroller on LMDE or Cinnamon" {
-  get_distro_id() { echo "lmde"; }
-  get_desktop_environment() { echo "unknown"; }
-  install_packages() {
-    echo "installed: $*"
-    return 0
-  }
-  run _install_desktop_integration_tools
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed: nemo-fileroller" ]]
-
-  get_distro_id() { echo "debian"; }
-  get_desktop_environment() { echo "cinnamon"; }
-  run _install_desktop_integration_tools
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed: nemo-fileroller" ]]
-
-  get_distro_id() { echo "debian"; }
-  get_desktop_environment() { echo "gnome"; }
-  run _install_desktop_integration_tools
-  [ "$status" -eq 0 ]
-  [[ ! "$output" =~ "installed: nemo-fileroller" ]]
-}
-
 _initialize_xdg_dirs() {
   if command -v xdg-user-dirs-update > /dev/null 2>&1; then
     echo "Initializing XDG user directories..."
@@ -156,8 +132,8 @@ EOF
 }
 
 @test "main runs all setup steps in order" {
-  get_distro_id() { echo "lmde"; }
-  get_desktop_environment() { echo "cinnamon"; }
+  get_distro_id() { echo "debian"; }
+  get_desktop_environment() { echo "gnome"; }
   install_packages() {
     echo "mock installed: $*"
     return 0
@@ -182,7 +158,6 @@ EOF
   [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev" ]]
   [[ "$output" =~ "mock installed: dosfstools mtools ntfs-3g" ]]
   [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
-  [[ "$output" =~ "mock installed: nemo-fileroller" ]]
   [[ "$output" =~ "mock installed: spell-pt-br spell-en" ]]
   [[ "$output" =~ "mock bluetooth configured" ]]
   [[ "$output" =~ "mock services enabled" ]]

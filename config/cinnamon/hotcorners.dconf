@@ -1,7 +1,0 @@
-[org/cinnamon]
-hotcorner-layout=['expo:true:0', 'scale:false:0', 'scale:true:500', 'desktop:false:0']
-alttab-switcher-delay=150
-alttab-switcher-enforce-primary-monitor=true
-alttab-switcher-show-all-workspaces=true
-alttab-switcher-style='coverflow'
-alttab-switcher-warp-mouse-pointer=false

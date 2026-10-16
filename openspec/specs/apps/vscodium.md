@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs the VSCodium (or Code - OSS on Arch) open-source editor across supported distributions (Arch Linux, Debian, Fedora, LMDE), configuring official upstream repositories with GPG verification on Debian, LMDE, and Fedora, and using repository packages directly on Arch Linux.
+Installs the VSCodium (or Code - OSS on Arch) open-source editor across supported distributions (Arch Linux, Debian, Fedora), configuring official upstream repositories with GPG verification on Debian and Fedora, and using repository packages directly on Arch Linux.
 
 ---
 
@@ -13,7 +13,7 @@ Installs the VSCodium (or Code - OSS on Arch) open-source editor across supporte
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`)**: SHALL install `code` directly from distribution repositories via `install_packages code`.
-- **Debian (`debian`) & LMDE (`lmde`)**: SHALL configure the VSCodium upstream APT repository (importing GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`, adding `/etc/apt/sources.list.d/vscodium.sources`), run `apt update`, and install package `codium` via `install_packages codium`.
+- **Debian (`debian`)**: SHALL configure the VSCodium upstream APT repository (importing GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`, adding `/etc/apt/sources.list.d/vscodium.sources`), run `apt update`, and install package `codium` via `install_packages codium`.
 - **Fedora (`fedora`)**: SHALL configure the VSCodium upstream YUM/DNF repository at `/etc/yum.repos.d/vscodium.repo` with GPG verification (`https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg`) and install package `codium` via `install_packages codium`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
@@ -24,9 +24,9 @@ The script SHALL determine the installation mechanism based on the target distri
 - **THEN** it SHALL call `install_packages code`
 - **AND** it SHALL NOT attempt to add third-party APT or DNF repositories
 
-#### Scenario: Running on Debian or LMDE
+#### Scenario: Running on Debian
 
-- **GIVEN** a Debian or LMDE system (`get_distro_id` returns `debian` or `lmde`)
+- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/apps/setup-vscodium.sh` is executed
 - **THEN** it SHALL ensure `wget` or `curl` and `gpg` are present
 - **AND** it SHALL download and dearmor the VSCodium GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` (or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`)

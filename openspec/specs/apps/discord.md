@@ -13,7 +13,7 @@ Installs Discord desktop voice and text messaging client using the optimal distr
 The script SHALL select the installation provider based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`)**: SHALL install the native distribution package `discord`.
-- **Debian (`debian`), Fedora (`fedora`) & LMDE (`lmde`)**: SHALL install the official Flatpak package `com.discordapp.Discord` via Flathub (`install_flatpak_app`).
+- **Debian (`debian`) & Fedora (`fedora`)**: SHALL install the official Flatpak package `com.discordapp.Discord` via Flathub (`install_flatpak_app`).
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
 #### Scenario: Running on Arch Linux
@@ -23,9 +23,9 @@ The script SHALL select the installation provider based on the target distributi
 - **THEN** it SHALL call `install_packages discord`
 - **AND** it SHALL NOT invoke Flatpak
 
-#### Scenario: Running on Debian, Fedora or LMDE
+#### Scenario: Running on Debian or Fedora
 
-- **GIVEN** a Debian, Fedora, or LMDE system (`get_distro_id` returns `debian`, `fedora`, or `lmde`)
+- **GIVEN** a Debian or Fedora system (`get_distro_id` returns `debian` or `fedora`)
 - **WHEN** `scripts/apps/setup-discord.sh` runs
 - **THEN** it SHALL call `install_flatpak_app "com.discordapp.Discord" "Discord"`
 

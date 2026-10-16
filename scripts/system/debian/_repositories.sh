@@ -6,13 +6,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../_utils.sh" 2> /dev/null || source "
 get_debian_codename() {
   if [ -f /etc/os-release ]; then
     # shellcheck source=/dev/null
-    local debian_codename version_codename
-    debian_codename="$(grep '^DEBIAN_CODENAME=' /etc/os-release 2> /dev/null | cut -d= -f2 | tr -d '"' || true)"
-    if [ -n "$debian_codename" ]; then
-      echo "$debian_codename"
-      return 0
-    fi
-
+    local version_codename
     version_codename="$(grep '^VERSION_CODENAME=' /etc/os-release 2> /dev/null | cut -d= -f2 | tr -d '"' || true)"
     if [ -n "$version_codename" ]; then
       echo "$version_codename"

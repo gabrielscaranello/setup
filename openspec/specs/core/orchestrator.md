@@ -2,7 +2,7 @@
 
 ## Overview
 
-The central CLI orchestrator provides a single, unified entry point (`./main.sh` and `make <target>`) for running setup modules individually or orchestrating the complete desktop setup pipeline with automatic distribution detection across **Debian**, **Fedora**, **Arch Linux**, and **LMDE** (Linux Mint Debian Edition).
+The central CLI orchestrator provides a single, unified entry point (`./main.sh` and `make <target>`) for running setup modules individually or orchestrating the complete desktop setup pipeline with automatic distribution detection across **Debian**, **Fedora**, and **Arch Linux**.
 
 ## Requirements
 
@@ -10,13 +10,12 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 - `main.sh` acts as root launcher forwarding all parameters to `runners/main.sh`.
 - When invoked without arguments, it defaults to displaying interactive CLI help (`show_help`).
-- `show_help` documents all supported modules, available distro commands (`arch`, `debian`, `fedora`, `lmde`), and the global setup target (`all`).
+- `show_help` documents all supported modules, available distro commands (`arch`, `debian`, `fedora`), and the global setup target (`all`).
 
 ### 2. Automatic Distribution Delegation (`run_all`)
 
 - Queries `get_distro_id` to detect the running Linux distribution.
 - Delegates full setup pipeline to the dedicated runner:
-  - `lmde`: executes `runners/lmde.sh`
   - `debian`: executes `runners/debian.sh`
   - `fedora`: executes `runners/fedora.sh`
   - `arch`: executes `runners/arch.sh`
@@ -25,7 +24,7 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 ### 3. Direct Module and Runner Invocations (`run_module`)
 
 - Supports direct invocation of individual toolchain, desktop, and app scripts.
-- Supports direct invocation of distro runners (`arch`, `debian`, `fedora`, `lmde`) to allow explicit target overrides.
+- Supports direct invocation of distro runners (`arch`, `debian`, `fedora`) to allow explicit target overrides.
 - For unknown commands or targets, outputs an error message and shows help with exit status 1.
 
 ## Test Scenarios
@@ -36,15 +35,7 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 - **GIVEN** `runners/main.sh` is invoked with no arguments, `help`, or `--help`
 - **WHEN** execution starts
-- **THEN** it displays available setup commands including `all`, `arch`, `debian`, `fedora`, and `lmde`
-- **AND** exits with status 0
-
-**Scenario: Auto-delegation to LMDE runner**
-
-- **GIVEN** `get_distro_id` returns `lmde`
-- **WHEN** `run_all` is executed
-- **THEN** it outputs delegation to the LMDE runner
-- **AND** invokes `runners/lmde.sh`
+- **THEN** it displays available setup commands including `all`, `arch`, `debian`, and `fedora`
 - **AND** exits with status 0
 
 **Scenario: Auto-delegation to Debian, Fedora, and Arch runners**
@@ -56,7 +47,7 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 **Scenario: Direct distro runner execution**
 
-- **GIVEN** a specific runner target is passed (e.g. `lmde`, `arch`, `debian`, `fedora`)
+- **GIVEN** a specific runner target is passed (e.g. `arch`, `debian`, `fedora`)
 - **WHEN** `run_module` is called
 - **THEN** it executes the corresponding runner script
 - **AND** exits with status 0

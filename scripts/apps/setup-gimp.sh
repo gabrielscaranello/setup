@@ -14,7 +14,7 @@ _install_gimp() {
       echo "Installing GIMP from distribution repository..."
       install_packages gimp
       ;;
-    debian | lmde)
+    debian)
       echo "Installing GIMP with flatpak..."
       install_flatpak_app "org.gimp.GIMP" "GIMP"
       ;;

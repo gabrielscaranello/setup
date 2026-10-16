@@ -127,17 +127,6 @@ setup() {
   [[ "$output" =~ installed\ from\ binary ]]
 }
 
-@test "_install_telegram delegates to binary on lmde" {
-  get_distro_id() { echo "lmde"; }
-  _install_telegram_binary() {
-    echo "installed from binary"
-    return 0
-  }
-  run _install_telegram
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ installed\ from\ binary ]]
-}
-
 @test "main executes successfully and reports complete" {
   _install_telegram() {
     echo "called _install_telegram"

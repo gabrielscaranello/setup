@@ -14,7 +14,6 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 - **Debian 13 (Trixie)** (`apt`)
 - **Fedora 44** (`dnf`)
 - **Arch Linux** (`pacman` / Rolling release)
-- **LMDE 7 (Linux Mint Debian Edition)** (`apt`)
 
 ---
 
@@ -22,7 +21,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 ### 1. Modern Tooling & Package Management
 
-- Use `apt` (never legacy `apt-get`) on Debian and LMDE.
+- Use `apt` (never legacy `apt-get`) on Debian.
 - Always use `install_packages <generic_pkg>` to automatically resolve distribution package differences via `packages.conf`.
 
 ### 2. Common Reusable Utilities (`scripts/_utils.sh`)
@@ -30,14 +29,14 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 Common operations must reuse helper functions from `scripts/_utils.sh`:
 
 - `install_packages <generic_pkg>...`: Resolves packages across distributions via `packages.conf` and installs them idempotently.
-- `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, `lmde`, or `unknown`).
-- `require_supported_distro`: Validates that current system is supported (`debian`, `fedora`, `arch`, `lmde`) and prints distro ID; exits 1 otherwise.
+- `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
+- `require_supported_distro`: Validates that current system is supported (`debian`, `fedora`, `arch`) and prints distro ID; exits 1 otherwise.
 - `is_distro <distro>`: Checks whether current system matches target distribution.
-- `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, `cinnamon`, or `unknown`).
+- `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - `get_gpu_vendor`: Returns detected physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
-- `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian/LMDE, `crond` on Fedora, `cronie` on Arch).
+- `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch).
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
 - `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
@@ -64,11 +63,6 @@ Third-party repository configurations and hardware primitives must reside in the
   - `add_fedora_docker_repo`: Idempotently adds Docker CE DNF repository.
   - `add_fedora_vscodium_repo`: Idempotently adds VSCodium DNF repository.
   - `add_fedora_rpmfusion_repo`: Idempotently adds RPM Fusion Free and Non-Free DNF repositories.
-- **LMDE (`scripts/system/lmde/_repositories.sh`)**:
-  - `get_lmde_codename`: Resolves Linux Mint release codename (`gigi`, etc.).
-  - `get_lmde_debian_codename`: Resolves underlying Debian base codename (`trixie`, etc.).
-  - `add_lmde_official_repo`: Idempotently verifies or adds official Linux Mint APT repository and imports keyring.
-  - `add_lmde_backports_repo`: Idempotently configures Debian Backports for LMDE.
 
 ### 4. Rule for One-Line Functions
 
@@ -77,7 +71,7 @@ Third-party repository configurations and hardware primitives must reside in the
 
 ### 5. Desktop Environment (DE) Handling Policy
 
-- Whenever a script or configuration step depends on a specific Desktop Environment (GNOME, KDE Plasma, Cinnamon), it must detect the active environment using `get_desktop_environment`.
+- Whenever a script or configuration step depends on a specific Desktop Environment (GNOME, KDE Plasma), it must detect the active environment using `get_desktop_environment`.
 - **Default to doing nothing**: When the Desktop Environment is not recognized (`unknown` or unsupported), the script must **NOT** execute environment-specific actions or guess configurations. Agnóstic/generic configurations (like standard XDG specifications) may still proceed.
 
 ### 6. SOLID Principles in Bash Scripts & Helpers
@@ -91,7 +85,7 @@ All setup scripts, helpers, and orchestrators must strictly adhere to the **SOLI
   - Scripts and runners must be open for extension, but closed for modification.
   - Distribution variations and new tools should be added through declarative configuration (`scripts/packages.conf`) and extensible dispatch mechanisms (`case "$(get_distro_id)" in ...`), avoiding modifications to core installer functions.
 - **L — Liskov Substitution Principle (LSP)**:
-  - Distribution-specific helper and installation functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`, `_install_lmde_*`) must adhere to a consistent contract: identical expected inputs, standard return codes (0 for success or expected graceful skip, non-zero for fatal failure), idempotency, and honoring execution control flags (such as `*_SKIP_PACKAGE_INSTALL` or `*_FORCE_*`).
+  - Distribution-specific helper and installation functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`) must adhere to a consistent contract: identical expected inputs, standard return codes (0 for success or expected graceful skip, non-zero for fatal failure), idempotency, and honoring execution control flags (such as `*_SKIP_PACKAGE_INSTALL` or `*_FORCE_*`).
 - **I — Interface Segregation Principle (ISP)**:
   - Avoid monolithic interfaces. Distro helper modules (e.g., `_repositories.sh`) should expose fine-grained, dedicated functions for individual repositories rather than huge, all-in-one setup functions. Sourced modules must only expose utilities relevant to their domain.
 - **D — Dependency Inversion Principle (DIP)**:
@@ -121,7 +115,6 @@ make test-integration
 docker run --rm -it -v "$(pwd)":/setup setup-test-debian bash
 docker run --rm -it -v "$(pwd)":/setup setup-test-fedora bash
 docker run --rm -it -v "$(pwd)":/setup setup-test-archlinux bash
-docker run --rm -it -v "$(pwd)":/setup setup-test-lmde bash
 
 # ❌ NEVER — executes on the developer's workstation, may corrupt their system
 bash scripts/toolchain/setup-docker.sh
@@ -214,7 +207,7 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
 3. **[runners/main.sh](runners/main.sh)**: Register the new module in `run_module()`, `run_all()` steps, and the `show_help()` documentation. The CLI help in `runners/main.sh` is the single source of truth for available setup commands.
 4. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
-   - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`, `lmde`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
+   - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
    - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
 

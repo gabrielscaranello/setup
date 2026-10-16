@@ -16,7 +16,6 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/desktop/_plasma.sh" 2> /dev/null || true
-source "scripts/desktop/_dconf.sh" 2> /dev/null || true
 
 _set_mime_default() {
   local desktop_file="$1"
@@ -69,20 +68,6 @@ _set_default_terminal_plasma() {
   plasma_write_config "kdeglobals" "General" "TerminalService" "kitty.desktop"
 }
 
-_set_default_terminal_cinnamon() {
-  if command -v dconf > /dev/null 2>&1; then
-    dconf_exec write /org/cinnamon/desktop/default-applications/terminal/exec "'kitty'" 2> /dev/null || true
-    dconf_exec write /org/cinnamon/desktop/default-applications/terminal/exec-arg "'-e'" 2> /dev/null || true
-  fi
-
-  if command -v gsettings > /dev/null 2>&1; then
-    if gsettings list-schemas 2> /dev/null | grep -qx "org.cinnamon.desktop.default-applications.terminal"; then
-      gsettings set org.cinnamon.desktop.default-applications.terminal exec 'kitty' 2> /dev/null || true
-      gsettings set org.cinnamon.desktop.default-applications.terminal exec-arg '-e' 2> /dev/null || true
-    fi
-  fi
-}
-
 _set_default_terminal() {
   local de
   de="$(get_desktop_environment)"
@@ -96,9 +81,6 @@ _set_default_terminal() {
       ;;
     plasma)
       _set_default_terminal_plasma
-      ;;
-    cinnamon)
-      _set_default_terminal_cinnamon
       ;;
     *)
       # For unrecognized desktop environments, do not apply DE-specific configurations
@@ -212,14 +194,11 @@ _set_default_file_manager() {
   local desktop_file
 
   case "$de" in
-    cinnamon)
-      desktop_file="$(resolve_desktop_app "nemo.desktop" "org.gnome.Nautilus.desktop" "nautilus.desktop")"
-      ;;
     plasma)
       desktop_file="$(resolve_desktop_app "org.kde.dolphin.desktop" "dolphin.desktop" "org.gnome.Nautilus.desktop" "nautilus.desktop")"
       ;;
     *)
-      desktop_file="$(resolve_desktop_app "org.gnome.Nautilus.desktop" "nautilus.desktop" "nemo.desktop" "org.kde.dolphin.desktop" "dolphin.desktop")"
+      desktop_file="$(resolve_desktop_app "org.gnome.Nautilus.desktop" "nautilus.desktop" "org.kde.dolphin.desktop" "dolphin.desktop")"
       ;;
   esac
 
@@ -238,9 +217,6 @@ _set_default_pdf_viewer() {
   local desktop_file
 
   case "$de" in
-    cinnamon)
-      desktop_file="$(resolve_desktop_app "xreader.desktop" "org.gnome.Evince.desktop" "evince.desktop" "org.kde.okular.desktop" "okular.desktop")"
-      ;;
     plasma)
       desktop_file="$(resolve_desktop_app "org.kde.okular.desktop" "okular.desktop" "org.gnome.Evince.desktop" "evince.desktop")"
       ;;
@@ -265,9 +241,6 @@ _set_default_image_viewer() {
   local desktop_file
 
   case "$de" in
-    cinnamon)
-      desktop_file="$(resolve_desktop_app "xviewer.desktop" "org.gnome.Loupe.desktop" "eog.desktop" "org.kde.gwenview.desktop" "gwenview.desktop")"
-      ;;
     plasma)
       desktop_file="$(resolve_desktop_app "org.kde.gwenview.desktop" "gwenview.desktop" "org.gnome.Loupe.desktop" "eog.desktop")"
       ;;
@@ -297,9 +270,6 @@ _set_default_text_editor() {
   local desktop_file
 
   case "$de" in
-    cinnamon)
-      desktop_file="$(resolve_desktop_app "xed.desktop" "org.gnome.TextEditor.desktop" "gedit.desktop" "org.kde.ghostwriter.desktop" "ghostwriter.desktop")"
-      ;;
     plasma)
       desktop_file="$(resolve_desktop_app "org.kde.ghostwriter.desktop" "ghostwriter.desktop" "org.gnome.TextEditor.desktop" "gedit.desktop")"
       ;;

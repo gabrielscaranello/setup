@@ -62,19 +62,6 @@
   [[ "$output" =~ "pipeline: Fedora Desktop Setup" ]]
 }
 
-@test "runners/lmde.sh run_all calls run_pipeline with LMDE pipeline" {
-  source /setup/runners/lmde.sh 2>/dev/null || source runners/lmde.sh
-
-  run_pipeline() {
-    echo "pipeline: $1"
-    return 0
-  }
-
-  run run_all
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "pipeline: LMDE Desktop Setup" ]]
-}
-
 @test "runners/_utils.sh COMMON_POST_STEPS orders desktop-apps before default-apps" {
   source /setup/runners/_utils.sh 2>/dev/null || source runners/_utils.sh 2>/dev/null
 

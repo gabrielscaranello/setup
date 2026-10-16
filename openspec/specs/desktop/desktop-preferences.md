@@ -18,7 +18,7 @@ Supports both primary desktop environments:
   - **GNOME**: When `get_desktop_environment` returns `gnome`, the script delegates to GNOME configuration routines.
   - **KDE Plasma**: When `get_desktop_environment` returns `plasma`, the script delegates to KDE Plasma 6 configuration routines.
 - **Unsupported DE Skip Invariant**:
-  - Whenever `get_desktop_environment` returns an unsupported or unknown environment (such as `xfce`, `cinnamon`, or `unknown`), the script **MUST IMMEDIATELY SKIP** all configuration steps.
+  - Whenever `get_desktop_environment` returns an unsupported or unknown environment (such as `xfce` or `unknown`), the script **MUST IMMEDIATELY SKIP** all configuration steps.
   - It outputs an informative log message and **exits with return code 0** without modifying any configuration settings or files.
 
 ### 1. GNOME Desktop Environment Preferences

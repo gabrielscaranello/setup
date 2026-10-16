@@ -55,9 +55,9 @@
   [ "$status" -eq 0 ]
 }
 
-@test "_install_go installs from binary on lmde" {
+@test "_install_go installs from binary on debian" {
   source /setup/scripts/toolchain/setup-go.sh
-  require_supported_distro() { echo "lmde"; }
+  require_supported_distro() { echo "debian"; }
   install_packages() { return 0; }
   _install_go_from_binary() { echo "called _install_go_from_binary"; }
   _install_go_packages() { echo "called _install_go_packages"; }

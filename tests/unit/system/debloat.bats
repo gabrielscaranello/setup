@@ -96,50 +96,6 @@ setup() {
   [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole akregator kmail korganizer kontact" ]]
 }
 
-@test "_debloat_debian purges packages on Cinnamon when installed" {
-  get_desktop_environment() { echo "cinnamon"; }
-  get_distro_id() { echo "debian"; }
-  _filter_installed_debian() {
-    local args="$*"
-    [[ "$args" =~ "celluloid" ]]
-    [[ "$args" =~ "gnome-terminal" ]]
-    [[ "$args" =~ "hypnotix*" ]]
-    [[ "$args" =~ "mintchat" ]]
-    [[ "$args" =~ "sticky" ]]
-    [[ "$args" =~ "thingy" ]]
-    [[ "$args" =~ "thunderbird*" ]]
-    echo "celluloid gnome-terminal hypnotix mintchat sticky thingy"
-  }
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _debloat_debian
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Purging unused Debian packages: celluloid gnome-terminal hypnotix mintchat sticky thingy" ]]
-  [[ "$output" =~ "sudo apt purge -y celluloid gnome-terminal hypnotix mintchat sticky thingy" ]]
-}
-
-@test "_debloat_debian includes Cinnamon packages on LMDE with generic/unknown DE" {
-  get_desktop_environment() { echo "unknown"; }
-  get_distro_id() { echo "lmde"; }
-  _filter_installed_debian() {
-    local args="$*"
-    [[ "$args" =~ "celluloid" ]]
-    [[ "$args" =~ "mintchat" ]]
-    echo "celluloid mintchat"
-  }
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _debloat_debian
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "Purging unused Debian packages: celluloid mintchat" ]]
-}
-
 @test "_debloat_debian handles no installed packages gracefully" {
   get_desktop_environment() { echo "gnome"; }
   _filter_installed_debian() {
@@ -210,16 +166,6 @@ setup() {
 
 @test "main delegates to _debloat_debian on debian" {
   get_distro_id() { echo "debian"; }
-  _debloat_debian() { echo "called debloat debian"; return 0; }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called debloat debian" ]]
-  [[ "$output" =~ "setup-debloat complete" ]]
-}
-
-@test "main delegates to _debloat_debian on lmde" {
-  get_distro_id() { echo "lmde"; }
   _debloat_debian() { echo "called debloat debian"; return 0; }
 
   run main

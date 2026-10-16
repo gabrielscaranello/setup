@@ -14,7 +14,6 @@ get_desktop_environment() {
   case "$de" in
     *gnome*) echo "gnome" ;;
     *kde* | *plasma*) echo "plasma" ;;
-    *cinnamon*) echo "cinnamon" ;;
     *) echo "unknown" ;;
   esac
 }
@@ -28,14 +27,7 @@ save_desktop_environment() {
 
 prompt_desktop_environment() {
   local prompt_label="${1:-Selecione o Desktop Environment:}"
-  local default_de="${2:-}"
-  if [ -z "$default_de" ]; then
-    if [ "$(get_distro_id 2> /dev/null || true)" = "lmde" ]; then
-      default_de="cinnamon"
-    else
-      default_de="plasma"
-    fi
-  fi
+  local default_de="${2:-plasma}"
 
   if [ -t 0 ]; then
     echo "" >&2
@@ -43,13 +35,11 @@ prompt_desktop_environment() {
     echo "$prompt_label" >&2
     echo "  1) KDE Plasma" >&2
     echo "  2) GNOME" >&2
-    echo "  3) Cinnamon (Padrão no LMDE)" >&2
     echo "" >&2
     local choice=""
-    read -r -p "Opção [1-3, padrão: 1]: " choice || true
+    read -r -p "Opção [1-2, padrão: 1]: " choice || true
     case "$choice" in
       2 | [gG]*) echo "gnome" ;;
-      3 | [cC]*) echo "cinnamon" ;;
       *) echo "plasma" ;;
     esac
   else

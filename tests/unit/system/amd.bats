@@ -54,11 +54,6 @@ setup() {
   [[ "$output" =~ "called nonfree" ]]
   [[ "$output" =~ "called backports" ]]
 
-  run configure_gpu_repositories "lmde"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called nonfree" ]]
-  [[ "$output" =~ "called backports" ]]
-
   run configure_gpu_repositories "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called rpmfusion" ]]

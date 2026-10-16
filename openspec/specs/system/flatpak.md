@@ -10,7 +10,7 @@ Idempotently installs the Flatpak package manager integration and enables the pr
 
 ### Requirement: Flatpak Package Installation
 
-The script SHALL install `flatpak` using the native package manager via `install_packages flatpak` for Debian, Fedora, Arch Linux, or LMDE.
+The script SHALL install `flatpak` using the native package manager via `install_packages flatpak` for Debian, Fedora, or Arch Linux.
 
 #### Scenario: Flatpak not installed
 

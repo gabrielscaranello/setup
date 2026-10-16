@@ -208,15 +208,3 @@ DESKTOP_OPEN
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed from binary" ]]
 }
-
-@test "_install_kitty delegates to binary on lmde" {
-  source /setup/scripts/terminal/setup-kitty.sh
-  require_supported_distro() { echo "lmde"; }
-  _install_kitty_binary() {
-    echo "installed from binary"
-    return 0
-  }
-  run _install_kitty
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed from binary" ]]
-}

@@ -38,7 +38,7 @@ _install_gnome_apps() {
   local distro
   distro="$(get_distro_id 2> /dev/null || echo "unknown")"
   case "$distro" in
-    debian | fedora | lmde)
+    debian | fedora)
       echo "Installing Extension Manager via Flatpak on $distro..."
       install_flatpak_app "com.mattjakeman.ExtensionManager" "Extension Manager"
       ;;
