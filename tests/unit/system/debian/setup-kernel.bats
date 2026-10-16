@@ -7,9 +7,12 @@ setup() {
   source /setup/scripts/system/debian/setup-kernel.sh
 }
 
-@test "_install_backports_kernel_apt calls add_debian_backports_repo and installs kernel with -t <codename>-backports" {
+@test "_install_backports_kernel_apt calls add_debian_backports_repo and installs kernel with -t <codename>-backports on stable" {
   get_debian_codename() {
     echo "bookworm"
+  }
+  is_debian_testing() {
+    return 1
   }
   add_debian_backports_repo() {
     echo "called add_debian_backports_repo"
@@ -25,6 +28,23 @@ setup() {
   [[ "$output" =~ -t\ bookworm-backports ]]
   [[ "$output" =~ linux-image-amd64 ]]
   [[ "$output" =~ linux-headers-amd64 ]]
+}
+
+@test "_install_backports_kernel_apt installs kernel directly via install_packages on Debian testing/forky" {
+  get_debian_codename() {
+    echo "forky"
+  }
+  is_debian_testing() {
+    return 0
+  }
+  install_packages() {
+    echo "install_packages called with: $*"
+    return 0
+  }
+  run _install_backports_kernel_apt
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing latest Linux kernel and headers on Debian testing (forky)" ]]
+  [[ "$output" =~ "install_packages called with: linux-image-amd64 linux-headers-amd64" ]]
 }
 
 @test "_install_backports_kernel_apt installs newer backports version than default suite candidate" {

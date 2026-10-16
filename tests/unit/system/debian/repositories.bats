@@ -31,6 +31,66 @@ EOF
   [ "$output" = "trixie" ]
 }
 
+@test "get_debian_codename retrieves DEBIAN_CODENAME on Debian testing/forky" {
+  local os_release_file
+  os_release_file="$(mktemp)"
+  cat << 'EOF' > "$os_release_file"
+NAME="Debian GNU/Linux"
+PRETTY_NAME="Debian GNU/Linux forky/sid"
+DEBIAN_CODENAME=forky
+EOF
+
+  get_debian_codename_mock() {
+    local version_codename
+    version_codename="$(grep '^VERSION_CODENAME=' "$os_release_file" 2>/dev/null | cut -d= -f2 | tr -d '"' || true)"
+    if [ -n "$version_codename" ]; then
+      echo "$version_codename"
+      return 0
+    fi
+    local debian_codename
+    debian_codename="$(grep '^DEBIAN_CODENAME=' "$os_release_file" 2>/dev/null | cut -d= -f2 | tr -d '"' || true)"
+    if [ -n "$debian_codename" ]; then
+      echo "$debian_codename"
+      return 0
+    fi
+    echo "trixie"
+  }
+
+  run get_debian_codename_mock
+  rm -f "$os_release_file"
+  [ "$status" -eq 0 ]
+  [ "$output" = "forky" ]
+}
+
+@test "is_debian_testing detects testing and unstable codenames" {
+  run is_debian_testing "forky"
+  [ "$status" -eq 0 ]
+
+  run is_debian_testing "testing"
+  [ "$status" -eq 0 ]
+
+  run is_debian_testing "sid"
+  [ "$status" -eq 0 ]
+
+  run is_debian_testing "unstable"
+  [ "$status" -eq 0 ]
+
+  run is_debian_testing "trixie"
+  [ "$status" -eq 1 ]
+
+  run is_debian_testing "bookworm"
+  [ "$status" -eq 1 ]
+}
+
+@test "add_debian_backports_repo skips on Debian testing (forky)" {
+  get_debian_codename() {
+    echo "forky"
+  }
+  run add_debian_backports_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "does not use backports, skipping" ]]
+}
+
 @test "_is_debian_backports_configured returns true when repo exists" {
   local tmp_dir
   tmp_dir="$(mktemp -d)"
@@ -48,6 +108,9 @@ EOF
 }
 
 @test "add_debian_backports_repo skips when repository is already configured" {
+  get_debian_codename() {
+    echo "bookworm"
+  }
   _is_debian_backports_configured() {
     return 0
   }

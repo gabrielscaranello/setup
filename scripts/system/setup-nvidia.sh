@@ -12,6 +12,13 @@ source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
 _install_debian_driver() {
   local codename
   codename="$(get_debian_codename)"
+
+  if is_debian_testing "$codename"; then
+    echo "Installing kernel headers, firmware, and NVIDIA driver on Debian testing ($codename)..."
+    install_packages linux-headers-amd64 firmware-misc-nonfree nvidia-driver nvidia-smi nvidia-settings
+    return 0
+  fi
+
   echo "Installing kernel headers, firmware, and NVIDIA driver on Debian from backports (${codename}-backports)..."
   # Justification: APT pinning (-t <release>-backports) required for newer NVIDIA drivers on Debian
   sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings 2> /dev/null \

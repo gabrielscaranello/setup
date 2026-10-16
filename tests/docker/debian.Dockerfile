@@ -1,4 +1,5 @@
-FROM debian:trixie
+ARG DEBIAN_VERSION=trixie
+FROM debian:${DEBIAN_VERSION}
 
 ARG BATS_VERSION=1.11.0
 

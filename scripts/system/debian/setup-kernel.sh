@@ -10,11 +10,18 @@ _install_backports_kernel_apt() {
   local codename
   codename="$(get_debian_codename)"
 
+  if is_debian_testing "$codename"; then
+    echo "Installing latest Linux kernel and headers on Debian testing ($codename)..."
+    install_packages linux-image-amd64 linux-headers-amd64
+    return 0
+  fi
+
   add_debian_backports_repo
 
   echo "Installing latest Linux kernel and headers from ${codename}-backports..."
   # Justification: APT pinning (-t <release>-backports) required to select the backports kernel
-  sudo apt install -y -t "${codename}-backports" linux-image-amd64 linux-headers-amd64
+  sudo apt install -y -t "${codename}-backports" linux-image-amd64 linux-headers-amd64 2> /dev/null \
+    || install_packages linux-image-amd64 linux-headers-amd64
 }
 
 _setup_debian_kernel() {

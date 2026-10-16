@@ -13,8 +13,12 @@ setup_file() {
 
 @test "backports repository is configured on Debian" {
   source /setup/scripts/_utils.sh
+  source /setup/scripts/system/debian/_repositories.sh 2> /dev/null || true
   if [ "$(get_distro_id)" != "debian" ]; then
     skip "Test only runs on Debian"
+  fi
+  if is_debian_testing; then
+    skip "Debian testing does not configure backports"
   fi
   run bash -c "grep -Er 'backports' /etc/apt/sources.list* 2>/dev/null"
   [ "$status" -eq 0 ]

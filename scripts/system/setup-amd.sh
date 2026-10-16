@@ -53,6 +53,21 @@ _install_fedora_amd_packages() {
 _install_debian_backports_stack() {
   local codename
   codename="$(get_debian_codename)"
+
+  if is_debian_testing "$codename"; then
+    echo "Installing AMD GPU firmware and Mesa graphics stack on Debian testing ($codename)..."
+    install_packages \
+      firmware-amd-graphics \
+      libegl-mesa0 \
+      libgbm1 \
+      libgl1-mesa-dri \
+      libglx-mesa0 \
+      mesa-va-drivers \
+      mesa-vdpau-drivers \
+      mesa-vulkan-drivers
+    return 0
+  fi
+
   echo "Installing AMD GPU firmware and Mesa graphics stack from Debian backports (${codename}-backports)..."
   # Justification: APT pinning (-t <release>-backports) is required for newer Mesa on Debian
   sudo apt install -y -t "${codename}-backports" \
@@ -72,6 +87,10 @@ _install_debian_32bit_packages() {
   codename="$(get_debian_codename)"
   if command -v dpkg > /dev/null 2>&1 && dpkg --print-foreign-architectures 2> /dev/null | grep -q "i386"; then
     echo "Configuring 32-bit AMD graphics libraries on Debian..."
+    if is_debian_testing "$codename"; then
+      sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
+      return 0
+    fi
     # Justification: Multiarch architecture suffix (:i386) with backports pinning
     sudo apt install -y -t "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null \
       || sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true

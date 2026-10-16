@@ -16,15 +16,21 @@ The helper SHALL resolve the Debian release codename from `/etc/os-release` (`DE
 
 The function `add_debian_backports_repo` SHALL check `/etc/apt/sources.list` and `/etc/apt/sources.list.d/` for existing backports configurations before creating `/etc/apt/sources.list.d/backports.list`.
 
+#### Scenario: Debian testing or unstable release
+
+- **GIVEN** Debian codename is `forky`, `testing`, `sid`, or `unstable`
+- **WHEN** `add_debian_backports_repo` is called
+- **THEN** it SHALL skip backports repository configuration and return 0
+
 #### Scenario: Backports already present
 
 - **GIVEN** APT sources already contain `<codename>-backports`
 - **WHEN** `add_debian_backports_repo` is called
 - **THEN** it SHALL skip repository creation and return 0
 
-#### Scenario: Adding Backports
+#### Scenario: Adding Backports on stable release
 
-- **GIVEN** no backports repository exists
+- **GIVEN** a Debian stable release (e.g. `trixie`, `bookworm`) with no backports repository configured
 - **WHEN** `add_debian_backports_repo` is called
 - **THEN** `/etc/apt/sources.list.d/backports.list` SHALL be written with `main contrib non-free non-free-firmware` components
 - **AND** `sudo apt update -qq` SHALL be executed

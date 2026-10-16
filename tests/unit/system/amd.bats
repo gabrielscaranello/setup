@@ -139,6 +139,7 @@ setup() {
 
 @test "_install_debian_backports_stack installs backports packages with fallback" {
   get_debian_codename() { echo "trixie"; }
+  is_debian_testing() { return 1; }
   sudo() { echo "sudo: $*"; return 0; }
   install_packages() { echo "fallback: $*"; return 0; }
 
@@ -147,8 +148,20 @@ setup() {
   [[ "$output" =~ "sudo: apt install -y -t trixie-backports firmware-amd-graphics" ]]
 }
 
+@test "_install_debian_backports_stack installs packages directly on Debian testing/forky" {
+  get_debian_codename() { echo "forky"; }
+  is_debian_testing() { return 0; }
+  install_packages() { echo "install_packages: $*"; return 0; }
+
+  run _install_debian_backports_stack
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing AMD GPU firmware and Mesa graphics stack on Debian testing (forky)..." ]]
+  [[ "$output" =~ "install_packages: firmware-amd-graphics" ]]
+}
+
 @test "_install_debian_32bit_packages installs i386 graphics when multiarch enabled" {
   get_debian_codename() { echo "trixie"; }
+  is_debian_testing() { return 1; }
   command() { return 0; }
   dpkg() { echo "i386"; return 0; }
   sudo() { echo "sudo: $*"; return 0; }
@@ -156,6 +169,18 @@ setup() {
   run _install_debian_32bit_packages
   [ "$status" -eq 0 ]
   [[ "$output" =~ "sudo: apt install -y -t trixie-backports mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386" ]]
+}
+
+@test "_install_debian_32bit_packages installs i386 graphics directly on Debian testing/forky" {
+  get_debian_codename() { echo "forky"; }
+  is_debian_testing() { return 0; }
+  command() { return 0; }
+  dpkg() { echo "i386"; return 0; }
+  sudo() { echo "sudo: $*"; return 0; }
+
+  run _install_debian_32bit_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo: apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386" ]]
 }
 
 @test "_install_amd_packages skips when AMD_SKIP_PACKAGE_INSTALL is active" {

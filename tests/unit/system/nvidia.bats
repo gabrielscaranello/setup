@@ -134,6 +134,13 @@ EOF
   run _install_driver_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "apt called: install -y -t trixie-backports nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings" ]]
+
+  get_debian_codename() { echo "forky"; }
+  is_debian_testing() { return 0; }
+  run _install_driver_packages "debian"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing kernel headers, firmware, and NVIDIA driver on Debian testing (forky)..." ]]
+  [[ "$output" =~ "installed: linux-headers-amd64 firmware-misc-nonfree nvidia-driver nvidia-smi nvidia-settings" ]]
 }
 
 @test "_configure_power_and_modeset configures modprobe, RTD3 rules and systemd services" {

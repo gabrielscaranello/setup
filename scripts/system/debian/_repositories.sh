@@ -12,6 +12,13 @@ get_debian_codename() {
       echo "$version_codename"
       return 0
     fi
+
+    local debian_codename
+    debian_codename="$(grep '^DEBIAN_CODENAME=' /etc/os-release 2> /dev/null | cut -d= -f2 | tr -d '"' || true)"
+    if [ -n "$debian_codename" ]; then
+      echo "$debian_codename"
+      return 0
+    fi
   fi
 
   if command -v lsb_release > /dev/null 2>&1; then
@@ -20,6 +27,18 @@ get_debian_codename() {
 
   # Fallback to trixie if detection fails
   echo "trixie"
+}
+
+is_debian_testing() {
+  local codename="${1:-$(get_debian_codename)}"
+  case "$codename" in
+    forky | testing | sid | unstable)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 _is_debian_backports_configured() {
@@ -41,6 +60,12 @@ _is_debian_backports_configured() {
 add_debian_backports_repo() {
   local codename
   codename="$(get_debian_codename)"
+
+  if is_debian_testing "$codename"; then
+    echo "Debian testing/unstable ($codename) does not use backports, skipping."
+    return 0
+  fi
+
   local backports_file="/etc/apt/sources.list.d/backports.list"
 
   if _is_debian_backports_configured "$codename"; then
