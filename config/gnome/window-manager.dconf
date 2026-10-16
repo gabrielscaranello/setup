@@ -15,5 +15,5 @@ name='Kitty'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
 binding='<Control><Alt>s'
-command='flameshot gui'
+command='sh -c "QT_QPA_PLATFORM=wayland flameshot gui"'
 name='Flameshot'

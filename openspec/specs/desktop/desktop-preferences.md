@@ -42,7 +42,7 @@ Supports both primary desktop environments:
    - Touchpad: two-finger scrolling enabled (`two-finger-scrolling-enabled=true`).
 3. **Window Manager & Keybindings** (`window-manager.dconf`):
    - Titlebar middle click: minimizes window.
-   - Global shortcuts: Show Desktop (`<Super>d`), Home Folder (`<Super>e`), Terminal (`<Control><Alt>t` -> `kitty`), Flameshot (`<Control><Alt>s` -> `flameshot gui`).
+   - Global shortcuts: Show Desktop (`<Super>d`), Home Folder (`<Super>e`), Terminal (`<Control><Alt>t` -> `kitty`), Flameshot (`<Control><Alt>s` -> `sh -c "QT_QPA_PLATFORM=wayland flameshot gui"`).
 4. **Night Light** (`night-light.dconf`):
    - Enabled with manual continuous schedule (from 4.0 to ~3.98), temperature 4700K.
 5. **Privacy & Search Providers** (`privacy.dconf`):

@@ -13,16 +13,32 @@ setup() {
   [[ "$output" =~ "Unsupported distribution" ]]
 }
 
-@test "_install_screenshot_tool installs flameshot on GNOME" {
+@test "_configure_flameshot_portal_permission executes dbus-send if available" {
+  dbus-send() {
+    echo "dbus-send called with: $*"
+    return 0
+  }
+  run _configure_flameshot_portal_permission
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "org.freedesktop.impl.portal.PermissionStore" ]]
+  [[ "$output" =~ "org.flameshot.Flameshot" ]]
+}
+
+@test "_install_screenshot_tool installs flameshot and configures portal permissions on GNOME" {
   require_supported_distro() { echo "arch"; }
   get_desktop_environment() { echo "gnome"; }
   install_packages() {
     echo "installed packages: $*"
     return 0
   }
+  _configure_flameshot_portal_permission() {
+    echo "mocked _configure_flameshot_portal_permission"
+    return 0
+  }
   run _install_screenshot_tool
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed packages: flameshot" ]]
+  [[ "$output" =~ "mocked _configure_flameshot_portal_permission" ]]
 }
 
 @test "_install_screenshot_tool installs spectacle on KDE Plasma" {

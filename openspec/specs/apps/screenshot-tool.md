@@ -16,7 +16,7 @@ Installs and configures the appropriate desktop screenshot utility based on the 
 
 The script SHALL detect the active desktop environment via `get_desktop_environment`:
 
-- **GNOME (`gnome`)**: SHALL install `flameshot` using `install_packages flameshot`.
+- **GNOME (`gnome`)**: SHALL install `flameshot` using `install_packages flameshot` and pre-authorize Flameshot in `org.freedesktop.impl.portal.PermissionStore` via D-Bus when available.
 - **KDE Plasma (`plasma`)**: SHALL install `spectacle` using `install_packages spectacle`.
 - **Unknown / Headless / Unsupported DE (`unknown`)**: SHALL output a skip notice, do nothing, and exit cleanly with code 0.
 
@@ -25,6 +25,7 @@ The script SHALL detect the active desktop environment via `get_desktop_environm
 - **GIVEN** a desktop running GNOME (`get_desktop_environment` returns `gnome`)
 - **WHEN** `scripts/apps/setup-screenshot-tool.sh` is executed
 - **THEN** it SHALL call `install_packages flameshot`
+- **AND** it SHALL configure portal permissions for `org.flameshot.Flameshot` via `dbus-send` if available
 
 #### Scenario: Running on KDE Plasma
 
