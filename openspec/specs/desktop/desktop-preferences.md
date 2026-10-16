@@ -2,7 +2,7 @@
 
 ## Overview
 
-Automate desktop environment preferences and system application configurations across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**).
+Automate desktop environment preferences and system application configurations across supported distributions (**Debian 13/14 (Trixie/Forky)**, **Fedora 44**, and **Arch Linux**).
 
 Supports both primary desktop environments:
 

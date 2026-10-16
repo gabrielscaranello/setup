@@ -528,7 +528,7 @@ EOF
   mkdir -p "$db_dir"
 
   sqlite3 "$db_dir/database" 'CREATE TABLE ResourceLink (initiatingAgent TEXT, targettedResource TEXT);'
-  sqlite3 "$db_dir/database" 'INSERT INTO ResourceLink VALUES ("org.kde.plasma.favorites.applications", "applications:firefox.desktop");'
+  sqlite3 "$db_dir/database" "INSERT INTO ResourceLink VALUES ('org.kde.plasma.favorites.applications', 'applications:firefox.desktop');"
 
   run _clear_plasma_kickoff_favorites
   [ "$status" -eq 0 ]
