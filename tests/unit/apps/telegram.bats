@@ -50,12 +50,14 @@ setup() {
   [ "$status" -eq 1 ]
 }
 
-@test "_setup_desktop_integration creates symlinks and desktop entry" {
+@test "_setup_desktop_integration creates symlinks and desktop entry while cleaning legacy entries" {
   local test_home="/tmp/test-telegram-home"
   rm -rf "$test_home"
-  mkdir -p "$test_home/.local/opt/telegram-desktop"
+  mkdir -p "$test_home/.local/opt/telegram-desktop" "$test_home/.local/share/applications"
   touch "$test_home/.local/opt/telegram-desktop/Telegram"
   chmod +x "$test_home/.local/opt/telegram-desktop/Telegram"
+  touch "$test_home/.local/share/applications/telegramdesktop.desktop"
+  touch "$test_home/.local/share/applications/org.telegram.desktop._f3fe17d408312a022c11c6c9d7a1beb8.desktop"
 
   (
     HOME="$test_home"
@@ -64,7 +66,8 @@ setup() {
 
   [ -L "$test_home/.local/bin/telegram-desktop" ]
   [ -f "$test_home/.local/share/applications/org.telegram.desktop.desktop" ]
-  [ -L "$test_home/.local/share/applications/telegramdesktop.desktop" ]
+  [ ! -e "$test_home/.local/share/applications/telegramdesktop.desktop" ]
+  [ ! -e "$test_home/.local/share/applications/org.telegram.desktop._f3fe17d408312a022c11c6c9d7a1beb8.desktop" ]
   grep -q "Exec=$test_home/.local/opt/telegram-desktop/Telegram" "$test_home/.local/share/applications/org.telegram.desktop.desktop"
   grep -q "StartupWMClass=TelegramDesktop" "$test_home/.local/share/applications/org.telegram.desktop.desktop"
   rm -rf "$test_home"

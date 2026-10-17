@@ -36,7 +36,7 @@ On Debian standalone binary installation, the script SHALL:
 - Create symlink `~/.local/bin/telegram-desktop` -> `~/.local/opt/telegram-desktop/Telegram`.
 - Deploy high-resolution application icons (`telegram.png` and `org.telegram.desktop.png`) under `~/.local/share/icons/hicolor/512x512/apps/`.
 - Write `~/.local/share/applications/org.telegram.desktop.desktop` configured with `Exec=~/.local/opt/telegram-desktop/Telegram -- %u`, `Icon=telegram`, `StartupWMClass=TelegramDesktop`, categories (`Network;InstantMessaging;Chat;`), and MIME association `MimeType=x-scheme-handler/tg;`.
-- Create a backward compatibility symlink `~/.local/share/applications/telegramdesktop.desktop` pointing to `org.telegram.desktop.desktop`.
+- Remove legacy `telegramdesktop.desktop` and hashed desktop entries (`org.telegram.desktop._*.desktop`) from `~/.local/share/applications/` to prevent duplicate menu entries in GNOME and other desktop environments.
 - Refresh desktop and icon caches (`update-desktop-database`, `gtk-update-icon-cache`, and `kbuildsycoca6` when available).
 
 #### Scenario: Running on Arch Linux
@@ -59,7 +59,7 @@ On Debian standalone binary installation, the script SHALL:
 - **THEN** latest tarball is downloaded from GitHub and extracted to `~/.local/opt/telegram-desktop`
 - **AND** `~/.local/bin/telegram-desktop` symlink is created
 - **AND** `org.telegram.desktop.desktop` is deployed with `x-scheme-handler/tg;` and `StartupWMClass=TelegramDesktop`
-- **AND** `telegramdesktop.desktop` compatibility symlink is created
+- **AND** legacy `telegramdesktop.desktop` and hashed desktop entries are removed
 - **AND** icon files and desktop database caches are updated
 
 #### Scenario: Running on Debian when already up to date

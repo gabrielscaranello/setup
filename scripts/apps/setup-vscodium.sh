@@ -27,12 +27,12 @@ _install_vscodium() {
 
 _setup_vscodium_desktop_integration() {
   local app_dir="/usr/share/applications"
-  local code_oss_desktop="${app_dir}/com.visualstudio.CodeOSS.desktop"
   local codium_desktop="${app_dir}/codium.desktop"
 
-  if [ -f "$code_oss_desktop" ] && [ ! -f "$codium_desktop" ]; then
-    echo "Creating compatibility symlink for codium.desktop..."
-    sudo ln -sf "$code_oss_desktop" "$codium_desktop" 2> /dev/null || true
+  # Clean up legacy compatibility symlink to prevent duplicate launcher icons in GNOME and Plasma
+  if [ -L "$codium_desktop" ]; then
+    echo "Cleaning up legacy codium.desktop symlink..."
+    sudo rm -f "$codium_desktop" 2> /dev/null || true
   fi
 
   if command -v update-desktop-database > /dev/null 2>&1; then

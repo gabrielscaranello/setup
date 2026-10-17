@@ -391,7 +391,7 @@ EOF
   grep -q "^\[Added Associations\]" "$test_home/.config/mimeapps.list"
   grep -q "^x-scheme-handler/https=firefox.desktop;chromium.desktop;" "$test_home/.config/mimeapps.list"
   grep -q "^image/png=gimp.desktop;" "$test_home/.config/mimeapps.list"
-  grep -q "^text/plain=codium.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^text/plain=com.visualstudio.CodeOSS.desktop;" "$test_home/.config/mimeapps.list"
 
   rm -rf "$test_home"
 }

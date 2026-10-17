@@ -68,8 +68,9 @@ Keywords=tg;chat;im;messaging;messenger;sms;tdesktop;
 StartupWMClass=TelegramDesktop
 DESKTOP
 
-  # Compatibility symlink for legacy telegramdesktop.desktop
-  ln -sf "org.telegram.desktop.desktop" "$legacy_desktop_file"
+  # Clean up legacy desktop files and duplicate hashed entries to avoid duplicate icons in menus
+  rm -f "$legacy_desktop_file"
+  find "$apps_dir" -maxdepth 1 -name "org.telegram.desktop._*.desktop" -delete 2> /dev/null || true
 
   # Update desktop and icon databases
   if command -v update-desktop-database > /dev/null 2>&1; then

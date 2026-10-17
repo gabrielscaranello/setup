@@ -142,3 +142,23 @@ teardown() {
   [[ "$utilities_apps" =~ "yelp.desktop" ]]
 }
 
+@test "config/gnome/shell.dconf contains canonical favorite apps without duplicate launchers in app-picker-layout" {
+  local repo_root
+  repo_root="$(get_repo_root)"
+  local shell_dconf="${repo_root}/config/gnome/shell.dconf"
+
+  [ -f "$shell_dconf" ]
+
+  local shell_section
+  shell_section="$(awk '/^\[org\/gnome\/shell\]/ { in_sec = 1; next } /^\[/ { in_sec = 0 } in_sec { print }' "$shell_dconf")"
+
+  [[ "$shell_section" =~ "com.visualstudio.CodeOSS.desktop" ]]
+  [[ "$shell_section" =~ "org.telegram.desktop.desktop" ]]
+  [[ ! "$shell_section" =~ "codium.desktop" ]]
+  [[ ! "$shell_section" =~ "org.telegram.desktop._" ]]
+
+  local app_picker
+  app_picker="$(grep '^app-picker-layout=' "$shell_dconf")"
+  [[ ! "$app_picker" =~ "org.telegram.desktop" ]]
+}
+
