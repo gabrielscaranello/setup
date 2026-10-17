@@ -63,8 +63,10 @@ setup() {
   )
 
   [ -L "$test_home/.local/bin/telegram-desktop" ]
-  [ -f "$test_home/.local/share/applications/telegramdesktop.desktop" ]
-  grep -q "Exec=$test_home/.local/opt/telegram-desktop/Telegram" "$test_home/.local/share/applications/telegramdesktop.desktop"
+  [ -f "$test_home/.local/share/applications/org.telegram.desktop.desktop" ]
+  [ -L "$test_home/.local/share/applications/telegramdesktop.desktop" ]
+  grep -q "Exec=$test_home/.local/opt/telegram-desktop/Telegram" "$test_home/.local/share/applications/org.telegram.desktop.desktop"
+  grep -q "StartupWMClass=TelegramDesktop" "$test_home/.local/share/applications/org.telegram.desktop.desktop"
   rm -rf "$test_home"
 }
 

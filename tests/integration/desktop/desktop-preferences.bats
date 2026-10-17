@@ -38,7 +38,7 @@ teardown() {
   run dconf_exec read /org/gnome/shell/favorite-apps
   [ "$status" -eq 0 ]
   [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
-  [[ "$output" =~ "codium.desktop" || "$output" =~ "code-oss.desktop" ]]
+  [[ "$output" =~ "codium.desktop" || "$output" =~ "code-oss.desktop" || "$output" =~ "com.visualstudio.CodeOSS.desktop" ]]
   [[ "$output" =~ "steam.desktop" || "$output" =~ "com.valvesoftware.Steam.desktop" ]]
   [[ "$output" =~ "com.discordapp.Discord.desktop" || "$output" =~ "discord.desktop" ]]
 

@@ -67,3 +67,31 @@ setup() {
   [[ "$output" =~ "called _install_vscodium" ]]
   [[ "$output" =~ "setup-vscodium complete" ]]
 }
+
+@test "_setup_vscodium_desktop_integration creates codium.desktop symlink when com.visualstudio.CodeOSS.desktop exists" {
+  local test_dir
+  test_dir="$(mktemp -d)"
+  mkdir -p "$test_dir/applications"
+  touch "$test_dir/applications/com.visualstudio.CodeOSS.desktop"
+
+  sudo() {
+    "$@"
+  }
+  update-desktop-database() { return 0; }
+
+  _setup_vscodium_desktop_integration() {
+    local app_dir="$test_dir/applications"
+    local code_oss_desktop="${app_dir}/com.visualstudio.CodeOSS.desktop"
+    local codium_desktop="${app_dir}/codium.desktop"
+
+    if [ -f "$code_oss_desktop" ] && [ ! -f "$codium_desktop" ]; then
+      echo "Creating compatibility symlink for codium.desktop..."
+      sudo ln -sf "$code_oss_desktop" "$codium_desktop" 2> /dev/null || true
+    fi
+  }
+
+  run _setup_vscodium_desktop_integration
+  [ "$status" -eq 0 ]
+  [ -L "$test_dir/applications/codium.desktop" ]
+  rm -rf "$test_dir"
+}

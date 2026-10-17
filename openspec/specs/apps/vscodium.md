@@ -13,9 +13,15 @@ Installs the VSCodium (or Code - OSS on Arch) open-source editor across supporte
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`)**: SHALL install `code` directly from distribution repositories via `install_packages code`.
-- **Debian (`debian`)**: SHALL configure the VSCodium upstream APT repository (importing GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`, adding `/etc/apt/sources.list.d/vscodium.sources`), run `apt update`, and install package `codium` via `install_packages codium`.
-- **Fedora (`fedora`)**: SHALL configure the VSCodium upstream YUM/DNF repository at `/etc/yum.repos.d/vscodium.repo` with GPG verification (`https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg`) and install package `codium` via `install_packages codium`.
+- **Debian (`debian`)**: SHALL configure the VSCodium upstream APT repository (importing GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`, adding `/etc/apt/sources.list.d/vscodium.sources`), run `apt update`, install package `codium` via `install_packages codium`, and ensure desktop integration (creating `codium.desktop` compatibility symlink to `com.visualstudio.CodeOSS.desktop` if missing).
+- **Fedora (`fedora`)**: SHALL configure the VSCodium upstream YUM/DNF repository at `/etc/yum.repos.d/vscodium.repo` with GPG verification (`https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg`), install package `codium` via `install_packages codium`, and ensure desktop integration (creating `codium.desktop` compatibility symlink to `com.visualstudio.CodeOSS.desktop` if missing).
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
+
+---
+
+### Requirement: Desktop Entry & Compatibility Symlinks
+
+When VSCodium packages deploy `com.visualstudio.CodeOSS.desktop` under `/usr/share/applications`, the installer SHALL ensure `codium.desktop` is available as a compatibility symlink pointing to `com.visualstudio.CodeOSS.desktop` and refresh the desktop database via `update-desktop-database`.
 
 #### Scenario: Running on Arch Linux
 
@@ -32,6 +38,7 @@ The script SHALL determine the installation mechanism based on the target distri
 - **AND** it SHALL download and dearmor the VSCodium GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` (or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`)
 - **AND** it SHALL write the deb822 source file `/etc/apt/sources.list.d/vscodium.sources` (pointing to `https://download.vscodium.com/debs`)
 - **AND** it SHALL update APT index and install `codium` via `install_packages codium`
+- **AND** it SHALL ensure `codium.desktop` compatibility symlink exists pointing to `com.visualstudio.CodeOSS.desktop`
 - **AND** subsequent executions SHALL skip repository setup idempotently if already configured
 
 #### Scenario: Running on Fedora
@@ -40,6 +47,7 @@ The script SHALL determine the installation mechanism based on the target distri
 - **WHEN** `scripts/apps/setup-vscodium.sh` is executed
 - **THEN** it SHALL write `/etc/yum.repos.d/vscodium.repo` with baseurl `https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/` and GPG key `https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg`
 - **AND** it SHALL install `codium` via `install_packages codium`
+- **AND** it SHALL ensure `codium.desktop` compatibility symlink exists pointing to `com.visualstudio.CodeOSS.desktop`
 - **AND** subsequent executions SHALL skip repository setup idempotently if the `.repo` file already exists
 
 #### Scenario: Running on an unsupported distribution

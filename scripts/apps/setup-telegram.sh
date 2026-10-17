@@ -31,16 +31,29 @@ _setup_desktop_integration() {
   local opt_dir="$HOME/.local/opt/telegram-desktop"
   local bin_dir="$HOME/.local/bin"
   local apps_dir="$HOME/.local/share/applications"
+  local icon_dir="$HOME/.local/share/icons/hicolor/512x512/apps"
 
-  mkdir -p "$bin_dir" "$apps_dir"
+  mkdir -p "$bin_dir" "$apps_dir" "$icon_dir"
 
   # Create symlink in ~/.local/bin
   if [ -x "$opt_dir/Telegram" ]; then
     ln -sf "$opt_dir/Telegram" "$bin_dir/telegram-desktop"
   fi
 
+  # Deploy application icons for desktop environments lacking Telegram icon (e.g. KDE Breeze)
+  if [ ! -f "$icon_dir/telegram.png" ] || [ ! -f "$icon_dir/org.telegram.desktop.png" ]; then
+    local icon_url="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/icon512.png"
+    if command -v download_file > /dev/null 2>&1; then
+      download_file "$icon_url" "$icon_dir/telegram.png" 2> /dev/null || true
+    fi
+    if [ -f "$icon_dir/telegram.png" ]; then
+      ln -sf "telegram.png" "$icon_dir/org.telegram.desktop.png" 2> /dev/null || cp "$icon_dir/telegram.png" "$icon_dir/org.telegram.desktop.png" 2> /dev/null || true
+    fi
+  fi
+
   # Create desktop entry if it doesn't already exist or to point to correct binary
-  local desktop_file="$apps_dir/telegramdesktop.desktop"
+  local desktop_file="$apps_dir/org.telegram.desktop.desktop"
+  local legacy_desktop_file="$apps_dir/telegramdesktop.desktop"
   cat << DESKTOP > "$desktop_file"
 [Desktop Entry]
 Name=Telegram Desktop
@@ -52,7 +65,24 @@ Type=Application
 Categories=Network;InstantMessaging;Chat;
 MimeType=x-scheme-handler/tg;
 Keywords=tg;chat;im;messaging;messenger;sms;tdesktop;
+StartupWMClass=TelegramDesktop
 DESKTOP
+
+  # Compatibility symlink for legacy telegramdesktop.desktop
+  ln -sf "org.telegram.desktop.desktop" "$legacy_desktop_file"
+
+  # Update desktop and icon databases
+  if command -v update-desktop-database > /dev/null 2>&1; then
+    update-desktop-database "$apps_dir" 2> /dev/null || true
+  fi
+  if command -v gtk-update-icon-cache > /dev/null 2>&1; then
+    gtk-update-icon-cache -q -t "$HOME/.local/share/icons/hicolor" 2> /dev/null || true
+  fi
+  if command -v kbuildsycoca6 > /dev/null 2>&1; then
+    kbuildsycoca6 --noincremental 2> /dev/null || true
+  elif command -v kbuildsycoca5 > /dev/null 2>&1; then
+    kbuildsycoca5 --noincremental 2> /dev/null || true
+  fi
 }
 
 _install_telegram_binary() {

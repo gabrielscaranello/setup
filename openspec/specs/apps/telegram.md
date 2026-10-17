@@ -32,9 +32,12 @@ On Debian, the script SHALL check if Telegram is already installed (`~/.local/op
 
 On Debian standalone binary installation, the script SHALL:
 
-- Create `~/.local/bin` and `~/.local/share/applications` directories if missing.
+- Create `~/.local/bin`, `~/.local/share/applications`, and `~/.local/share/icons/hicolor/512x512/apps` directories if missing.
 - Create symlink `~/.local/bin/telegram-desktop` -> `~/.local/opt/telegram-desktop/Telegram`.
-- Write `~/.local/share/applications/telegramdesktop.desktop` configured with `Exec=~/.local/opt/telegram-desktop/Telegram -- %u`, `Icon=telegram`, categories (`Network;InstantMessaging;Chat;`), and MIME association `MimeType=x-scheme-handler/tg;`.
+- Deploy high-resolution application icons (`telegram.png` and `org.telegram.desktop.png`) under `~/.local/share/icons/hicolor/512x512/apps/`.
+- Write `~/.local/share/applications/org.telegram.desktop.desktop` configured with `Exec=~/.local/opt/telegram-desktop/Telegram -- %u`, `Icon=telegram`, `StartupWMClass=TelegramDesktop`, categories (`Network;InstantMessaging;Chat;`), and MIME association `MimeType=x-scheme-handler/tg;`.
+- Create a backward compatibility symlink `~/.local/share/applications/telegramdesktop.desktop` pointing to `org.telegram.desktop.desktop`.
+- Refresh desktop and icon caches (`update-desktop-database`, `gtk-update-icon-cache`, and `kbuildsycoca6` when available).
 
 #### Scenario: Running on Arch Linux
 
@@ -55,14 +58,16 @@ On Debian standalone binary installation, the script SHALL:
 - **WHEN** `scripts/apps/setup-telegram.sh` is executed
 - **THEN** latest tarball is downloaded from GitHub and extracted to `~/.local/opt/telegram-desktop`
 - **AND** `~/.local/bin/telegram-desktop` symlink is created
-- **AND** `telegramdesktop.desktop` is deployed with `x-scheme-handler/tg;` support
+- **AND** `org.telegram.desktop.desktop` is deployed with `x-scheme-handler/tg;` and `StartupWMClass=TelegramDesktop`
+- **AND** `telegramdesktop.desktop` compatibility symlink is created
+- **AND** icon files and desktop database caches are updated
 
 #### Scenario: Running on Debian when already up to date
 
 - **GIVEN** a Debian system with the latest Telegram version already installed in `~/.local/opt/telegram-desktop` (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/apps/setup-telegram.sh` is executed
 - **THEN** tarball download and extraction SHALL be skipped
-- **AND** desktop integration and symlinks SHALL be verified
+- **AND** desktop integration, icons, and symlinks SHALL be verified
 
 #### Scenario: Running on an unsupported distribution
 

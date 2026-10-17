@@ -295,7 +295,7 @@ _set_added_associations() {
   firefox_desktop="$(resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
   chromium_desktop="$(resolve_desktop_app "chromium.desktop" "chromium-browser.desktop" "org.chromium.Chromium.desktop")"
   gimp_desktop="$(resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
-  editor_desktop="$(resolve_desktop_app "codium.desktop" "code-oss.desktop")"
+  editor_desktop="$(resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
 
   local browser_combo="${firefox_desktop};${chromium_desktop};"
   local browser_mimes=(

@@ -143,3 +143,27 @@ teardown() {
   [[ "$output" =~ "applications:code-oss.desktop" ]]
   [[ "$output" =~ "applications:discord.desktop" ]]
 }
+
+@test "get_favorite_apps resolves com.visualstudio.CodeOSS.desktop when present" {
+  local mock_home
+  mock_home="$(mktemp -d)"
+  HOME="$mock_home"
+  mkdir -p "$mock_home/.local/share/applications"
+  touch "$mock_home/.local/share/applications/com.visualstudio.CodeOSS.desktop"
+
+  get_distro_id() { echo "debian"; }
+
+  run get_favorite_apps "plasma"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "com.visualstudio.CodeOSS.desktop" ]]
+
+  rm -rf "$mock_home"
+}
+
+@test "get_plasma_launchers maintains Telegram before Steam" {
+  get_distro_id() { echo "debian"; }
+
+  run get_plasma_launchers
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ applications:(org\.telegram\.desktop|telegramdesktop)\.desktop.*applications:(com\.valvesoftware\.Steam|steam)\.desktop ]]
+}

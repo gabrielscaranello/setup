@@ -26,7 +26,7 @@ get_favorite_apps() {
 
   case "$distro" in
     arch)
-      editor="$(_resolve_desktop_app "code-oss.desktop" "codium.desktop")"
+      editor="$(_resolve_desktop_app "code-oss.desktop" "codium.desktop" "com.visualstudio.CodeOSS.desktop")"
       firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
       browser="$(_resolve_desktop_app "chromium.desktop" "org.chromium.Chromium.desktop" "chromium-browser.desktop")"
       notes="$(_resolve_desktop_app "obsidian.desktop" "md.obsidian.Obsidian.desktop")"
@@ -35,7 +35,7 @@ get_favorite_apps() {
       steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
     debian)
-      editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
+      editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
       firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
       browser="$(_resolve_desktop_app "org.chromium.Chromium.desktop" "chromium.desktop" "chromium-browser.desktop")"
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
@@ -44,7 +44,7 @@ get_favorite_apps() {
       steam="$(_resolve_desktop_app "com.valvesoftware.Steam.desktop" "steam.desktop")"
       ;;
     fedora)
-      editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
+      editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
       firefox="$(_resolve_desktop_app "org.mozilla.firefox.desktop" "firefox.desktop")"
       browser="$(_resolve_desktop_app "chromium-browser.desktop" "chromium.desktop" "org.chromium.Chromium.desktop")"
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
@@ -53,7 +53,7 @@ get_favorite_apps() {
       steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
     *)
-      editor="$(_resolve_desktop_app "codium.desktop" "code-oss.desktop")"
+      editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
       firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
       browser="$(_resolve_desktop_app "chromium.desktop" "chromium-browser.desktop" "org.chromium.Chromium.desktop")"
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
@@ -76,9 +76,9 @@ get_favorite_apps() {
     "org.onlyoffice.desktopeditors.desktop" \
     "$notes" \
     "$gimp" \
+    "$telegram" \
     "$steam" \
-    "$chat" \
-    "$telegram"
+    "$chat"
 }
 
 configure_gnome_favorite_apps() {
