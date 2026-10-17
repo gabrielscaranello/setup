@@ -82,7 +82,7 @@ When the detected environment is `gnome`, the script SHALL install the following
 - `sushi`: File quick-look previewer (`gnome-sushi` on Debian, `sushi` on Fedora/Arch).
 - `file-roller`: Graphical archive manager (`file-roller` on Debian/Arch, `file-roller` and `file-roller-nautilus` on Fedora).
 - `loupe`: Modern GTK4 image viewer.
-- `evince`: Document and PDF viewer.
+- `papers`: Document and PDF viewer (modern GTK4/Adwaita viewer replacing legacy `evince`).
 - `gnome-calculator`: Calculator application.
 - `gnome-system-monitor`: System process and resource monitor.
 - `baobab`: Disk usage graphical analyzer.

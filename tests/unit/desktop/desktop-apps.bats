@@ -39,7 +39,7 @@ setup() {
   run _install_gnome_apps
   [ "$status" -eq 0 ]
   [[ "$output" =~ "nautilus sushi" ]]
-  [[ "$output" =~ "file-roller loupe evince" ]]
+  [[ "$output" =~ "file-roller loupe papers" ]]
   [[ "$output" =~ "gnome-calculator gnome-system-monitor baobab" ]]
   [[ "$output" =~ "gnome-disk-utility gnome-text-editor" ]]
   [[ "$output" =~ "gnome-tweaks gnome-weather" ]]

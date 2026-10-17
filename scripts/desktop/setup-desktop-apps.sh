@@ -28,7 +28,7 @@ _install_gnome_apps() {
   _should_skip_package_install && return 0
   install_packages \
     nautilus sushi \
-    file-roller loupe evince \
+    file-roller loupe papers \
     gnome-calculator gnome-system-monitor baobab \
     gnome-disk-utility gnome-text-editor \
     gnome-tweaks gnome-weather \

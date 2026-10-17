@@ -6,7 +6,7 @@
 # - VLC for video and audio playback
 # - Firefox (Chromium fallback) for web browsing
 # - ONLYOFFICE for office documents (Word, Excel, PowerPoint, OpenDocument)
-# - Evince (GNOME) / Okular (KDE Plasma) for PDF documents
+# - Papers / Evince (GNOME) / Okular (KDE Plasma) for PDF documents
 # - Loupe (GNOME) / Gwenview (KDE Plasma) for images
 # - GNOME Text Editor (GNOME) / Ghostwriter (KDE Plasma) for text and markdown files
 # - Secondary application handlers under [Added Associations] (Chromium, GIMP, VSCodium)
@@ -218,10 +218,10 @@ _set_default_pdf_viewer() {
 
   case "$de" in
     plasma)
-      desktop_file="$(resolve_desktop_app "org.kde.okular.desktop" "okular.desktop" "org.gnome.Evince.desktop" "evince.desktop")"
+      desktop_file="$(resolve_desktop_app "org.kde.okular.desktop" "okular.desktop" "org.gnome.Papers.desktop" "papers.desktop" "org.gnome.Evince.desktop" "evince.desktop")"
       ;;
     *)
-      desktop_file="$(resolve_desktop_app "org.gnome.Evince.desktop" "evince.desktop" "org.kde.okular.desktop" "okular.desktop")"
+      desktop_file="$(resolve_desktop_app "org.gnome.Papers.desktop" "papers.desktop" "org.gnome.Evince.desktop" "evince.desktop" "org.kde.okular.desktop" "okular.desktop")"
       ;;
   esac
 

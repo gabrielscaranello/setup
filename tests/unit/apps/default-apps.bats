@@ -302,7 +302,7 @@ EOF
   rm -rf "$test_home"
 }
 
-@test "_set_default_pdf_viewer resolves Evince on GNOME and Okular on Plasma" {
+@test "_set_default_pdf_viewer resolves Papers on GNOME and Okular on Plasma" {
   source /setup/scripts/apps/setup-default-apps.sh
   local test_home="/tmp/test-default-apps-pdf-home"
   mkdir -p "$test_home"
@@ -311,11 +311,33 @@ EOF
   resolve_desktop_app() { echo "$1"; }
 
   HOME="$test_home" _set_default_pdf_viewer
-  grep -q "^application/pdf=org.gnome.Evince.desktop;" "$test_home/.config/mimeapps.list"
+  grep -q "^application/pdf=org.gnome.Papers.desktop;" "$test_home/.config/mimeapps.list"
 
   get_desktop_environment() { echo "plasma"; }
   HOME="$test_home" _set_default_pdf_viewer
   grep -q "^application/pdf=org.kde.okular.desktop;" "$test_home/.config/mimeapps.list"
+
+  rm -rf "$test_home"
+}
+
+@test "_set_default_pdf_viewer falls back to Evince on GNOME when Papers is absent" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local test_home="/tmp/test-default-apps-pdf-fallback"
+  mkdir -p "$test_home"
+
+  get_desktop_environment() { echo "gnome"; }
+  resolve_desktop_app() {
+    for app in "$@"; do
+      if [ "$app" = "org.gnome.Evince.desktop" ]; then
+        echo "$app"
+        return 0
+      fi
+    done
+    echo "$1"
+  }
+
+  HOME="$test_home" _set_default_pdf_viewer
+  grep -q "^application/pdf=org.gnome.Evince.desktop;" "$test_home/.config/mimeapps.list"
 
   rm -rf "$test_home"
 }
