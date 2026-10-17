@@ -18,7 +18,7 @@ _show_help() {
   echo "  --unit                Run fast unit test suite only (mocked / logic tests)"
   echo "  --integration         Run container integration test suite only"
   echo "  --coverage            Generate code coverage reports with kcov"
-  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse)"
+  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse|tumbleweed)"
   echo "  --filter=<pattern>    Run only tests matching pattern (e.g. nvm, neovim, utils)"
   echo "  -h, --help            Show this help message"
   echo ""
@@ -214,7 +214,7 @@ _merge_coverage() {
       "$image" \
       bash -c '
         dirs_to_merge=()
-        for d in unit archlinux debian fedora opensuse; do
+        for d in unit archlinux debian fedora opensuse tumbleweed; do
           if [[ -d "/setup/coverage/$d" ]]; then
             while IFS= read -r cov_db_dir; do
               dirs_to_merge+=("$cov_db_dir")
@@ -254,9 +254,10 @@ main() {
         archlinux | arch) _run_integration_distro "archlinux" ;;
         debian) _run_integration_distro "debian" ;;
         fedora) _run_integration_distro "fedora" ;;
-        opensuse | suse) _run_integration_distro "opensuse" ;;
+        opensuse | leap | suse) _run_integration_distro "opensuse" ;;
+        tumbleweed) _run_integration_distro "tumbleweed" ;;
         *)
-          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, opensuse" >&2
+          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, opensuse, tumbleweed" >&2
           exit 1
           ;;
       esac
