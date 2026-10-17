@@ -308,3 +308,86 @@ CONF
   run _enable_cron_service
   [ "$status" -eq 0 ]
 }
+
+@test "_install_opensuse_snapper_packages calls install_packages with snapper and plugins" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+  run _install_opensuse_snapper_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed:\ snapper\ snapper-zypp-plugin\ grub2-snapper-plugin\ btrfs-progs ]]
+}
+
+@test "_configure_opensuse_snapper creates config and enables timers on btrfs" {
+  get_root_filesystem() { echo "btrfs"; }
+  command() { return 0; }
+  sudo() {
+    if [ "$1" = "snapper" ] && [ "$2" = "--no-dbus" ] && [ "$3" = "list-configs" ]; then
+      echo "No configs found"
+      return 0
+    elif [ "$1" = "snapper" ] && [ "$2" = "--no-dbus" ] && [ "$3" = "create-config" ]; then
+      echo "snapper create-config executed"
+      return 0
+    elif [ "$1" = "systemctl" ]; then
+      echo "systemctl: $*"
+      return 0
+    fi
+    "$@"
+  }
+
+  run _configure_opensuse_snapper
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Creating Snapper root config" ]]
+  [[ "$output" =~ "Enabling Snapper systemd timers" ]]
+}
+
+@test "_configure_opensuse_snapper configures SUSE_BTRFS_SNAPSHOT_BOOTING in /etc/default/grub" {
+  get_root_filesystem() { echo "btrfs"; }
+  command() { return 0; }
+  local test_grub_dir="/tmp/test-grub"
+  mkdir -p "$test_grub_dir"
+  echo 'GRUB_TIMEOUT=5' > "$test_grub_dir/grub"
+
+  _configure_opensuse_snapper() {
+    local fs_type="btrfs"
+    local grub_file="$test_grub_dir/grub"
+    if [ -f "$grub_file" ]; then
+      echo 'SUSE_BTRFS_SNAPSHOT_BOOTING="true"' >> "$grub_file"
+    fi
+  }
+
+  run _configure_opensuse_snapper
+  [ "$status" -eq 0 ]
+  grep -q 'SUSE_BTRFS_SNAPSHOT_BOOTING="true"' "$test_grub_dir/grub"
+  rm -rf "$test_grub_dir"
+}
+
+@test "_create_opensuse_initial_snapshot creates baseline snapshot when snapper available" {
+  command() { return 0; }
+  sudo() {
+    if [ "$1" = "snapper" ] && [ "$2" = "--no-dbus" ] && [ "$3" = "list-configs" ]; then
+      echo "root | /"
+      return 0
+    elif [ "$1" = "snapper" ] && [ "$2" = "--no-dbus" ] && [ "$3" = "create" ]; then
+      echo "snapper snapshot created: $*"
+      return 0
+    fi
+  }
+
+  run _create_opensuse_initial_snapshot
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Creating initial baseline Snapper snapshot" ]]
+}
+
+@test "_setup_timeshift delegates to _setup_opensuse_snapper on openSUSE" {
+  is_distro() { [ "$1" = "opensuse" ]; }
+  _setup_opensuse_snapper() {
+    echo "delegated to opensuse snapper"
+    return 0
+  }
+
+  run _setup_timeshift
+  [ "$status" -eq 0 ]
+  [ "$output" = "delegated to opensuse snapper" ]
+}

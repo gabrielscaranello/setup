@@ -2,21 +2,30 @@
 
 ## Purpose
 
-Installs and configures Timeshift for automated and on-demand desktop backup snapshots, dynamically generating configuration files based on the root filesystem type (Btrfs vs. RSYNC), integrating `grub-btrfs` / `grub-btrfsd` bootloader menus on Btrfs systems, and creating an initial baseline snapshot.
+Installs and configures desktop backup snapshots and bootloader integration. On Debian, Fedora, and Arch Linux, configures Timeshift with dynamic template rendering based on filesystem type (Btrfs vs. RSYNC), `grub-btrfs` / `grub-btrfsd` bootloader integration on Btrfs, and cron scheduler enablement. On openSUSE, leverages the native distribution snapshot tooling via Snapper (`snapper`, `snapper-zypp-plugin`, `grub2-snapper-plugin`), systemd timers, and GRUB snapshot boot integration.
 
 ---
 
 ## Requirements
 
-### Requirement: Timeshift Package Installation
+### Requirement: Snapshot Package Installation
 
-The script SHALL install the `timeshift` and `xhost` packages across supported distributions via `install_packages timeshift xhost` (providing Wayland root GUI launcher support via `xorg-xhost` on Arch, `x11-xserver-utils` on Debian, and `xhost` on Fedora).
+The script SHALL install snapshot management packages appropriate for the active distribution:
 
-#### Scenario: Installing package
+- On Debian, Fedora, and Arch Linux: SHALL install `timeshift` and `xhost` via `install_packages timeshift xhost`.
+- On openSUSE (`opensuse`): SHALL install native snapshot tooling `snapper`, `snapper-zypp-plugin`, `grub2-snapper-plugin`, and `btrfs-progs` via `install_packages`.
 
-- **GIVEN** a supported distribution (Debian, Fedora, Arch Linux)
-- **WHEN** `scripts/system/setup-timeshift.sh` runs
+#### Scenario: Installing package on Debian, Fedora, or Arch
+
+- **GIVEN** a supported distribution running Debian, Fedora, or Arch Linux
+- **WHEN** snapshot package installation executes
 - **THEN** `timeshift` and `xhost` packages SHALL be installed
+
+#### Scenario: Installing package on openSUSE
+
+- **GIVEN** an openSUSE distribution (`is_distro opensuse`)
+- **WHEN** snapshot package installation executes
+- **THEN** `snapper`, `snapper-zypp-plugin`, `grub2-snapper-plugin`, and `btrfs-progs` packages SHALL be installed
 
 ---
 
@@ -106,6 +115,29 @@ The script SHALL enable the system cron daemon (`cron.service` on Debian, `crond
 
 #### Scenario: Enabling cron service for Timeshift
 
-- **GIVEN** system running systemd
+- **GIVEN** system running systemd on Debian, Fedora, or Arch Linux
 - **WHEN** `_enable_cron_service` executes
 - **THEN** `cron.service` (Debian), `crond.service` (Fedora), or `cronie.service` (Arch Linux) SHALL be enabled
+
+---
+
+### Requirement: openSUSE Native Snapper Configuration & Bootloader Integration
+
+When running on openSUSE (`is_distro opensuse`):
+
+- **Configuration**: If the root filesystem is `btrfs` and the root snapper config does not exist, the script SHALL create it via `sudo snapper --no-dbus create-config /`.
+- **Systemd Timers**: When `systemctl` is available, the script SHALL enable and start `snapper-timeline.timer`, `snapper-cleanup.timer`, and `snapper-boot.timer`.
+- **GRUB Integration**: When on `btrfs` and `/etc/default/grub` exists, the script SHALL configure `SUSE_BTRFS_SNAPSHOT_BOOTING="true"` in `/etc/default/grub` and regenerate GRUB configuration if `grub2-mkconfig` is available.
+- **Initial Snapshot**: If `snapper` is available and a `root` config exists, the script SHALL create a baseline single snapshot via `sudo snapper --no-dbus create --type single --description "Initial setup snapshot" --cleanup-algorithm number`.
+
+#### Scenario: Configuring Snapper on openSUSE with Btrfs
+
+- **GIVEN** openSUSE with Btrfs root filesystem
+- **WHEN** Snapper configuration executes
+- **THEN** root config is created if missing, systemd timers are enabled, GRUB snapshot booting is configured, and an initial baseline snapshot is created
+
+#### Scenario: Configuring Snapper on openSUSE non-Btrfs / container
+
+- **GIVEN** openSUSE on non-Btrfs or container environment
+- **WHEN** Snapper configuration executes
+- **THEN** package installation and timer enablement succeed gracefully without failure
