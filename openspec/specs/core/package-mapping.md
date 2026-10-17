@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Establishes a declarative translation table that maps generic software package identifiers across Debian (`apt`), Fedora (`dnf`), and Arch Linux (`pacman`).
+Establishes a declarative translation table that maps generic software package identifiers across Debian (`apt`), Fedora (`dnf`), Arch Linux (`pacman`), and openSUSE (`zypper`).
 
 ---
 
@@ -10,11 +10,11 @@ Establishes a declarative translation table that maps generic software package i
 
 ### Requirement: Declarative Multi-Distro Resolution
 
-The mapping file SHALL maintain pipe-separated (`|`) records with columns: `Generic Name | Debian Package | Fedora Package | Arch Linux Package`, resolved primarily by target distribution identifier (`debian`, `fedora`, `arch`) with backwards-compatible support for package manager aliases (`apt`, `dnf`, `pacman`).
+The mapping file SHALL maintain pipe-separated (`|`) records with columns: `Generic Name | Debian Package | Fedora Package | Arch Linux Package | openSUSE Package`, resolved primarily by target distribution identifier (`debian`, `fedora`, `arch`, `opensuse-leap`, `opensuse-tumbleweed`, or prefix `opensuse`) with backwards-compatible support for package manager aliases (`apt`, `dnf`, `pacman`, `zypper`).
 
 #### Scenario: Translating package with distro naming differences
 
-- **GIVEN** a package has distinct naming across distributions (e.g. `golang` resolving to `go` on Arch, `akmod-nvidia` on Fedora, `nvidia-driver` on Debian)
+- **GIVEN** a package has distinct naming across distributions (e.g. `golang` resolving to `go` on Arch, `akmod-nvidia` on Fedora, `nvidia-driver` on Debian, `go` on openSUSE)
 - **WHEN** referenced by its generic name in an installation script via `install_packages`
 - **THEN** it SHALL resolve to the exact distro-native package name specified in `packages.conf` for the active distribution
 

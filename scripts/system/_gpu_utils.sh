@@ -6,6 +6,7 @@
 source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 # Configures the third-party repositories required for GPU driver installation
 # on the current distribution.
@@ -79,6 +80,10 @@ configure_gpu_repositories() {
       ;;
     arch | pacman)
       add_arch_multilib_repo
+      ;;
+    opensuse* | zypper)
+      add_opensuse_nonfree_repo
+      add_opensuse_packman_repo
       ;;
   esac
 }

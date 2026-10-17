@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provides reusable, distribution-agnostic helper functions for system detection, desktop environment detection, root filesystem inspection, package management abstractions, network fetching, and Flatpak application provisioning across Debian, Fedora, and Arch Linux.
+Provides reusable, distribution-agnostic helper functions for system detection, desktop environment detection, root filesystem inspection, package management abstractions, network fetching, and Flatpak application provisioning across Debian, Fedora, Arch Linux, and openSUSE.
 
 The utility architecture adheres to the **Facade Pattern**: `scripts/_utils.sh` acts as an entry point sourcing specialized submodules located under `scripts/utils/`:
 
@@ -20,19 +20,19 @@ The utility architecture adheres to the **Facade Pattern**: `scripts/_utils.sh` 
 
 The utility library SHALL detect the operating system distribution via `/etc/os-release` (with fallback to `/usr/lib/os-release` and configurable via `OS_RELEASE_PATH` for testing), exposing:
 
-- `get_distro_id`: returns the exact distribution identifier (`debian`, `fedora`, `arch`, or derivative/unsupported IDs)
-- `is_distro <id>`: returns 0 if the current distribution matches the specified ID
-- `require_supported_distro`: validates that current distribution is one of `debian`, `fedora`, or `arch`
-- `_get_package_manager`: internal helper resolving the package manager command (`apt`, `dnf`, `pacman`) for package execution
+- `get_distro_id`: returns the exact distribution identifier (`debian`, `fedora`, `arch`, `opensuse-leap`, `opensuse-tumbleweed`, or derivative/unsupported IDs)
+- `is_distro <id>`: returns 0 if the current distribution matches the specified ID (matching `opensuse*` when queried for `opensuse`)
+- `require_supported_distro`: validates that current distribution is one of `debian`, `fedora`, `arch`, `opensuse-leap`, `opensuse-tumbleweed`, or `opensuse`
+- `_get_package_manager`: internal helper resolving the package manager command (`apt`, `dnf`, `pacman`, `zypper`) for package execution
 
 All setup scripts and runners SHALL use `get_distro_id` for distribution branching and decision-making, keeping `_get_package_manager` strictly internal to package execution.
 
 #### Scenario: Running on supported distributions
 
-- **GIVEN** `/etc/os-release` indicates `debian`, `fedora`, or `arch`
+- **GIVEN** `/etc/os-release` indicates `debian`, `fedora`, `arch`, `opensuse-leap`, or `opensuse-tumbleweed`
 - **WHEN** `get_distro_id` is invoked
-- **THEN** it returns `debian`, `fedora`, or `arch` respectively
-- **AND** `_get_package_manager` resolves to `apt`, `dnf`, or `pacman`
+- **THEN** it returns `debian`, `fedora`, `arch`, `opensuse-leap`, or `opensuse-tumbleweed` respectively
+- **AND** `_get_package_manager` resolves to `apt`, `dnf`, `pacman`, or `zypper`
 - **AND** `require_supported_distro` succeeds returning 0
 
 #### Scenario: Running on an unsupported derivative distribution
@@ -184,17 +184,17 @@ The utility function `fetch_github_latest_version` SHALL query the GitHub API fo
 
 ### Requirement: Distribution Validation Guard
 
-The utility function `require_supported_distro` SHALL validate that the current operating system is one of `debian`, `fedora`, or `arch`.
+The utility function `require_supported_distro` SHALL validate that the current operating system is one of `debian`, `fedora`, `arch`, `opensuse-leap`, `opensuse-tumbleweed`, or `opensuse`.
 
 #### Scenario: Supported distribution
 
-- **GIVEN** current distribution is `debian`, `fedora`, or `arch`
+- **GIVEN** current distribution is `debian`, `fedora`, `arch`, `opensuse-leap`, or `opensuse-tumbleweed`
 - **WHEN** `require_supported_distro` is called
 - **THEN** it SHALL output the distro ID to stdout and return 0
 
 #### Scenario: Unsupported distribution
 
-- **GIVEN** current distribution is not `debian`, `fedora`, or `arch`
+- **GIVEN** current distribution is not `debian`, `fedora`, `arch`, or `opensuse*`
 - **WHEN** `require_supported_distro` is called
 - **THEN** it SHALL print an error to stderr and return 1
 
@@ -235,13 +235,13 @@ The utility function `install_github_binary` SHALL download, extract, and instal
 
 ### Requirement: Distribution Cron Service Activation
 
-The utility function `enable_cron_service` SHALL resolve and activate the distribution-specific cron daemon (`cron` on Debian, `crond` on Fedora, `cronie` on Arch Linux) via `systemctl`.
+The utility function `enable_cron_service` SHALL resolve and activate the distribution-specific cron daemon (`cron` on Debian and openSUSE, `crond` on Fedora, `cronie` on Arch Linux) via `systemctl`.
 
 #### Scenario: Enabling cron daemon on supported distributions
 
 - **GIVEN** `systemctl` is available on the system
 - **WHEN** `enable_cron_service` is called without arguments
-- **THEN** it SHALL resolve `cron.service` on Debian, `crond.service` on Fedora, and `cronie.service` on Arch Linux
+- **THEN** it SHALL resolve `cron.service` on Debian and openSUSE, `crond.service` on Fedora, and `cronie.service` on Arch Linux
 - **AND** enable and start the service idempotently
 - **AND** if `systemctl` is unavailable (e.g. containers or chroot), it SHALL skip gracefully with exit code 0
 

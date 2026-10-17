@@ -10,6 +10,8 @@ setup() {
   [ "$(_get_package_name "build-tools" "apt")" = "build-essential" ]
   [ "$(_get_package_name "build-tools" "dnf")" = "@development-tools" ]
   [ "$(_get_package_name "build-tools" "pacman")" = "base-devel" ]
+  [ "$(_get_package_name "build-tools" "zypper")" = "patterns-devel-base-devel_basis" ]
+  [ "$(_get_package_name "build-tools" "opensuse-leap")" = "patterns-devel-base-devel_basis" ]
 }
 
 @test "_get_package_name resolves ninja-build for all managers" {
@@ -448,6 +450,16 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "ubuntu" ]
 
+  echo 'ID="opensuse-leap"' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "opensuse-leap" ]
+
+  echo 'ID=opensuse-tumbleweed' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "opensuse-tumbleweed" ]
+
   rm -f "$test_os_release"
 }
 
@@ -470,6 +482,20 @@ EOF
 
   run is_distro "arch"
   [ "$status" -eq 1 ]
+
+  get_distro_id() { echo "opensuse-leap"; }
+  run is_distro "opensuse"
+  [ "$status" -eq 0 ]
+
+  run is_distro "opensuse-leap"
+  [ "$status" -eq 0 ]
+
+  run is_distro "fedora"
+  [ "$status" -eq 1 ]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run is_distro "opensuse"
+  [ "$status" -eq 0 ]
 }
 
 @test "require_supported_distro validates supported distributions" {
@@ -487,6 +513,16 @@ EOF
   run require_supported_distro
   [ "$status" -eq 0 ]
   [ "$output" = "arch" ]
+
+  get_distro_id() { echo "opensuse-leap"; }
+  run require_supported_distro
+  [ "$status" -eq 0 ]
+  [ "$output" = "opensuse-leap" ]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run require_supported_distro
+  [ "$status" -eq 0 ]
+  [ "$output" = "opensuse-tumbleweed" ]
 
   get_distro_id() { echo "ubuntu"; }
   run require_supported_distro

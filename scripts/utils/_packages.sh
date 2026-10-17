@@ -20,6 +20,10 @@ _get_package_manager() {
       echo "pacman"
       return 0
       ;;
+    opensuse*)
+      echo "zypper"
+      return 0
+      ;;
   esac
 
   if command -v dnf > /dev/null 2>&1; then
@@ -28,6 +32,8 @@ _get_package_manager() {
     echo "apt"
   elif command -v pacman > /dev/null 2>&1; then
     echo "pacman"
+  elif command -v zypper > /dev/null 2>&1; then
+    echo "zypper"
   else
     return 1
   fi
@@ -54,6 +60,7 @@ _get_package_name() {
       debian | apt) field_idx=2 ;;
       fedora | dnf) field_idx=3 ;;
       arch | pacman) field_idx=4 ;;
+      opensuse* | zypper) field_idx=5 ;;
       *) field_idx=0 ;;
     esac
 
@@ -65,10 +72,11 @@ _get_package_name() {
         resolved_pkg="$(echo "$matched_line" | awk -F' *\\| *' -v col="$field_idx" '{ print $col }')"
         if [ "$resolved_pkg" = "-" ]; then
           echo ""
-        else
+          return 0
+        elif [ -n "$resolved_pkg" ]; then
           echo "$resolved_pkg"
+          return 0
         fi
-        return 0
       fi
     fi
   fi
@@ -92,6 +100,10 @@ _install_package_from_repository() {
 
     pacman)
       sudo pacman -Sy --needed --noconfirm "$@"
+      ;;
+
+    zypper)
+      sudo zypper --non-interactive install -y --no-recommends "$@"
       ;;
 
     *)
@@ -172,7 +184,7 @@ is_package_installed() {
       debian)
         dpkg -s "$item" > /dev/null 2>&1 || return 1
         ;;
-      fedora)
+      fedora | opensuse*)
         rpm -q "$item" > /dev/null 2>&1 || return 1
         ;;
       arch)

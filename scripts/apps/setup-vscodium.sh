@@ -6,6 +6,7 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
+source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _install_vscodium() {
   local distro
@@ -17,6 +18,9 @@ _install_vscodium() {
       ;;
     fedora)
       add_fedora_vscodium_repo
+      ;;
+    opensuse*)
+      add_opensuse_vscodium_repo
       ;;
   esac
 

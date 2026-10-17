@@ -88,10 +88,10 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 
 ### Phase 1: Foundation & Package Manager Abstraction (`zypper`)
 
-- [ ] Add openSUSE distribution detection in `scripts/_utils.sh` (`opensuse-leap`, `opensuse-tumbleweed`, `get_distro_id`)
-- [ ] Implement package manager adapter for `zypper` (`zypper --non-interactive install --no-recommends`)
-- [ ] Map openSUSE packages in `scripts/packages.conf` across system, CLI, and GUI tools
-- [ ] Implement openSUSE repository helper (`scripts/system/opensuse/_repositories.sh`) with Packman repository support
+- [x] Add openSUSE distribution detection in `scripts/_utils.sh` (`opensuse-leap`, `opensuse-tumbleweed`, `get_distro_id`) — `scripts/utils/_system.sh`
+- [x] Implement package manager adapter for `zypper` (`zypper --non-interactive install --no-recommends`) — `scripts/utils/_packages.sh`
+- [x] Map openSUSE packages in `scripts/packages.conf` across system, CLI, and GUI tools — `scripts/packages.conf`
+- [x] Implement openSUSE repository helper (`scripts/system/opensuse/_repositories.sh`) with Packman repository support — `scripts/system/opensuse/_repositories.sh`
 
 ### Phase 2: System, Drivers, Kernel & Security
 

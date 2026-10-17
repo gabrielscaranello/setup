@@ -37,10 +37,16 @@ is_distro() {
   local target="$1"
   local current
   current="$(get_distro_id 2> /dev/null || echo "unknown")"
+  if [ "$target" = "opensuse" ]; then
+    case "$current" in
+      opensuse*) return 0 ;;
+      *) return 1 ;;
+    esac
+  fi
   [ "$current" = "$target" ]
 }
 
-# Validates and returns the current distro if it is one of: debian, fedora, arch.
+# Validates and returns the current distro if it is one of: debian, fedora, arch, opensuse (leap/tumbleweed).
 # Prints the distro ID to stdout on success; prints error and returns 1 on failure.
 # Usage: distro="$(require_supported_distro)" || return 1
 require_supported_distro() {
@@ -50,7 +56,7 @@ require_supported_distro() {
     return 1
   }
   case "$distro" in
-    debian | fedora | arch)
+    debian | fedora | arch | opensuse | opensuse-leap | opensuse-tumbleweed)
       echo "$distro"
       return 0
       ;;
@@ -186,7 +192,7 @@ enable_cron_service() {
   fi
 
   echo "Enabling cron scheduler service..."
-  if is_distro debian; then
+  if is_distro debian || is_distro opensuse; then
     sudo systemctl enable --now cron.service 2> /dev/null || sudo systemctl enable cron.service 2> /dev/null || true
   elif is_distro fedora; then
     sudo systemctl enable --now crond.service 2> /dev/null || sudo systemctl enable crond.service 2> /dev/null || true
