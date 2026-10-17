@@ -2,7 +2,7 @@
 
 ## Overview
 
-Install multimedia codecs and audio/video plugins across all supported distributions (Debian, Fedora, Arch Linux). This ensures robust multimedia playback capabilities including support for various audio/video formats and streaming protocols.
+Install multimedia codecs and audio/video plugins across all supported distributions (Debian, Fedora, Arch Linux, openSUSE). This ensures robust multimedia playback capabilities including support for various audio/video formats and streaming protocols.
 
 ## Requirements
 
@@ -11,16 +11,19 @@ Install multimedia codecs and audio/video plugins across all supported distribut
 - **Debian 13 (Trixie)**
 - **Fedora 44**
 - **Arch Linux**
+- **openSUSE Leap 16.1 & openSUSE Tumbleweed**
 
 ### Packages to Install
 
 - **Debian**: `ffmpeg`, `gstreamer1.0-plugins-base`, `gstreamer1.0-plugins-good`, `gstreamer1.0-plugins-bad`, `gstreamer1.0-plugins-ugly`, `gstreamer1.0-libav`, `libavcodec-extra`
 - **Fedora**: `ffmpeg`, `gstreamer1-plugins-base`, `gstreamer1-plugins-good`, `gstreamer1-plugins-bad-free`, `gstreamer1-plugins-bad-freeworld`, `gstreamer1-plugins-ugly`, `gstreamer1-libav`, `gstreamer1-plugin-openh264`
 - **Arch Linux**: `ffmpeg`, `gst-plugins-base`, `gst-plugins-good`, `gst-plugins-bad`, `gst-plugins-ugly`, `gst-libav`
+- **openSUSE**: `ffmpeg`, `gstreamer-plugins-base`, `gstreamer-plugins-good`, `gstreamer-plugins-bad`, `gstreamer-plugins-ugly`, `gstreamer-plugins-libav`, `mozilla-openh264`
 
 ### Configuration Requirements
 
 - **Fedora**: Must configure and enable RPM Fusion repositories (Free and Non-Free) before installing packages to ensure access to full codec implementations. Uses existing `add_fedora_rpmfusion_repo` helper. Must swap pre-installed `ffmpeg-free` for full `ffmpeg` from RPM Fusion using `--allowerasing` to avoid package conflicts.
+- **openSUSE**: Must configure and enable Packman Essentials repository before installing packages via `add_opensuse_packman_repo` helper.
 - **Debian**: Uses default repositories. No third-party repo required.
 - **Arch Linux**: Uses default repositories. No third-party repo required.
 
@@ -47,6 +50,13 @@ Install multimedia codecs and audio/video plugins across all supported distribut
 - **GIVEN** the system is Arch Linux
 - **WHEN** the codecs setup script is executed
 - **THEN** it should install the Arch-specific codec packages via `install_packages`
+
+**Scenario: Install codecs on openSUSE**
+
+- **GIVEN** the system is openSUSE
+- **WHEN** the codecs setup script is executed
+- **THEN** it should add the Packman Essentials repository
+- **AND** install the openSUSE-specific codec packages via `install_packages`
 
 **Scenario: Unsupported distribution**
 

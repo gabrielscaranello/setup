@@ -103,7 +103,7 @@ _install_package_from_repository() {
       ;;
 
     zypper)
-      sudo zypper --non-interactive install -y --no-recommends "$@"
+      sudo zypper --non-interactive --gpg-auto-import-keys install -y --allow-vendor-change --no-recommends "$@"
       ;;
 
     *)

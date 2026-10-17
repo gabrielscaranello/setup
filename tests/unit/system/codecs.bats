@@ -94,3 +94,24 @@ setup() {
   [[ "$output" =~ "packages installed" ]]
 }
 
+@test "main configures Packman repository on openSUSE before installing packages" {
+  get_distro_id() { echo "opensuse-leap"; }
+  is_distro() {
+    [ "$1" = "opensuse" ] || [ "$1" = "opensuse-leap" ]
+  }
+
+  add_opensuse_packman_repo() {
+    echo "packman configured"
+  }
+
+  install_packages() {
+    echo "packages installed: $*"
+  }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "packman configured" ]]
+  [[ "$output" =~ "packages installed: ffmpeg gstreamer-plugins-base gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer-libav codec-openh264" ]]
+}
+
+

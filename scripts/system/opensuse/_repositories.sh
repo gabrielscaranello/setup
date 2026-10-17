@@ -45,6 +45,7 @@ add_opensuse_packman_repo() {
 
   echo "Configuring Packman Essentials repository for openSUSE (${version})..."
   sudo zypper --non-interactive addrepo -cfp 90 "$repo_url" packman-essentials 2> /dev/null || true
+  sudo zypper --non-interactive --gpg-auto-import-keys refresh packman-essentials 2> /dev/null || true
 }
 
 add_opensuse_nonfree_repo() {

@@ -4,6 +4,7 @@ set -euo pipefail
 # Source utilities
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
+source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _swap_fedora_ffmpeg() {
   if rpm -q ffmpeg-free > /dev/null 2>&1 && ! rpm -q ffmpeg > /dev/null 2>&1; then
@@ -31,6 +32,8 @@ main() {
 
   if [ "$distro" = "fedora" ]; then
     _setup_fedora_repos
+  elif is_distro opensuse; then
+    add_opensuse_packman_repo
   fi
 
   # Install multimedia packages using cross-distro abstraction
