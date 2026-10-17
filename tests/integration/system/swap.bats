@@ -14,6 +14,14 @@ setup_file() {
   grep -q "vm.vfs_cache_pressure=50" "/etc/sysctl.d/00-custom.conf"
 }
 
+@test "zram-generator configuration is created on systemd-zram distros" {
+  source /setup/scripts/_utils.sh
+  if ! is_distro debian; then
+    [ -f "/etc/systemd/zram-generator.conf" ]
+    grep -q "zram-size = ram / 2" "/etc/systemd/zram-generator.conf"
+  fi
+}
+
 @test "setup-swap.sh is idempotent (second run succeeds)" {
   run bash /setup/scripts/system/setup-swap.sh
   [ "$status" -eq 0 ] || true

@@ -89,7 +89,7 @@ _configure_zram() {
     debian)
       _configure_zram_tools
       ;;
-    fedora | arch)
+    fedora | arch | opensuse*)
       _configure_zram_generator
       ;;
   esac

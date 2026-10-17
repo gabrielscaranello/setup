@@ -241,4 +241,14 @@ CONF
   run _configure_zram
   [ "$status" -eq 0 ]
   [[ "$output" =~ "generator-zram" ]]
+
+  get_distro_id() { echo "opensuse-leap"; }
+  run _configure_zram
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "generator-zram" ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run _configure_zram
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "generator-zram" ]]
 }
