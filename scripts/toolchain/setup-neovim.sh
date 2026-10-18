@@ -48,13 +48,38 @@ _package_and_install_neovim_deb() {
   )
 }
 
+_install_neovim_make() {
+  local work_dir="$1"
+  echo "Installing Neovim via make install..."
+  (
+    cd "$work_dir" || return 1
+    sudo make install || {
+      echo "Failed to install Neovim" >&2
+      return 1
+    }
+  )
+}
+
 _install_neovim_from_source() {
+  local method="${1:-deb}"
   local work_dir="/tmp/neovim"
 
-  echo "Installing Neovim from source (DEB package)..."
+  echo "Installing Neovim from source ($method)..."
   _clone_neovim_source "$work_dir" || return 1
   _build_neovim_source "$work_dir" || return 1
-  _package_and_install_neovim_deb "$work_dir" || return 1
+
+  case "$method" in
+    deb)
+      _package_and_install_neovim_deb "$work_dir" || return 1
+      ;;
+    make)
+      _install_neovim_make "$work_dir" || return 1
+      ;;
+    *)
+      echo "Unsupported source installation method: $method" >&2
+      return 1
+      ;;
+  esac
 
   echo "Neovim installed successfully at $(command -v nvim)"
 }
@@ -83,14 +108,19 @@ _install_neovim() {
   local distro="$1"
 
   case "$distro" in
-    fedora | arch)
+    fedora | arch | opensuse-tumbleweed)
       echo "Installing Neovim from distribution repository..."
       install_packages neovim
       ;;
     debian)
       _ensure_rust
       _install_build_deps
-      _install_neovim_from_source
+      _install_neovim_from_source "deb"
+      ;;
+    opensuse | opensuse-leap)
+      _ensure_rust
+      _install_build_deps
+      _install_neovim_from_source "make"
       ;;
     *)
       echo "Unsupported distribution: $distro" >&2
@@ -116,6 +146,9 @@ _install_runtime_deps() {
       ;;
     arch)
       install_packages build-tools rust tree-sitter-cli luarocks
+      ;;
+    opensuse*)
+      install_packages luarocks python3
       ;;
   esac
 }

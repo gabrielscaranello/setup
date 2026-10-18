@@ -168,3 +168,77 @@
   rm -rf /tmp/test_nvim_deb
 }
 
+@test "_install_neovim_make executes sudo make install" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  mkdir -p /tmp/test_nvim_make
+  sudo() { echo "sudo: $*"; return 0; }
+  run _install_neovim_make "/tmp/test_nvim_make"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo: make install" ]]
+  rm -rf /tmp/test_nvim_make
+}
+
+@test "_install_neovim_make handles sudo make install failure" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  mkdir -p /tmp/test_nvim_make
+  sudo() { return 1; }
+  run _install_neovim_make "/tmp/test_nvim_make"
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Failed to install Neovim" ]]
+  rm -rf /tmp/test_nvim_make
+}
+
+@test "_install_neovim_from_source handles unknown method failure" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  _clone_neovim_source() { return 0; }
+  _build_neovim_source() { return 0; }
+  run _install_neovim_from_source "invalid-method"
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported source installation method: invalid-method" ]]
+}
+
+@test "_install_neovim installs from repo on opensuse-tumbleweed" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  install_packages() { echo "installing: $*"; return 0; }
+  run _install_neovim "opensuse-tumbleweed"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing Neovim from distribution repository..." ]]
+  [[ "$output" =~ "installing: neovim" ]]
+}
+
+@test "_install_neovim builds from source on opensuse-leap" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  _ensure_rust() { echo "step: ensure_rust"; }
+  _install_build_deps() { echo "step: install_build_deps"; }
+  _install_neovim_from_source() { echo "step: install_neovim_from_source with method $1"; }
+  run _install_neovim "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "step: ensure_rust" ]]
+  [[ "$output" =~ "step: install_build_deps" ]]
+  [[ "$output" =~ "step: install_neovim_from_source with method make" ]]
+}
+
+@test "_install_neovim builds from source on opensuse" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  _ensure_rust() { echo "step: ensure_rust"; }
+  _install_build_deps() { echo "step: install_build_deps"; }
+  _install_neovim_from_source() { echo "step: install_neovim_from_source with method $1"; }
+  run _install_neovim "opensuse"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "step: ensure_rust" ]]
+  [[ "$output" =~ "step: install_build_deps" ]]
+  [[ "$output" =~ "step: install_neovim_from_source with method make" ]]
+}
+
+@test "_install_runtime_deps installs common and opensuse specific dependencies on opensuse" {
+  source /setup/scripts/toolchain/setup-neovim.sh
+  install_packages() {
+    echo "installing packages: $*"
+    return 0
+  }
+  run _install_runtime_deps "opensuse-tumbleweed"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
+  [[ "$output" =~ "luarocks python3" ]]
+}
+

@@ -30,6 +30,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
   - **Debian (`debian`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`)
   - **Fedora (`fedora`)**: `luarocks`, `cargo`, `lua-5.1`
   - **Arch Linux (`arch`)**: `build-tools` (`base-devel`), `rust`, `tree-sitter-cli`, `luarocks`
+  - **openSUSE (`opensuse-tumbleweed`, `opensuse-leap`, `opensuse`)**: `luarocks` (`lua54-luarocks`), `python3`
 
 #### Scenario: Installing runtime packages on Debian
 
@@ -49,19 +50,26 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 - **WHEN** `scripts/toolchain/setup-neovim.sh` installs runtime dependencies
 - **THEN** common packages (`jq`, `fd`, `wl-clipboard`, `imagemagick`, `sqlite`, `tidy`, `protobuf`, `ripgrep`, `unzip`) and Arch-specific packages (`base-devel`, `rust`, `tree-sitter-cli`, `luarocks`) SHALL be installed
 
+#### Scenario: Installing runtime packages on openSUSE
+
+- **GIVEN** an openSUSE system (`get_distro_id` returns `opensuse-tumbleweed` or `opensuse-leap` or `opensuse`)
+- **WHEN** `scripts/toolchain/setup-neovim.sh` installs runtime dependencies
+- **THEN** common packages (`jq`, `fd`, `wl-clipboard`, `ImageMagick`, `sqlite3`, `sqlite3-devel`, `tidy`, `protobuf-devel`, `ripgrep`, `unzip`) and openSUSE-specific packages (`lua54-luarocks`, `python3`) SHALL be installed
+
 ---
 
 ### Requirement: Distribution Installation Strategy
 
 The script SHALL determine the Neovim binary installation mechanism based on the target distribution (`get_distro_id`):
 
-- **Fedora (`fedora`) & Arch Linux (`arch`)**: SHALL install `neovim` directly from official repositories using `install_packages neovim`.
+- **Fedora (`fedora`), Arch Linux (`arch`) & openSUSE Tumbleweed (`opensuse-tumbleweed`)**: SHALL install `neovim` directly from official repositories using `install_packages neovim`.
 - **Debian (`debian`)**: SHALL ensure `scripts/toolchain/setup-rust.sh` is executed (for `tree-sitter-cli`), install required build dependencies (`build-tools`, `ninja-build`, `gcc-cxx`, `cmake`, `gettext-tools`, `curl`, `git`, `file`), clone Neovim `stable` branch into `/tmp/neovim`, build using `make -j$(nproc) CMAKE_BUILD_TYPE=RelWithDebInfo`, generate a Debian package using `cpack -G DEB`, and install the resulting `.deb` package via `dpkg -i`.
+- **openSUSE Leap (`opensuse-leap` / `opensuse`)**: SHALL ensure `scripts/toolchain/setup-rust.sh` is executed, install required build dependencies (`build-tools`, `ninja-build`, `gcc-cxx`, `cmake`, `gettext-tools`, `curl`, `git`, `file`), clone Neovim `stable` branch into `/tmp/neovim`, build using `make -j$(nproc) CMAKE_BUILD_TYPE=RelWithDebInfo`, and install globally via `sudo make install`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
-#### Scenario: Running on Fedora or Arch Linux
+#### Scenario: Running on Fedora, Arch Linux, or openSUSE Tumbleweed
 
-- **GIVEN** a Fedora or Arch Linux system (`get_distro_id` returns `fedora` or `arch`)
+- **GIVEN** a Fedora, Arch Linux, or openSUSE Tumbleweed system (`get_distro_id` returns `fedora`, `arch`, or `opensuse-tumbleweed`)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` is executed
 - **THEN** `_ensure_nvm` is executed
 - **AND** `_ensure_go` is executed
@@ -77,6 +85,16 @@ The script SHALL determine the Neovim binary installation mechanism based on the
 - **AND** `_ensure_rust` is executed
 - **AND** build dependencies and runtime packages are installed via `install_packages`
 - **AND** Neovim source is cloned, built, packaged with `cpack -G DEB`, and installed via `sudo dpkg -i`
+
+#### Scenario: Running on openSUSE Leap
+
+- **GIVEN** an openSUSE Leap system (`get_distro_id` returns `opensuse-leap` or `opensuse`)
+- **WHEN** `scripts/toolchain/setup-neovim.sh` is executed
+- **THEN** `_ensure_nvm` is executed
+- **AND** `_ensure_go` is executed
+- **AND** `_ensure_rust` is executed
+- **AND** build dependencies and runtime packages are installed via `install_packages`
+- **AND** Neovim source is cloned, built, and installed via `sudo make install`
 
 #### Scenario: Running on an unsupported distribution
 
