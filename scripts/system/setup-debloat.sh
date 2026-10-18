@@ -44,6 +44,16 @@ _filter_installed_fedora() {
   echo "${installed[@]:-}"
 }
 
+_filter_installed_opensuse() {
+  local installed=()
+  for pkg in "$@"; do
+    if rpm -q "$pkg" > /dev/null 2>&1; then
+      installed+=("$pkg")
+    fi
+  done
+  echo "${installed[@]:-}"
+}
+
 COMMON_DEBLOAT_PACKAGES=(
   libreoffice-core
   xterm
@@ -190,6 +200,50 @@ _debloat_fedora() {
   fi
 }
 
+_debloat_opensuse() {
+  local de
+  de="$(get_desktop_environment)"
+
+  local targets=(
+    "${COMMON_DEBLOAT_PACKAGES[@]}"
+    libreoffice
+    transmission
+  )
+
+  case "$de" in
+    gnome)
+      targets+=(
+        "${COMMON_GNOME_DEBLOAT_PACKAGES[@]}"
+      )
+      ;;
+    plasma)
+      targets+=(
+        dragonplayer
+        "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
+      )
+      ;;
+    *)
+      echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
+      ;;
+  esac
+
+  if [ "${DEBLOAT_SKIP_PACKAGE_REMOVAL:-0}" = "1" ]; then
+    echo "DEBLOAT_SKIP_PACKAGE_REMOVAL is active. Skipping openSUSE package removal."
+    return 0
+  fi
+
+  local to_remove
+  to_remove="$(_filter_installed_opensuse "${targets[@]}")"
+
+  if [ -n "$to_remove" ]; then
+    echo "Removing unused openSUSE packages: $to_remove"
+    # shellcheck disable=SC2086
+    sudo zypper --non-interactive remove -u $to_remove
+  else
+    echo "No unused openSUSE packages found to remove."
+  fi
+}
+
 main() {
   echo "Starting system packages debloat..."
 
@@ -202,6 +256,9 @@ main() {
       ;;
     fedora)
       _debloat_fedora
+      ;;
+    opensuse*)
+      _debloat_opensuse
       ;;
     arch)
       echo "Arch Linux is minimal by default; debloat is not needed."

@@ -164,6 +164,75 @@ setup() {
   [[ "$output" =~ "No unused Fedora packages found to remove." ]]
 }
 
+@test "_filter_installed_opensuse filters packages matching rpm -q" {
+  rpm() {
+    if [ "$2" = "installed-pkg" ]; then
+      return 0
+    fi
+    return 1
+  }
+
+  run _filter_installed_opensuse "installed-pkg" "missing-pkg"
+  [ "$status" -eq 0 ]
+  [ "$output" = "installed-pkg" ]
+}
+
+@test "_debloat_opensuse skips when DEBLOAT_SKIP_PACKAGE_REMOVAL is set" {
+  get_desktop_environment() { echo "gnome"; }
+  DEBLOAT_SKIP_PACKAGE_REMOVAL=1 run _debloat_opensuse
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "DEBLOAT_SKIP_PACKAGE_REMOVAL is active" ]]
+}
+
+@test "_debloat_opensuse removes packages on GNOME when installed" {
+  get_desktop_environment() { echo "gnome"; }
+  _filter_installed_opensuse() {
+    echo "totem libreoffice transmission"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _debloat_opensuse
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Removing unused openSUSE packages: totem libreoffice transmission" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive remove -u totem libreoffice transmission" ]]
+}
+
+@test "_debloat_opensuse removes packages on KDE Plasma when installed" {
+  get_desktop_environment() { echo "plasma"; }
+  _filter_installed_opensuse() {
+    local args="$*"
+    [[ "$args" =~ "akregator" ]]
+    [[ "$args" =~ "kmail" ]]
+    [[ "$args" =~ "korganizer" ]]
+    [[ "$args" =~ "kontact" ]]
+    [[ "$args" =~ "kdepim" ]]
+    echo "dragonplayer juk konsole akregator kmail korganizer kontact"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _debloat_opensuse
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Removing unused openSUSE packages: dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive remove -u dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+}
+
+@test "_debloat_opensuse handles no installed packages gracefully" {
+  get_desktop_environment() { echo "gnome"; }
+  _filter_installed_opensuse() {
+    echo ""
+  }
+
+  run _debloat_opensuse
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "No unused openSUSE packages found to remove." ]]
+}
+
 @test "main delegates to _debloat_debian on debian" {
   get_distro_id() { echo "debian"; }
   _debloat_debian() { echo "called debloat debian"; return 0; }
@@ -181,6 +250,22 @@ setup() {
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called debloat fedora" ]]
+  [[ "$output" =~ "setup-debloat complete" ]]
+}
+
+@test "main delegates to _debloat_opensuse on opensuse-leap and opensuse-tumbleweed" {
+  get_distro_id() { echo "opensuse-leap"; }
+  _debloat_opensuse() { echo "called debloat opensuse"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called debloat opensuse" ]]
+  [[ "$output" =~ "setup-debloat complete" ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called debloat opensuse" ]]
   [[ "$output" =~ "setup-debloat complete" ]]
 }
 

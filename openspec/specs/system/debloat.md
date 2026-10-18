@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Removes unused default packages, redundant applications, legacy utilities, and distro bloatware on **Debian 13** and **Fedora 44**, tailored specifically to the active Desktop Environment (**GNOME** or **KDE Plasma**).
+Removes unused default packages, redundant applications, legacy utilities, and distro bloatware on **Debian 13**, **Fedora 44**, and **openSUSE Leap 16.1 / Tumbleweed**, tailored specifically to the active Desktop Environment (**GNOME** or **KDE Plasma**).
 
 On **Arch Linux**, this module gracefully bypasses package removal because Arch installations are user-composed and inherently minimal.
 
@@ -16,6 +16,7 @@ The script SHALL detect the current distribution using `get_distro_id`:
 
 - On **Debian**: SHALL execute APT-tailored debloat operations using `apt purge -y` and `apt autoremove --purge -y`.
 - On **Fedora**: SHALL execute Fedora-tailored debloat operations using `dnf remove -y` and `dnf autoremove -y`.
+- On **openSUSE** (`opensuse-leap`, `opensuse-tumbleweed`, `opensuse`): SHALL execute Zypper-tailored debloat operations using `zypper --non-interactive remove -u`.
 - On **Arch Linux**: SHALL print an informational message indicating debloat is unnecessary on minimal Arch systems and exit cleanly with code 0.
 - On **Unknown / Unsupported Distros**: SHALL print an error to stderr and exit with code 1.
 
@@ -29,20 +30,20 @@ The script SHALL detect the current distribution using `get_distro_id`:
 
 ### Requirement: Common Unused Packages Removal
 
-The script SHALL remove cross-desktop unused packages on supported distros (Debian and Fedora):
+The script SHALL remove cross-desktop unused packages on supported distros (Debian, Fedora, openSUSE):
 
-- **Office**: `libreoffice-core` (Debian & Fedora), `libreoffice-common` (Debian).
+- **Office**: `libreoffice-core` (Debian & Fedora), `libreoffice-common` (Debian), `libreoffice` (openSUSE).
 - **Terminal Fallback**: `xterm` (replaced by Kitty).
 - **Text Editor**: `kate` (replaced by Ghostwriter / Neovim / VSCodium).
 - **CD/DVD Burning**: `brasero`.
 - **Desktop Backup**: `deja-dup` (replaced by Timeshift).
-- **BitTorrent**: `transmission-common`.
+- **BitTorrent**: `transmission-common`, `transmission` (openSUSE).
 
-#### Scenario: Removing common packages on Debian or Fedora
+#### Scenario: Removing common packages on Debian, Fedora, or openSUSE
 
-- **GIVEN** standard desktop installation on Debian or Fedora
+- **GIVEN** standard desktop installation on Debian, Fedora, or openSUSE
 - **WHEN** common debloat executes
-- **THEN** LibreOffice, xterm, kate, brasero, deja-dup, and transmission-common SHALL be purged/removed
+- **THEN** LibreOffice, xterm, kate, brasero, deja-dup, and transmission SHALL be purged/removed
 
 ---
 
