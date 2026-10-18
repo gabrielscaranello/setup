@@ -92,8 +92,9 @@ setup() {
   [[ "$output" =~ installed\ packages:\ lazydocker ]]
 }
 
-@test "_install_lazydocker delegates to binary on debian and fedora" {
+@test "_install_lazydocker delegates to binary on debian, fedora, and opensuse" {
   get_distro_id() { echo "debian"; }
+  require_supported_distro() { echo "debian"; }
   _install_lazydocker_binary() {
     echo "installed from binary debian"
     return 0
@@ -103,6 +104,7 @@ setup() {
   [[ "$output" =~ installed\ from\ binary\ debian ]]
 
   get_distro_id() { echo "fedora"; }
+  require_supported_distro() { echo "fedora"; }
   _install_lazydocker_binary() {
     echo "installed from binary fedora"
     return 0
@@ -110,6 +112,26 @@ setup() {
   run _install_lazydocker
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary\ fedora ]]
+
+  get_distro_id() { echo "opensuse-leap"; }
+  require_supported_distro() { echo "opensuse-leap"; }
+  _install_lazydocker_binary() {
+    echo "installed from binary opensuse-leap"
+    return 0
+  }
+  run _install_lazydocker
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ from\ binary\ opensuse-leap ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  _install_lazydocker_binary() {
+    echo "installed from binary opensuse-tumbleweed"
+    return 0
+  }
+  run _install_lazydocker
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ from\ binary\ opensuse-tumbleweed ]]
 }
 
 @test "_resolve_lazydocker_arch maps x86 and arm64 architectures" {

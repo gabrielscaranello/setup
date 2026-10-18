@@ -80,7 +80,7 @@ setup() {
   [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_lazygit delegates to repo on arch" {
+@test "_install_lazygit delegates to repo on arch and opensuse-tumbleweed" {
   get_distro_id() { echo "arch"; }
   require_supported_distro() { echo "arch"; }
   install_packages() {
@@ -90,10 +90,17 @@ setup() {
   run _install_lazygit
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ packages:\ lazygit ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run _install_lazygit
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ packages:\ lazygit ]]
 }
 
-@test "_install_lazygit delegates to binary on debian and fedora" {
+@test "_install_lazygit delegates to binary on debian, fedora and opensuse-leap" {
   get_distro_id() { echo "debian"; }
+  require_supported_distro() { echo "debian"; }
   _install_lazygit_binary() {
     echo "installed from binary debian"
     return 0
@@ -103,6 +110,7 @@ setup() {
   [[ "$output" =~ installed\ from\ binary\ debian ]]
 
   get_distro_id() { echo "fedora"; }
+  require_supported_distro() { echo "fedora"; }
   _install_lazygit_binary() {
     echo "installed from binary fedora"
     return 0
@@ -110,6 +118,16 @@ setup() {
   run _install_lazygit
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary\ fedora ]]
+
+  get_distro_id() { echo "opensuse-leap"; }
+  require_supported_distro() { echo "opensuse-leap"; }
+  _install_lazygit_binary() {
+    echo "installed from binary opensuse-leap"
+    return 0
+  }
+  run _install_lazygit
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ from\ binary\ opensuse-leap ]]
 }
 
 @test "_resolve_lazygit_arch returns correct architecture string" {

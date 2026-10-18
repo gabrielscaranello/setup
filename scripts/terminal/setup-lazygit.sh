@@ -62,11 +62,11 @@ _install_lazygit() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    arch)
+    arch | opensuse-tumbleweed)
       echo "Installing lazygit from distribution repository..."
       install_packages lazygit
       ;;
-    debian | fedora)
+    debian | fedora | opensuse | opensuse-leap)
       _install_lazygit_binary
       ;;
   esac
