@@ -66,7 +66,8 @@ add_opensuse_vscodium_repo() {
 
   echo "Configuring VSCodium repository for Zypper..."
   sudo rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg 2> /dev/null || true
-  sudo zypper --non-interactive addrepo -t YUM https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/ vscodium 2> /dev/null || true
+  sudo zypper --non-interactive addrepo -cfp 90 https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/ vscodium 2> /dev/null || true
+  sudo zypper --non-interactive --gpg-auto-import-keys refresh vscodium 2> /dev/null || true
 }
 
 add_opensuse_nvidia_repo() {
