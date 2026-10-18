@@ -71,16 +71,33 @@ _install_cargo_packages() {
   done
 }
 
+_install_rust() {
+  local distro
+  distro="$(require_supported_distro)" || return 1
+
+  case "$distro" in
+    opensuse-tumbleweed)
+      echo "Installing Rust and Cargo from distribution repository..."
+      install_packages rust cargo libclang || true
+      _setup_shell_profile
+      export PATH="$PATH:$HOME/.cargo/bin"
+      ;;
+    *)
+      install_packages curl build-tools libclang || true
+      _install_rustup
+      _setup_shell_profile
+      _source_cargo
+      rustup default stable 2> /dev/null || true
+      ;;
+  esac
+
+  _source_cargo || true
+  _install_cargo_packages
+}
+
 main() {
   echo "Setting up Rust / Cargo..."
-
-  install_packages curl build-tools libclang || true
-  _install_rustup
-  _setup_shell_profile
-  _source_cargo
-  rustup default stable 2> /dev/null || true
-  _install_cargo_packages
-
+  _install_rust
   echo "setup-rust complete"
 }
 

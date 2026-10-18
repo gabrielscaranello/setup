@@ -114,11 +114,11 @@ _install_go() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch)
+    fedora | arch | opensuse-tumbleweed)
       echo "Installing Golang from distribution repository..."
       install_packages golang
       ;;
-    debian)
+    debian | opensuse-leap | opensuse)
       install_packages curl wget tar git || true
       _install_go_from_binary
       ;;

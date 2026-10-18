@@ -12,8 +12,8 @@ Installs Go (via official binary archive or distribution repositories), exports 
 
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
-- **Fedora (`fedora`) & Arch Linux (`arch`)**: Install `golang` from native package repositories via `install_packages golang`.
-- **Debian (`debian`)**: Download and extract official `go<version>.linux-amd64.tar.gz` to `/usr/local/go`.
+- **Fedora (`fedora`), Arch Linux (`arch`) & openSUSE Tumbleweed (`opensuse-tumbleweed`)**: Install `golang` from native package repositories via `install_packages golang`.
+- **Debian (`debian`) & openSUSE Leap (`opensuse-leap`, `opensuse`)**: Download and extract official `go<version>.linux-amd64.tar.gz` to `/usr/local/go`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
 ### Requirement: Shell Profile PATH Integration
@@ -24,16 +24,16 @@ The script SHALL idempotently append `export PATH="$PATH:/usr/local/go/bin:$HOME
 
 The script SHALL install required global Go utilities (e.g. `github.com/reteps/dockerfmt@latest`) via `go install`, skipping if the binary is already in `PATH`.
 
-#### Scenario: Running on Fedora or Arch Linux
+#### Scenario: Running on Fedora, Arch Linux, or openSUSE Tumbleweed
 
-- **GIVEN** a Fedora or Arch Linux system (`get_distro_id` returns `fedora` or `arch`)
+- **GIVEN** a Fedora, Arch Linux, or openSUSE Tumbleweed system (`get_distro_id` returns `fedora`, `arch`, or `opensuse-tumbleweed`)
 - **WHEN** `scripts/toolchain/setup-go.sh` runs
 - **THEN** `golang` is installed via native package manager
 - **AND** global Go tools are installed
 
-#### Scenario: Running on Debian
+#### Scenario: Running on Debian or openSUSE Leap
 
-- **GIVEN** a Debian system (`get_distro_id` returns `debian`)
+- **GIVEN** a Debian or openSUSE Leap system (`get_distro_id` returns `debian`, `opensuse-leap`, or `opensuse`)
 - **WHEN** `scripts/toolchain/setup-go.sh` runs
 - **THEN** official Go binary archive is installed in `/usr/local/go`
 - **AND** shell profile contains Go PATH export

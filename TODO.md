@@ -107,7 +107,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 - [x] Install JetBrains Mono Nerd Font — `scripts/terminal/setup-fonts.sh`
 - [x] Install Kitty terminal emulator — `scripts/terminal/setup-kitty.sh`
 - [x] Install Docker engine and plugins (`docker`, `docker-compose`) via Zypper — `scripts/toolchain/setup-docker.sh`
-- [ ] Install Gitflow CJS, Golang, Rust/Cargo, NVM/Node.js — `scripts/toolchain/setup-*.sh`
+- [x] Install Gitflow CJS, Golang, Rust/Cargo, NVM/Node.js — `scripts/toolchain/setup-*.sh`
 - [ ] Install/build Neovim with Zypper runtime dependencies (`wl-clipboard`, `xclip`, `xsel`) — `scripts/toolchain/setup-neovim.sh`
 - [ ] Install Lazygit and Lazydocker binaries — `scripts/terminal/setup-lazygit.sh`, `scripts/terminal/setup-lazydocker.sh`
 

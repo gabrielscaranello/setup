@@ -1,4 +1,5 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2218
 
 # Unit tests for setup-rust.sh logic and branches
 
@@ -109,4 +110,45 @@
   run _install_cargo_packages
   [ "$status" -eq 0 ]
   [[ "$output" =~ "already installed, skipping" ]]
+}
+
+@test "_install_rust installs packages from repo on opensuse-tumbleweed" {
+  source /setup/scripts/toolchain/setup-rust.sh
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+  _setup_shell_profile() { echo "called _setup_shell_profile"; }
+  _source_cargo() { return 0; }
+  _install_cargo_packages() { echo "called _install_cargo_packages"; }
+
+  run _install_rust
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed: rust cargo libclang" ]]
+  [[ "$output" =~ "called _setup_shell_profile" ]]
+  [[ "$output" =~ "called _install_cargo_packages" ]]
+}
+
+@test "_install_rust invokes rustup flow on other distros" {
+  source /setup/scripts/toolchain/setup-rust.sh
+  require_supported_distro() { echo "opensuse-leap"; }
+  install_packages() { return 0; }
+  _install_rustup() { echo "called _install_rustup"; }
+  _setup_shell_profile() { echo "called _setup_shell_profile"; }
+  _source_cargo() { return 0; }
+  _install_cargo_packages() { echo "called _install_cargo_packages"; }
+
+  run _install_rust
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _install_rustup" ]]
+  [[ "$output" =~ "called _install_cargo_packages" ]]
+}
+
+@test "_install_rust fails when distribution is unsupported" {
+  source /setup/scripts/toolchain/setup-rust.sh
+  get_distro_id() { echo "unknown-distro"; return 1; }
+  run _install_rust
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported distribution" ]]
 }

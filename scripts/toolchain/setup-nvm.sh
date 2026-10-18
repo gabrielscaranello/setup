@@ -73,7 +73,7 @@ _install_nvm() {
       echo "Detected pacman; installing nvm package from repo..."
       install_packages nvm
       ;;
-    debian | fedora)
+    debian | fedora | opensuse*)
       _install_nvm_script
       ;;
   esac
@@ -119,7 +119,7 @@ _install_node() {
 main() {
   echo "Setting up NVM/Node (node ${NODE_VERSION}, nvm ${NVM_VERSION})..."
 
-  install_packages curl wget git || true
+  install_packages curl wget git findutils || true
   _install_nvm
   _setup_shell_profile
   _source_nvm

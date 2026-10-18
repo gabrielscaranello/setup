@@ -75,6 +75,20 @@
   [[ "$output" =~ "called _install_nvm_script" ]]
 }
 
+@test "_install_nvm calls _install_nvm_script on opensuse" {
+  source /setup/scripts/toolchain/setup-nvm.sh
+  require_supported_distro() { echo "opensuse-leap"; }
+  _install_nvm_script() { echo "called _install_nvm_script"; }
+  run _install_nvm
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _install_nvm_script" ]]
+
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run _install_nvm
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _install_nvm_script" ]]
+}
+
 @test "_install_nvm returns error on unsupported distribution" {
   source /setup/scripts/toolchain/setup-nvm.sh
   require_supported_distro() { echo "Unsupported distribution" >&2; return 1; }
