@@ -41,6 +41,30 @@ setup() {
   [[ "$output" =~ "sudo pacman -Syu --noconfirm" ]]
 }
 
+@test "_update_opensuse invokes zypper refresh and dup on tumbleweed" {
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _update_opensuse "opensuse-tumbleweed"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo zypper --non-interactive refresh" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive dup --no-recommends" ]]
+}
+
+@test "_update_opensuse invokes zypper refresh and up on leap" {
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _update_opensuse "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo zypper --non-interactive refresh" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive up --no-recommends" ]]
+}
+
 @test "main skips when UPDATE_SKIP_SYSTEM_UPGRADE is set" {
   UPDATE_SKIP_SYSTEM_UPGRADE=1 run main
   [ "$status" -eq 0 ]
@@ -75,6 +99,22 @@ setup() {
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called _update_arch" ]]
+  [[ "$output" =~ "setup-update complete" ]]
+}
+
+@test "main delegates to _update_opensuse on opensuse-leap and opensuse-tumbleweed" {
+  require_supported_distro() { echo "opensuse-leap"; }
+  _update_opensuse() { echo "called _update_opensuse $1"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _update_opensuse opensuse-leap" ]]
+  [[ "$output" =~ "setup-update complete" ]]
+
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _update_opensuse opensuse-tumbleweed" ]]
   [[ "$output" =~ "setup-update complete" ]]
 }
 

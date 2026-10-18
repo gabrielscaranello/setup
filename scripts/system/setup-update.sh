@@ -28,6 +28,18 @@ _update_arch() {
   sudo pacman -Syu --noconfirm
 }
 
+_update_opensuse() {
+  local distro="$1"
+  echo "Refreshing Zypper repositories and upgrading openSUSE packages..."
+  # Justification: install_packages does not abstract full-system upgrade operations
+  sudo zypper --non-interactive refresh
+  if [ "$distro" = "opensuse-tumbleweed" ]; then
+    sudo zypper --non-interactive dup --no-recommends
+  else
+    sudo zypper --non-interactive up --no-recommends
+  fi
+}
+
 main() {
   echo "Starting system update and upgrade..."
 
@@ -49,6 +61,9 @@ main() {
       ;;
     arch)
       _update_arch
+      ;;
+    opensuse*)
+      _update_opensuse "$distro"
       ;;
   esac
 

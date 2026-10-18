@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Refreshes distribution package repositories and upgrades all installed system packages to their latest versions across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**).
+Refreshes distribution package repositories and upgrades all installed system packages to their latest versions across supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**, and **openSUSE Leap 16.1 / Tumbleweed**).
 
 This module runs early in the setup sequence, immediately following the debloat cleanup step, ensuring all subsequent installations occur on an up-to-date system base.
 
@@ -17,6 +17,8 @@ The script SHALL detect the current operating system using `require_supported_di
 - On **Debian**: SHALL refresh APT metadata (`sudo apt update`) and perform a non-interactive package upgrade (`sudo apt upgrade -y`).
 - On **Fedora**: SHALL refresh DNF repository metadata and perform a non-interactive package upgrade (`sudo dnf upgrade -y --refresh`).
 - On **Arch Linux**: SHALL refresh Pacman package databases and upgrade system packages (`sudo pacman -Syu --noconfirm`).
+- On **openSUSE Tumbleweed** (`opensuse-tumbleweed`): SHALL refresh Zypper metadata (`sudo zypper --non-interactive refresh`) and perform distribution upgrade without recommends (`sudo zypper --non-interactive dup --no-recommends`).
+- On **openSUSE Leap / generic openSUSE** (`opensuse-leap`, `opensuse`): SHALL refresh Zypper metadata (`sudo zypper --non-interactive refresh`) and perform package update without recommends (`sudo zypper --non-interactive up --no-recommends`).
 - On **Unsupported Distros**: SHALL print an error to stderr and exit with code 1.
 
 #### Scenario: Updating system on Debian
@@ -36,6 +38,18 @@ The script SHALL detect the current operating system using `require_supported_di
 - **GIVEN** Arch Linux
 - **WHEN** `scripts/system/setup-update.sh` runs
 - **THEN** Pacman databases SHALL be synced and system upgraded via `pacman -Syu --noconfirm`
+
+#### Scenario: Updating system on openSUSE Tumbleweed
+
+- **GIVEN** openSUSE Tumbleweed
+- **WHEN** `scripts/system/setup-update.sh` runs
+- **THEN** Zypper repositories SHALL be refreshed and packages upgraded via `zypper --non-interactive dup --no-recommends`
+
+#### Scenario: Updating system on openSUSE Leap
+
+- **GIVEN** openSUSE Leap 16.1
+- **WHEN** `scripts/system/setup-update.sh` runs
+- **THEN** Zypper repositories SHALL be refreshed and packages updated via `zypper --non-interactive up --no-recommends`
 
 ---
 
