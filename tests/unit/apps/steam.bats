@@ -61,6 +61,56 @@ setup() {
   [[ "$output" =~ "called add_arch_multilib_repo" ]]
   [[ "$output" =~ "installed packages: vulkan-radeon lib32-vulkan-radeon lib32-mesa steam mangohud gamescope gamemode fonts-liberation" ]]
 }
+@test "_install_steam_packages installs packages on openSUSE Tumbleweed" {
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
+  run _install_steam_packages "opensuse-tumbleweed"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing Steam, MangoHud, Gamescope, and GameMode from official repositories on openSUSE Tumbleweed" ]]
+  [[ "$output" =~ "installed packages: steam mangohud gamescope gamemode" ]]
+}
+
+@test "_install_steam_packages installs Flatpaks and enables 32-bit on openSUSE Leap" {
+  _enable_leap_32bit() {
+    echo "called _enable_leap_32bit"
+    return 0
+  }
+  install_flatpak_app() {
+    echo "installed flatpak: $1 ($2)"
+    return 0
+  }
+  run _install_steam_packages "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _enable_leap_32bit" ]]
+  [[ "$output" =~ "Installing Steam, MangoHud, and Gamescope via Flatpak on openSUSE Leap" ]]
+  [[ "$output" =~ "installed flatpak: com.valvesoftware.Steam (Steam)" ]]
+  [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.MangoHud (MangoHud Vulkan Layer)" ]]
+  [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.gamescope (Gamescope Vulkan Layer)" ]]
+
+  run _install_steam_packages "opensuse"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _enable_leap_32bit" ]]
+  [[ "$output" =~ "installed flatpak: com.valvesoftware.Steam (Steam)" ]]
+}
+
+@test "_enable_leap_32bit installs compatibility packages and configures update-bootloader" {
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
+  update-bootloader() {
+    echo "called update-bootloader: $*"
+    return 1
+  }
+  sudo() { "$@"; }
+  run _enable_leap_32bit
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling 32-bit (IA32) kernel emulation" ]]
+  [[ "$output" =~ "installed packages: grub2-compat-ia32 selinux-policy-targeted-gaming steam-devices" ]]
+  [[ "$output" =~ "called update-bootloader: --add-option ia32_emulation=1" ]]
+}
 
 @test "_install_debian_steam installs Steam flatpaks" {
   install_flatpak_app() {

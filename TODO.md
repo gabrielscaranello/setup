@@ -125,7 +125,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 - [x] Install ONLYOFFICE, Obsidian, GIMP, DBeaver, MongoDB Compass — `scripts/apps/setup-*.sh`
 - [x] Configure screenshot tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
 - [x] Install Discord and Telegram Desktop — `scripts/apps/setup-discord.sh`, `scripts/apps/setup-telegram.sh`
-- [ ] Install Steam and gaming tools — `scripts/apps/setup-steam.sh`
+- [x] Install Steam and gaming tools — `scripts/apps/setup-steam.sh`
 
 ### Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE Plasma)
 

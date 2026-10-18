@@ -74,6 +74,39 @@ _install_arch_steam() {
   install_packages "${gpu_pkgs[@]}" steam mangohud gamescope gamemode fonts-liberation
 }
 
+_install_leap_steam() {
+  _enable_leap_32bit
+  echo "Installing Steam, MangoHud, and Gamescope via Flatpak on openSUSE Leap..."
+  install_flatpak_app "com.valvesoftware.Steam" "Steam"
+  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
+  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
+}
+
+_install_tumbleweed_steam() {
+  echo "Installing Steam, MangoHud, Gamescope, and GameMode from official repositories on openSUSE Tumbleweed..."
+  install_packages steam mangohud gamescope gamemode
+}
+
+_enable_leap_32bit() {
+  echo "Enabling 32-bit (IA32) kernel emulation and gaming compatibility on openSUSE Leap..."
+  install_packages grub2-compat-ia32 selinux-policy-targeted-gaming steam-devices || true
+
+  if command -v update-bootloader > /dev/null 2>&1; then
+    if ! update-bootloader --get-option "ia32_emulation=1" &> /dev/null; then
+      sudo update-bootloader --add-option "ia32_emulation=1" 2> /dev/null || true
+      sudo update-bootloader --config 2> /dev/null || true
+    fi
+  elif [ -f /etc/default/grub ]; then
+    if ! grep -q "ia32_emulation=1" /etc/default/grub; then
+      echo "Configuring ia32_emulation=1 in /etc/default/grub..."
+      sudo sed -i 's/\(GRUB_CMDLINE_LINUX="[^"]*\)/\1 ia32_emulation=1/' /etc/default/grub 2> /dev/null || true
+      if command -v grub2-mkconfig > /dev/null 2>&1; then
+        sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null || true
+      fi
+    fi
+  fi
+}
+
 _install_steam_packages() {
   local distro="$1"
 
@@ -81,6 +114,8 @@ _install_steam_packages() {
     debian) _install_debian_steam ;;
     fedora) _install_fedora_steam ;;
     arch) _install_arch_steam ;;
+    opensuse-tumbleweed) _install_tumbleweed_steam ;;
+    opensuse | opensuse-leap) _install_leap_steam ;;
   esac
 }
 

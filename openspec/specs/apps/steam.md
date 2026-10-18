@@ -15,6 +15,8 @@ The installation SHALL strictly target and support:
 - **Arch Linux** (`arch`)
 - **Fedora 44** (`fedora`)
 - **Debian 13 (Trixie)** (`debian`)
+- **openSUSE Tumbleweed** (`opensuse-tumbleweed`)
+- **openSUSE Leap 16.1** (`opensuse-leap`, `opensuse`)
 
 ### Requirement: Packaging Strategy by Distribution
 
@@ -46,6 +48,20 @@ The installation SHALL strictly target and support:
      - `gamescope`
      - `gamemode` and `lib32-gamemode`
      - `fonts-liberation` (`ttf-liberation` for font rendering in Steam UI)
+
+4. **openSUSE Tumbleweed (`opensuse-tumbleweed`)**:
+   - SHALL install native packages directly from official repositories using `install_packages`:
+     - `steam` (from `openSUSE-Tumbleweed-Non-Oss`, automatically pulling 32-bit runtime requirements)
+     - `mangohud` and `mangohud-32bit`
+     - `gamescope`
+     - `gamemode`
+
+5. **openSUSE Leap 16.1 (`opensuse-leap`, `opensuse`)**:
+   - In openSUSE Leap 16, 32-bit x86 execution is disabled by default in the kernel. The script SHALL enable 32-bit (IA32) emulation and compatibility by installing `grub2-compat-ia32`, `selinux-policy-targeted-gaming`, and `steam-devices` via `install_packages`, and ensuring the bootloader kernel parameter `ia32_emulation=1` is configured (via `update-bootloader --add-option "ia32_emulation=1"` or `/etc/default/grub`).
+   - Steam, MangoHud, and Gamescope SHALL be installed via Flatpak:
+     - `com.valvesoftware.Steam`
+     - `org.freedesktop.Platform.VulkanLayer.MangoHud`
+     - `org.freedesktop.Platform.VulkanLayer.gamescope`
 
 ### Requirement: Desktop Environment (DE) Differentiated Proton Manager
 
@@ -131,6 +147,36 @@ _(Note: `gamescope` shares the exact same package name on all supported managers
 - **THEN** it SHALL ensure `[multilib]` is enabled in `/etc/pacman.conf`
 - **AND** it SHALL detect the GPU and install appropriate Vulkan drivers alongside native packages `steam`, `mangohud`, `gamescope`, `gamemode`, `fonts-liberation`
 - **AND** it SHALL install `net.davidotek.pupgui2` via `install_flatpak_app`
+
+### Scenario: Running on openSUSE Tumbleweed under GNOME
+
+- **GIVEN** an openSUSE Tumbleweed system running GNOME (`distro="opensuse-tumbleweed"`, `de="gnome"`)
+- **WHEN** `scripts/apps/setup-steam.sh` is executed
+- **THEN** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode` via `install_packages`
+- **AND** it SHALL install `com.vysp3r.ProtonPlus` and `io.github.radiolamp.mangojuice` via `install_flatpak_app`
+
+### Scenario: Running on openSUSE Tumbleweed under KDE Plasma
+
+- **GIVEN** an openSUSE Tumbleweed system running KDE Plasma (`distro="opensuse-tumbleweed"`, `de="plasma"`)
+- **WHEN** `scripts/apps/setup-steam.sh` is executed
+- **THEN** it SHALL install native packages `steam`, `mangohud`, `gamescope`, `gamemode` via `install_packages`
+- **AND** it SHALL install `net.davidotek.pupgui2` and `io.github.radiolamp.mangojuice` via `install_flatpak_app`
+
+### Scenario: Running on openSUSE Leap under GNOME
+
+- **GIVEN** an openSUSE Leap system running GNOME (`distro="opensuse-leap"`, `de="gnome"`)
+- **WHEN** `scripts/apps/setup-steam.sh` is executed
+- **THEN** it SHALL enable 32-bit (IA32) emulation by installing `grub2-compat-ia32`, `selinux-policy-targeted-gaming`, and `steam-devices`
+- **AND** it SHALL ensure kernel option `ia32_emulation=1` is configured
+- **AND** it SHALL install `com.valvesoftware.Steam`, `org.freedesktop.Platform.VulkanLayer.MangoHud`, `org.freedesktop.Platform.VulkanLayer.gamescope`, `com.vysp3r.ProtonPlus`, and `io.github.radiolamp.mangojuice` via `install_flatpak_app`
+
+### Scenario: Running on openSUSE Leap under KDE Plasma
+
+- **GIVEN** an openSUSE Leap system running KDE Plasma (`distro="opensuse-leap"`, `de="plasma"`)
+- **WHEN** `scripts/apps/setup-steam.sh` is executed
+- **THEN** it SHALL enable 32-bit (IA32) emulation by installing `grub2-compat-ia32`, `selinux-policy-targeted-gaming`, and `steam-devices`
+- **AND** it SHALL ensure kernel option `ia32_emulation=1` is configured
+- **AND** it SHALL install `com.valvesoftware.Steam`, `org.freedesktop.Platform.VulkanLayer.MangoHud`, `org.freedesktop.Platform.VulkanLayer.gamescope`, `net.davidotek.pupgui2`, and `io.github.radiolamp.mangojuice` via `install_flatpak_app`
 
 ### Scenario: Running on an unsupported distribution
 

@@ -6,9 +6,11 @@ setup_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
   local pm
   pm="$(_get_package_manager)"
+  local distro
+  distro="$(get_distro_id 2>/dev/null || echo "unknown")"
 
   # In headless container environments, mock flatpak if real flatpak is not configured or in container
-  if ! command -v flatpak >/dev/null 2>&1 || [ "$pm" = "apt" ]; then
+  if ! command -v flatpak >/dev/null 2>&1 || [ "$pm" = "apt" ] || [ "$distro" = "opensuse" ] || [ "$distro" = "opensuse-leap" ]; then
     sudo mkdir -p /usr/local/bin
     sudo bash -c "cat << 'MOCK' > /usr/local/bin/flatpak
 #!/bin/bash
@@ -44,16 +46,21 @@ teardown_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
   local pm
   pm="$(_get_package_manager)"
+  local distro
+  distro="$(get_distro_id 2>/dev/null || echo "unknown")"
 
-  case "$pm" in
-    apt)
+  case "$distro" in
+    debian | opensuse | opensuse-leap)
       flatpak list | grep -q "com.valvesoftware.Steam"
       ;;
-    dnf)
+    fedora)
       rpm -q steam || flatpak list | grep -q "com.valvesoftware.Steam"
       ;;
-    pacman)
+    arch)
       pacman -Q steam || flatpak list | grep -q "com.valvesoftware.Steam"
+      ;;
+    opensuse-tumbleweed)
+      rpm -q steam || command -v steam >/dev/null 2>&1
       ;;
   esac
 }
