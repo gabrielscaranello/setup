@@ -68,3 +68,27 @@ add_opensuse_vscodium_repo() {
   sudo rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg 2> /dev/null || true
   sudo zypper --non-interactive addrepo -t YUM https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/ vscodium 2> /dev/null || true
 }
+
+add_opensuse_nvidia_repo() {
+  local version
+  version="$(get_opensuse_version)"
+
+  if [ "$version" = "tumbleweed" ]; then
+    echo "openSUSE Tumbleweed uses native upstream kernel graphics drivers, skipping extra NVIDIA repo."
+    return 0
+  fi
+
+  if zypper lr NVIDIA > /dev/null 2>&1 || zypper lr repo-non-free > /dev/null 2>&1 || zypper ls NVIDIA > /dev/null 2>&1; then
+    echo "NVIDIA repository already configured on openSUSE, skipping."
+    return 0
+  fi
+
+  echo "Configuring NVIDIA repository for openSUSE Leap (${version})..."
+  if zypper se -t package openSUSE-repos-Leap-NVIDIA > /dev/null 2>&1; then
+    install_packages openSUSE-repos-Leap-NVIDIA || true
+  else
+    sudo zypper --non-interactive addrepo --refresh "https://download.nvidia.com/opensuse/leap/${version}" NVIDIA 2> /dev/null || true
+  fi
+
+  sudo zypper --non-interactive --gpg-auto-import-keys refresh 2> /dev/null || true
+}

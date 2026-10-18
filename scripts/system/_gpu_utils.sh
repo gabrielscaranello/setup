@@ -84,6 +84,7 @@ configure_gpu_repositories() {
     opensuse* | zypper)
       add_opensuse_nonfree_repo
       add_opensuse_packman_repo
+      add_opensuse_nvidia_repo
       ;;
   esac
 }

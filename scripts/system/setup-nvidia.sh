@@ -38,6 +38,21 @@ _install_arch_driver() {
   install_packages nvidia-open-dkms nvidia-utils nvidia-settings lib32-nvidia-utils
 }
 
+_install_opensuse_driver() {
+  local version
+  version="$(get_opensuse_version 2> /dev/null || echo "leap")"
+
+  if [ "$version" = "tumbleweed" ]; then
+    echo "openSUSE Tumbleweed utilizes native upstream kernel graphics drivers. Ensuring utilities..."
+    install_packages nvidia-settings suse-prime 2> /dev/null || true
+    return 0
+  fi
+
+  echo "Installing NVIDIA driver on openSUSE Leap (${version})..."
+  install_packages x11-video-nvidiaG06 nvidia-settings suse-prime 2> /dev/null \
+    || install_packages x11-video-nvidiaG06 2> /dev/null || true
+}
+
 _install_driver_packages() {
   local distro="$1"
 
@@ -50,6 +65,7 @@ _install_driver_packages() {
     debian) _install_debian_driver ;;
     fedora) _install_fedora_driver ;;
     arch) _install_arch_driver ;;
+    opensuse*) _install_opensuse_driver ;;
   esac
 }
 

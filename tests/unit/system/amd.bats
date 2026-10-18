@@ -61,6 +61,15 @@ setup() {
   run configure_gpu_repositories "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called multilib" ]]
+
+  add_opensuse_nonfree_repo() { echo "called opensuse nonfree"; }
+  add_opensuse_packman_repo() { echo "called opensuse packman"; }
+  add_opensuse_nvidia_repo() { echo "called opensuse nvidia"; }
+  run configure_gpu_repositories "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called opensuse nonfree" ]]
+  [[ "$output" =~ "called opensuse packman" ]]
+  [[ "$output" =~ "called opensuse nvidia" ]]
 }
 
 @test "_install_arch_amd_packages installs mesa, vulkan-radeon and lib32 packages" {
@@ -181,6 +190,18 @@ setup() {
   run _install_debian_32bit_packages
   [ "$status" -eq 0 ]
   [[ "$output" =~ "sudo: apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386" ]]
+}
+
+@test "_install_opensuse_amd_packages installs firmware, mesa and vulkan packages" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+
+  run _install_opensuse_amd_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed: kernel-firmware-amdgpu libvulkan_radeon libva-utils vulkan-tools" ]]
+  [[ "$output" =~ "installed: libvulkan_radeon-32bit" ]]
 }
 
 @test "_install_amd_packages skips when AMD_SKIP_PACKAGE_INSTALL is active" {

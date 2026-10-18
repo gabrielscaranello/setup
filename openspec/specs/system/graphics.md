@@ -2,7 +2,7 @@
 
 ## Overview
 
-Convenience orchestrator that sequentially invokes NVIDIA and AMD GPU driver setup scripts (`setup-nvidia.sh` and `setup-amd.sh`) across all supported distributions (Debian, Fedora, and Arch Linux). Both scripts feature hardware autodetection guards and execute only if corresponding physical GPU hardware is present, supporting single-GPU, hybrid (iGPU + dGPU), and multi-GPU configurations.
+Convenience orchestrator that sequentially invokes NVIDIA and AMD GPU driver setup scripts (`setup-nvidia.sh` and `setup-amd.sh`) across all supported distributions (Debian, Fedora, Arch Linux, and openSUSE). Both scripts feature hardware autodetection guards and execute only if corresponding physical GPU hardware is present, supporting single-GPU, hybrid (iGPU + dGPU), and multi-GPU configurations.
 
 ## Requirements
 

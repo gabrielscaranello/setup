@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Detects AMD graphics hardware (discrete Radeon GPUs and integrated Ryzen APUs) across **Arch Linux**, **Fedora**, and **Debian 13 (Trixie)**, and configures the required open-source user-space driver stack, non-free firmwares, hardware-accelerated video decoding codecs (VA-API/VDPAU), 32-bit multilib libraries for gaming/Steam, and Vulkan (RADV) runtime support.
+Detects AMD graphics hardware (discrete Radeon GPUs and integrated Ryzen APUs) across **Arch Linux**, **Fedora**, **Debian 13 (Trixie)**, and **openSUSE (Leap 16.1 & Tumbleweed)**, and configures the required open-source user-space driver stack, non-free firmwares, hardware-accelerated video decoding codecs (VA-API/VDPAU), 32-bit multilib libraries for gaming/Steam, and Vulkan (RADV) runtime support.
 
 ---
 
@@ -58,6 +58,11 @@ The script SHALL strictly inspect hardware before attempting driver or codec con
    - SHALL install `firmware-amd-graphics` and Mesa drivers (`mesa-va-drivers`, `mesa-vdpau-drivers`, `mesa-vulkan-drivers`, `libgl1-mesa-dri`, `libglx-mesa0`, `libegl-mesa0`, `libgbm1`) from backports if available, falling back to main release.
    - SHALL install diagnostic and utility tools: `libvulkan1`, `vainfo`, `vulkan-tools`.
    - On systems with `i386` multiarch enabled: install `mesa-vulkan-drivers:i386`, `libgl1-mesa-dri:i386` (from backports if available).
+
+4. **openSUSE (Leap 16.1 & Tumbleweed) (`opensuse*`)**:
+   - Uses native upstream open-source kernel `amdgpu` driver and Mesa stack.
+   - SHALL install 64-bit packages: `kernel-firmware-amdgpu`, `libvulkan_radeon`, `libva-utils`, `vulkan-tools`.
+   - SHALL install 32-bit gaming libraries if available: `libvulkan_radeon-32bit`.
 
 ---
 

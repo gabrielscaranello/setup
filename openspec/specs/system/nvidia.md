@@ -2,10 +2,10 @@
 
 ## Purpose
 
-Detects NVIDIA graphics hardware, configures appropriate distribution repositories (including Debian backports for driver and firmware), installs NVIDIA display drivers, sets up Wayland modesetting and power management systemd services, and configures modern hybrid GPU management via **`switcheroo-control`**, **`prime-run`**, and PCIe Runtime D3 (RTD3) dynamic power management for laptops with dual Intel/AMD + NVIDIA graphics across **Debian 13 (Trixie)**, **Fedora 44**, and **Arch Linux**, completely replacing legacy Optimus and archived switching mechanisms.
+Detects NVIDIA graphics hardware, configures appropriate distribution repositories (including Debian backports for driver and firmware, and openSUSE Leap NVIDIA repos), installs NVIDIA display drivers, sets up Wayland modesetting and power management systemd services, and configures modern hybrid GPU management via **`switcheroo-control`**, **`prime-run`**, and PCIe Runtime D3 (RTD3) dynamic power management for laptops with dual Intel/AMD + NVIDIA graphics across **Debian 13 (Trixie)**, **Fedora 44**, **Arch Linux**, and **openSUSE (Leap 16.1 & Tumbleweed)**, completely replacing legacy Optimus and archived switching mechanisms.
 
 > [!NOTE]
-> **Hardware Testing Status**: This implementation has been thoroughly verified via unit tests and containerized integration test environments across Debian, Fedora, and Arch Linux. Real-world bare-metal hardware validation on physical NVIDIA/hybrid hardware is pending and will be conducted soon to identify any machine-specific adjustments.
+> **Hardware Testing Status**: This implementation has been thoroughly verified via unit tests and containerized integration test environments across Debian, Fedora, Arch Linux, and openSUSE. Real-world bare-metal hardware validation on physical NVIDIA/hybrid hardware is pending and will be conducted soon to identify any machine-specific adjustments.
 
 ---
 
@@ -39,7 +39,11 @@ When an NVIDIA GPU is confirmed, the script SHALL configure native repositories 
    - Driver package: `nvidia-open-dkms` (or `nvidia` for standard linux kernel).
    - Complementary packages: `nvidia-utils`, `nvidia-settings`.
 
-4. **Unsupported Distros / Derivatives**:
+4. **openSUSE (Leap 16.1 & Tumbleweed) (`opensuse*`)**:
+   - On **openSUSE Leap**: SHALL configure the official NVIDIA repository via `openSUSE-repos-Leap-NVIDIA` (or direct repo URL) and install driver packages (`x11-video-nvidiaG06`, `nvidia-settings`, `suse-prime`).
+   - On **openSUSE Tumbleweed**: SHALL utilize native upstream kernel graphics stack and ensure utilities (`nvidia-settings`, `suse-prime`) without requiring additional out-of-tree repositories.
+
+5. **Unsupported Distros / Derivatives**:
    - SHALL exit with code 1 and write an error message to `stderr`.
 
 ### Requirement: Modern Hybrid GPU Architecture (`switcheroo-control` & `prime-run`)
@@ -48,7 +52,7 @@ For laptops with hybrid graphics (Intel/AMD iGPU + NVIDIA dGPU), the script SHAL
 
 - SHALL install and enable `switcheroo-control` (`switcheroo-control.service`), enabling native desktop launcher integration in GNOME Shell ("Launch using Discrete Graphic Card") and KDE Plasma.
 - SHALL configure the `prime-run` wrapper:
-  - On Debian and Arch Linux: install `nvidia-prime` package providing `/usr/bin/prime-run`.
+  - On Debian, Arch Linux, and openSUSE: install `nvidia-prime` (resolves to `suse-prime` on openSUSE) package providing `/usr/bin/prime-run` (or create wrapper if missing).
   - On Fedora: install `/usr/local/bin/prime-run` executable script exporting `__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only`.
 - Legacy Bumblebee, bbswitch, Optimus-Manager, and archived EnvyControl tools SHALL NOT be used.
 

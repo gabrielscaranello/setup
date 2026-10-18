@@ -104,6 +104,17 @@ _install_debian_amd_packages() {
   _install_debian_32bit_packages
 }
 
+_install_opensuse_32bit_packages() {
+  echo "Installing 32-bit AMD graphics libraries on openSUSE..."
+  install_packages libvulkan_radeon-32bit 2> /dev/null || true
+}
+
+_install_opensuse_amd_packages() {
+  echo "Installing AMD GPU firmware, Mesa, and Vulkan on openSUSE..."
+  install_packages kernel-firmware-amdgpu libvulkan_radeon libva-utils vulkan-tools
+  _install_opensuse_32bit_packages
+}
+
 _install_amd_packages() {
   local distro="$1"
 
@@ -116,6 +127,7 @@ _install_amd_packages() {
     debian) _install_debian_amd_packages ;;
     fedora) _install_fedora_amd_packages ;;
     arch) _install_arch_amd_packages ;;
+    opensuse*) _install_opensuse_amd_packages ;;
   esac
 }
 

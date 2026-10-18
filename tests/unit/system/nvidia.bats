@@ -141,6 +141,17 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Installing kernel headers, firmware, and NVIDIA driver on Debian testing (forky)..." ]]
   [[ "$output" =~ "installed: linux-headers-amd64 firmware-misc-nonfree nvidia-driver nvidia-smi nvidia-settings" ]]
+
+  get_opensuse_version() { echo "16.1"; }
+  run _install_driver_packages "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing NVIDIA driver on openSUSE Leap (16.1)..." ]]
+  [[ "$output" =~ "installed: x11-video-nvidiaG06 nvidia-settings suse-prime" ]]
+
+  get_opensuse_version() { echo "tumbleweed"; }
+  run _install_driver_packages "opensuse-tumbleweed"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "openSUSE Tumbleweed utilizes native upstream kernel graphics drivers" ]]
 }
 
 @test "_configure_power_and_modeset configures modprobe, RTD3 rules and systemd services" {

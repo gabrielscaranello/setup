@@ -77,3 +77,21 @@ The function `add_opensuse_vscodium_repo` SHALL configure the official VSCodium 
 - **GIVEN** VSCodium repository is not present
 - **WHEN** `add_opensuse_vscodium_repo` is called
 - **THEN** it SHALL import the VSCodium GPG key and add the repository via `zypper ar`
+
+---
+
+### Requirement: Idempotent NVIDIA Repository Configuration
+
+The function `add_opensuse_nvidia_repo` SHALL configure the official NVIDIA repository for openSUSE Leap, while skipping external driver repositories on openSUSE Tumbleweed (as Tumbleweed relies on native upstream kernel graphics stack).
+
+#### Scenario: NVIDIA repository on openSUSE Tumbleweed
+
+- **GIVEN** openSUSE Tumbleweed distribution (`get_opensuse_version` returns `tumbleweed`)
+- **WHEN** `add_opensuse_nvidia_repo` is called
+- **THEN** it SHALL output an informative message and return 0 without adding external proprietary repositories
+
+#### Scenario: NVIDIA repository on openSUSE Leap
+
+- **GIVEN** openSUSE Leap distribution
+- **WHEN** `add_opensuse_nvidia_repo` is called
+- **THEN** it SHALL install `openSUSE-repos-Leap-NVIDIA` or add `https://download.nvidia.com/opensuse/leap/${version}` and refresh repositories

@@ -107,3 +107,46 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Configuring VSCodium repository for Zypper" ]]
 }
+
+@test "add_opensuse_nvidia_repo skips on tumbleweed" {
+  get_opensuse_version() { echo "tumbleweed"; }
+  run add_opensuse_nvidia_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "openSUSE Tumbleweed uses native upstream kernel graphics drivers, skipping extra NVIDIA repo." ]]
+}
+
+@test "add_opensuse_nvidia_repo skips when repository already configured" {
+  get_opensuse_version() { echo "16.1"; }
+  zypper() {
+    if [ "$1" = "lr" ] && [ "$2" = "NVIDIA" ]; then
+      return 0
+    fi
+    return 1
+  }
+
+  run add_opensuse_nvidia_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "NVIDIA repository already configured on openSUSE, skipping." ]]
+}
+
+@test "add_opensuse_nvidia_repo configures repository on leap" {
+  get_opensuse_version() { echo "16.1"; }
+  zypper() {
+    if [ "$1" = "lr" ] || [ "$1" = "ls" ]; then
+      return 1
+    elif [ "$1" = "se" ]; then
+      return 0
+    fi
+    return 0
+  }
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+  sudo() { echo "sudo $*"; }
+
+  run add_opensuse_nvidia_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring NVIDIA repository for openSUSE Leap (16.1)..." ]]
+  [[ "$output" =~ "installed: openSUSE-repos-Leap-NVIDIA" ]]
+}
