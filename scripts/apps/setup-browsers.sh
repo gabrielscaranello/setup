@@ -5,6 +5,7 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
@@ -12,9 +13,21 @@ _remove_firefox_esr_apt() {
   sudo apt remove -y firefox-esr firefox-esr-l10n-pt-br 2> /dev/null || true
 }
 
+_remove_firefox_esr_opensuse() {
+  echo "Removing firefox-esr if installed on openSUSE..."
+  # Justification: Package removal is not provided by install_packages abstraction
+  sudo zypper --non-interactive remove -u MozillaFirefox-esr firefox-esr 2> /dev/null || true
+}
+
 _install_firefox_apt() {
   _remove_firefox_esr_apt
   add_debian_mozilla_repo
+  install_packages firefox firefox-i18n-pt-br
+}
+
+_install_firefox_opensuse_leap() {
+  _remove_firefox_esr_opensuse
+  add_opensuse_mozilla_repo
   install_packages firefox firefox-i18n-pt-br
 }
 
@@ -35,6 +48,12 @@ _install_firefox() {
       install_packages wget || true
       _install_firefox_apt
       ;;
+    opensuse-tumbleweed)
+      echo "Firefox is default on openSUSE Tumbleweed, skipping installation."
+      ;;
+    opensuse | opensuse-leap)
+      _install_firefox_opensuse_leap
+      ;;
   esac
 }
 
@@ -43,7 +62,7 @@ _install_chromium() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch)
+    fedora | arch | opensuse*)
       echo "Installing Chromium from distribution repository..."
       install_packages chromium
       ;;

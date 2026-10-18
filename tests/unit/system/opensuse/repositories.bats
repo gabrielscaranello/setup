@@ -150,3 +150,50 @@ setup() {
   [[ "$output" =~ "Configuring NVIDIA repository for openSUSE Leap (16.1)..." ]]
   [[ "$output" =~ "installed: openSUSE-repos-Leap-NVIDIA" ]]
 }
+
+@test "add_opensuse_mozilla_repo skips when repository is already configured" {
+  zypper() {
+    if [ "$1" = "lr" ] && [ "$2" = "mozilla" ]; then
+      return 0
+    fi
+    return 1
+  }
+
+  run add_opensuse_mozilla_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "already configured" ]]
+}
+
+@test "add_opensuse_mozilla_repo configures mozilla repository on openSUSE leap" {
+  get_opensuse_version() { echo "16.0"; }
+  zypper() {
+    if [ "$1" = "lr" ]; then
+      return 1
+    fi
+    return 0
+  }
+  sudo() { echo "sudo $*"; }
+
+  run add_opensuse_mozilla_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring Mozilla repository for openSUSE (16.0)..." ]]
+  [[ "$output" =~ "sudo zypper --non-interactive addrepo -cfp 90 https://download.opensuse.org/repositories/mozilla/16.0/mozilla.repo" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive --gpg-auto-import-keys refresh mozilla" ]]
+}
+
+@test "add_opensuse_mozilla_repo configures mozilla repository on openSUSE tumbleweed" {
+  get_opensuse_version() { echo "tumbleweed"; }
+  zypper() {
+    if [ "$1" = "lr" ]; then
+      return 1
+    fi
+    return 0
+  }
+  sudo() { echo "sudo $*"; }
+
+  run add_opensuse_mozilla_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring Mozilla repository for openSUSE (tumbleweed)..." ]]
+  [[ "$output" =~ "sudo zypper --non-interactive addrepo -cfp 90 https://download.opensuse.org/repositories/mozilla/openSUSE_Tumbleweed/mozilla.repo" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive --gpg-auto-import-keys refresh mozilla" ]]
+}

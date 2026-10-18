@@ -31,7 +31,14 @@ MOCK"
   bash /setup/scripts/apps/setup-browsers.sh
 }
 
+setup() {
+  source /setup/scripts/_utils.sh 2>/dev/null || true
+}
+
 @test "firefox is installed or available" {
+  if [ "$(get_distro_id 2>/dev/null)" = "opensuse-tumbleweed" ]; then
+    skip "Firefox is default on full desktop installations of openSUSE Tumbleweed and skipped by setup-browsers"
+  fi
   run firefox --version
   [ "$status" -eq 0 ] || command -v firefox
 }

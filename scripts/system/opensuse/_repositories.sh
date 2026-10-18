@@ -92,3 +92,25 @@ add_opensuse_nvidia_repo() {
 
   sudo zypper --non-interactive --gpg-auto-import-keys refresh 2> /dev/null || true
 }
+
+add_opensuse_mozilla_repo() {
+  local repo_file="/etc/zypp/repos.d/mozilla.repo"
+  if [ -f "$repo_file" ] || zypper lr mozilla > /dev/null 2>&1; then
+    echo "Mozilla repository already configured on openSUSE, skipping."
+    return 0
+  fi
+
+  local version
+  version="$(get_opensuse_version)"
+
+  local repo_url
+  if [ "$version" = "tumbleweed" ]; then
+    repo_url="https://download.opensuse.org/repositories/mozilla/openSUSE_Tumbleweed/mozilla.repo"
+  else
+    repo_url="https://download.opensuse.org/repositories/mozilla/16.0/mozilla.repo"
+  fi
+
+  echo "Configuring Mozilla repository for openSUSE (${version})..."
+  sudo zypper --non-interactive addrepo -cfp 90 "$repo_url" 2> /dev/null || true
+  sudo zypper --non-interactive --gpg-auto-import-keys refresh mozilla 2> /dev/null || true
+}

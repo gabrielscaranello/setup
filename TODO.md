@@ -120,7 +120,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 
 ### Phase 5: GUI Applications & Desktop Tools
 
-- [ ] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/apps/setup-browsers.sh`
+- [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/apps/setup-browsers.sh`
 - [ ] Install VSCodium (RPM/YUM repository via Zypper) — `scripts/apps/setup-vscodium.sh`
 - [ ] Install ONLYOFFICE, Obsidian, GIMP, DBeaver, MongoDB Compass — `scripts/apps/setup-*.sh`
 - [ ] Configure screenshot tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`

@@ -95,3 +95,21 @@ The function `add_opensuse_nvidia_repo` SHALL configure the official NVIDIA repo
 - **GIVEN** openSUSE Leap distribution
 - **WHEN** `add_opensuse_nvidia_repo` is called
 - **THEN** it SHALL install `openSUSE-repos-Leap-NVIDIA` or add `https://download.nvidia.com/opensuse/leap/${version}` and refresh repositories
+
+---
+
+### Requirement: Idempotent Mozilla Repository Configuration
+
+The function `add_opensuse_mozilla_repo` SHALL configure the official openSUSE Mozilla OBS repository with priority 90 if not already present.
+
+#### Scenario: Mozilla repository already configured
+
+- **GIVEN** `/etc/zypp/repos.d/mozilla.repo` exists or repo alias `mozilla` is present
+- **WHEN** `add_opensuse_mozilla_repo` is called
+- **THEN** it SHALL skip repository creation and return 0
+
+#### Scenario: Adding Mozilla repository on openSUSE Leap
+
+- **GIVEN** openSUSE Leap distribution
+- **WHEN** `add_opensuse_mozilla_repo` is called
+- **THEN** it SHALL add `https://download.opensuse.org/repositories/mozilla/16.0/mozilla.repo` with priority 90, enable autorefresh, and auto-import GPG keys

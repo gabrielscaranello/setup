@@ -66,6 +66,43 @@
   [[ "$output" =~ "installing packages: firefox firefox-i18n-pt-br" ]]
 }
 
+@test "_install_firefox skips on openSUSE Tumbleweed" {
+  source /setup/scripts/apps/setup-browsers.sh
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run _install_firefox
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Firefox is default on openSUSE Tumbleweed, skipping installation." ]]
+}
+
+@test "_install_firefox delegates to openSUSE Leap installer on openSUSE Leap" {
+  source /setup/scripts/apps/setup-browsers.sh
+  get_distro_id() { echo "opensuse-leap"; }
+  _install_firefox_opensuse_leap() {
+    echo "called openSUSE Leap firefox install"
+    return 0
+  }
+  run _install_firefox
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called openSUSE Leap firefox install" ]]
+}
+
+@test "_install_firefox_opensuse_leap calls add_opensuse_mozilla_repo and installs firefox" {
+  source /setup/scripts/apps/setup-browsers.sh
+  _remove_firefox_esr_opensuse() { return 0; }
+  add_opensuse_mozilla_repo() {
+    echo "called add_opensuse_mozilla_repo"
+    return 0
+  }
+  install_packages() {
+    echo "installing packages: $*"
+    return 0
+  }
+  run _install_firefox_opensuse_leap
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called add_opensuse_mozilla_repo" ]]
+  [[ "$output" =~ "installing packages: firefox firefox-i18n-pt-br" ]]
+}
+
 @test "_install_firefox fails when distribution is unsupported" {
   source /setup/scripts/apps/setup-browsers.sh
   get_distro_id() { echo "unknown-distro"; return 1; }
@@ -93,6 +130,23 @@
     echo "installing package: $*"
     return 0
   }
+  run _install_chromium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing package: chromium" ]]
+}
+
+@test "_install_chromium calls install_packages chromium on openSUSE" {
+  source /setup/scripts/apps/setup-browsers.sh
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  install_packages() {
+    echo "installing package: $*"
+    return 0
+  }
+  run _install_chromium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installing package: chromium" ]]
+
+  get_distro_id() { echo "opensuse-leap"; }
   run _install_chromium
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installing package: chromium" ]]
