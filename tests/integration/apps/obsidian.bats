@@ -6,7 +6,7 @@ setup_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
   local pm
   pm="$(_get_package_manager)"
-  if [ "$pm" = "apt" ] || [ "$pm" = "dnf" ]; then
+  if [ "$pm" = "apt" ] || [ "$pm" = "dnf" ] || [ "$pm" = "zypper" ]; then
     # In headless containers without full systemd/D-Bus, mock successful flatpak installation
     sudo mkdir -p /usr/local/bin
     sudo bash -c "cat << 'MOCK' > /usr/local/bin/flatpak

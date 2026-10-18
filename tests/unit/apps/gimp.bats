@@ -46,6 +46,28 @@ setup() {
   [[ "$output" =~ "installed flatpak: org.gimp.GIMP GIMP" ]]
 }
 
+@test "_install_gimp delegates to repo on openSUSE Tumbleweed" {
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
+  run _install_gimp
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed packages: gimp" ]]
+}
+
+@test "_install_gimp delegates to flatpak on openSUSE Leap" {
+  require_supported_distro() { echo "opensuse-leap"; }
+  install_flatpak_app() {
+    echo "installed flatpak: $*"
+    return 0
+  }
+  run _install_gimp
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: org.gimp.GIMP GIMP" ]]
+}
+
 @test "main executes successfully and reports complete" {
   _install_gimp() {
     echo "called _install_gimp"

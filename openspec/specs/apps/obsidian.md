@@ -13,7 +13,7 @@ Installs Obsidian note-taking and knowledge base application across supported di
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`)**: SHALL install `obsidian` directly from official repositories via `install_packages obsidian`.
-- **Debian (`debian`) & Fedora (`fedora`)**: SHALL install the official Flatpak package `md.obsidian.Obsidian` via Flathub (`install_flatpak_app "md.obsidian.Obsidian" "Obsidian"`).
+- **Debian (`debian`), Fedora (`fedora`), openSUSE (`opensuse-leap`, `opensuse-tumbleweed`, `opensuse`)**: SHALL install the official Flatpak package `md.obsidian.Obsidian` via Flathub (`install_flatpak_app "md.obsidian.Obsidian" "Obsidian"`).
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
 #### Scenario: Running on Arch Linux
@@ -23,9 +23,9 @@ The script SHALL determine the installation mechanism based on the target distri
 - **THEN** it SHALL call `install_packages obsidian`
 - **AND** it SHALL NOT attempt to install via Flatpak
 
-#### Scenario: Running on Debian or Fedora
+#### Scenario: Running on Debian, Fedora, or openSUSE
 
-- **GIVEN** a Debian or Fedora system (`get_distro_id` returns `debian` or `fedora`)
+- **GIVEN** a Debian, Fedora, or openSUSE system
 - **WHEN** `scripts/apps/setup-obsidian.sh` is executed
 - **THEN** it SHALL invoke `install_flatpak_app "md.obsidian.Obsidian" "Obsidian"`
 - **AND** ensure Flatpak and Flathub are configured

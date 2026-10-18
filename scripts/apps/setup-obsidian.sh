@@ -14,7 +14,7 @@ _install_obsidian() {
       echo "Installing Obsidian from distribution repository..."
       install_packages obsidian
       ;;
-    debian | fedora)
+    debian | fedora | opensuse*)
       echo "Installing Obsidian with flatpak..."
       install_flatpak_app "md.obsidian.Obsidian" "Obsidian"
       ;;

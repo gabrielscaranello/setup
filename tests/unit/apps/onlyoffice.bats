@@ -45,3 +45,19 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed flatpak: org.onlyoffice.desktopeditors ONLYOFFICE" ]]
 }
+
+@test "main installs ONLYOFFICE via flatpak on opensuse" {
+  require_supported_distro() { echo "opensuse-leap"; }
+  install_flatpak_app() {
+    echo "installed flatpak: $*"
+    return 0
+  }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: org.onlyoffice.desktopeditors ONLYOFFICE" ]]
+
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: org.onlyoffice.desktopeditors ONLYOFFICE" ]]
+}

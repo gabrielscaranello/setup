@@ -45,3 +45,19 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed flatpak: com.mongodb.Compass MongoDB Compass" ]]
 }
+
+@test "main installs MongoDB Compass via flatpak on opensuse" {
+  require_supported_distro() { echo "opensuse-leap"; }
+  install_flatpak_app() {
+    echo "installed flatpak: $*"
+    return 0
+  }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: com.mongodb.Compass MongoDB Compass" ]]
+
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed flatpak: com.mongodb.Compass MongoDB Compass" ]]
+}

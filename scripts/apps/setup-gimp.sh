@@ -10,11 +10,11 @@ _install_gimp() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch)
+    fedora | arch | opensuse-tumbleweed)
       echo "Installing GIMP from distribution repository..."
       install_packages gimp
       ;;
-    debian)
+    debian | opensuse | opensuse-leap)
       echo "Installing GIMP with flatpak..."
       install_flatpak_app "org.gimp.GIMP" "GIMP"
       ;;

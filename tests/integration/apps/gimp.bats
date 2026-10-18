@@ -5,8 +5,9 @@
 setup_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
   local pm
-  pm="$(_get_package_manager)"
-  if [ "$pm" = "apt" ]; then
+  local distro
+  distro="$(get_distro_id 2>/dev/null || echo "unknown")"
+  if [ "$pm" = "apt" ] || [ "$distro" = "opensuse" ] || [ "$distro" = "opensuse-leap" ]; then
     # In headless containers without full systemd/D-Bus, mock successful flatpak installation
     sudo mkdir -p /usr/local/bin
     sudo bash -c "cat << 'MOCK' > /usr/local/bin/flatpak
@@ -39,7 +40,9 @@ teardown_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
   local pm
   pm="$(_get_package_manager)"
-  if [ "$pm" = "apt" ]; then
+  local distro
+  distro="$(get_distro_id 2>/dev/null || echo "unknown")"
+  if [ "$pm" = "apt" ] || [ "$distro" = "opensuse" ] || [ "$distro" = "opensuse-leap" ]; then
     flatpak list --app --columns=application | grep -qx "org.gimp.GIMP"
   else
     command -v gimp >/dev/null 2>&1

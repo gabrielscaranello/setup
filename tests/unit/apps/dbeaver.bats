@@ -33,4 +33,14 @@ setup() {
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
+
+  require_supported_distro() { echo "opensuse-leap"; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
+
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ flatpak:\ io.dbeaver.DBeaverCommunity\ DBeaver ]]
 }
