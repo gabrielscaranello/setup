@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs and configures the appropriate desktop screenshot utility based on the active desktop environment:
+Installs and configures the appropriate desktop screenshot utility based on the active desktop environment across all supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**, and **openSUSE Leap 16.1 / Tumbleweed**):
 
 - **GNOME**: Installs **Flameshot** (`flameshot`) via `install_packages flameshot`.
 - **KDE Plasma**: Installs **Spectacle** (`spectacle` / `kde-spectacle`) via `install_packages spectacle`.

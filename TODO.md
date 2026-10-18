@@ -123,7 +123,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 - [x] Install Web Browsers (`Chromium`, `Firefox`) — `scripts/apps/setup-browsers.sh`
 - [x] Install VSCodium (RPM/YUM repository via Zypper) — `scripts/apps/setup-vscodium.sh`
 - [x] Install ONLYOFFICE, Obsidian, GIMP, DBeaver, MongoDB Compass — `scripts/apps/setup-*.sh`
-- [ ] Configure screenshot tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
+- [x] Configure screenshot tool (`Flameshot` on GNOME, `Spectacle` on KDE Plasma) — `scripts/apps/setup-screenshot-tool.sh`
 - [ ] Install Discord and Telegram Desktop — `scripts/apps/setup-discord.sh`, `scripts/apps/setup-telegram.sh`
 - [ ] Install Steam and gaming tools — `scripts/apps/setup-steam.sh`
 
