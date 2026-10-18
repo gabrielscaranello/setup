@@ -15,6 +15,7 @@ The script SHALL determine the installation mechanism based on the target distri
 - **Arch Linux (`arch`)**: SHALL install `code` directly from distribution repositories via `install_packages code`.
 - **Debian (`debian`)**: SHALL configure the VSCodium upstream APT repository (importing GPG key to `/usr/share/keyrings/vscodium-archive-keyring.gpg` or `/etc/apt/keyrings/vscodium-archive-keyring.gpg`, adding `/etc/apt/sources.list.d/vscodium.sources`), run `apt update`, install package `codium` via `install_packages codium`, and ensure desktop integration (cleaning up duplicate `codium.desktop` symlinks).
 - **Fedora (`fedora`)**: SHALL configure the VSCodium upstream YUM/DNF repository at `/etc/yum.repos.d/vscodium.repo` with GPG verification (`https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg`), install package `codium` via `install_packages codium`, and ensure desktop integration (cleaning up duplicate `codium.desktop` symlinks).
+- **openSUSE (`opensuse-leap`, `opensuse-tumbleweed`, `opensuse`)**: SHALL configure the VSCodium upstream Zypper repository at `/etc/zypp/repos.d/vscodium.repo` with GPG verification (`add_opensuse_vscodium_repo`), install package `codium` via `install_packages vscodium`, and ensure desktop integration.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and output an error message to `stderr`.
 
 ---
@@ -49,6 +50,15 @@ The installer SHALL recognize `com.visualstudio.CodeOSS.desktop` as the canonica
 - **AND** it SHALL install `codium` via `install_packages codium`
 - **AND** it SHALL remove legacy `codium.desktop` compatibility symlink if present to prevent menu duplication
 - **AND** subsequent executions SHALL skip repository setup idempotently if the `.repo` file already exists
+
+#### Scenario: Running on openSUSE
+
+- **GIVEN** an openSUSE system (`get_distro_id` returns `opensuse-leap` or `opensuse-tumbleweed`)
+- **WHEN** `scripts/apps/setup-vscodium.sh` is executed
+- **THEN** it SHALL configure `/etc/zypp/repos.d/vscodium.repo` via `add_opensuse_vscodium_repo`
+- **AND** it SHALL install `codium` via `install_packages vscodium`
+- **AND** it SHALL remove legacy `codium.desktop` compatibility symlink if present to prevent menu duplication
+- **AND** subsequent executions SHALL skip repository setup idempotently if the repository already exists
 
 #### Scenario: Running on an unsupported distribution
 

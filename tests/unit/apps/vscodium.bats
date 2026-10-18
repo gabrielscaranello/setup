@@ -56,6 +56,28 @@ setup() {
   [[ "$output" =~ "installed packages: vscodium" ]]
 }
 
+@test "_install_vscodium on opensuse adds repo and installs vscodium" {
+  get_distro_id() { echo "opensuse-leap"; }
+  add_opensuse_vscodium_repo() {
+    echo "called add_opensuse_vscodium_repo"
+    return 0
+  }
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
+  run _install_vscodium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called add_opensuse_vscodium_repo" ]]
+  [[ "$output" =~ "installed packages: vscodium" ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run _install_vscodium
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called add_opensuse_vscodium_repo" ]]
+  [[ "$output" =~ "installed packages: vscodium" ]]
+}
+
 @test "main executes successfully and reports complete" {
   _install_vscodium() {
     echo "called _install_vscodium"

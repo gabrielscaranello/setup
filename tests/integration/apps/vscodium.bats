@@ -20,6 +20,9 @@ setup_file() {
     [ -f /etc/apt/sources.list.d/vscodium.sources ]
     [ -f /usr/share/keyrings/vscodium-archive-keyring.gpg ]
     command -v codium >/dev/null 2>&1
+  elif [ "$pm" = "zypper" ]; then
+    [ -f /etc/zypp/repos.d/vscodium.repo ]
+    command -v codium >/dev/null 2>&1
   fi
 }
 
