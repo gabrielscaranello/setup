@@ -184,7 +184,7 @@ setup() {
   [[ "$output" =~ "DEBLOAT_SKIP_PACKAGE_REMOVAL is active" ]]
 }
 
-@test "_debloat_opensuse removes packages on GNOME when installed" {
+@test "_debloat_opensuse removes and locks packages on GNOME when installed" {
   get_desktop_environment() { echo "gnome"; }
   _filter_installed_opensuse() {
     echo "totem libreoffice transmission"
@@ -198,9 +198,11 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Removing unused openSUSE packages: totem libreoffice transmission" ]]
   [[ "$output" =~ "sudo zypper --non-interactive remove -u totem libreoffice transmission" ]]
+  [[ "$output" =~ "Locking removed openSUSE packages to prevent reinstallation: totem libreoffice transmission" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive addlock totem libreoffice transmission" ]]
 }
 
-@test "_debloat_opensuse removes packages on KDE Plasma when installed" {
+@test "_debloat_opensuse removes and locks packages on KDE Plasma when installed" {
   get_desktop_environment() { echo "plasma"; }
   _filter_installed_opensuse() {
     local args="$*"
@@ -220,6 +222,8 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Removing unused openSUSE packages: dragonplayer juk konsole akregator kmail korganizer kontact" ]]
   [[ "$output" =~ "sudo zypper --non-interactive remove -u dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "Locking removed openSUSE packages to prevent reinstallation: dragonplayer juk konsole akregator kmail korganizer kontact" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive addlock dragonplayer juk konsole akregator kmail korganizer kontact" ]]
 }
 
 @test "_debloat_opensuse handles no installed packages gracefully" {

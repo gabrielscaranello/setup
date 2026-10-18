@@ -239,6 +239,9 @@ _debloat_opensuse() {
     echo "Removing unused openSUSE packages: $to_remove"
     # shellcheck disable=SC2086
     sudo zypper --non-interactive remove -u $to_remove
+    echo "Locking removed openSUSE packages to prevent reinstallation: $to_remove"
+    # shellcheck disable=SC2086
+    sudo zypper --non-interactive addlock $to_remove
   else
     echo "No unused openSUSE packages found to remove."
   fi

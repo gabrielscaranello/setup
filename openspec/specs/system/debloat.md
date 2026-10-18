@@ -16,7 +16,7 @@ The script SHALL detect the current distribution using `get_distro_id`:
 
 - On **Debian**: SHALL execute APT-tailored debloat operations using `apt purge -y` and `apt autoremove --purge -y`.
 - On **Fedora**: SHALL execute Fedora-tailored debloat operations using `dnf remove -y` and `dnf autoremove -y`.
-- On **openSUSE** (`opensuse-leap`, `opensuse-tumbleweed`, `opensuse`): SHALL execute Zypper-tailored debloat operations using `zypper --non-interactive remove -u`.
+- On **openSUSE** (`opensuse-leap`, `opensuse-tumbleweed`, `opensuse`): SHALL execute Zypper-tailored debloat operations using `zypper --non-interactive remove -u`, and SHALL lock removed packages using `zypper --non-interactive addlock` to prevent them from being reinstalled during `zypper install-new-recommends` or pattern updates.
 - On **Arch Linux**: SHALL print an informational message indicating debloat is unnecessary on minimal Arch systems and exit cleanly with code 0.
 - On **Unknown / Unsupported Distros**: SHALL print an error to stderr and exit with code 1.
 
