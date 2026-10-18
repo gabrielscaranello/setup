@@ -35,13 +35,16 @@ _configure_gui_frontend() {
 
   case "$de" in
     gnome)
-      if [ "$distro" = "debian" ] || [ "$distro" = "arch" ]; then
-        echo "Installing GUFW for GNOME..."
-        install_packages gufw
-      elif [ "$distro" = "fedora" ]; then
-        echo "Installing firewall-config for GNOME..."
-        install_packages firewall-config
-      fi
+      case "$distro" in
+        debian | arch)
+          echo "Installing GUFW for GNOME..."
+          install_packages gufw
+          ;;
+        fedora | opensuse*)
+          echo "Installing firewall-config for GNOME..."
+          install_packages firewall-config
+          ;;
+      esac
       ;;
 
     plasma)
@@ -64,7 +67,7 @@ main() {
       _configure_ufw
       ;;
 
-    fedora)
+    fedora | opensuse*)
       _configure_firewalld
       ;;
   esac

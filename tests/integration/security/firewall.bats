@@ -5,7 +5,7 @@ setup_file() {
 }
 
 @test "firewall package (ufw or firewalld) is installed and command exists" {
-  if command -v dnf >/dev/null 2>&1; then
+  if command -v firewall-cmd >/dev/null 2>&1 || command -v dnf >/dev/null 2>&1 || command -v zypper >/dev/null 2>&1; then
     command -v firewall-cmd
   else
     command -v ufw

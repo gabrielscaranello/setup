@@ -171,3 +171,61 @@ setup() {
   [[ "$output" =~ "Firewall setup completed successfully." ]]
 }
 
+@test "_configure_gui_frontend handles GNOME on opensuse with firewall-config" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+
+  run _configure_gui_frontend "opensuse-leap" "gnome"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed:\ firewall-config ]]
+
+  run _configure_gui_frontend "opensuse-tumbleweed" "gnome"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed:\ firewall-config ]]
+}
+
+@test "main configures firewalld and gnome GUI on opensuse-leap" {
+  get_distro_id() { echo "opensuse-leap"; }
+  get_desktop_environment() { echo "gnome"; }
+  install_packages() { echo "installed: $*"; }
+  sudo() { echo "sudo: $*"; }
+  command() { return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed:\ firewalld ]]
+  [[ "$output" =~ installed:\ firewall-config ]]
+  [[ "$output" =~ "Firewall setup completed successfully." ]]
+}
+
+@test "main configures firewalld and plasma GUI on opensuse-tumbleweed" {
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  get_desktop_environment() { echo "plasma"; }
+  install_packages() { echo "installed: $*"; }
+  sudo() { echo "sudo: $*"; }
+  command() { return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed:\ firewalld ]]
+  [[ "$output" =~ installed:\ plasma-firewall ]]
+  [[ "$output" =~ "Firewall setup completed successfully." ]]
+}
+
+@test "main configures firewalld without GUI on headless opensuse" {
+  get_distro_id() { echo "opensuse-leap"; }
+  get_desktop_environment() { echo "unknown"; }
+  install_packages() { echo "installed: $*"; }
+  sudo() { echo "sudo: $*"; }
+  command() { return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed:\ firewalld ]]
+  [[ ! "$output" =~ installed:\ plasma-firewall ]]
+  [[ ! "$output" =~ installed:\ firewall-config ]]
+  [[ "$output" =~ "Firewall setup completed successfully." ]]
+}
+

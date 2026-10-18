@@ -97,7 +97,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 
 - [x] Configure swap settings and memory tuning on openSUSE — `scripts/system/setup-swap.sh`
 - [x] Configure Btrfs integration with Snapper / Timeshift — `scripts/system/setup-timeshift.sh`
-- [ ] Configure Firewall (`firewalld` with `plasma-firewall` on KDE Plasma and `firewall-config` on GNOME) — `scripts/security/setup-firewall.sh`
+- [x] Configure Firewall (`firewalld` with `plasma-firewall` on KDE Plasma and `firewall-config` on GNOME) — `scripts/security/setup-firewall.sh`
 - [ ] Configure NVIDIA graphics drivers (openSUSE official NVIDIA repository) and AMD — `scripts/system/setup-nvidia.sh`, `scripts/system/setup-amd.sh`, `scripts/system/setup-graphics.sh`
 - [x] Install multimedia codecs via Packman repository — `scripts/system/setup-codecs.sh`
 - [ ] Configure Flatpak and Flathub on openSUSE — `scripts/system/setup-flatpak.sh`
