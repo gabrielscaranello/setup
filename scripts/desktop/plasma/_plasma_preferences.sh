@@ -96,6 +96,9 @@ _setup_plasma_start_icon() {
     fedora)
       src_icon="${assets_dir}/fedora.svg"
       ;;
+    opensuse | opensuse-leap | opensuse-tumbleweed)
+      src_icon="${assets_dir}/opensuse.svg"
+      ;;
     *)
       echo "Distribution '$distro' is not recognized for start menu icon. Leaving default icon."
       return 0

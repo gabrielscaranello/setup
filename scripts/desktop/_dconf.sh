@@ -15,6 +15,20 @@ ensure_dconf() {
     echo "Error: dconf CLI is not installed or not found in PATH." >&2
     return 1
   fi
+
+  if [ ! -s /etc/machine-id ] && [ ! -s /var/lib/dbus/machine-id ]; then
+    if command -v dbus-uuidgen > /dev/null 2>&1; then
+      if [ -w /etc ]; then
+        dbus-uuidgen --ensure 2> /dev/null || true
+      elif command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
+        sudo dbus-uuidgen --ensure 2> /dev/null || true
+      fi
+    elif [ -w /etc ]; then
+      od -vN 16 -An -tx1 /dev/urandom 2> /dev/null | tr -d ' \n' > /etc/machine-id 2> /dev/null || true
+    elif command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
+      od -vN 16 -An -tx1 /dev/urandom 2> /dev/null | tr -d ' \n' | sudo tee /etc/machine-id > /dev/null 2>&1 || true
+    fi
+  fi
 }
 
 dconf_exec() {

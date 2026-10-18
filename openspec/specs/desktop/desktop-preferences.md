@@ -2,12 +2,12 @@
 
 ## Overview
 
-Automate desktop environment preferences and system application configurations across supported distributions (**Debian 13/14 (Trixie/Forky)**, **Fedora 44**, and **Arch Linux**).
+Automate desktop environment preferences and system application configurations across supported distributions (**Debian 13/14 (Trixie/Forky)**, **Fedora 44**, **Arch Linux**, and **openSUSE Leap 16.1 / Tumbleweed**).
 
 Supports both primary desktop environments:
 
 - **GNOME**: Configured via modular `dconf` dumps organized under `config/gnome/` applied idempotently via `_dconf.sh`.
-- **KDE Plasma 6** (Plasma 6.3 on Debian 13, Plasma 6.7 on Arch Linux and Fedora 44): Configured via granular CLI tools (`kwriteconfig6`, `plasma-apply-colorscheme`) and direct INI configuration merging under `~/.config/` applied idempotently via modular helpers under `scripts/desktop/plasma/` aggregated by the `_plasma.sh` facade.
+- **KDE Plasma 6** (Plasma 6.3 on Debian 13, Plasma 6.7 on Arch Linux and Fedora 44, Plasma 6 on openSUSE Leap and Tumbleweed): Configured via granular CLI tools (`kwriteconfig6`, `plasma-apply-colorscheme`) and direct INI configuration merging under `~/.config/` applied idempotently via modular helpers under `scripts/desktop/plasma/` aggregated by the `_plasma.sh` facade.
 
 ## Requirements
 
@@ -51,7 +51,7 @@ Supports both primary desktop environments:
 6. **Nautilus File Manager** (`nautilus.dconf`):
    - Default zoom `small-plus`, tree view navigation enabled in list view.
 7. **Shell & App Folders** (`shell.dconf`):
-   - Dash favorite apps: Dynamically resolved based on distribution and installed desktop entries: Nautilus, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `com.visualstudio.CodeOSS.desktop` on Debian/Fedora), Firefox (`org.mozilla.firefox.desktop` on Fedora, `firefox.desktop` on Arch/Debian), Chromium (`chromium-browser.desktop` on Fedora, `chromium.desktop` on Arch, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Telegram, Steam, Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora).
+   - Dash favorite apps: Dynamically resolved based on distribution and installed desktop entries: Nautilus, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on openSUSE, `com.visualstudio.CodeOSS.desktop` on Debian/Fedora), Firefox (`org.mozilla.firefox.desktop` on Fedora, `firefox.desktop` on Arch/Debian/openSUSE), Chromium (`chromium-browser.desktop` on Fedora, `chromium.desktop` on Arch/openSUSE, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch/openSUSE Tumbleweed, `md.obsidian.Obsidian.desktop` on Debian/Fedora/openSUSE Leap), GIMP (`gimp.desktop` on Arch/Fedora/openSUSE Tumbleweed, `org.gimp.GIMP.desktop` on Debian/openSUSE Leap), Telegram, Steam (`steam.desktop` on Arch/Fedora/openSUSE Tumbleweed, `com.valvesoftware.Steam.desktop` on Debian/openSUSE Leap), Discord (`discord.desktop` on Arch/openSUSE Tumbleweed, `com.discordapp.Discord.desktop` on Debian/Fedora/openSUSE Leap).
    - App picker folders: Games (`ProtonPlus`, `MangoJuice`, `Steam`), Develop (`DBeaver`, `Compass`), System (including `gufw`, `firewall-config`), Utilities (including `VLC`, `Yelp`/Help).
 8. **Applications** (`apps.dconf`):
    - GNOME Text Editor: highlight current line, space indentation, dark style scheme.
@@ -75,6 +75,7 @@ Supports both primary desktop environments:
 - **Debian 13 (Trixie)**: KDE Plasma 6.3
 - **Fedora 44**: KDE Plasma 6.7
 - **Arch Linux**: KDE Plasma 6.7
+- **openSUSE Leap 16.1 / Tumbleweed**: KDE Plasma 6
 
 #### Prerequisites & Tooling
 
@@ -270,9 +271,9 @@ Supports both primary desktop environments:
 - **Live Session (D-Bus)**: When `plasmashell` and `kwin` are active, invokes `evaluateScript` via `qdbus6`/`qdbus` to safely build and configure the bottom panel without altering desktop containments, enforces `panel.floating = false;` and `writeConfig("floating", 0)`, configures KWin virtual desktops (4 desktops, 2 rows) via `org.kde.KWin.VirtualDesktopManager`, and forces KWin reconfigure.
 - **Offline Fallback (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`)**: Deploys a complete corona template containing screen mapping, desktop containment (`org.kde.plasma.folder`, `lastScreen=0`), and the bottom panel (`location=4`, `floating=0`, `thickness=40`, `formfactor=2`, `lastScreen=0`).
 - Ordered applets (`AppletOrder=2;3;4;5;6;7;8`):
-  1.  Application Launcher (`org.kde.plasma.kickoff`) — custom start menu icon (Papirus distributor-logo `start-here.svg` installed to `~/.icons/start-here.svg` per distro: Arch Linux, Debian, Fedora), compact session/power buttons without captions/labels (`showActionButtonCaptions=false`), favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`, `icon=~/.icons/start-here.svg`, and immutable override in `kicker-extra-favoritesrc` with `IgnoreDefaults[$i]=true` and `Prepend[$i]=` to prevent distribution defaults from returning upon session restart)
+  1.  Application Launcher (`org.kde.plasma.kickoff`) — custom start menu icon (Papirus distributor-logo `start-here.svg` installed to `~/.icons/start-here.svg` per distro: Arch Linux, Debian, Fedora, openSUSE), compact session/power buttons without captions/labels (`showActionButtonCaptions=false`), favorites section cleared / empty (`favorites=""`, `favoritesPortedToStats=true`, `icon=~/.icons/start-here.svg`, and immutable override in `kicker-extra-favoritesrc` with `IgnoreDefaults[$i]=true` and `Prepend[$i]=` to prevent distribution defaults from returning upon session restart)
   2.  Separator (`org.kde.plasma.marginsseparator`)
-  3.  Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `com.visualstudio.CodeOSS.desktop` on Debian/Fedora), Firefox (`org.mozilla.firefox.desktop` on Fedora, `firefox.desktop` on Arch/Debian), Chromium (`chromium-browser.desktop` on Fedora, `chromium.desktop` on Arch, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch, `md.obsidian.Obsidian.desktop` on Debian/Fedora), GIMP (`gimp.desktop` on Arch/Fedora, `org.gimp.GIMP.desktop` on Debian), Telegram, Steam (`com.valvesoftware.Steam.desktop` on Debian, `steam.desktop` on Arch/Fedora), Discord (`discord.desktop` on Arch, `com.discordapp.Discord.desktop` on Debian/Fedora); shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
+  3.  Icons-Only Task Manager (`org.kde.plasma.icontasks`) — pinned launchers: Dolphin, Kitty, VS Code/Codium (`code-oss.desktop` on Arch, `codium.desktop` on openSUSE, `com.visualstudio.CodeOSS.desktop` on Debian/Fedora), Firefox (`org.mozilla.firefox.desktop` on Fedora, `firefox.desktop` on Arch/Debian/openSUSE), Chromium (`chromium-browser.desktop` on Fedora, `chromium.desktop` on Arch/openSUSE, `org.chromium.Chromium.desktop` on Debian), DBeaver, OnlyOffice, Obsidian (`obsidian.desktop` on Arch/openSUSE Tumbleweed, `md.obsidian.Obsidian.desktop` on Debian/Fedora/openSUSE Leap), GIMP (`gimp.desktop` on Arch/Fedora/openSUSE Tumbleweed, `org.gimp.GIMP.desktop` on Debian/openSUSE Leap), Telegram, Steam (`steam.desktop` on Arch/Fedora/openSUSE Tumbleweed, `com.valvesoftware.Steam.desktop` on Debian/openSUSE Leap), Discord (`discord.desktop` on Arch/openSUSE Tumbleweed, `com.discordapp.Discord.desktop` on Debian/Fedora/openSUSE Leap); shows open apps across all virtual desktops (`showOnlyCurrentDesktop=false`)
   4.  Pager (`org.kde.plasma.pager`) — virtual desktops (2 rows, text display disabled / `displayedText=None`)
   5.  Separator (`org.kde.plasma.marginsseparator`)
   6.  System Tray (`org.kde.plasma.systemtray`)

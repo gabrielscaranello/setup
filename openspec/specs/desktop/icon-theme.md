@@ -16,11 +16,12 @@ Automate installation and configuration of the `Papirus-Dark` icon theme on the 
 - **Debian (`debian`)**: Installs native `papirus-icon-theme` package via `install_packages papirus-icon-theme`.
 - **Fedora (`fedora`)**: Installs native `papirus-icon-theme` package via `install_packages papirus-icon-theme`.
 - **Arch Linux (`arch`)**: Installs native `papirus-icon-theme` package via `install_packages papirus-icon-theme`.
+- **openSUSE (`opensuse`, `opensuse-leap`, `opensuse-tumbleweed`)**: Installs native `papirus-icon-theme` package via `install_packages papirus-icon-theme`.
 
 ### Folder Color Utility (`papirus-folders`)
 
 - **Arch Linux (`arch`)**: Installs `papirus-folders` via `install_packages papirus-folders`.
-- **Debian / Fedora**: Installs official upstream script from `PapirusDevelopmentTeam/papirus-folders` into `/usr/local/bin` (or `~/.local/bin` if permissions require).
+- **Debian / Fedora / openSUSE**: Installs official upstream script from `PapirusDevelopmentTeam/papirus-folders` into `/usr/local/bin` (or `~/.local/bin` if permissions require).
 - **Upstream Update Check**: When `papirus-folders` is already installed from upstream, checks GitHub API for newer releases and updates automatically.
 - **Folder Variant**: Runs `papirus-folders -C adwaita` (with `sudo` if `/usr/share/icons` is not user-writable).
 

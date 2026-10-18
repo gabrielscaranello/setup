@@ -33,6 +33,9 @@ _configure_logo_menu_icon() {
     arch)
       icon_id=6
       ;;
+    opensuse | opensuse-leap | opensuse-tumbleweed)
+      icon_id=7
+      ;;
     *)
       echo "  Unknown distribution '$distro' for Logo Menu icon. Keeping default."
       return 0

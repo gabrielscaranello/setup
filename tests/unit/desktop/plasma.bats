@@ -728,6 +728,21 @@ EOF
   rm -rf "$test_home"
 }
 
+@test "_setup_plasma_start_icon installs opensuse icon on openSUSE" {
+  local test_home
+  test_home="$(mktemp -d /tmp/plasma_icon_test_XXXXXX)"
+  HOME="$test_home"
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+
+  run _setup_plasma_start_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing KDE Plasma start menu icon for opensuse-tumbleweed..." ]]
+  [ -f "$test_home/.icons/start-here.svg" ]
+  [ -f "$test_home/.local/share/icons/start-here.svg" ]
+
+  rm -rf "$test_home"
+}
+
 @test "_setup_plasma_start_icon does not install icon when distribution is unknown" {
   local test_home
   test_home="$(mktemp -d /tmp/plasma_icon_test_XXXXXX)"

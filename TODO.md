@@ -129,11 +129,11 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 
 ### Phase 6: Themes, Extensions & Desktop Customization (GNOME & KDE Plasma)
 
-- [ ] Configure Bibata cursor theme (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-cursor-theme.sh`
-- [ ] Configure GTK theme (`adw-gtk3-dark`) and Papirus icons on GNOME — `scripts/desktop/setup-gtk-theme.sh`, `scripts/desktop/setup-icon-theme.sh`
-- [ ] Appearance orchestrator (`look`) — `scripts/desktop/setup-look.sh`
-- [ ] Install and configure GNOME Shell extensions — `scripts/desktop/setup-gnome-extensions.sh`, `scripts/desktop/setup-gnome-extensions-config.sh`
-- [ ] Apply KDE Plasma 6 preferences on openSUSE (2x2 grid, bottom panel, KWin shortcuts, kactivitymanagerd) — `scripts/desktop/setup-desktop-preferences.sh`
+- [x] Configure Bibata cursor theme (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-cursor-theme.sh`
+- [x] Configure GTK theme (`adw-gtk3-dark`) and Papirus icons on GNOME — `scripts/desktop/setup-gtk-theme.sh`, `scripts/desktop/setup-icon-theme.sh`
+- [x] Appearance orchestrator (`look`) — `scripts/desktop/setup-look.sh`
+- [x] Install and configure GNOME Shell extensions — `scripts/desktop/setup-gnome-extensions.sh`, `scripts/desktop/setup-gnome-extensions-config.sh`
+- [x] Apply KDE Plasma 6 preferences on openSUSE (2x2 grid, bottom panel, KWin shortcuts, kactivitymanagerd) — `scripts/desktop/setup-desktop-preferences.sh`
 
 ### Phase 7: Final Tweaks, Testing & Orchestration
 

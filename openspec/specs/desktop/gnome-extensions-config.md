@@ -98,6 +98,7 @@ Configuration settings are organized into individual `.dconf` dump files within 
      - **Debian (`debian`)**: icon index `2` (Debian logo).
      - **Fedora (`fedora`)**: icon index `1` (Fedora logo).
      - **Arch Linux (`arch`)**: icon index `6` (Arch Linux logo).
+     - **openSUSE (`opensuse-leap`, `opensuse-tumbleweed`, `opensuse`)**: icon index `7` (openSUSE logo).
 
 2. **Arch Linux Updates Indicator (`arch-update.dconf`)**:
    - Loaded exclusively when `is_distro "arch"` is true.
@@ -166,6 +167,16 @@ Configuration settings are organized into individual `.dconf` dump files within 
 - **THEN** it should load all common `.dconf` dumps
 - **AND** set Logo Menu icon to `6`
 - **AND** load `arch-update.dconf` (configured with `pacman` and `checkupdates`, without `yay`)
+- **AND** exit with return code 0
+
+**Scenario: Extension Configuration on openSUSE**
+
+- **GIVEN** `get_desktop_environment` returns `gnome`
+- **AND** `get_distro_id` returns `opensuse-tumbleweed`, `opensuse-leap`, or `opensuse`
+- **WHEN** `setup-gnome-extensions-config.sh` is executed
+- **THEN** it should load all common `.dconf` dumps
+- **AND** set Logo Menu icon to `7`
+- **AND** skip loading `arch-update.dconf`
 - **AND** exit with return code 0
 
 **Scenario: Idempotent Execution**

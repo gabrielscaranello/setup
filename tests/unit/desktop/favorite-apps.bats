@@ -104,6 +104,44 @@ teardown() {
   [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
 }
 
+@test "get_favorite_apps resolves expected desktop apps on openSUSE Tumbleweed" {
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+
+  run get_favorite_apps "gnome"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
+  [[ "$output" =~ "kitty.desktop" ]]
+  [[ "$output" =~ "codium.desktop" ]]
+  [[ "$output" =~ "firefox.desktop" ]]
+  [[ "$output" =~ "chromium.desktop" ]]
+  [[ "$output" =~ "io.dbeaver.DBeaverCommunity.desktop" ]]
+  [[ "$output" =~ "org.onlyoffice.desktopeditors.desktop" ]]
+  [[ "$output" =~ "obsidian.desktop" ]]
+  [[ "$output" =~ "gimp.desktop" ]]
+  [[ "$output" =~ "org.telegram.desktop.desktop" ]]
+  [[ "$output" =~ "steam.desktop" ]]
+  [[ "$output" =~ "discord.desktop" ]]
+}
+
+@test "get_favorite_apps resolves expected desktop apps on openSUSE Leap" {
+  get_distro_id() { echo "opensuse-leap"; }
+
+  run get_favorite_apps "gnome"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "org.gnome.Nautilus.desktop" ]]
+  [[ "$output" =~ "kitty.desktop" ]]
+  [[ "$output" =~ "codium.desktop" ]]
+  [[ "$output" =~ "firefox.desktop" ]]
+  [[ "$output" =~ "chromium.desktop" ]]
+  [[ "$output" =~ "io.dbeaver.DBeaverCommunity.desktop" ]]
+  [[ "$output" =~ "org.onlyoffice.desktopeditors.desktop" ]]
+  [[ "$output" =~ "md.obsidian.Obsidian.desktop" ]]
+  [[ "$output" =~ "org.gimp.GIMP.desktop" ]]
+  [[ "$output" =~ "org.telegram.desktop.desktop" ]]
+  [[ "$output" =~ "com.valvesoftware.Steam.desktop" ]]
+  [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
+}
+
 @test "get_favorite_apps uses dolphin on plasma" {
   get_distro_id() { echo "arch"; }
 

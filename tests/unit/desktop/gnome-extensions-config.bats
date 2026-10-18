@@ -80,6 +80,24 @@ teardown() {
   [[ "$output" =~ "dconf_exec called: write /org/gnome/shell/extensions/Logo-menu/menu-button-icon-image 6" ]]
 }
 
+@test "_configure_logo_menu_icon sets icon 7 on openSUSE" {
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  dconf_exec() {
+    echo "dconf_exec called: $*"
+  }
+
+  run _configure_logo_menu_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting Logo Menu icon for opensuse-tumbleweed (index: 7)..." ]]
+  [[ "$output" =~ "dconf_exec called: write /org/gnome/shell/extensions/Logo-menu/menu-button-icon-image 7" ]]
+
+  get_distro_id() { echo "opensuse-leap"; }
+  run _configure_logo_menu_icon
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting Logo Menu icon for opensuse-leap (index: 7)..." ]]
+  [[ "$output" =~ "dconf_exec called: write /org/gnome/shell/extensions/Logo-menu/menu-button-icon-image 7" ]]
+}
+
 @test "_configure_logo_menu_icon keeps default on unknown distro" {
   get_distro_id() { echo "unknown"; }
   dconf_exec() {

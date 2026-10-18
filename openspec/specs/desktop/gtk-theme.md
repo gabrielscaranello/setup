@@ -15,7 +15,7 @@ Automate installation and configuration of the modern `adw-gtk3` theme and its d
 
 - **Fedora (`fedora`)**: Installs native `adw-gtk3-theme` package via `install_packages adw-gtk3-theme`.
 - **Arch Linux (`arch`)**: Installs native `adw-gtk-theme` package via `install_packages adw-gtk3-theme`.
-- **Debian (`debian`)**: Downloads latest upstream release archive (`adw-gtk3*.tar.xz`) from `https://github.com/lassekongo83/adw-gtk3/releases/latest`, extracts, saves version metadata, and installs to `$HOME/.local/share/themes/` (and `/usr/share/themes/` if permissions/sudo allow).
+- **Debian and openSUSE (`debian`, `opensuse`, `opensuse-leap`, `opensuse-tumbleweed`)**: Downloads latest upstream release archive (`adw-gtk3*.tar.xz`) from `https://github.com/lassekongo83/adw-gtk3/releases/latest`, extracts, saves version metadata, and installs to `$HOME/.local/share/themes/` (and `/usr/share/themes/` if permissions/sudo allow).
 - **Upstream Update Check**: When the theme is already installed via GitHub upstream (or not managed by a system package manager), checks remote releases against the local recorded version and automatically updates if a newer version is available.
 
 ### Flatpak Integration

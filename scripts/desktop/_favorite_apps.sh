@@ -52,6 +52,24 @@ get_favorite_apps() {
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
       steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
       ;;
+    opensuse-tumbleweed)
+      editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
+      firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
+      browser="$(_resolve_desktop_app "chromium.desktop" "org.chromium.Chromium.desktop" "chromium-browser.desktop")"
+      notes="$(_resolve_desktop_app "obsidian.desktop" "md.obsidian.Obsidian.desktop")"
+      gimp="$(_resolve_desktop_app "gimp.desktop" "org.gimp.GIMP.desktop")"
+      chat="$(_resolve_desktop_app "discord.desktop" "com.discordapp.Discord.desktop")"
+      steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
+      ;;
+    opensuse | opensuse-leap)
+      editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
+      firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
+      browser="$(_resolve_desktop_app "chromium.desktop" "org.chromium.Chromium.desktop" "chromium-browser.desktop")"
+      notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
+      gimp="$(_resolve_desktop_app "org.gimp.GIMP.desktop" "gimp.desktop")"
+      chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
+      steam="$(_resolve_desktop_app "com.valvesoftware.Steam.desktop" "steam.desktop")"
+      ;;
     *)
       editor="$(_resolve_desktop_app "com.visualstudio.CodeOSS.desktop" "code-oss.desktop" "codium.desktop")"
       firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
