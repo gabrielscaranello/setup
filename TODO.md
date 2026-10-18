@@ -114,7 +114,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 ### Phase 4: Base System Packages & Desktop Environments (GNOME & KDE Plasma)
 
 - [x] Install base system packages on openSUSE Leap 16.1 and Tumbleweed — `scripts/system/setup-packages.sh`
-- [ ] Install curated Desktop Environment applications suite (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-desktop-apps.sh`
+- [x] Install curated Desktop Environment applications suite (`GNOME`, `KDE Plasma`) — `scripts/desktop/setup-desktop-apps.sh`
 - [ ] Implement unused packages cleanup / debloat on openSUSE for GNOME and KDE — `scripts/system/setup-debloat.sh`
 - [ ] Implement system update script (`zypper dup` on Tumbleweed, `zypper up` on Leap) — `scripts/system/setup-update.sh`
 

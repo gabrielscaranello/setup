@@ -68,6 +68,11 @@ setup() {
   run _install_gnome_apps
   [ "$status" -eq 0 ]
   [[ ! "$output" =~ "installed flatpak" ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run _install_gnome_apps
+  [ "$status" -eq 0 ]
+  [[ ! "$output" =~ "installed flatpak" ]]
 }
 
 @test "main runs KDE Plasma application setup when DE is plasma" {

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs the canonical, native desktop applications corresponding to the active Desktop Environment (**KDE Plasma** or **GNOME**) across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**). The suite provides file management, quick-look previewing, archive management, document/image viewing, text editing, calculator, system diagnostics, and disk management tailored to the visual toolkit of the active session.
+Installs the canonical, native desktop applications corresponding to the active Desktop Environment (**KDE Plasma** or **GNOME**) across supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**, and **openSUSE Leap 16.1 / Tumbleweed**). The suite provides file management, quick-look previewing, archive management, document/image viewing, text editing, calculator, system diagnostics, and disk management tailored to the visual toolkit of the active session.
 
 ---
 
@@ -52,17 +52,17 @@ The script SHALL inspect the current desktop environment using `get_desktop_envi
 When the detected environment is `plasma`, the script SHALL install the following applications via `install_packages`:
 
 - `dolphin`: Advanced file manager.
-- `dolphin-plugins`: Thumbnailers and network sharing extensions (`ffmpegthumbs`, `kdegraphics-thumbnailers`, `kdenetwork-filesharing` on Arch; `ffmpegthumbs` on Debian/Fedora).
+- `dolphin-plugins`: Thumbnailers and network sharing extensions (`ffmpegthumbs`, `kdegraphics-thumbnailers`, `kdenetwork-filesharing` on Arch; `ffmpegthumbs` on Debian/Fedora/openSUSE).
 - `ark`: Graphical archive manager.
 - `gwenview`: Image viewer.
 - `okular`: Document and PDF viewer.
 - `kalk`: Calculator application.
-- `plasma-systemmonitor`: System process and resource monitor.
+- `plasma-systemmonitor`: System process and resource monitor (`plasma6-systemmonitor` on openSUSE, `plasma-systemmonitor` on Debian/Fedora/Arch).
 - `filelight`: Disk usage graphical analyzer.
-- `partitionmanager`: Partition editor (`partitionmanager` on Debian/Arch, `kde-partitionmanager` on Fedora).
+- `partitionmanager`: Partition editor (`partitionmanager` on Debian/Arch/openSUSE, `kde-partitionmanager` on Fedora).
 - `ghostwriter`: Distraction-free markdown text editor.
-- `kde-gtk-config`: GTK theme integration module for KDE Plasma (`kde-config-gtk-style` on Debian, `kde-gtk-config` on Fedora/Arch).
-- `kdeconnect`: Device integration client (`kdeconnect` on Debian/Arch, `kde-connect` on Fedora).
+- `kde-gtk-config`: GTK theme integration module for KDE Plasma (`kde-config-gtk-style` on Debian, `kde-gtk-config` on Fedora/Arch/openSUSE).
+- `kdeconnect`: Device integration client (`kdeconnect` on Debian/Arch, `kde-connect` on Fedora, `kdeconnect-kde` on openSUSE).
 - `kweather`: Weather forecast application.
 - `vlc`: Multi-format media and video player.
 
@@ -89,7 +89,7 @@ When the detected environment is `gnome`, the script SHALL install the following
 - `gnome-disk-utility`: Storage drives and partition manager.
 - `gnome-text-editor`: Modern GTK4 text editor.
 - `gnome-tweaks`: Advanced configuration and customization utility.
-- `extension-manager`: Graphical utility to browse, install, and manage GNOME Shell extensions (installed natively on Arch Linux, and via Flatpak `com.mattjakeman.ExtensionManager` on Debian and Fedora).
+- `extension-manager`: Graphical utility to browse, install, and manage GNOME Shell extensions (installed natively on Arch Linux and openSUSE, and via Flatpak `com.mattjakeman.ExtensionManager` on Debian and Fedora).
 - `gnome-weather`: Weather forecast application.
 - `vlc`: Multi-format media and video player.
 
