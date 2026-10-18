@@ -13,7 +13,7 @@ Installs Docker container runtime, Docker Compose, Docker Buildx, and Containerd
 The script SHALL install Docker packages based on the target distribution (`get_distro_id`):
 
 - **Fedora (`fedora`)**: SHALL add the official Docker CE repo via `add_fedora_docker_repo` from `scripts/system/fedora/_repositories.sh` if not present.
-- **Debian (`debian`) & Arch Linux (`arch`)**: SHALL NOT add the Fedora Docker repo file.
+- **Debian (`debian`), Arch Linux (`arch`) & openSUSE (`opensuse`, `opensuse-leap`, `opensuse-tumbleweed`)**: SHALL NOT add the Fedora Docker repo file.
 - **Package Installation**: SHALL invoke `install_packages docker docker-compose docker-buildx containerd`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
@@ -31,9 +31,9 @@ The script SHALL:
 - **WHEN** `scripts/toolchain/setup-docker.sh` is executed
 - **THEN** Docker CE repo is added and packages installed from it
 
-#### Scenario: Running on Debian or Arch Linux
+#### Scenario: Running on Debian, Arch Linux, or openSUSE
 
-- **GIVEN** a Debian or Arch Linux system (`get_distro_id` returns `debian` or `arch`)
+- **GIVEN** a Debian, Arch Linux, or openSUSE system (`get_distro_id` returns `debian`, `arch`, or `opensuse*`)
 - **WHEN** `scripts/toolchain/setup-docker.sh` is executed
 - **THEN** Docker packages are installed without adding the Fedora repo file
 

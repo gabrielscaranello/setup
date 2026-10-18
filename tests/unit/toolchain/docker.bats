@@ -14,6 +14,14 @@ setup() {
   run _install_docker_packages "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
+
+  run _install_docker_packages "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
+
+  run _install_docker_packages "opensuse-tumbleweed"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed packages: docker docker-compose docker-buildx containerd" ]]
 }
 
 @test "_install_docker_packages calls add_fedora_docker_repo on Fedora" {
