@@ -120,6 +120,29 @@ EOF
   [[ "$output" =~ "Enabling cron scheduler service" ]]
 }
 
+@test "_enable_system_services enables power-profiles-daemon and cron on openSUSE" {
+  local systemctl_calls=()
+  systemctl() {
+    systemctl_calls+=("$*")
+    return 0
+  }
+  sudo() {
+    "$@"
+  }
+  is_distro() {
+    [ "$1" = "opensuse" ]
+  }
+  command() {
+    if [ "${2:-}" = "systemctl" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  run _enable_system_services
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Enabling core hardware and power management services" ]]
+  [[ "$output" =~ "Enabling cron scheduler service" ]]
+}
+
 @test "_enable_system_services skips cleanly when systemctl is absent" {
   command() {
     if [ "${2:-}" = "systemctl" ]; then return 1; fi

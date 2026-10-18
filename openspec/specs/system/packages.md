@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provisions foundational operating system packages, modern command-line productivity tools, hardware and power management daemons, multi-filesystem drivers, XDG directory standards, and language dictionaries across supported distributions (**Debian 13**, **Fedora 44**, and **Arch Linux**). This module is strictly decoupled from any Desktop Environment (GNOME or KDE Plasma).
+Provisions foundational operating system packages, modern command-line productivity tools, hardware and power management daemons, multi-filesystem drivers, XDG directory standards, and language dictionaries across supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**, and **openSUSE Leap 16.1 / Tumbleweed**). This module is strictly decoupled from any Desktop Environment (GNOME or KDE Plasma).
 
 ---
 
@@ -17,7 +17,7 @@ The script SHALL install modern command-line utilities and shell environments ac
 - `eza`: Modern replacement for `ls` with tree view and metadata formatting.
 - `gdu`: Fast console disk usage analyzer.
 - `zsh` & `zsh-completions`: Z shell and extended autocompletions.
-- `man-db`: System documentation and manual reader (`man`).
+- `man-db`: System documentation and manual reader (`man` on openSUSE, `man-db` on Debian/Fedora/Arch).
 - `util-linux-user` (Fedora): Provides `chsh` on Fedora <= 43 (graceful resolution on Fedora >= 44 where merged into `util-linux`).
 
 #### Scenario: Installing CLI productivity tools on Debian
@@ -37,6 +37,12 @@ The script SHALL install modern command-line utilities and shell environments ac
 - **GIVEN** Arch Linux
 - **WHEN** `scripts/system/setup-packages.sh` executes
 - **THEN** `bat`, `btop`, `eza`, `gdu`, `zsh`, `zsh-completions`, and `man-db` SHALL be installed via `install_packages`
+
+#### Scenario: Installing CLI productivity tools on openSUSE
+
+- **GIVEN** openSUSE Leap or Tumbleweed
+- **WHEN** `scripts/system/setup-packages.sh` executes
+- **THEN** `bat`, `btop`, `eza`, `gdu`, `zsh`, and `man` (via `man-db`) SHALL be installed via `install_packages`
 
 ---
 
@@ -158,19 +164,20 @@ After installing `xdg-user-dirs`, the script SHALL initialize the default user d
 
 ### Requirement: Cross-Distribution Package Mapping Contract (`packages.conf`)
 
-Package differences across distributions SHALL be declared in `scripts/packages.conf` in alphabetical order, following the column-aligned format `GENERIC_NAME | DEBIAN | FEDORA | ARCH`:
+Package differences across distributions SHALL be declared in `scripts/packages.conf` in alphabetical order, following the column-aligned format `GENERIC_NAME | DEBIAN | FEDORA | ARCH | OPENSUSE`:
 
-- `clipboard`: `clipboard | xclip | xsel | wl-clipboard`
-- `fwupd`: `fwupd | fwupd | fwupd | fwupd fwupd-efi`
-- `libu2f-udev`: `libu2f-udev | libu2f-udev | - | -`
-- `openssh`: `openssh | openssh-client | openssh-clients | openssh`
-- `spell-en`: `spell-en | hunspell-en-us | hunspell-en-US | aspell-en`
-- `spell-pt-br`: `spell-pt-br | hunspell-pt-br | hunspell-pt-BR | aspell-pt`
-- `util-linux-user`: `util-linux-user | - | util-linux-user | -`
-- `zram`: `zram | zram-tools | zram-generator | zram-generator`
-- `zsh-completions`: `zsh-completions | - | - | zsh-completions`
+- `clipboard`: `clipboard | xclip | xsel | wl-clipboard | wl-clipboard`
+- `fwupd`: `fwupd | fwupd | fwupd | fwupd fwupd-efi | fwupd`
+- `libu2f-udev`: `libu2f-udev | - | - | - | -`
+- `man-db`: `man-db | man-db | man-db | man-db | man`
+- `openssh`: `openssh | openssh-client | openssh-clients | openssh | openssh`
+- `spell-en`: `spell-en | hunspell-en-us | hunspell-en-US | aspell-en | myspell-en`
+- `spell-pt-br`: `spell-pt-br | hunspell-pt-br | hunspell-pt-BR | aspell-pt | myspell-pt_BR`
+- `util-linux-user`: `util-linux-user | - | util-linux-user | - | -`
+- `zram`: `zram | zram-tools | zram-generator | zram-generator | zram-generator`
+- `zsh-completions`: `zsh-completions | - | - | zsh-completions | -`
 
-Packages with identical names (`bat`, `btop`, `dialog`, `dosfstools`, `eza`, `gdu`, `keychain`, `man-db`, `mtools`, `ntfs-3g`, `numlockx`, `power-profiles-daemon`, `xdg-user-dirs`, `xdg-utils`, `zsh`) SHALL NOT be added to `packages.conf` and SHALL resolve automatically via fallback.
+Packages with identical names (`bat`, `btop`, `dialog`, `dosfstools`, `eza`, `gdu`, `keychain`, `mtools`, `ntfs-3g`, `numlockx`, `power-profiles-daemon`, `xdg-user-dirs`, `xdg-utils`, `zsh`) SHALL NOT be added to `packages.conf` and SHALL resolve automatically via fallback.
 
 #### Scenario: Resolving mapped packages
 
