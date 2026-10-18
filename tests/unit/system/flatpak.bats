@@ -54,3 +54,15 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ Flathub\ remote\ repository\ added\ successfully ]]
 }
+
+@test "main executes _setup_flatpak flow successfully" {
+  _setup_flatpak() {
+    echo "mock setup_flatpak"
+    return 0
+  }
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Flatpak and Flathub..." ]]
+  [[ "$output" =~ "mock setup_flatpak" ]]
+  [[ "$output" =~ "setup-flatpak complete" ]]
+}
