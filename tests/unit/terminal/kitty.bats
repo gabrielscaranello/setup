@@ -208,3 +208,33 @@ DESKTOP_OPEN
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed from binary" ]]
 }
+
+@test "_install_kitty delegates to repo on opensuse-tumbleweed" {
+  source /setup/scripts/terminal/setup-kitty.sh
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  install_packages() {
+    echo "install_packages called with: $*"
+    return 0
+  }
+  ensure_xdg_terminal_exec() {
+    echo "ensure_xdg_terminal_exec called"
+    return 0
+  }
+
+  run _install_kitty
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "install_packages called with: kitty" ]]
+  [[ "$output" =~ "ensure_xdg_terminal_exec called" ]]
+}
+
+@test "_install_kitty delegates to binary on opensuse-leap" {
+  source /setup/scripts/terminal/setup-kitty.sh
+  require_supported_distro() { echo "opensuse-leap"; }
+  _install_kitty_binary() {
+    echo "installed from binary"
+    return 0
+  }
+  run _install_kitty
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed from binary" ]]
+}

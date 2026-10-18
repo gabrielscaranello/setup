@@ -124,12 +124,12 @@ _install_kitty() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    arch | fedora)
+    arch | fedora | opensuse-tumbleweed)
       echo "Installing kitty from distribution repository..."
       install_packages kitty
       ensure_xdg_terminal_exec
       ;;
-    debian)
+    debian | opensuse-leap | opensuse)
       _install_kitty_binary
       ;;
   esac
