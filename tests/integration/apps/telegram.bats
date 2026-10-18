@@ -10,7 +10,9 @@ setup_file() {
   source /setup/scripts/_utils.sh 2>/dev/null
   local pm
   pm="$(_get_package_manager)"
-  if [ "$pm" = "apt" ]; then
+  local distro
+  distro="$(get_distro_id 2>/dev/null || echo "unknown")"
+  if [ "$pm" = "apt" ] || [ "$distro" = "opensuse" ] || [ "$distro" = "opensuse-leap" ]; then
     [ -x "$HOME/.local/opt/telegram-desktop/Telegram" ] || [ -x "$HOME/.local/bin/telegram-desktop" ]
   else
     command -v telegram-desktop >/dev/null 2>&1 || command -v Telegram >/dev/null 2>&1

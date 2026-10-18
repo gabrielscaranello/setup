@@ -14,7 +14,7 @@ setup() {
   [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_discord delegates to repo on arch" {
+@test "_install_discord delegates to repo on arch and opensuse-tumbleweed" {
   require_supported_distro() { echo "arch"; }
   install_packages() {
     echo "installed packages: $*"
@@ -23,9 +23,14 @@ setup() {
   run _install_discord
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ packages:\ discord ]]
+
+  require_supported_distro() { echo "opensuse-tumbleweed"; }
+  run _install_discord
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ packages:\ discord ]]
 }
 
-@test "_install_discord delegates to flatpak on debian and fedora" {
+@test "_install_discord delegates to flatpak on debian, fedora, and opensuse-leap" {
   require_supported_distro() { echo "debian"; }
   install_flatpak_app() {
     echo "installed flatpak: $*"
@@ -36,10 +41,11 @@ setup() {
   [[ "$output" =~ installed\ flatpak:\ com.discordapp.Discord\ Discord ]]
 
   require_supported_distro() { echo "fedora"; }
-  install_flatpak_app() {
-    echo "installed flatpak: $*"
-    return 0
-  }
+  run _install_discord
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ flatpak:\ com.discordapp.Discord\ Discord ]]
+
+  require_supported_distro() { echo "opensuse-leap"; }
   run _install_discord
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ flatpak:\ com.discordapp.Discord\ Discord ]]

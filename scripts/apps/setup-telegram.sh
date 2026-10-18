@@ -154,10 +154,10 @@ _install_telegram() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch)
+    fedora | arch | opensuse-tumbleweed)
       _install_telegram_repo "$distro"
       ;;
-    debian)
+    debian | opensuse | opensuse-leap)
       _install_telegram_binary
       ;;
   esac

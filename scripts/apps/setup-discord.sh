@@ -10,11 +10,11 @@ _install_discord() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    arch)
+    arch | opensuse-tumbleweed)
       echo "Installing Discord from distribution repository..."
       install_packages discord
       ;;
-    debian | fedora)
+    debian | fedora | opensuse | opensuse-leap)
       echo "Installing Discord with flatpak..."
       install_flatpak_app "com.discordapp.Discord" "Discord"
       ;;

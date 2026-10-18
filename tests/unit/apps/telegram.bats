@@ -101,7 +101,7 @@ setup() {
   [[ "$output" =~ Unsupported\ distribution ]]
 }
 
-@test "_install_telegram delegates to repo on arch and fedora" {
+@test "_install_telegram delegates to repo on arch, fedora, and opensuse-tumbleweed" {
   get_distro_id() { echo "arch"; }
   _install_telegram_repo() {
     echo "installed from repo $1"
@@ -112,21 +112,27 @@ setup() {
   [[ "$output" =~ installed\ from\ repo\ arch ]]
 
   get_distro_id() { echo "fedora"; }
-  _install_telegram_repo() {
-    echo "installed from repo $1"
-    return 0
-  }
   run _install_telegram
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ repo\ fedora ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run _install_telegram
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ from\ repo\ opensuse-tumbleweed ]]
 }
 
-@test "_install_telegram delegates to binary on debian" {
+@test "_install_telegram delegates to binary on debian and opensuse-leap" {
   get_distro_id() { echo "debian"; }
   _install_telegram_binary() {
     echo "installed from binary"
     return 0
   }
+  run _install_telegram
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ installed\ from\ binary ]]
+
+  get_distro_id() { echo "opensuse-leap"; }
   run _install_telegram
   [ "$status" -eq 0 ]
   [[ "$output" =~ installed\ from\ binary ]]
