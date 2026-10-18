@@ -137,11 +137,11 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 
 ### Phase 7: Final Tweaks, Testing & Orchestration
 
-- [ ] Configure default applications (MIME types / handlers) — `scripts/apps/setup-default-apps.sh`
-- [ ] Hide unwanted applications from desktop menus (`.desktop` files) — `scripts/desktop/setup-hide-apps.sh`
-- [ ] Create openSUSE runner and pipeline (`runners/opensuse.sh`, integration in `runners/main.sh` and `Makefile`)
-- [ ] Create Docker test containers (`setup-test-opensuse-tumbleweed`, `setup-test-opensuse-leap`)
-- [ ] Add unit and integration tests for openSUSE
+- [x] Configure default applications (MIME types / handlers) — `scripts/apps/setup-default-apps.sh`
+- [x] Hide unwanted applications from desktop menus (`.desktop` files) — `scripts/desktop/setup-hide-apps.sh`
+- [x] Create openSUSE runner and pipeline (`runners/opensuse.sh`, integration in `runners/main.sh` and `Makefile`)
+- [x] Create Docker test containers (`setup-test-opensuse-tumbleweed`, `setup-test-opensuse-leap`)
+- [x] Add unit and integration tests for openSUSE
 
 ---
 

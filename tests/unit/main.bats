@@ -80,6 +80,14 @@ setup() {
   run run_module "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "fedora.sh" ]]
+
+  run run_module "opensuse"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "opensuse.sh" ]]
+
+  run run_module "snapper"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "setup-timeshift.sh" ]]
 }
 
 @test "run_all dispatches to debian runner when distribution is debian" {
@@ -110,6 +118,26 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Delegating complete setup to Arch Linux runner..." ]]
   [[ "$output" =~ "arch.sh" ]]
+}
+
+@test "run_all dispatches to opensuse runner when distribution is opensuse-tumbleweed" {
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  bash() { echo "executed: $*"; return 0; }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Delegating complete setup to openSUSE runner..." ]]
+  [[ "$output" =~ "opensuse.sh" ]]
+}
+
+@test "run_all dispatches to opensuse runner when distribution is opensuse-leap" {
+  get_distro_id() { echo "opensuse-leap"; }
+  bash() { echo "executed: $*"; return 0; }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Delegating complete setup to openSUSE runner..." ]]
+  [[ "$output" =~ "opensuse.sh" ]]
 }
 
 @test "run_all fails when distribution is an unsupported derivative like ubuntu" {

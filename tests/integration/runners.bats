@@ -21,5 +21,7 @@
     [ -x "/setup/runners/debian.sh" ]
   elif command -v dnf > /dev/null 2>&1; then
     [ -x "/setup/runners/fedora.sh" ]
+  elif command -v zypper > /dev/null 2>&1; then
+    [ -x "/setup/runners/opensuse.sh" ]
   fi
 }

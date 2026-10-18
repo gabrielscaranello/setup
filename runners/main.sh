@@ -58,9 +58,11 @@ Available Commands:
   nvm                     - Install NVM, Node.js and global packages
   obsidian                - Install Obsidian Knowledge Base
   onlyoffice              - Install ONLYOFFICE Desktop Editors (Flatpak)
+  opensuse                - Run complete setup pipeline for openSUSE (Leap, Tumbleweed)
   packages                - Install core system packages and CLI utilities
   rust                    - Install Rust, Cargo and tools (tree-sitter-cli)
   screenshot              - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
+  snapper                 - Configure Snapper snapshots and GRUB integration (openSUSE)
   steam                   - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
   swap                    - Configure Swap and VM memory tuning
   telegram                - Install Telegram Desktop
@@ -90,11 +92,16 @@ run_all() {
       bash "$RUNNERS_DIR/arch.sh"
       ;;
 
+    opensuse | opensuse-leap | opensuse-tumbleweed)
+      echo "Delegating complete setup to openSUSE runner..."
+      bash "$RUNNERS_DIR/opensuse.sh"
+      ;;
+
     *)
       if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
-        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', and 'arch' are currently supported." >&2
+        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', and 'opensuse' are currently supported." >&2
       else
-        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch)." >&2
+        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, opensuse)." >&2
       fi
       return 1
       ;;
@@ -266,6 +273,10 @@ run_module() {
       bash "$SCRIPTS_DIR/apps/setup-onlyoffice.sh"
       ;;
 
+    opensuse | opensuse-leap | opensuse-tumbleweed)
+      bash "$RUNNERS_DIR/opensuse.sh"
+      ;;
+
     packages)
       bash "$SCRIPTS_DIR/system/setup-packages.sh"
       ;;
@@ -276,6 +287,10 @@ run_module() {
 
     screenshot)
       bash "$SCRIPTS_DIR/apps/setup-screenshot-tool.sh"
+      ;;
+
+    snapper)
+      bash "$SCRIPTS_DIR/system/setup-timeshift.sh"
       ;;
 
     steam)

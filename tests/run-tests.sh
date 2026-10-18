@@ -267,6 +267,10 @@ main() {
       _run_integration_distro "debian"
       echo ""
       _run_integration_distro "fedora"
+      echo ""
+      _run_integration_distro "opensuse"
+      echo ""
+      _run_integration_distro "tumbleweed"
     fi
   fi
 
