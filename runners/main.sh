@@ -48,6 +48,7 @@ Available Commands:
   hide-apps               - Hide unwanted applications from desktop menus (.desktop files)
   icon-theme              - Install and configure Papirus-Dark icon theme
   kernel-debian           - Install latest Linux kernel and headers from Debian backports
+  kernel-opensuse         - Install latest Linux kernel and headers from openSUSE backports (Leap)
   kitty                   - Install Kitty terminal emulator
   lazydocker              - Install Lazydocker
   lazygit                 - Install Lazygit
@@ -231,6 +232,10 @@ run_module() {
 
     kernel-debian)
       bash "$SCRIPTS_DIR/system/debian/setup-kernel.sh"
+      ;;
+
+    kernel-opensuse)
+      bash "$SCRIPTS_DIR/system/opensuse/setup-kernel.sh"
       ;;
 
     kitty)

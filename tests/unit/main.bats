@@ -61,6 +61,10 @@ setup() {
   run run_module "hide-apps"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "setup-hide-apps.sh" ]]
+
+  run run_module "kernel-opensuse"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "system/opensuse/setup-kernel.sh" ]]
 }
 
 @test "run_module dispatches to distro runners directly" {

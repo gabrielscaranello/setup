@@ -62,17 +62,38 @@
   [[ "$output" =~ "pipeline: Fedora Desktop Setup" ]]
 }
 
-@test "runners/opensuse.sh run_all calls run_pipeline with openSUSE pipeline" {
+@test "runners/opensuse.sh run_all calls run_pipeline with openSUSE pipeline and includes kernel on Leap" {
   source /setup/runners/opensuse.sh 2>/dev/null || source runners/opensuse.sh
+  get_distro_id() { echo "opensuse-leap"; }
 
   run_pipeline() {
     echo "pipeline: $1"
+    shift
+    printf "step: %s\n" "$@"
     return 0
   }
 
   run run_all
   [ "$status" -eq 0 ]
   [[ "$output" =~ "pipeline: openSUSE Desktop Setup" ]]
+  [[ "$output" =~ "system/opensuse/setup-kernel.sh:openSUSE Leap latest kernel and headers setup" ]]
+}
+
+@test "runners/opensuse.sh run_all skips kernel step on openSUSE Tumbleweed" {
+  source /setup/runners/opensuse.sh 2>/dev/null || source runners/opensuse.sh
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+
+  run_pipeline() {
+    echo "pipeline: $1"
+    shift
+    printf "step: %s\n" "$@"
+    return 0
+  }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "pipeline: openSUSE Desktop Setup" ]]
+  [[ ! "$output" =~ "system/opensuse/setup-kernel.sh" ]]
 }
 
 @test "runners/_utils.sh COMMON_POST_STEPS orders desktop-apps before default-apps" {

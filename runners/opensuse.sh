@@ -15,8 +15,15 @@ run_all() {
   local steps=(
     "${COMMON_INITIAL_STEPS[@]}"
     "system/setup-timeshift.sh:Snapper snapshot and rollback setup"
-    "${COMMON_POST_STEPS[@]}"
   )
+
+  local distro
+  distro="$(get_distro_id 2> /dev/null || true)"
+  if [ "$distro" != "opensuse-tumbleweed" ]; then
+    steps+=("system/opensuse/setup-kernel.sh:openSUSE Leap latest kernel and headers setup")
+  fi
+
+  steps+=("${COMMON_POST_STEPS[@]}")
 
   run_pipeline "openSUSE Desktop Setup" "${steps[@]}"
 }

@@ -100,6 +100,7 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 - [x] Configure Firewall (`firewalld` with `plasma-firewall` on KDE Plasma and `firewall-config` on GNOME) — `scripts/security/setup-firewall.sh`
 - [x] Configure NVIDIA graphics drivers (openSUSE official NVIDIA repository) and AMD — `scripts/system/setup-nvidia.sh`, `scripts/system/setup-amd.sh`, `scripts/system/setup-graphics.sh`
 - [x] Install multimedia codecs via Packman repository — `scripts/system/setup-codecs.sh`
+- [x] Install latest Linux kernel and headers from Backport repository on openSUSE Leap — `scripts/system/opensuse/setup-kernel.sh`
 - [x] Configure Flatpak and Flathub on openSUSE — `scripts/system/setup-flatpak.sh`
 
 ### Phase 3: Development Toolchain & Terminal

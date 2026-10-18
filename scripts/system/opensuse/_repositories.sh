@@ -114,3 +114,25 @@ add_opensuse_mozilla_repo() {
   sudo zypper --non-interactive addrepo -cfp 90 "$repo_url" 2> /dev/null || true
   sudo zypper --non-interactive --gpg-auto-import-keys refresh mozilla 2> /dev/null || true
 }
+
+add_opensuse_kernel_backports_repo() {
+  local repo_name="Kernel_stable_Backport"
+  if [ -f "/etc/zypp/repos.d/${repo_name}.repo" ] || zypper lr "$repo_name" > /dev/null 2>&1; then
+    echo "Kernel Backport repository already configured on openSUSE, skipping."
+    return 0
+  fi
+
+  local version
+  version="$(get_opensuse_version)"
+
+  if [ "$version" = "tumbleweed" ]; then
+    echo "openSUSE Tumbleweed already runs the latest rolling kernel. Skipping backports repository."
+    return 0
+  fi
+
+  local repo_url="https://download.opensuse.org/repositories/Kernel:/stable:/Backport/standard/"
+
+  echo "Configuring Kernel Backport repository for openSUSE Leap (${version})..."
+  sudo zypper --non-interactive addrepo -cfp 90 "$repo_url" "$repo_name" 2> /dev/null || true
+  sudo zypper --non-interactive --gpg-auto-import-keys refresh "$repo_name" 2> /dev/null || true
+}
