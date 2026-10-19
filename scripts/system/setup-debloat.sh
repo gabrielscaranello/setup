@@ -208,18 +208,40 @@ _debloat_opensuse() {
     "${COMMON_DEBLOAT_PACKAGES[@]}"
     libreoffice
     transmission
+    opensuse-welcome
+    opensuse-welcome-launcher
+    patterns-desktop-multimedia
+    patterns-office-office
+    vim
+    lftp
   )
 
   case "$de" in
     gnome)
       targets+=(
         "${COMMON_GNOME_DEBLOAT_PACKAGES[@]}"
+        dconf-editor
+        gnome-console
+        gnome-packagekit
+        patterns-gnome-gnome_games
+        patterns-gnome-gnome_multimedia
+        patterns-gnome-gnome_office
+        patterns-gnome-gnome_utilities
+        system-config-printer
+        vinagre
       )
       ;;
     plasma)
       targets+=(
         dragonplayer
         "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
+        feh
+        icewm
+        patterns-kde-kde_games
+        patterns-kde-kde_multimedia
+        patterns-kde-kde_office
+        patterns-kde-kde_pim
+        patterns-kde-kde_utilities
       )
       ;;
     *)

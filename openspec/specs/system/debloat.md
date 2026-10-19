@@ -49,10 +49,13 @@ The script SHALL remove cross-desktop unused packages on supported distros (Debi
 
 ### Requirement: Distribution-Specific Removals
 
-The script SHALL handle packages unique to specific distributions:
-
 - **Debian**: SHALL purge `gimp` from APT to prevent conflicts with the newer Flatpak build installed via `setup-gimp.sh`.
 - **Fedora**: SHALL remove `mediawriter` and `gnome-shell-extension-background-logo` (Fedora desktop watermark).
+- **openSUSE**: SHALL remove distro-specific bloat and patterns:
+  - Common: `opensuse-welcome`, `opensuse-welcome-launcher`, `patterns-desktop-multimedia`, `patterns-office-office`, `vim`, `lftp`.
+  - KDE Plasma: `feh`, `icewm`, `patterns-kde-kde_games`, `patterns-kde-kde_multimedia`, `patterns-kde-kde_office`, `patterns-kde-kde_pim`, `patterns-kde-kde_utilities`.
+  - GNOME: `dconf-editor`, `gnome-console`, `gnome-packagekit`, `patterns-gnome-gnome_games`, `patterns-gnome-gnome_multimedia`, `patterns-gnome-gnome_office`, `patterns-gnome-gnome_utilities`, `system-config-printer`, `vinagre`.
+  - Lock: All removed packages and patterns SHALL be locked via `zypper --non-interactive addlock`.
 
 ---
 
