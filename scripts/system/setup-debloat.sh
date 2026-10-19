@@ -108,6 +108,7 @@ COMMON_PLASMA_DEBLOAT_PACKAGES=(
   kwalletmanager
   sweeper
   skanlite
+  qrca
 )
 
 _debloat_debian() {

@@ -107,6 +107,7 @@ When the detected Desktop Environment is `plasma`, the script SHALL remove redun
   - `kwalletmanager`
   - `sweeper`
   - `skanlite`
+  - `qrca`
 
 > [!IMPORTANT]
 > `drkonqi` is a hard dependency of `plasma-workspace` on Debian (`Depends: drkonqi`). It MUST NOT be purged via APT to avoid removing the entire desktop environment. Instead, its launcher (`org.kde.drkonqi.coredump.gui`) is hidden from application menus via `setup-hide-apps.sh`.
