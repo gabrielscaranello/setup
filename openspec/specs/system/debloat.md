@@ -107,10 +107,9 @@ When the detected Desktop Environment is `plasma`, the script SHALL remove redun
   - `kwalletmanager`
   - `sweeper`
   - `skanlite`
-  - `qrca`
 
 > [!IMPORTANT]
-> `drkonqi` is a hard dependency of `plasma-workspace` on Debian (`Depends: drkonqi`). It MUST NOT be purged via APT to avoid removing the entire desktop environment. Instead, its launcher (`org.kde.drkonqi.coredump.gui`) is hidden from application menus via `setup-hide-apps.sh`.
+> `drkonqi` (on Debian) and `qrca` (on openSUSE / KDE Plasma 6) are core dependencies of KDE Plasma workspace packages (e.g. `plasma-workspace` or `patterns-kde-kde_plasma`). They MUST NOT be purged via package managers (`apt`, `zypper`) to avoid cascading removals that destroy the entire desktop environment. Instead, their desktop launchers (`org.kde.drkonqi.coredump.gui`, `org.kde.qrca`, `qrca`) are hidden from application menus via `setup-hide-apps.sh`.
 
 #### Scenario: Running debloat under KDE Plasma
 

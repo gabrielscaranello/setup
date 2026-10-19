@@ -83,7 +83,6 @@ setup() {
     [[ "$args" =~ "korganizer" ]]
     [[ "$args" =~ "kontact" ]]
     [[ "$args" =~ "kdepim" ]]
-    [[ "$args" =~ "qrca" ]]
     echo "dragonplayer juk konsole akregator kmail korganizer kontact"
   }
   sudo() {
@@ -141,7 +140,6 @@ setup() {
     [[ "$args" =~ "korganizer" ]]
     [[ "$args" =~ "kontact" ]]
     [[ "$args" =~ "kdepim" ]]
-    [[ "$args" =~ "qrca" ]]
     echo "dragon juk konsole akregator kmail korganizer kontact"
   }
   sudo() {
@@ -237,7 +235,6 @@ setup() {
     [[ "$args" =~ "opensuse-welcome-launcher" ]]
     [[ "$args" =~ "vim" ]]
     [[ "$args" =~ "lftp" ]]
-    [[ "$args" =~ "qrca" ]]
     echo "dragonplayer juk konsole akregator kmail korganizer kontact feh icewm patterns-kde-kde_games"
   }
   sudo() {

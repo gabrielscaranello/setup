@@ -259,6 +259,8 @@ EOF
   local has_uxterm=0
   local has_debian_xterm=0
   local has_python=0
+  local has_qrca=0
+  local has_org_kde_qrca=0
 
   local app
   for app in "${APPS[@]}"; do
@@ -266,12 +268,16 @@ EOF
     if [ "$app" = "uxterm" ]; then has_uxterm=1; fi
     if [ "$app" = "debian-xterm" ]; then has_debian_xterm=1; fi
     if [ "$app" = "python3" ]; then has_python=1; fi
+    if [ "$app" = "qrca" ]; then has_qrca=1; fi
+    if [ "$app" = "org.kde.qrca" ]; then has_org_kde_qrca=1; fi
   done
 
   [ "$has_xterm" -eq 1 ]
   [ "$has_uxterm" -eq 1 ]
   [ "$has_debian_xterm" -eq 1 ]
   [ "$has_python" -eq 1 ]
+  [ "$has_qrca" -eq 1 ]
+  [ "$has_org_kde_qrca" -eq 1 ]
 }
 
 @test "_hide_app handles wildcard patterns and creates hidden desktop file" {

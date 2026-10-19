@@ -21,6 +21,10 @@ APPS=(
   org.gnome.Extensions
   org.gnome.Tour
   org.kde.drkonqi.coredump.gui
+  org.kde.kdeconnect.app
+  org.kde.kdeconnect.sms
+  org.kde.qrca
+  org.qt.qdbusviewer6
   python3
   python3.11
   python3.12
@@ -28,6 +32,7 @@ APPS=(
   python3.14
   python3.15
   qdbusviewer
+  qrca
   qv4l2
   qvidcap
   system-config-printer

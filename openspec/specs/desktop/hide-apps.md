@@ -37,6 +37,9 @@ The consolidated list covers unwanted menu entries across Debian, Fedora, and Ar
 - `org.gnome.Extensions`: Standalone GNOME Extensions tool (redundant)
 - `org.gnome.Tour`: GNOME Tour welcome application
 - `org.kde.drkonqi.coredump.gui`: KDE Crash and Coredump Report GUI
+- `org.kde.kdeconnect.app`, `org.kde.kdeconnect.sms`: KDE Connect desktop launchers
+- `org.kde.qrca`, `qrca`: KDE Qrca barcode / QR scanner GUI
+- `org.qt.qdbusviewer6`: Qt 6 D-Bus Viewer
 - `python3*`: Python interactive CLI launchers (`python3`, `python3.11`, `python3.12`, `python3.13`)
 - `qdbusviewer`: Qt D-Bus Viewer
 - `qv4l2`: V4L2 Test Utility
