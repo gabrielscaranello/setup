@@ -10,13 +10,13 @@ Installs or builds the latest Neovim editor, ensuring pre-requisite toolchains (
 
 ### Requirement: Mandatory Toolchain Prerequisites
 
-The script SHALL ensure that `scripts/toolchain/setup-nvm.sh` and `scripts/toolchain/setup-go.sh` are executed across all distributions before any Neovim installation or configuration steps proceed.
+The script SHALL ensure that `scripts/toolchain/setup-nvm.sh`, `scripts/toolchain/setup-go.sh`, and `scripts/toolchain/setup-rust.sh` are executed across all distributions as mandatory prerequisites before any Neovim installation or configuration steps proceed.
 
 #### Scenario: Running setup across any supported distribution
 
-- **GIVEN** any supported Linux distribution (Arch Linux, Fedora, or Debian)
+- **GIVEN** any supported Linux distribution (Arch Linux, Fedora, Debian, or openSUSE)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` is executed
-- **THEN** it SHALL invoke `setup-nvm.sh` and `setup-go.sh` first to guarantee Node.js, npm, and Go toolchains are present
+- **THEN** it SHALL invoke `setup-nvm.sh`, `setup-go.sh`, and `setup-rust.sh` first to guarantee Node.js, npm, Go, and Rust/Cargo toolchains are present
 
 ---
 
@@ -30,7 +30,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
   - **Debian (`debian`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`)
   - **Fedora (`fedora`)**: `luarocks`, `cargo`, `lua-5.1`
   - **Arch Linux (`arch`)**: `build-tools` (`base-devel`), `rust`, `tree-sitter-cli`, `luarocks`
-  - **openSUSE (`opensuse-tumbleweed`, `opensuse-leap`, `opensuse`)**: `luarocks` (`lua54-luarocks`), `python3`
+  - **openSUSE (`opensuse-tumbleweed`, `opensuse-leap`, `opensuse`)**: `luarocks` (`lua54-luarocks`), `python3`, `lua54-devel`, `build-tools` (`patterns-devel-base-devel_basis`)
 
 #### Scenario: Installing runtime packages on Debian
 
@@ -54,7 +54,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 
 - **GIVEN** an openSUSE system (`get_distro_id` returns `opensuse-tumbleweed` or `opensuse-leap` or `opensuse`)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` installs runtime dependencies
-- **THEN** common packages (`jq`, `fd`, `wl-clipboard`, `ImageMagick`, `sqlite3`, `sqlite3-devel`, `tidy`, `protobuf-devel`, `ripgrep`, `unzip`) and openSUSE-specific packages (`lua54-luarocks`, `python3`) SHALL be installed
+- **THEN** common packages (`jq`, `fd`, `wl-clipboard`, `ImageMagick`, `sqlite3`, `sqlite3-devel`, `tidy`, `protobuf-devel`, `ripgrep`, `unzip`) and openSUSE-specific packages (`lua54-luarocks`, `python3`, `lua54-devel`, `patterns-devel-base-devel_basis`) SHALL be installed
 
 ---
 
@@ -73,6 +73,7 @@ The script SHALL determine the Neovim binary installation mechanism based on the
 - **WHEN** `scripts/toolchain/setup-neovim.sh` is executed
 - **THEN** `_ensure_nvm` is executed
 - **AND** `_ensure_go` is executed
+- **AND** `_ensure_rust` is executed
 - **AND** runtime dependencies are installed via `install_packages`
 - **AND** `install_packages neovim` is called directly
 

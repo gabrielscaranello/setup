@@ -95,8 +95,14 @@ _ensure_go() {
 }
 
 _ensure_rust() {
-  echo "Ensuring rust/cargo is installed (required for tree-sitter-cli on debian)..."
+  echo "Ensuring rust/cargo is installed (required by neovim toolchain)..."
   bash "${BASH_SOURCE[0]%/*}/setup-rust.sh"
+  if [ -s "$HOME/.cargo/env" ]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.cargo/env"
+  elif [ -d "$HOME/.cargo/bin" ]; then
+    export PATH="$PATH:$HOME/.cargo/bin"
+  fi
 }
 
 _install_build_deps() {
@@ -148,7 +154,7 @@ _install_runtime_deps() {
       install_packages build-tools rust tree-sitter-cli luarocks
       ;;
     opensuse*)
-      install_packages luarocks python3
+      install_packages luarocks python3 lua54-devel build-tools
       ;;
   esac
 }
@@ -162,6 +168,7 @@ main() {
 
   _ensure_nvm
   _ensure_go
+  _ensure_rust
   _install_runtime_deps "$distro"
   _install_neovim "$distro"
 }

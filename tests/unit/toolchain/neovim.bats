@@ -114,17 +114,19 @@
   [[ "$output" =~ "build-tools rust tree-sitter-cli luarocks" ]]
 }
 
-@test "main executes _ensure_nvm, _ensure_go, _install_runtime_deps and _install_neovim in order" {
+@test "main executes _ensure_nvm, _ensure_go, _ensure_rust, _install_runtime_deps and _install_neovim in order" {
   source /setup/scripts/toolchain/setup-neovim.sh
   get_distro_id() { echo "fedora"; }
   _ensure_nvm() { echo "step: ensure_nvm"; }
   _ensure_go() { echo "step: ensure_go"; }
+  _ensure_rust() { echo "step: ensure_rust"; }
   _install_runtime_deps() { echo "step: install_runtime_deps for $1"; }
   _install_neovim() { echo "step: install_neovim for $1"; }
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "step: ensure_nvm" ]]
   [[ "$output" =~ "step: ensure_go" ]]
+  [[ "$output" =~ "step: ensure_rust" ]]
   [[ "$output" =~ "step: install_runtime_deps for fedora" ]]
   [[ "$output" =~ "step: install_neovim for fedora" ]]
 }
@@ -239,6 +241,6 @@
   run _install_runtime_deps "opensuse-tumbleweed"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
-  [[ "$output" =~ "luarocks python3" ]]
+  [[ "$output" =~ "luarocks python3 lua54-devel build-tools" ]]
 }
 

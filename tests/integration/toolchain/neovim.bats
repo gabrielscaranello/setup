@@ -15,3 +15,15 @@ setup_file() {
   run bash /setup/scripts/toolchain/setup-neovim.sh
   [ "$status" -eq 0 ]
 }
+
+@test "cargo is available in PATH after setup-neovim" {
+  if command -v cargo >/dev/null 2>&1; then
+    run cargo --version
+    [ "$status" -eq 0 ]
+  elif [ -x "$HOME/.cargo/bin/cargo" ]; then
+    run "$HOME/.cargo/bin/cargo" --version
+    [ "$status" -eq 0 ]
+  else
+    false
+  fi
+}

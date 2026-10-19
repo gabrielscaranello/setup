@@ -57,6 +57,7 @@ COMMON_POST_STEPS=(
   "terminal/setup-fonts.sh:Fonts setup"
   "toolchain/setup-gitflow.sh:Gitflow setup"
   "toolchain/setup-go.sh:Golang setup"
+  "toolchain/setup-rust.sh:Rust and Cargo setup"
   "toolchain/setup-nvm.sh:NVM/Node setup"
   "terminal/setup-kitty.sh:Kitty terminal setup"
   "terminal/setup-lazygit.sh:Lazygit setup"
