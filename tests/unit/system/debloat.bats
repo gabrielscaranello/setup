@@ -198,6 +198,7 @@ setup() {
     [[ "$args" =~ "opensuse-welcome-launcher" ]]
     [[ "$args" =~ "vim" ]]
     [[ "$args" =~ "lftp" ]]
+    [[ "$args" =~ "gimp" ]]
     echo "totem libreoffice transmission dconf-editor gnome-console"
   }
   sudo() {
@@ -235,6 +236,7 @@ setup() {
     [[ "$args" =~ "opensuse-welcome-launcher" ]]
     [[ "$args" =~ "vim" ]]
     [[ "$args" =~ "lftp" ]]
+    [[ "$args" =~ "gimp" ]]
     echo "dragonplayer juk konsole akregator kmail korganizer kontact feh icewm patterns-kde-kde_games"
   }
   sudo() {

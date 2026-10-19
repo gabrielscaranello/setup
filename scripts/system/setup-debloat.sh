@@ -203,6 +203,8 @@ _debloat_fedora() {
 _debloat_opensuse() {
   local de
   de="$(get_desktop_environment)"
+  local distro
+  distro="$(get_distro_id 2> /dev/null || echo "opensuse-leap")"
 
   local targets=(
     "${COMMON_DEBLOAT_PACKAGES[@]}"
@@ -215,6 +217,10 @@ _debloat_opensuse() {
     vim
     lftp
   )
+
+  if [ "$distro" != "opensuse-tumbleweed" ]; then
+    targets+=(gimp)
+  fi
 
   case "$de" in
     gnome)

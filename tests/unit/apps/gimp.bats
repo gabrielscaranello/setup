@@ -68,6 +68,27 @@ setup() {
   [[ "$output" =~ "installed flatpak: org.gimp.GIMP GIMP" ]]
 }
 
+@test "_install_gimp purges native gimp on debian when present" {
+  require_supported_distro() { echo "debian"; }
+  install_flatpak_app() { return 0; }
+  dpkg() { return 0; }
+  sudo() { echo "sudo $*"; return 0; }
+  run _install_gimp
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo apt purge -y gimp" ]]
+}
+
+@test "_install_gimp removes and locks native gimp on openSUSE Leap when present" {
+  require_supported_distro() { echo "opensuse-leap"; }
+  install_flatpak_app() { return 0; }
+  rpm() { return 0; }
+  sudo() { echo "sudo $*"; return 0; }
+  run _install_gimp
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo zypper --non-interactive remove -u gimp" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive addlock gimp" ]]
+}
+
 @test "main executes successfully and reports complete" {
   _install_gimp() {
     echo "called _install_gimp"
