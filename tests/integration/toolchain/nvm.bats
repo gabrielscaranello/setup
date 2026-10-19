@@ -2,7 +2,7 @@
 
 # Integration tests for setup-nvm.sh (runs identically across all distros)
 
-NVM_INIT=". /usr/share/nvm/init-nvm.sh 2>/dev/null || . \"\$HOME/.nvm/nvm.sh\""
+NVM_INIT=". /usr/share/nvm/init-nvm.sh 2>/dev/null || . \"\${XDG_CONFIG_HOME:-\$HOME/.config}/nvm/nvm.sh\" 2>/dev/null || . \"\$HOME/.nvm/nvm.sh\" 2>/dev/null"
 
 setup_file() {
   bash /setup/scripts/toolchain/setup-nvm.sh

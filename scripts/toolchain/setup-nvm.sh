@@ -15,14 +15,50 @@ COREPACK_PACKAGES=("yarn@1")
 # Regular packages to install globally via npm
 NPM_PACKAGES=("@github/copilot" "@styled/typescript-styled-plugin")
 
+_resolve_nvm_dir() {
+  if [ -n "${NVM_DIR:-}" ] && [ -s "$NVM_DIR/nvm.sh" ]; then
+    echo "$NVM_DIR"
+    return 0
+  fi
+
+  local xdg_nvm="${XDG_CONFIG_HOME:-$HOME/.config}/nvm"
+  if [ -s "$xdg_nvm/nvm.sh" ]; then
+    echo "$xdg_nvm"
+    return 0
+  fi
+
+  if [ -s "$HOME/.nvm/nvm.sh" ]; then
+    echo "$HOME/.nvm"
+    return 0
+  fi
+
+  if [ -n "${NVM_DIR:-}" ]; then
+    echo "$NVM_DIR"
+    return 0
+  fi
+
+  if [ -n "${XDG_CONFIG_HOME:-}" ]; then
+    echo "${XDG_CONFIG_HOME}/nvm"
+  elif [ -d "$HOME/.config" ]; then
+    echo "$HOME/.config/nvm"
+  else
+    echo "$HOME/.nvm"
+  fi
+}
+
 _install_nvm_script() {
   echo "Installing nvm via upstream install script..."
-  # NVM_PROFILE=/dev/null prevents the installer from auto-modifying shell profile
+  local nvm_dir
+  nvm_dir="$(_resolve_nvm_dir)"
+  mkdir -p "$nvm_dir"
+  export NVM_DIR="$nvm_dir"
+
+  # PROFILE=/dev/null (and NVM_PROFILE=/dev/null) prevents the installer from auto-modifying shell profile
   # files — we handle that ourselves idempotently in _setup_shell_profile
   if command -v curl > /dev/null 2>&1; then
-    curl -fsSL "$NVM_INSTALL_URL" | NVM_PROFILE=/dev/null bash
+    curl -fsSL "$NVM_INSTALL_URL" | PROFILE=/dev/null NVM_PROFILE=/dev/null bash
   else
-    wget -qO- "$NVM_INSTALL_URL" | NVM_PROFILE=/dev/null bash
+    wget -qO- "$NVM_INSTALL_URL" | PROFILE=/dev/null NVM_PROFILE=/dev/null bash
   fi
 }
 
@@ -35,19 +71,40 @@ _setup_shell_profile() {
     return 0
   fi
 
+  local nvm_dir
+  nvm_dir="$(_resolve_nvm_dir)"
+
   echo "Adding nvm init to $profile..."
-  cat >> "$profile" << 'EOF'
+  cat >> "$profile" << EOF
 
 # nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+export NVM_DIR="$nvm_dir"
+[ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
+[ -s "\$NVM_DIR/bash_completion" ] && \\. "\$NVM_DIR/bash_completion"
 EOF
 }
 
 _source_nvm() {
-  export NVM_DIR="$HOME/.nvm"
+  local nvm_dir
+  nvm_dir="$(_resolve_nvm_dir)"
+  export NVM_DIR="$nvm_dir"
+
   if [ -s "$NVM_DIR/nvm.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$NVM_DIR/nvm.sh"
+    return 0
+  fi
+
+  local xdg_nvm="${XDG_CONFIG_HOME:-$HOME/.config}/nvm"
+  if [ -s "$xdg_nvm/nvm.sh" ]; then
+    export NVM_DIR="$xdg_nvm"
+    # shellcheck disable=SC1091
+    . "$NVM_DIR/nvm.sh"
+    return 0
+  fi
+
+  if [ -s "$HOME/.nvm/nvm.sh" ]; then
+    export NVM_DIR="$HOME/.nvm"
     # shellcheck disable=SC1091
     . "$NVM_DIR/nvm.sh"
     return 0

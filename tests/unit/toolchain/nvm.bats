@@ -32,9 +32,32 @@
 
 @test "_source_nvm returns error when nvm is not found" {
   source /setup/scripts/toolchain/setup-nvm.sh
-  HOME="/nonexistent" run _source_nvm
+  HOME="/nonexistent" XDG_CONFIG_HOME="/nonexistent" NVM_DIR="" run _source_nvm
   [ "$status" -eq 1 ]
   [[ "$output" =~ "nvm not found" ]]
+}
+
+@test "_source_nvm sources nvm from ~/.config/nvm when present" {
+  source /setup/scripts/toolchain/setup-nvm.sh
+  local test_home="/tmp/test-nvm-config-home"
+  mkdir -p "$test_home/.config/nvm"
+  echo "nvm() { echo 'mock-nvm-xdg'; }" > "$test_home/.config/nvm/nvm.sh"
+
+  HOME="$test_home" XDG_CONFIG_HOME="$test_home/.config" NVM_DIR="" run _source_nvm
+  [ "$status" -eq 0 ]
+  rm -rf "$test_home"
+}
+
+@test "_resolve_nvm_dir prioritizes existing ~/.config/nvm" {
+  source /setup/scripts/toolchain/setup-nvm.sh
+  local test_home="/tmp/test-nvm-resolve-home"
+  mkdir -p "$test_home/.config/nvm"
+  touch "$test_home/.config/nvm/nvm.sh"
+
+  local resolved
+  resolved="$(HOME="$test_home" XDG_CONFIG_HOME="$test_home/.config" NVM_DIR="" _resolve_nvm_dir)"
+  [ "$resolved" = "$test_home/.config/nvm" ]
+  rm -rf "$test_home"
 }
 
 @test "_enable_corepack falls back to node when corepack command is absent" {

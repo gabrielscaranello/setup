@@ -13,12 +13,12 @@ Installs NVM (Node Version Manager), configures shell profile integration, insta
 The script SHALL determine the installation mechanism based on the target distribution (`get_distro_id`):
 
 - **Arch Linux (`arch`)**: Install `nvm` from repository and load `/usr/share/nvm/init-nvm.sh`.
-- **Debian (`debian`), Fedora (`fedora`) & openSUSE (`opensuse`, `opensuse-leap`, `opensuse-tumbleweed`)**: Download and run upstream `nvm` install script with `NVM_PROFILE=/dev/null`.
+- **Debian (`debian`), Fedora (`fedora`) & openSUSE (`opensuse`, `opensuse-leap`, `opensuse-tumbleweed`)**: Download and run upstream `nvm` install script with `PROFILE=/dev/null`.
 - **Unsupported Distros / Derivatives**: SHALL exit with code 1 and write an error message to `stderr`.
 
-### Requirement: Shell Profile Configuration
+### Requirement: Shell Profile Configuration & Directory Resolution
 
-The script SHALL add the standard NVM init block (`export NVM_DIR="$HOME/.nvm"`, source `nvm.sh` and `bash_completion`) to the user profile without duplication.
+The script SHALL detect and support NVM installed at either `$HOME/.nvm` or `$XDG_CONFIG_HOME/nvm` (`$HOME/.config/nvm`), prioritizing any existing installation or standard XDG location. It SHALL add the standard NVM init block (`export NVM_DIR="..."`, source `nvm.sh` and `bash_completion`) to the user profile without duplication.
 
 ### Requirement: Node.js & Package Provisioning
 
