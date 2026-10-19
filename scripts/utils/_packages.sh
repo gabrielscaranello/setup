@@ -157,8 +157,9 @@ install_flatpak_app() {
     fi
   fi
 
-  if flatpak list --app --columns=application 2> /dev/null | grep -qx "$app_id"; then
-    echo "$app_name (Flatpak) is already installed, skipping."
+  if flatpak list --columns=application 2> /dev/null | grep -qx "$app_id"; then
+    echo "$app_name (Flatpak) is already installed, updating to latest version..."
+    sudo flatpak update -y --noninteractive "$app_id" 2> /dev/null || true
     return 0
   fi
 

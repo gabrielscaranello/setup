@@ -276,17 +276,22 @@ EOF
   [ "$output" = "$HOME/.profile" ]
 }
 
-@test "install_flatpak_app skips when already installed" {
+@test "install_flatpak_app updates when already installed" {
   flatpak() {
     if [ "$1" = "list" ]; then
       echo "org.example.App"
       return 0
     fi
+    if [ "$1" = "update" ]; then
+      echo "flatpak updated: $*"
+      return 0
+    fi
     return 1
   }
+  sudo() { "$@"; }
   run install_flatpak_app "org.example.App" "ExampleApp"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ already\ installed,\ skipping ]]
+  [[ "$output" =~ already\ installed,\ updating\ to\ latest\ version ]]
 }
 
 @test "install_flatpak_app installs app when not present" {

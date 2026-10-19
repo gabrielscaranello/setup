@@ -22,9 +22,9 @@ The installation SHALL strictly target and support:
 
 1. **Debian 13 (`debian`)**:
    - To avoid polluting the base system with 32-bit multiarch (`i386`) packages and library conflicts, Steam SHALL be installed via Flatpak (`com.valvesoftware.Steam`).
-   - MangoHud and Gamescope for Steam SHALL be installed via their official Flathub Vulkan layer extensions:
-     - `org.freedesktop.Platform.VulkanLayer.MangoHud`
-     - `org.freedesktop.Platform.VulkanLayer.gamescope`
+   - Host GameMode daemon SHALL be installed natively via `install_packages gamemode` to support performance optimizations across the Flatpak sandbox portal (`org.freedesktop.portal.GameMode`).
+   - MangoHud and Gamescope for Steam SHALL be installed via their official Flathub Vulkan layer extensions (`org.freedesktop.Platform.VulkanLayer.MangoHud`, `org.freedesktop.Platform.VulkanLayer.gamescope`), matching the Steam runtime branch, and SHALL be kept updated to the latest version.
+   - Permissions SHALL be configured for Steam Flatpak to access host GameMode portal and MangoHud configuration.
 
 2. **Fedora 44 (`fedora`)**:
    - SHALL ensure the RPM Fusion Nonfree repository is configured via `add_fedora_rpmfusion_repo` from `scripts/system/fedora/_repositories.sh`.
@@ -58,10 +58,12 @@ The installation SHALL strictly target and support:
 
 5. **openSUSE Leap 16.1 (`opensuse-leap`, `opensuse`)**:
    - In openSUSE Leap 16, 32-bit x86 execution is disabled by default in the kernel. The script SHALL enable 32-bit (IA32) emulation and compatibility by installing `grub2-compat-ia32`, `selinux-policy-targeted-gaming`, and `steam-devices` via `install_packages`, and ensuring the bootloader kernel parameter `ia32_emulation=1` is configured (via `update-bootloader --add-option "ia32_emulation=1"` or `/etc/default/grub`).
+   - Host GameMode daemon SHALL be installed natively via `install_packages gamemode` to support performance optimizations across the Flatpak sandbox portal (`org.freedesktop.portal.GameMode`).
    - Steam, MangoHud, and Gamescope SHALL be installed via Flatpak:
      - `com.valvesoftware.Steam`
-     - `org.freedesktop.Platform.VulkanLayer.MangoHud`
-     - `org.freedesktop.Platform.VulkanLayer.gamescope`
+     - `org.freedesktop.Platform.VulkanLayer.MangoHud` (installed for matching runtime and kept updated to latest version)
+     - `org.freedesktop.Platform.VulkanLayer.gamescope` (installed for matching runtime and kept updated to latest version)
+   - Permissions SHALL be configured for Steam Flatpak to access host GameMode portal and MangoHud configuration.
 
 ### Requirement: Desktop Environment (DE) Differentiated Proton Manager
 

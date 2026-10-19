@@ -17,13 +17,18 @@ setup() {
 }
 
 @test "_install_steam_packages installs Flatpaks on Debian" {
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
   install_flatpak_app() {
     echo "installed flatpak: $1 ($2)"
     return 0
   }
   run _install_steam_packages "debian"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "Installing Steam, MangoHud, and Gamescope via Flatpak on Debian" ]]
+  [[ "$output" =~ "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on Debian" ]]
+  [[ "$output" =~ "installed packages: gamemode" ]]
   [[ "$output" =~ "installed flatpak: com.valvesoftware.Steam (Steam)" ]]
   [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.MangoHud (MangoHud Vulkan Layer)" ]]
   [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.gamescope (Gamescope Vulkan Layer)" ]]
@@ -77,6 +82,10 @@ setup() {
     echo "called _enable_leap_32bit"
     return 0
   }
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
   install_flatpak_app() {
     echo "installed flatpak: $1 ($2)"
     return 0
@@ -84,7 +93,8 @@ setup() {
   run _install_steam_packages "opensuse-leap"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called _enable_leap_32bit" ]]
-  [[ "$output" =~ "Installing Steam, MangoHud, and Gamescope via Flatpak on openSUSE Leap" ]]
+  [[ "$output" =~ "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on openSUSE Leap" ]]
+  [[ "$output" =~ "installed packages: gamemode" ]]
   [[ "$output" =~ "installed flatpak: com.valvesoftware.Steam (Steam)" ]]
   [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.MangoHud (MangoHud Vulkan Layer)" ]]
   [[ "$output" =~ "installed flatpak: org.freedesktop.Platform.VulkanLayer.gamescope (Gamescope Vulkan Layer)" ]]
@@ -112,7 +122,11 @@ setup() {
   [[ "$output" =~ "called update-bootloader: --add-option ia32_emulation=1" ]]
 }
 
-@test "_install_debian_steam installs Steam flatpaks" {
+@test "_install_debian_steam installs Steam flatpaks and gamemode" {
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
   install_flatpak_app() {
     echo "flatpak: $1"
     return 0
@@ -120,6 +134,37 @@ setup() {
   run _install_debian_steam
   [ "$status" -eq 0 ]
   [[ "$output" =~ "flatpak: com.valvesoftware.Steam" ]]
+  [[ "$output" =~ "installed packages: gamemode" ]]
+}
+
+@test "_install_flatpak_gaming_layer installs matching runtime branch and updates layer" {
+  install_flatpak_app() {
+    echo "called install_flatpak_app: $1 ($2)"
+    return 0
+  }
+  flatpak() {
+    if [ "$1" = "info" ]; then
+      echo "Runtime: org.freedesktop.Platform/x86_64/24.08"
+      return 0
+    fi
+    if [ "$1" = "install" ]; then
+      echo "called flatpak install: $*"
+      return 0
+    fi
+    if [ "$1" = "update" ]; then
+      echo "called flatpak update: $*"
+      return 0
+    fi
+    return 0
+  }
+  sudo() { "$@"; }
+
+  run _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called install_flatpak_app: org.freedesktop.Platform.VulkanLayer.MangoHud (MangoHud Vulkan Layer)" ]]
+  [[ "$output" =~ "Ensuring MangoHud Vulkan Layer on Steam runtime branch '24.08'" ]]
+  [[ "$output" =~ "called flatpak install: install -y --noninteractive flathub org.freedesktop.Platform.VulkanLayer.MangoHud//24.08" ]]
+  [[ "$output" =~ "called flatpak update: update -y --noninteractive org.freedesktop.Platform.VulkanLayer.MangoHud" ]]
 }
 
 @test "_install_fedora_steam calls add_fedora_rpmfusion_repo and installs packages" {

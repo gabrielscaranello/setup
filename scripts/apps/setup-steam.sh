@@ -27,11 +27,41 @@ _install_proton_manager() {
   esac
 }
 
+_install_flatpak_gaming_layer() {
+  local layer_id="$1"
+  local layer_name="${2:-$layer_id}"
+
+  install_flatpak_app "$layer_id" "$layer_name"
+
+  # Match and install corresponding Freedesktop runtime branch used by Steam if present
+  if command -v flatpak > /dev/null 2>&1; then
+    local steam_branch
+    steam_branch="$(flatpak info com.valvesoftware.Steam 2> /dev/null | grep -E '^Runtime:' | awk '{print $2}' | cut -d/ -f3 || true)"
+    if [ -n "$steam_branch" ]; then
+      echo "Ensuring $layer_name on Steam runtime branch '$steam_branch'..."
+      sudo flatpak install -y --noninteractive flathub "${layer_id}//${steam_branch}" 2> /dev/null || true
+    fi
+
+    # Always ensure the layer is updated to the latest available version
+    sudo flatpak update -y --noninteractive "$layer_id" 2> /dev/null || true
+  fi
+}
+
+_configure_steam_flatpak_permissions() {
+  if command -v flatpak > /dev/null 2>&1; then
+    echo "Configuring GameMode portal and MangoHud access permissions for Flatpak Steam..."
+    flatpak override --user --talk-name=org.freedesktop.portal.GameMode com.valvesoftware.Steam 2> /dev/null || true
+    flatpak override --user --filesystem=xdg-config/MangoHud:ro com.valvesoftware.Steam 2> /dev/null || true
+  fi
+}
+
 _install_debian_steam() {
-  echo "Installing Steam, MangoHud, and Gamescope via Flatpak on Debian..."
+  echo "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on Debian..."
+  install_packages gamemode
   install_flatpak_app "com.valvesoftware.Steam" "Steam"
-  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
-  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
+  _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
+  _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
+  _configure_steam_flatpak_permissions
 }
 
 _install_fedora_steam() {
@@ -76,10 +106,12 @@ _install_arch_steam() {
 
 _install_leap_steam() {
   _enable_leap_32bit
-  echo "Installing Steam, MangoHud, and Gamescope via Flatpak on openSUSE Leap..."
+  echo "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on openSUSE Leap..."
+  install_packages gamemode
   install_flatpak_app "com.valvesoftware.Steam" "Steam"
-  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
-  install_flatpak_app "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
+  _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
+  _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
+  _configure_steam_flatpak_permissions
 }
 
 _install_tumbleweed_steam() {
