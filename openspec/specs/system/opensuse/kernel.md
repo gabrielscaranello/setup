@@ -12,20 +12,20 @@ Installs the latest modern stable Linux kernel and development headers from the 
 
 The script SHALL check the target distribution using `get_distro_id`. If run on openSUSE Tumbleweed (which already runs the latest rolling kernel) or non-openSUSE systems, it SHALL output an informative skip message and exit cleanly with code 0.
 
-### Requirement: Kernel Backport Repository Configuration
+### Requirement: Kernel Repository Configuration
 
-The script SHALL ensure the `Kernel_stable_Backport` repository is configured via `add_opensuse_kernel_backports_repo` (`https://download.opensuse.org/repositories/Kernel:/stable:/Backport/standard/`).
+The script SHALL ensure the `Kernel:stable` repository is configured via `add_opensuse_kernel_backports_repo` (`https://download.opensuse.org/repositories/Kernel:/stable/standard`).
 
 ### Requirement: Kernel & Headers Installation
 
-The script SHALL install `kernel-default` and `kernel-default-devel` packages from `Kernel_stable_Backport`.
+The script SHALL install `kernel-default` and `kernel-default-devel` packages from `Kernel:stable`.
 
 #### Scenario: Execution on openSUSE Leap
 
 - **GIVEN** an openSUSE Leap installation (`get_distro_id` returns `opensuse` or `opensuse-leap`)
 - **WHEN** `scripts/system/opensuse/setup-kernel.sh` is executed
-- **THEN** `add_opensuse_kernel_backports_repo` SHALL configure the repository
-- **AND** `kernel-default` and `kernel-default-devel` SHALL be installed from `Kernel_stable_Backport`
+- **THEN** `add_opensuse_kernel_backports_repo` SHALL configure the `Kernel:stable` repository
+- **AND** `kernel-default` and `kernel-default-devel` SHALL be installed from `Kernel:stable`
 
 #### Scenario: Execution on openSUSE Tumbleweed
 

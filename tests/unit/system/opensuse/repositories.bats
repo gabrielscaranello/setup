@@ -197,3 +197,43 @@ setup() {
   [[ "$output" =~ "sudo zypper --non-interactive addrepo -cfp 90 https://download.opensuse.org/repositories/mozilla/openSUSE_Tumbleweed/mozilla.repo" ]]
   [[ "$output" =~ "sudo zypper --non-interactive --gpg-auto-import-keys refresh mozilla" ]]
 }
+
+@test "add_opensuse_kernel_backports_repo skips when repository is already configured" {
+  zypper() {
+    if [ "$1" = "lr" ] && [ "$2" = "Kernel:stable" ]; then
+      return 0
+    fi
+    return 1
+  }
+
+  run add_opensuse_kernel_backports_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "already configured" ]]
+}
+
+@test "add_opensuse_kernel_backports_repo skips on tumbleweed" {
+  get_opensuse_version() { echo "tumbleweed"; }
+  zypper() { return 1; }
+
+  run add_opensuse_kernel_backports_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "openSUSE Tumbleweed already runs the latest rolling kernel. Skipping kernel repository." ]]
+}
+
+@test "add_opensuse_kernel_backports_repo configures Kernel:stable repository on openSUSE leap" {
+  get_opensuse_version() { echo "16.1"; }
+  zypper() {
+    if [ "$1" = "lr" ]; then
+      return 1
+    fi
+    return 0
+  }
+  sudo() { echo "sudo $*"; }
+
+  run add_opensuse_kernel_backports_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring Kernel stable repository for openSUSE Leap (16.1)..." ]]
+  [[ "$output" =~ "sudo zypper --non-interactive addrepo -cfp 90 https://download.opensuse.org/repositories/Kernel:/stable/standard Kernel:stable" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive --gpg-auto-import-keys refresh Kernel:stable" ]]
+}
+

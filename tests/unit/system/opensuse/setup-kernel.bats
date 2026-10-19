@@ -7,7 +7,7 @@ setup() {
   source /setup/scripts/system/opensuse/setup-kernel.sh 2>/dev/null || source scripts/system/opensuse/setup-kernel.sh
 }
 
-@test "_install_backports_kernel_leap calls add_opensuse_kernel_backports_repo and installs kernel from Kernel_stable_Backport" {
+@test "_install_backports_kernel_leap calls add_opensuse_kernel_backports_repo and installs kernel from Kernel:stable" {
   add_opensuse_kernel_backports_repo() {
     echo "called add_opensuse_kernel_backports_repo"
     return 0
@@ -19,7 +19,7 @@ setup() {
   run _install_backports_kernel_leap
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called add_opensuse_kernel_backports_repo" ]]
-  [[ "$output" =~ "Kernel_stable_Backport" ]]
+  [[ "$output" =~ "Kernel:stable" ]]
   [[ "$output" =~ "kernel-default" ]]
   [[ "$output" =~ "kernel-default-devel" ]]
 }

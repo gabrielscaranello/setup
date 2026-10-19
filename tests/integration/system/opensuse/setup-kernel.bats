@@ -19,7 +19,7 @@ setup_file() {
     skip "Test only runs on openSUSE Leap"
   fi
 
-  run zypper lr Kernel_stable_Backport
+  run bash -c "zypper lr Kernel:stable > /dev/null 2>&1 || zypper lr Kernel_stable > /dev/null 2>&1"
   [ "$status" -eq 0 ]
 }
 
