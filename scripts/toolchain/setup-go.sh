@@ -5,7 +5,7 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
 
-GO_VERSION="1.24.0"
+GO_VERSION="1.27.2"
 GO_PACKAGES=("github.com/reteps/dockerfmt@latest")
 
 _setup_shell_profile() {

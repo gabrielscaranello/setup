@@ -21,10 +21,10 @@
 @test "_is_go_installed_from_binary returns true when go binary exists and matches version" {
   source /setup/scripts/toolchain/setup-go.sh
   /usr/local/go/bin/go() {
-    echo "go version go1.24.0 linux/amd64"
+    echo "go version go1.27.2 linux/amd64"
     return 0
   }
-  GO_VERSION="1.24.0"
+  GO_VERSION="1.27.2"
   [ -x "/usr/local/go/bin/go" ] || {
     # mock test environment condition
     _is_go_installed_from_binary() { return 0; }
