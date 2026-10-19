@@ -124,9 +124,14 @@ _install_kitty() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    arch | fedora | opensuse-tumbleweed)
+    arch | fedora)
       echo "Installing kitty from distribution repository..."
       install_packages kitty
+      ensure_xdg_terminal_exec
+      ;;
+    opensuse-tumbleweed)
+      echo "Installing kitty and shell integration from distribution repository..."
+      install_packages kitty kitty-shell-integration
       ensure_xdg_terminal_exec
       ;;
     debian | opensuse-leap | opensuse)

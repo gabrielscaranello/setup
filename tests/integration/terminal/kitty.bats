@@ -55,3 +55,13 @@ setup_file() {
     false
   fi
 }
+
+@test "kitty-shell-integration is installed on openSUSE Tumbleweed" {
+  source /setup/scripts/_utils.sh 2>/dev/null || true
+  if [ "$(get_distro_id 2>/dev/null)" = "opensuse-tumbleweed" ]; then
+    run rpm -q kitty-shell-integration
+    [ "$status" -eq 0 ]
+  else
+    skip "Test is specific to openSUSE Tumbleweed"
+  fi
+}

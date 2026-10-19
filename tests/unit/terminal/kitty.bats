@@ -223,7 +223,7 @@ DESKTOP_OPEN
 
   run _install_kitty
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "install_packages called with: kitty" ]]
+  [[ "$output" =~ "install_packages called with: kitty kitty-shell-integration" ]]
   [[ "$output" =~ "ensure_xdg_terminal_exec called" ]]
 }
 
