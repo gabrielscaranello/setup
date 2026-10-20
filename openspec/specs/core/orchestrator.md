@@ -12,6 +12,9 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 - When invoked without arguments, it defaults to displaying interactive CLI help (`show_help`).
 - `show_help` documents all supported modules, available distro commands (`arch`, `debian`, `fedora`), and the global setup target (`all`).
 
+- Modules are declared in a single registry (`runners/_modules.sh`, format `name|aliases|path|description`). Both `run_module` dispatch and `show_help` are generated from it, so adding a module requires only a new registry entry.
+- Extra CLI arguments after the module name are forwarded to the module script, and execution always starts from the repository root.
+
 ### 2. Automatic Distribution Delegation (`run_all`)
 
 - Queries `get_distro_id` to detect the running Linux distribution.

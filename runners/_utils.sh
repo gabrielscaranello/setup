@@ -1,6 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
+# Resolves (prompting when needed) and announces the target Desktop Environment.
+# Usage: ensure_target_de <distribution label>
+ensure_target_de() {
+  local de
+  de="$(ensure_desktop_environment "Selecione o Desktop Environment para a instalação no $1:")"
+  echo "Desktop Environment configurado para a execução: $de"
+}
+
 run_pipeline() {
   local pipeline_name="$1"
   shift

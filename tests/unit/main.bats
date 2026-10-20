@@ -172,11 +172,47 @@ setup() {
 }
 
 @test "run_module forwards extra arguments to arch-de" {
-  SCRIPTS_DIR="$(mktemp -d)"
-  mkdir -p "$SCRIPTS_DIR/system/arch"
-  printf '#!/bin/bash\necho "args: $*"\n' > "$SCRIPTS_DIR/system/arch/setup-desktop-environment.sh"
+  REPO_ROOT="$(mktemp -d)"
+  mkdir -p "$REPO_ROOT/scripts/system/arch"
+  printf '#!/bin/bash\necho "args: $*"\n' > "$REPO_ROOT/scripts/system/arch/setup-desktop-environment.sh"
   run run_module arch-de gnome
   [ "$status" -eq 0 ]
   [[ "$output" =~ "args: gnome" ]]
-  rm -rf "$SCRIPTS_DIR"
+  rm -rf "$REPO_ROOT"
+}
+
+@test "run_module resolves registry aliases" {
+  bash() {
+    echo "executed: $*"
+    return 0
+  }
+
+  run run_module "desktop-environment"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "system/arch/setup-desktop-environment.sh" ]]
+
+  run run_module "opensuse-leap"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "runners/opensuse.sh" ]]
+}
+
+@test "MODULES registry entries are unique, well-formed and point to existing files" {
+  local entry seen=" "
+  for entry in "${MODULES[@]}"; do
+    _parse_module_entry "$entry"
+    [ -n "$_MOD_NAME" ]
+    [ -n "$_MOD_DESC" ]
+    [ -f "$REPO_ROOT/$_MOD_PATH" ]
+    [[ "$seen" != *" $_MOD_NAME "* ]]
+    seen+="$_MOD_NAME "
+  done
+}
+
+@test "show_help lists every module in the registry" {
+  run show_help
+  local entry
+  for entry in "${MODULES[@]}"; do
+    _parse_module_entry "$entry"
+    [[ "$output" =~ "$_MOD_NAME" ]]
+  done
 }

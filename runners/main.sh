@@ -3,9 +3,17 @@ set -euo pipefail
 
 RUNNERS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../scripts" && pwd)"
+REPO_ROOT="$(cd "$SCRIPTS_DIR/.." && pwd)"
 
 # Source utilities for package manager and distro detection
 source "$SCRIPTS_DIR/_utils.sh" 2> /dev/null || true
+# shellcheck source=runners/_modules.sh
+source "$RUNNERS_DIR/_modules.sh"
+
+# Splits a registry entry into the globals _MOD_NAME, _MOD_ALIASES, _MOD_PATH and _MOD_DESC
+_parse_module_entry() {
+  IFS='|' read -r _MOD_NAME _MOD_ALIASES _MOD_PATH _MOD_DESC <<< "$1"
+}
 
 show_help() {
   cat << 'HELP_EOF'
@@ -18,59 +26,15 @@ Usage:
   make [command]
 
 Available Commands:
-  help                    - Show this help message
-  all                     - Run complete desktop setup pipeline for current distribution
-  amd                     - Install AMD GPU drivers, firmware and codecs
-  arch                    - Run complete setup pipeline for Arch Linux
-  arch-de                 - Provision Desktop Environment (GNOME, KDE Plasma) on Arch Linux
-  browsers                - Install Web Browsers (Chromium, Firefox)
-  codecs                  - Install Multimedia Codecs and A/V Plugins
-  cursor                  - Install and configure Bibata cursor theme (GNOME, KDE Plasma)
-  dbeaver                 - Install DBeaver
-  debian                  - Run complete setup pipeline for Debian
-  debloat                 - Remove unused default packages and bloatware (Debian, Fedora)
-  default-apps            - Configure default desktop applications (MIME types, handlers, terminal)
-  desktop-apps            - Install desktop environment specific applications (GNOME / KDE Plasma)
-  desktop-preferences     - Configure desktop environment preferences (GNOME, KDE Plasma)
-  discord                 - Install Discord
-  docker                  - Install Docker engine and plugins (buildx, compose)
-  fedora                  - Run complete setup pipeline for Fedora
-  firewall                - Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI
-  flatpak                 - Configure Flatpak and Flathub repository
-  fonts                   - Install JetBrains Mono Nerd Font
-  gimp                    - Install GIMP image editor
-  gitflow                 - Install Gitflow CJS
-  gnome-extensions        - Install and enable GNOME Shell extensions
-  gnome-extensions-config - Configure GNOME Shell extensions via dconf
-  go                      - Install Golang programming language
-  graphics                - Install and configure graphics drivers (NVIDIA / AMD)
-  gtk-theme               - Install and configure GTK theme (adw-gtk3-dark)
-  hide-apps               - Hide unwanted applications from desktop menus (.desktop files)
-  icon-theme              - Install and configure Papirus-Dark icon theme
-  kernel-debian           - Install latest Linux kernel and headers from Debian backports
-  kernel-opensuse         - Install latest Linux kernel and headers from openSUSE backports (Leap)
-  kitty                   - Install Kitty terminal emulator
-  lazydocker              - Install Lazydocker
-  lazygit                 - Install Lazygit
-  look                    - Configure desktop appearance (cursor, GTK theme, icon theme)
-  mongodb-compass         - Install MongoDB Compass (Flatpak)
-  neovim                  - Install Neovim and build runtime dependencies
-  nvidia                  - Install NVIDIA drivers and hybrid GPU tools (switcheroo-control & prime-run)
-  nvm                     - Install NVM, Node.js and global packages
-  obsidian                - Install Obsidian Knowledge Base
-  onlyoffice              - Install ONLYOFFICE Desktop Editors (Flatpak)
-  opensuse                - Run complete setup pipeline for openSUSE (Leap, Tumbleweed)
-  packages                - Install core system packages and CLI utilities
-  rust                    - Install Rust, Cargo and tools (tree-sitter-cli)
-  screenshot              - Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)
-  snapper                 - Configure Snapper snapshots and GRUB integration (openSUSE)
-  steam                   - Install Steam and gaming tools (Proton manager, MangoHud, Gamescope)
-  swap                    - Configure Swap and VM memory tuning
-  telegram                - Install Telegram Desktop
-  timeshift               - Install and configure Timeshift (Btrfs / Rsync)
-  update                  - Update package repositories and upgrade system packages
-  vscodium                - Install VSCodium (Code - OSS on Arch)
 HELP_EOF
+
+  local entry
+  printf '  %-23s - %s\n' "help" "Show this help message"
+  printf '  %-23s - %s\n' "all" "Run complete desktop setup pipeline for current distribution"
+  for entry in "${MODULES[@]}"; do
+    _parse_module_entry "$entry"
+    printf '  %-23s - %s\n' "$_MOD_NAME" "$_MOD_DESC"
+  done
 }
 
 run_all() {
@@ -109,6 +73,25 @@ run_all() {
   esac
 }
 
+# Resolves a command name (or alias) to its registry entry; returns 1 when unknown
+_find_module() {
+  local target="$1" entry alias
+  local -a aliases
+  for entry in "${MODULES[@]}"; do
+    _parse_module_entry "$entry"
+    if [ "$_MOD_NAME" = "$target" ]; then
+      return 0
+    fi
+    IFS=',' read -r -a aliases <<< "$_MOD_ALIASES"
+    for alias in "${aliases[@]}"; do
+      if [ "$alias" = "$target" ]; then
+        return 0
+      fi
+    done
+  done
+  return 1
+}
+
 run_module() {
   local target="$1"
   shift
@@ -116,224 +99,27 @@ run_module() {
   case "$target" in
     help | --help | -h)
       show_help
+      return 0
       ;;
-
     all)
       run_all
-      ;;
-
-    amd)
-      bash "$SCRIPTS_DIR/system/setup-amd.sh"
-      ;;
-
-    arch)
-      bash "$RUNNERS_DIR/arch.sh"
-      ;;
-
-    arch-de | desktop-environment)
-      bash "$SCRIPTS_DIR/system/arch/setup-desktop-environment.sh" "$@"
-      ;;
-
-    browsers)
-      bash "$SCRIPTS_DIR/apps/setup-browsers.sh"
-      ;;
-
-    codecs)
-      bash "$SCRIPTS_DIR/system/setup-codecs.sh"
-      ;;
-
-    cursor)
-      bash "$SCRIPTS_DIR/desktop/setup-cursor-theme.sh"
-      ;;
-
-    dbeaver)
-      bash "$SCRIPTS_DIR/apps/setup-dbeaver.sh"
-      ;;
-
-    debian)
-      bash "$RUNNERS_DIR/debian.sh"
-      ;;
-
-    debloat)
-      bash "$SCRIPTS_DIR/system/setup-debloat.sh"
-      ;;
-
-    default-apps)
-      bash "$SCRIPTS_DIR/apps/setup-default-apps.sh"
-      ;;
-
-    desktop-apps)
-      bash "$SCRIPTS_DIR/desktop/setup-desktop-apps.sh"
-      ;;
-
-    desktop-preferences)
-      bash "$SCRIPTS_DIR/desktop/setup-desktop-preferences.sh"
-      ;;
-
-    discord)
-      bash "$SCRIPTS_DIR/apps/setup-discord.sh"
-      ;;
-
-    docker)
-      bash "$SCRIPTS_DIR/toolchain/setup-docker.sh"
-      ;;
-
-    fedora)
-      bash "$RUNNERS_DIR/fedora.sh"
-      ;;
-
-    firewall)
-      bash "$SCRIPTS_DIR/security/setup-firewall.sh"
-      ;;
-
-    flatpak)
-      bash "$SCRIPTS_DIR/system/setup-flatpak.sh"
-      ;;
-
-    fonts)
-      bash "$SCRIPTS_DIR/terminal/setup-fonts.sh"
-      ;;
-
-    gimp)
-      bash "$SCRIPTS_DIR/apps/setup-gimp.sh"
-      ;;
-
-    gitflow)
-      bash "$SCRIPTS_DIR/toolchain/setup-gitflow.sh"
-      ;;
-
-    gnome-extensions)
-      bash "$SCRIPTS_DIR/desktop/setup-gnome-extensions.sh"
-      ;;
-
-    gnome-extensions-config)
-      bash "$SCRIPTS_DIR/desktop/setup-gnome-extensions-config.sh"
-      ;;
-
-    go)
-      bash "$SCRIPTS_DIR/toolchain/setup-go.sh"
-      ;;
-
-    graphics)
-      bash "$SCRIPTS_DIR/system/setup-graphics.sh"
-      ;;
-
-    gtk-theme)
-      bash "$SCRIPTS_DIR/desktop/setup-gtk-theme.sh"
-      ;;
-
-    hide-apps)
-      bash "$SCRIPTS_DIR/desktop/setup-hide-apps.sh"
-      ;;
-
-    icon-theme)
-      bash "$SCRIPTS_DIR/desktop/setup-icon-theme.sh"
-      ;;
-
-    kernel-debian)
-      bash "$SCRIPTS_DIR/system/debian/setup-kernel.sh"
-      ;;
-
-    kernel-opensuse)
-      bash "$SCRIPTS_DIR/system/opensuse/setup-kernel.sh"
-      ;;
-
-    kitty)
-      bash "$SCRIPTS_DIR/terminal/setup-kitty.sh"
-      ;;
-
-    lazydocker)
-      bash "$SCRIPTS_DIR/terminal/setup-lazydocker.sh"
-      ;;
-
-    lazygit)
-      bash "$SCRIPTS_DIR/terminal/setup-lazygit.sh"
-      ;;
-
-    look)
-      bash "$SCRIPTS_DIR/desktop/setup-look.sh"
-      ;;
-
-    mongodb-compass)
-      bash "$SCRIPTS_DIR/apps/setup-mongodb-compass.sh"
-      ;;
-
-    neovim)
-      bash "$SCRIPTS_DIR/toolchain/setup-neovim.sh"
-      ;;
-
-    nvidia)
-      bash "$SCRIPTS_DIR/system/setup-nvidia.sh"
-      ;;
-
-    nvm)
-      bash "$SCRIPTS_DIR/toolchain/setup-nvm.sh"
-      ;;
-
-    obsidian)
-      bash "$SCRIPTS_DIR/apps/setup-obsidian.sh"
-      ;;
-
-    onlyoffice)
-      bash "$SCRIPTS_DIR/apps/setup-onlyoffice.sh"
-      ;;
-
-    opensuse | opensuse-leap | opensuse-tumbleweed)
-      bash "$RUNNERS_DIR/opensuse.sh"
-      ;;
-
-    packages)
-      bash "$SCRIPTS_DIR/system/setup-packages.sh"
-      ;;
-
-    rust)
-      bash "$SCRIPTS_DIR/toolchain/setup-rust.sh"
-      ;;
-
-    screenshot)
-      bash "$SCRIPTS_DIR/apps/setup-screenshot-tool.sh"
-      ;;
-
-    snapper)
-      bash "$SCRIPTS_DIR/system/setup-timeshift.sh"
-      ;;
-
-    steam)
-      bash "$SCRIPTS_DIR/apps/setup-steam.sh"
-      ;;
-
-    swap)
-      bash "$SCRIPTS_DIR/system/setup-swap.sh"
-      ;;
-
-    telegram)
-      bash "$SCRIPTS_DIR/apps/setup-telegram.sh"
-      ;;
-
-    timeshift)
-      bash "$SCRIPTS_DIR/system/setup-timeshift.sh"
-      ;;
-
-    update)
-      bash "$SCRIPTS_DIR/system/setup-update.sh"
-      ;;
-
-    vscodium)
-      bash "$SCRIPTS_DIR/apps/setup-vscodium.sh"
-      ;;
-
-    *)
-      echo "Unknown command: $target" >&2
-      echo "" >&2
-      show_help >&2
-      return 1
+      return 0
       ;;
   esac
+
+  if ! _find_module "$target"; then
+    echo "Unknown command: $target" >&2
+    echo "" >&2
+    show_help >&2
+    return 1
+  fi
+
+  bash "$REPO_ROOT/$_MOD_PATH" "$@"
 }
 
 main() {
   # Setup scripts source helpers via paths relative to the repository root
-  cd "$SCRIPTS_DIR/.." || return 1
+  cd "$REPO_ROOT" || return 1
 
   if [ $# -eq 0 ]; then
     show_help
