@@ -111,6 +111,7 @@ run_all() {
 
 run_module() {
   local target="$1"
+  shift
 
   case "$target" in
     help | --help | -h)
@@ -130,7 +131,6 @@ run_module() {
       ;;
 
     arch-de | desktop-environment)
-      shift || true
       bash "$SCRIPTS_DIR/system/arch/setup-desktop-environment.sh" "$@"
       ;;
 
@@ -332,10 +332,13 @@ run_module() {
 }
 
 main() {
+  # Setup scripts source helpers via paths relative to the repository root
+  cd "$SCRIPTS_DIR/.." || return 1
+
   if [ $# -eq 0 ]; then
     show_help
   else
-    run_module "$1"
+    run_module "$@"
   fi
 }
 

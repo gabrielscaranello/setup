@@ -80,31 +80,39 @@ is_version_up_to_date() {
 install_github_binary() {
   local name="$1" repo="$2" version="$3" file_name="$4" bin_name="$5"
   local clean_version="${version#v}"
-  local download_url output_file extract_dir
+  local download_url work_dir output_file extract_dir
   local target_dir="/usr/local/bin"
 
   download_url="https://github.com/${repo}/releases/download/v${clean_version}/${file_name}"
-  output_file="/tmp/${file_name}"
-  extract_dir="/tmp/${name}-extract"
 
   install_packages curl wget tar || true
 
   echo "Installing ${name} (${version})..."
-  echo "Removing old build files if they exist..."
-  rm -rf "$output_file" "$extract_dir"
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-install.XXXXXX")"
+  output_file="${work_dir}/${file_name}"
+  extract_dir="${work_dir}/extract"
 
   echo "Downloading ${name}..."
-  download_file "$download_url" "$output_file"
+  if ! download_file "$download_url" "$output_file"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Extracting ${name}..."
   mkdir -p "$extract_dir"
-  tar -xzf "$output_file" -C "$extract_dir"
+  if ! tar -xzf "$output_file" -C "$extract_dir"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Installing ${name} to ${target_dir}..."
-  sudo install "$extract_dir/$bin_name" "$target_dir/"
+  if ! sudo install "$extract_dir/$bin_name" "$target_dir/"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Cleaning up temporary files..."
-  rm -rf "$output_file" "$extract_dir"
+  rm -rf "$work_dir"
 
   echo "${name} installed successfully at $(command -v "$bin_name" || echo "${target_dir}/${bin_name}")"
 }

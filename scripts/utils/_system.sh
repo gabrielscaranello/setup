@@ -112,8 +112,9 @@ write_ini_key() {
   mkdir -p "$(dirname "$file")"
   [ -f "$file" ] || touch "$file"
 
-  awk -v sec="[$section]" -v k="$key" -v v="$val" '
-    BEGIN { in_sec = 0; replaced = 0; sec_seen = 0; has_lines = 0 }
+  # Values are passed via ENVIRON so awk does not interpret backslash escape sequences
+  INI_VALUE="$val" awk -v sec="[$section]" -v k="$key" '
+    BEGIN { v = ENVIRON["INI_VALUE"]; in_sec = 0; replaced = 0; sec_seen = 0; has_lines = 0 }
     /^\[.*\]$/ {
       if (in_sec && !replaced) { print k "=" v; replaced = 1 }
       if ($0 == sec) { in_sec = 1; sec_seen = 1 } else { in_sec = 0 }
@@ -186,17 +187,24 @@ get_shell_profile() {
   esac
 }
 
+# Enables and starts the cron service for the current distribution.
+# Usage: enable_cron_service [service_name]  (defaults to the distro cron service)
 enable_cron_service() {
   if ! command -v systemctl > /dev/null 2>&1; then
     return 0
   fi
 
-  echo "Enabling cron scheduler service..."
-  if is_distro debian || is_distro opensuse; then
-    sudo systemctl enable --now cron.service 2> /dev/null || sudo systemctl enable cron.service 2> /dev/null || true
-  elif is_distro fedora; then
-    sudo systemctl enable --now crond.service 2> /dev/null || sudo systemctl enable crond.service 2> /dev/null || true
-  else
-    sudo systemctl enable --now cronie.service 2> /dev/null || sudo systemctl enable cronie.service 2> /dev/null || true
+  local service="${1:-}"
+  if [ -z "$service" ]; then
+    if is_distro debian || is_distro opensuse; then
+      service="cron"
+    elif is_distro fedora; then
+      service="crond"
+    else
+      service="cronie"
+    fi
   fi
+
+  echo "Enabling cron scheduler service..."
+  sudo systemctl enable --now "${service}.service" 2> /dev/null || sudo systemctl enable "${service}.service" 2> /dev/null || true
 }

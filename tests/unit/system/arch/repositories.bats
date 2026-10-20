@@ -47,7 +47,7 @@ EOF
   run add_arch_multilib_repo
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Enabling multilib repository" ]]
-  [[ "$output" =~ "called pacman with: -Sy" ]]
+  [[ "$output" =~ "called pacman with: -Syu --noconfirm" ]]
   grep -q "^\[multilib\]" "$PACMAN_CONF"
   grep -q "^Include = /etc/pacman.d/mirrorlist" "$PACMAN_CONF"
   rm -f "$PACMAN_CONF"
@@ -69,7 +69,7 @@ EOF
   run add_arch_multilib_repo
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Enabling multilib repository" ]]
-  [[ "$output" =~ "called pacman with: -Sy" ]]
+  [[ "$output" =~ "called pacman with: -Syu --noconfirm" ]]
   grep -q "^\[multilib\]" "$PACMAN_CONF"
   grep -q "^Include = /etc/pacman.d/mirrorlist" "$PACMAN_CONF"
   rm -f "$PACMAN_CONF"

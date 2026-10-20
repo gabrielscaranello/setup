@@ -678,3 +678,22 @@ EOF
   [ "$status" -eq 0 ]
   [ -z "$output" ]
 }
+
+@test "enable_cron_service honors an explicit service name" {
+  source /setup/scripts/_utils.sh
+  command() { if [ "${2:-}" = "systemctl" ]; then return 0; fi; builtin command "$@"; }
+  sudo() { echo "sudo $*"; }
+
+  run enable_cron_service "custom-cron"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "enable --now custom-cron.service" ]]
+}
+
+@test "write_ini_key preserves backslashes in values" {
+  source /setup/scripts/_utils.sh
+  local tmp_file
+  tmp_file="$(mktemp)"
+  write_ini_key "$tmp_file" "General" "path" 'a\nb\tc'
+  grep -qF 'path=a\nb\tc' "$tmp_file"
+  rm -f "$tmp_file"
+}

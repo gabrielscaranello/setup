@@ -170,3 +170,13 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "help called default" ]]
 }
+
+@test "run_module forwards extra arguments to arch-de" {
+  SCRIPTS_DIR="$(mktemp -d)"
+  mkdir -p "$SCRIPTS_DIR/system/arch"
+  printf '#!/bin/bash\necho "args: $*"\n' > "$SCRIPTS_DIR/system/arch/setup-desktop-environment.sh"
+  run run_module arch-de gnome
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "args: gnome" ]]
+  rm -rf "$SCRIPTS_DIR"
+}

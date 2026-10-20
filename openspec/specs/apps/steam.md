@@ -35,7 +35,7 @@ The installation SHALL strictly target and support:
      - `gamemode`
 
 3. **Arch Linux (`arch`)**:
-   - SHALL verify and ensure the `[multilib]` repository is enabled in `/etc/pacman.conf` (uncommenting `[multilib]` and its mirrorlist include if commented) and update pacman database (`pacman -Sy`).
+   - SHALL verify and ensure the `[multilib]` repository is enabled in `/etc/pacman.conf` (uncommenting `[multilib]` and its mirrorlist include if commented) and update pacman database (`pacman -Syu`).
    - SHALL detect physical GPU hardware (`lspci`) to resolve appropriate Vulkan and 32-bit driver packages before installing Steam, avoiding unprompted fallback to `nvidia-utils` during non-interactive pacman execution:
      - **AMD**: `vulkan-radeon lib32-vulkan-radeon lib32-mesa`
      - **Intel**: `vulkan-intel lib32-vulkan-intel lib32-mesa`

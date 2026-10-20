@@ -8,12 +8,15 @@ run_pipeline() {
   local scripts_dir
   scripts_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../scripts" && pwd)"
 
+  # Setup scripts source helpers via paths relative to the repository root
+  cd "$scripts_dir/.." || return 1
+
   echo "======================================="
   echo "   $pipeline_name Pipeline"
   echo "======================================="
   echo ""
 
-  local step_file step_desc
+  local step step_file step_desc
   for step in "${steps[@]}"; do
     step_file="${step%%:*}"
     step_desc="${step##*:}"

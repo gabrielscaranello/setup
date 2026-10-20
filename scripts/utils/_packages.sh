@@ -90,7 +90,11 @@ _install_package_from_repository() {
 
   case "$package_manager" in
     apt)
-      sudo apt update -qq
+      # Refresh the APT index only once per process to keep repeated installs fast
+      if [ "${_APT_INDEX_REFRESHED:-0}" != "1" ]; then
+        sudo apt update -qq
+        _APT_INDEX_REFRESHED=1
+      fi
       sudo apt install -y "$@"
       ;;
 
@@ -99,7 +103,9 @@ _install_package_from_repository() {
       ;;
 
     pacman)
-      sudo pacman -Sy --needed --noconfirm "$@"
+      # Sync and upgrade in the same transaction: syncing alone (-Sy) causes unsupported
+      # partial upgrades on Arch, while skipping the sync (-S) fails on stale databases (404s).
+      sudo pacman -Syu --needed --noconfirm "$@"
       ;;
 
     zypper)
@@ -125,7 +131,7 @@ install_packages() {
 
   local resolved_packages=()
   local package
-  local resolved
+  local resolved item
   for package in "$@"; do
     resolved="$(_get_package_name "$package" "$distro")"
     if [ -n "$resolved" ]; then

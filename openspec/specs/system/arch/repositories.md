@@ -29,11 +29,11 @@ The function `add_arch_multilib_repo` SHALL ensure that the `[multilib]` section
 - **GIVEN** `/etc/pacman.conf` contains a commented `#[multilib]` section
 - **WHEN** `add_arch_multilib_repo` is called
 - **THEN** it SHALL uncomment the `[multilib]` header and the immediate `Include` directive
-- **AND** it SHALL synchronize the pacman package database via `sudo pacman -Sy --noconfirm`
+- **AND** it SHALL synchronize the pacman package database together with a full upgrade via `sudo pacman -Syu --noconfirm` (partial upgrades are never performed)
 
 #### Scenario: Multilib section completely missing
 
 - **GIVEN** `/etc/pacman.conf` has no `[multilib]` section
 - **WHEN** `add_arch_multilib_repo` is called
 - **THEN** it SHALL append the `[multilib]` block with `Include = /etc/pacman.d/mirrorlist`
-- **AND** it SHALL synchronize the pacman package database via `sudo pacman -Sy --noconfirm`
+- **AND** it SHALL synchronize the pacman package database together with a full upgrade via `sudo pacman -Syu --noconfirm` (partial upgrades are never performed)

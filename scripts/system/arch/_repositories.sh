@@ -23,6 +23,7 @@ Include = /etc/pacman.d/mirrorlist
 EOF
   fi
 
-  echo "Updating pacman database..."
-  sudo pacman -Sy --noconfirm 2> /dev/null || sudo pacman -Sy
+  # Sync and upgrade together: syncing alone (-Sy) causes unsupported partial upgrades on Arch
+  echo "Updating pacman database and upgrading packages..."
+  sudo pacman -Syu --noconfirm
 }
