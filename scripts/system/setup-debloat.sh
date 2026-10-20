@@ -149,8 +149,7 @@ _debloat_debian() {
   if [ -n "$to_remove" ]; then
     echo "Purging unused Debian packages: $to_remove"
     # shellcheck disable=SC2086
-    sudo apt purge -y $to_remove
-    sudo apt autoremove --purge -y
+    remove_packages --autoremove $to_remove
   else
     echo "No unused Debian packages found to remove."
   fi
@@ -193,8 +192,7 @@ _debloat_fedora() {
   if [ -n "$to_remove" ]; then
     echo "Removing unused Fedora packages: $to_remove"
     # shellcheck disable=SC2086
-    sudo dnf remove -y $to_remove
-    sudo dnf autoremove -y
+    remove_packages --autoremove $to_remove
   else
     echo "No unused Fedora packages found to remove."
   fi
@@ -266,10 +264,10 @@ _debloat_opensuse() {
   if [ -n "$to_remove" ]; then
     echo "Removing unused openSUSE packages: $to_remove"
     # shellcheck disable=SC2086
-    sudo zypper --non-interactive remove -u $to_remove
+    remove_packages $to_remove
     echo "Locking removed openSUSE packages to prevent reinstallation: $to_remove"
     # shellcheck disable=SC2086
-    sudo zypper --non-interactive addlock $to_remove
+    lock_packages $to_remove
   else
     echo "No unused openSUSE packages found to remove."
   fi

@@ -79,6 +79,7 @@ setup() {
 }
 
 @test "_install_gimp removes and locks native gimp on openSUSE Leap when present" {
+  _get_package_manager() { echo "zypper"; }
   require_supported_distro() { echo "opensuse-leap"; }
   install_flatpak_app() { return 0; }
   rpm() { return 0; }

@@ -9,14 +9,12 @@ source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
-  # Justification: Package removal is not provided by install_packages abstraction
-  sudo apt remove -y firefox-esr firefox-esr-l10n-pt-br 2> /dev/null || true
+  remove_packages firefox-esr firefox-esr-l10n-pt-br 2> /dev/null || true
 }
 
 _remove_firefox_esr_opensuse() {
   echo "Removing firefox-esr if installed on openSUSE..."
-  # Justification: Package removal is not provided by install_packages abstraction
-  sudo zypper --non-interactive remove -u MozillaFirefox-esr firefox-esr 2> /dev/null || true
+  remove_packages MozillaFirefox-esr firefox-esr 2> /dev/null || true
 }
 
 _install_firefox_apt() {

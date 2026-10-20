@@ -21,13 +21,13 @@ _install_gimp() {
       if [ "$distro" = "debian" ]; then
         if dpkg -s gimp > /dev/null 2>&1; then
           echo "Removing native GIMP from Debian to prevent duplicate launchers..."
-          sudo apt purge -y gimp 2> /dev/null || true
+          remove_packages gimp 2> /dev/null || true
         fi
       elif [ "$distro" != "opensuse-tumbleweed" ]; then
         if rpm -q gimp > /dev/null 2>&1; then
           echo "Removing native GIMP from openSUSE Leap to prevent duplicate launchers..."
-          sudo zypper --non-interactive remove -u gimp 2> /dev/null || true
-          sudo zypper --non-interactive addlock gimp 2> /dev/null || true
+          remove_packages gimp 2> /dev/null || true
+          lock_packages gimp 2> /dev/null || true
         fi
       fi
       ;;

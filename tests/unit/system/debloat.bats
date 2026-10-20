@@ -115,6 +115,7 @@ setup() {
 }
 
 @test "_debloat_fedora removes packages on GNOME when installed" {
+  _get_package_manager() { echo "dnf"; }
   get_desktop_environment() { echo "gnome"; }
   _filter_installed_fedora() {
     echo "totem decibels mediawriter"
@@ -132,6 +133,7 @@ setup() {
 }
 
 @test "_debloat_fedora removes packages on KDE Plasma when installed" {
+  _get_package_manager() { echo "dnf"; }
   get_desktop_environment() { echo "plasma"; }
   _filter_installed_fedora() {
     local args="$*"
@@ -185,6 +187,7 @@ setup() {
 }
 
 @test "_debloat_opensuse removes and locks packages on GNOME when installed" {
+  _get_package_manager() { echo "zypper"; }
   get_desktop_environment() { echo "gnome"; }
   _filter_installed_opensuse() {
     local args="$*"
@@ -215,6 +218,7 @@ setup() {
 }
 
 @test "_debloat_opensuse removes and locks packages on KDE Plasma when installed" {
+  _get_package_manager() { echo "zypper"; }
   get_desktop_environment() { echo "plasma"; }
   _filter_installed_opensuse() {
     local args="$*"

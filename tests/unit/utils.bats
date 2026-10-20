@@ -697,3 +697,86 @@ EOF
   grep -qF 'path=a\nb\tc' "$tmp_file"
   rm -f "$tmp_file"
 }
+
+@test "upgrade_system runs the native upgrade commands for each package manager" {
+  source /setup/scripts/_utils.sh
+  sudo() { echo "sudo $*"; }
+
+  _get_package_manager() { echo "apt"; }
+  run upgrade_system
+  [[ "$output" =~ "sudo apt update" ]]
+  [[ "$output" =~ "sudo apt upgrade -y" ]]
+
+  _get_package_manager() { echo "dnf"; }
+  run upgrade_system
+  [[ "$output" =~ "sudo dnf upgrade -y --refresh" ]]
+
+  _get_package_manager() { echo "pacman"; }
+  run upgrade_system
+  [[ "$output" =~ "sudo pacman -Syu --noconfirm" ]]
+
+  _get_package_manager() { echo "zypper"; }
+  get_distro_id() { echo "opensuse-leap"; }
+  run upgrade_system
+  [[ "$output" =~ "sudo zypper --non-interactive refresh" ]]
+  [[ "$output" =~ "sudo zypper --non-interactive up --no-recommends" ]]
+
+  get_distro_id() { echo "opensuse-tumbleweed"; }
+  run upgrade_system
+  [[ "$output" =~ "sudo zypper --non-interactive dup --no-recommends" ]]
+}
+
+@test "upgrade_system fails when no package manager is available" {
+  source /setup/scripts/_utils.sh
+  _get_package_manager() { return 1; }
+  run upgrade_system
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported distribution" ]]
+}
+
+@test "remove_packages uses native removal commands and optional autoremove" {
+  source /setup/scripts/_utils.sh
+  sudo() { echo "sudo $*"; }
+
+  _get_package_manager() { echo "apt"; }
+  run remove_packages --autoremove foo bar
+  [[ "$output" =~ "sudo apt purge -y foo bar" ]]
+  [[ "$output" =~ "sudo apt autoremove --purge -y" ]]
+
+  run remove_packages foo
+  [[ "$output" =~ "sudo apt purge -y foo" ]]
+  [[ ! "$output" =~ "autoremove" ]]
+
+  _get_package_manager() { echo "dnf"; }
+  run remove_packages --autoremove foo
+  [[ "$output" =~ "sudo dnf remove -y foo" ]]
+  [[ "$output" =~ "sudo dnf autoremove -y" ]]
+
+  _get_package_manager() { echo "pacman"; }
+  run remove_packages foo
+  [[ "$output" =~ "sudo pacman -Rns --noconfirm foo" ]]
+
+  _get_package_manager() { echo "zypper"; }
+  run remove_packages foo
+  [[ "$output" =~ "sudo zypper --non-interactive remove -u foo" ]]
+}
+
+@test "remove_packages is a no-op without packages" {
+  source /setup/scripts/_utils.sh
+  run remove_packages
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "lock_packages only locks on zypper" {
+  source /setup/scripts/_utils.sh
+  sudo() { echo "sudo $*"; }
+
+  _get_package_manager() { echo "zypper"; }
+  run lock_packages foo
+  [[ "$output" =~ "sudo zypper --non-interactive addlock foo" ]]
+
+  _get_package_manager() { echo "apt"; }
+  run lock_packages foo
+  [ -z "$output" ]
+}

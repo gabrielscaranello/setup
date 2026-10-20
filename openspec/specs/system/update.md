@@ -72,3 +72,8 @@ The script SHALL honor `UPDATE_SKIP_SYSTEM_UPGRADE=1` to bypass full package dow
 - **GIVEN** any supported distribution (Debian, Fedora, Arch Linux)
 - **WHEN** `runners/main.sh` executes the initial setup pipeline
 - **THEN** `setup-debloat.sh` SHALL execute first, followed immediately by `setup-update.sh`, before memory tuning and package provisioning
+
+## Package Manager Abstraction
+
+- The update flow SHALL delegate to the shared `upgrade_system` helper in `scripts/utils/_packages.sh` instead of invoking `apt`, `dnf`, `pacman` or `zypper` directly.
+- Package removal and locking SHALL use the shared `remove_packages [--autoremove]` and `lock_packages` helpers (locks are zypper-only; no-op elsewhere).

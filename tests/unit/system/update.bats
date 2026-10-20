@@ -7,64 +7,6 @@ setup() {
   source /setup/scripts/system/setup-update.sh
 }
 
-@test "_update_debian invokes apt update and apt upgrade -y" {
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _update_debian
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "sudo apt update" ]]
-  [[ "$output" =~ "sudo apt upgrade -y" ]]
-}
-
-@test "_update_fedora invokes dnf upgrade -y --refresh" {
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _update_fedora
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "sudo dnf upgrade -y --refresh" ]]
-}
-
-@test "_update_arch invokes pacman -Syu --noconfirm" {
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _update_arch
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "sudo pacman -Syu --noconfirm" ]]
-}
-
-@test "_update_opensuse invokes zypper refresh and dup on tumbleweed" {
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _update_opensuse "opensuse-tumbleweed"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "sudo zypper --non-interactive refresh" ]]
-  [[ "$output" =~ "sudo zypper --non-interactive dup --no-recommends" ]]
-}
-
-@test "_update_opensuse invokes zypper refresh and up on leap" {
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  run _update_opensuse "opensuse-leap"
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "sudo zypper --non-interactive refresh" ]]
-  [[ "$output" =~ "sudo zypper --non-interactive up --no-recommends" ]]
-}
-
 @test "main skips when UPDATE_SKIP_SYSTEM_UPGRADE is set" {
   UPDATE_SKIP_SYSTEM_UPGRADE=1 run main
   [ "$status" -eq 0 ]
@@ -72,49 +14,13 @@ setup() {
   [[ "$output" =~ "setup-update complete" ]]
 }
 
-@test "main delegates to _update_debian on debian" {
+@test "main upgrades the system through upgrade_system on supported distributions" {
   require_supported_distro() { echo "debian"; }
-  _update_debian() { echo "called _update_debian"; return 0; }
+  upgrade_system() { echo "called upgrade_system"; return 0; }
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _update_debian" ]]
-  [[ "$output" =~ "setup-update complete" ]]
-}
-
-@test "main delegates to _update_fedora on fedora" {
-  require_supported_distro() { echo "fedora"; }
-  _update_fedora() { echo "called _update_fedora"; return 0; }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _update_fedora" ]]
-  [[ "$output" =~ "setup-update complete" ]]
-}
-
-@test "main delegates to _update_arch on arch" {
-  require_supported_distro() { echo "arch"; }
-  _update_arch() { echo "called _update_arch"; return 0; }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _update_arch" ]]
-  [[ "$output" =~ "setup-update complete" ]]
-}
-
-@test "main delegates to _update_opensuse on opensuse-leap and opensuse-tumbleweed" {
-  require_supported_distro() { echo "opensuse-leap"; }
-  _update_opensuse() { echo "called _update_opensuse $1"; return 0; }
-
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _update_opensuse opensuse-leap" ]]
-  [[ "$output" =~ "setup-update complete" ]]
-
-  require_supported_distro() { echo "opensuse-tumbleweed"; }
-  run main
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "called _update_opensuse opensuse-tumbleweed" ]]
+  [[ "$output" =~ "called upgrade_system" ]]
   [[ "$output" =~ "setup-update complete" ]]
 }
 
