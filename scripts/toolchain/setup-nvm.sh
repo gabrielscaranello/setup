@@ -32,6 +32,12 @@ _resolve_nvm_dir() {
     return 0
   fi
 
+  # Distribution package (Arch) ships nvm.sh under /usr/share/nvm and uses ~/.nvm as data dir
+  if [ -s /usr/share/nvm/nvm.sh ]; then
+    echo "${NVM_DIR:-$HOME/.nvm}"
+    return 0
+  fi
+
   if [ -n "${NVM_DIR:-}" ]; then
     echo "$NVM_DIR"
     return 0
@@ -82,6 +88,11 @@ export NVM_DIR="$nvm_dir"
 [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
 [ -s "\$NVM_DIR/bash_completion" ] && \\. "\$NVM_DIR/bash_completion"
 EOF
+
+  # Distribution package (Arch) provides its own init hook instead of $NVM_DIR/nvm.sh
+  if [ -s /usr/share/nvm/init-nvm.sh ]; then
+    echo '[ -s /usr/share/nvm/init-nvm.sh ] && \. /usr/share/nvm/init-nvm.sh' >> "$profile"
+  fi
 }
 
 _source_nvm() {
