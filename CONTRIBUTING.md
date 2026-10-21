@@ -18,26 +18,32 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 ├── CONTRIBUTING.md                # Developer contribution guide & architecture
 ├── README.md / README-pt-br.md    # User documentation (EN / PT-BR)
 ├── runners/                       # Distro-specific orchestration pipelines
-│   ├── _utils.sh                  # Runner helper (run_pipeline)
+│   ├── _modules.sh                # Declarative module registry & CLI descriptions
+│   ├── _utils.sh                  # Runner helper (run_pipeline, shared step lists)
 │   ├── arch.sh                    # Arch Linux setup pipeline
 │   ├── debian.sh                  # Debian setup pipeline
 │   ├── fedora.sh                  # Fedora setup pipeline
+│   ├── opensuse.sh                # openSUSE (Leap & Tumbleweed) setup pipeline
 │   └── main.sh                    # Central CLI dispatcher and module runner
 ├── scripts/                       # Modular setup scripts (organized by domain)
-│   ├── _utils.sh                  # Core abstraction (install_packages, etc.)
+│   ├── _utils.sh                  # Core entrypoint sourcing scripts/utils/*.sh
 │   ├── packages.conf              # Declarative cross-distro package mappings
+│   ├── utils/                     # Modular core utilities (_packages, _system, _desktop, _download)
 │   ├── apps/                      # Application setup scripts
 │   ├── desktop/                   # Desktop environment & theming setup scripts
 │   ├── security/                  # Security setup scripts
 │   ├── system/                    # System & OS setup scripts
+│   │   ├── _debloat_packages.sh   # Declarative bloatware package catalog per distro
 │   │   ├── _gpu_utils.sh          # Shared GPU utilities (hardware detection & repositories)
+│   │   ├── _grub_btrfs.sh         # Shared GRUB Btrfs snapshot menu integration
 │   │   ├── arch/                  # Arch-specific setup & repo scripts
 │   │   ├── debian/                # Debian-specific setup & repo scripts
-│   │   └── fedora/                # Fedora-specific repo scripts
+│   │   ├── fedora/                # Fedora-specific repo scripts
+│   │   └── opensuse/              # openSUSE-specific setup, repo & Snapper scripts
 │   ├── terminal/                  # Terminal tools & fonts setup scripts
 │   └── toolchain/                 # Dev runtimes & toolchains
 └── tests/                         # Test suite
-    ├── docker/                    # Base Dockerfiles per distro (archlinux, debian, fedora)
+    ├── docker/                    # Base Dockerfiles per distro (archlinux, debian, fedora, opensuse)
     ├── integration/               # Integration tests per domain/feature
     ├── unit/                      # Fast Bats unit tests per domain/feature
     └── run-tests.sh               # Master test orchestrator
@@ -60,19 +66,21 @@ source "scripts/_utils.sh" 2> /dev/null || true
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
 - **Rule for One-Line Functions**: Do not create trivial one-line proxy functions if called in only one place. Inline the helper or command directly. Only keep one-line functions if reused across multiple locations.
-- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`get_distro_id`, `require_supported_distro`, `is_distro`, `get_desktop_environment`, `get_root_filesystem`, `get_shell_profile`, `get_gpu_vendor`, `enable_cron_service`, `install_flatpak_app`, `download_file`, `fetch_url`, `fetch_github_latest_version`, `is_version_up_to_date`, `install_github_binary`).
+- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`install_packages`, `install_packages_from_repo`, `swap_packages`, `remove_packages`, `upgrade_system`, `lock_packages`, `get_distro_id`, `require_supported_distro`, `is_distro`, `get_desktop_environment`, `configure_de_wallpaper`, `get_root_filesystem`, `get_shell_profile`, `get_gpu_vendor`, `enable_cron_service`, `install_flatpak_app`, `download_file`, `fetch_url`, `fetch_github_latest_version`, `is_version_up_to_date`, `install_github_binary`).
 - **Distribution Repository & Hardware Helpers**: Reuse distro repository and hardware utilities:
   - GPU Utilities (`scripts/system/_gpu_utils.sh`): `has_nvidia_gpu`, `has_amd_gpu`, `has_intel_gpu`, `has_hybrid_gpu`, `configure_gpu_repositories`.
+  - Shared System Helpers: `scripts/system/_grub_btrfs.sh` (`configure_grub_btrfs`), `scripts/system/_debloat_packages.sh`.
   - Arch Linux (`scripts/system/arch/_repositories.sh`): `add_arch_multilib_repo`.
   - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
+  - openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`): `add_opensuse_packman_repo`, `add_opensuse_nvidia_repo`, `add_opensuse_vscodium_repo`, `configure_opensuse_snapper`.
 - **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps (GNOME, KDE Plasma). When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
 - **SOLID Design Principles**: All scripts and helpers must adhere to SOLID principles:
   - **S (Single Responsibility)**: Small, cohesive private functions (`_`) where each function has one reason to change (decouple detection, repos, installation, 32-bit compatibility, service management).
-  - **O (Open/Closed)**: Open for extension via `packages.conf` and clean dispatchers (`case "$(get_distro_id)" in ...`) without modifying core logic.
-  - **L (Liskov Substitution)**: Consistent contract across distro functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`) with matching signatures, exit codes, and flag handling.
+  - **O (Open/Closed)**: Open for extension via `packages.conf`, declarative module maps (`runners/_modules.sh`), and clean dispatchers (`case "$(get_distro_id)" in ...`) without modifying core logic.
+  - **L (Liskov Substitution)**: Consistent contract across distro functions (`_install_arch_*`, `_install_fedora_*`, `_install_debian_*`, `_install_opensuse_*`) with matching signatures, exit codes, and flag handling.
   - **I (Interface Segregation)**: Granular, focused repository and utility helpers instead of monolithic all-in-one functions.
-  - **D (Dependency Inversion)**: Rely on `scripts/_utils.sh` abstractions (`install_packages`, `download_file`, `get_distro_id`) rather than invoking raw package managers directly.
+  - **D (Dependency Inversion)**: Rely on `scripts/_utils.sh` abstractions (`install_packages`, `install_packages_from_repo`, `swap_packages`, `remove_packages`, `upgrade_system`, `lock_packages`, `download_file`, `get_distro_id`) rather than invoking raw package managers directly.
 
 - Entrypoint: expose `main()` and finalize with an execution guard:
 
@@ -92,9 +100,10 @@ fi
   - **Debian 13 (Trixie)** (`apt`)
   - **Fedora 44** (`dnf`)
   - **Arch Linux** (`pacman` / Rolling)
+  - **openSUSE Leap & Tumbleweed** (`zypper`)
 - Branch by distribution ID via `get_distro_id` from `_utils.sh` — do not hard-code.
 
-- Use `/tmp/<package>` for temporary builds and ensure `make clean` removes artifacts.
+- Use `mktemp -d` for isolated temporary build directories and ensure explicit cleanup (`rm -rf "$tmp_dir"`) on both success and failure.
 
 ## ✅ Idempotence, Code Quality & Formatting
 
@@ -110,7 +119,7 @@ fi
 
 Cross-distribution package discrepancies must be registered in `scripts/packages.conf`:
 
-- **Format**: `GENERIC_NAME | DEBIAN | FEDORA | ARCH`
+- **Format**: `GENERIC_NAME | DEBIAN | FEDORA | ARCH | OPENSUSE`
 - **Exclusivity**: Only add entries when package names differ across distributions or when unsupported (`-`) on a distro. Identical names are resolved automatically by fallback and should NOT be listed.
 - **Formatting**: Must maintain alphabetical order by generic name, preserve table column alignment, and ensure at least one space before and after every `|` separator.
 

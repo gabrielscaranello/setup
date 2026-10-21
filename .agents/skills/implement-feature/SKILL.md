@@ -52,28 +52,36 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
 - **Shebang, Strict Mode & Fail-Fast**: Start with `#!/bin/bash` and `set -euo pipefail`. Scripts must **fail-fast** — any failure halts execution immediately. Do not suppress errors blindly (avoid unchecked `|| true` unless the failure is explicitly optional and safely handled).
 - **Helper Sourcing**: Source helpers near the top: `source "scripts/_utils.sh" 2>/dev/null || true`.
 - **Public Utilities & Helper Catalog (`scripts/_utils.sh`)**:
-  Always reuse existing helpers from `scripts/_utils.sh` instead of reimplementing or calling raw tools directly:
-  1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
+  Always reuse existing helpers from `scripts/_utils.sh` (`scripts/utils/*.sh`) instead of reimplementing or calling raw tools directly:
+  1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, `opensuse`, or `unknown`).
   2. [`is_distro <distro>`](../../../scripts/_utils.sh): Checks whether current system matches target distribution.
-  3. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`) and installs them idempotently.
-  4. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
-  5. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
-  6. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
-  7. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
-  8. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
-  9. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
-  10. [`get_gpu_vendor`](../../../scripts/_utils.sh): Detects physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
-  11. [`enable_cron_service [service_name]`](../../../scripts/_utils.sh): Enables and starts distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch).
-  12. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`) and prints distro ID; exits 1 otherwise.
-  13. [`fetch_github_latest_version <owner/repo>`](../../../scripts/_utils.sh): Resolves latest release tag from GitHub with resilient fallback against API rate limits.
-  14. [`is_version_up_to_date <local_ver> <remote_ver>`](../../../scripts/_utils.sh): Compares local and remote version strings idempotently.
-  15. [`install_github_binary <name> <repo> <version> <file_name> <bin_name>`](../../../scripts/_utils.sh): Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
+  3. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`, `opensuse`) and installs them idempotently.
+  4. [`install_packages_from_repo <repo> <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` and installs them targeting a specific repository (`apt -t`, `zypper --from`, or fallback).
+  5. [`swap_packages <old_pkg> <new_pkg>`](../../../scripts/_utils.sh): Atomically swaps conflicting packages (`dnf swap --allowerasing` on Fedora, or `install_packages` fallback).
+  6. [`remove_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Removes installed packages idempotently across distributions.
+  7. [`upgrade_system`](../../../scripts/_utils.sh): Refreshes repository metadata and upgrades installed system packages across distributions.
+  8. [`lock_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Locks/holds packages against unintended upgrades.
+  9. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
+  10. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
+  11. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
+  12. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
+  13. [`configure_de_wallpaper <wallpaper_path>`](../../../scripts/_utils.sh): Sets the desktop wallpaper idempotently on GNOME or KDE Plasma.
+  14. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
+  15. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+  16. [`get_gpu_vendor`](../../../scripts/_utils.sh): Detects physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
+  17. [`enable_cron_service [service_name]`](../../../scripts/_utils.sh): Enables and starts distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch/openSUSE).
+  18. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`, `opensuse`) and prints distro ID; exits 1 otherwise.
+  19. [`fetch_github_latest_version <owner/repo>`](../../../scripts/_utils.sh): Resolves latest release tag from GitHub with resilient fallback against API rate limits.
+  20. [`is_version_up_to_date <local_ver> <remote_ver>`](../../../scripts/_utils.sh): Compares local and remote version strings idempotently.
+  21. [`install_github_binary <name> <repo> <version> <file_name> <bin_name>`](../../../scripts/_utils.sh): Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
 - **Distribution-Specific Repository & Hardware Utilities**:
   When configuring third-party or upstream repositories and hardware detection, reuse or register functions in:
   - **Shared GPU Utilities (`scripts/system/_gpu_utils.sh`)**: `has_nvidia_gpu`, `has_amd_gpu`, `has_intel_gpu`, `has_hybrid_gpu`, `configure_gpu_repositories`.
+  - **Shared System Helpers**: `scripts/system/_grub_btrfs.sh` (`configure_grub_btrfs`), `scripts/system/_debloat_packages.sh`.
   - **Arch Linux (`scripts/system/arch/_repositories.sh`)**: `add_arch_multilib_repo`.
   - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
+  - **openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`)**: `add_opensuse_packman_repo`, `add_opensuse_nvidia_repo`, `add_opensuse_vscodium_repo`, `configure_opensuse_snapper`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
@@ -177,10 +185,9 @@ All code paths and conditional branches must be thoroughly tested:
 
 ### Step 5: Orchestration, CLI Registration & Documentation
 
-1. **Master CLI & Orchestrator (`runners/main.sh` / `main.sh`)**:
-   - Register the module invocation in the appropriate distro runner(s) under `runners/` (`arch.sh`, `debian.sh`, `fedora.sh`) if it belongs to the automated complete setup.
-   - Register the module in `run_module()` case statement in `runners/main.sh` for standalone execution (e.g. `./main.sh <feature>` and `make <feature>`).
-   - Add the command description in `show_help()` in `runners/main.sh`. **The help in `runners/main.sh` is the single source of truth for all available setup commands.**
+1. **Master CLI & Orchestrator (`runners/_modules.sh`, `runners/main.sh` / `main.sh`)**:
+   - Register the module invocation in the appropriate distro runner(s) under `runners/` (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`) or shared pipeline arrays in `runners/_utils.sh` if it belongs to the automated complete setup.
+   - Register the module in `runners/_modules.sh` (`MODULE_CATALOG`, `MODULE_SCRIPTS`, and `MODULE_DESCRIPTIONS`) for standalone execution (e.g. `./main.sh <feature>` and `make <feature>`) and CLI help generation. **The declarative registry in `runners/_modules.sh` rendered by `show_help()` in `runners/main.sh` is the single source of truth for all available setup commands.**
 2. **Roadmap & Tracking (`TODO.md`)**:
    - Mark the corresponding task item as done `[x]` with script references.
 3. **Skill Synchronization**:

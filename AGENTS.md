@@ -14,6 +14,7 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 - **Debian 13 (Trixie)** (`apt`)
 - **Fedora 44** (`dnf`)
 - **Arch Linux** (`pacman` / Rolling release)
+- **openSUSE Leap & Tumbleweed** (`zypper`)
 
 ---
 
@@ -22,21 +23,27 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 ### 1. Modern Tooling & Package Management
 
 - Use `apt` (never legacy `apt-get`) on Debian.
-- Always use `install_packages <generic_pkg>` to automatically resolve distribution package differences via `packages.conf`.
+- Always use `install_packages <generic_pkg>` (and related helpers in `scripts/utils/_packages.sh`) to automatically resolve distribution package differences via `packages.conf`.
 
-### 2. Common Reusable Utilities (`scripts/_utils.sh`)
+### 2. Common Reusable Utilities (`scripts/_utils.sh` & `scripts/utils/*.sh`)
 
-Common operations must reuse helper functions from `scripts/_utils.sh`:
+Common operations must reuse helper functions from `scripts/_utils.sh` (which sources `scripts/utils/_packages.sh`, `_system.sh`, `_desktop.sh`, and `_download.sh`):
 
 - `install_packages <generic_pkg>...`: Resolves packages across distributions via `packages.conf` and installs them idempotently.
-- `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, or `unknown`).
-- `require_supported_distro`: Validates that current system is supported (`debian`, `fedora`, `arch`) and prints distro ID; exits 1 otherwise.
+- `install_packages_from_repo <repo> <generic_pkg>...`: Resolves packages via `packages.conf` and installs them targeting a specific repository (`apt -t`, `zypper --from`, or standard fallback on Fedora/Arch).
+- `swap_packages <old_pkg> <new_pkg>`: Replaces a conflicting package atomically (`dnf swap --allowerasing` on Fedora, or `install_packages` elsewhere).
+- `remove_packages <pkg>...`: Removes installed packages idempotently across distributions.
+- `upgrade_system`: Refreshes repository metadata and upgrades installed system packages across distributions.
+- `lock_packages <pkg>...`: Locks/holds packages to prevent unintended upgrades (`apt-mark hold`, `dnf versionlock`, `zypper addlock`).
+- `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, `opensuse`, or `unknown`).
+- `require_supported_distro`: Validates that current system is supported (`debian`, `fedora`, `arch`, `opensuse`) and prints distro ID; exits 1 otherwise.
 - `is_distro <distro>`: Checks whether current system matches target distribution.
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
+- `configure_de_wallpaper <wallpaper_path>`: Sets the desktop wallpaper idempotently on GNOME or KDE Plasma.
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - `get_gpu_vendor`: Returns detected physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
-- `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch).
+- `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch/openSUSE).
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
 - `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
@@ -50,7 +57,10 @@ Third-party repository configurations and hardware primitives must reside in the
 
 - **Shared GPU Utilities (`scripts/system/_gpu_utils.sh`)**:
   - `has_nvidia_gpu`, `has_amd_gpu`, `has_intel_gpu`, `has_hybrid_gpu`: Resilient hardware detection via `lspci`.
-  - `configure_gpu_repositories`: Idempotently configures non-free, multilib, or RPM Fusion repositories needed for GPU graphics drivers.
+  - `configure_gpu_repositories`: Idempotently configures non-free, multilib, RPM Fusion, or openSUSE Packman/NVIDIA repositories needed for GPU graphics drivers.
+- **Shared System Helpers**:
+  - `scripts/system/_grub_btrfs.sh`: `configure_grub_btrfs` for Btrfs snapshot boot menu integration.
+  - `scripts/system/_debloat_packages.sh`: Declarative per-distribution bloatware package lists.
 - **Arch Linux (`scripts/system/arch/_repositories.sh`)**:
   - `add_arch_multilib_repo`: Idempotently enables the multilib repository in `/etc/pacman.conf` and updates the pacman database.
 - **Debian (`scripts/system/debian/_repositories.sh`)**:
@@ -63,6 +73,11 @@ Third-party repository configurations and hardware primitives must reside in the
   - `add_fedora_docker_repo`: Idempotently adds Docker CE DNF repository.
   - `add_fedora_vscodium_repo`: Idempotently adds VSCodium DNF repository.
   - `add_fedora_rpmfusion_repo`: Idempotently adds RPM Fusion Free and Non-Free DNF repositories.
+- **openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`)**:
+  - `add_opensuse_packman_repo`: Idempotently adds the Packman Essentials repository (auto-detecting Leap `$releasever` or Tumbleweed).
+  - `add_opensuse_nvidia_repo`: Idempotently adds the official NVIDIA repository for openSUSE Leap & Tumbleweed.
+  - `add_opensuse_vscodium_repo`: Idempotently adds the VSCodium RPM repository.
+  - `configure_opensuse_snapper`: Idempotently configures Snapper timeline and Btrfs snapshot retention.
 
 ### 4. Rule for One-Line Functions
 
@@ -205,11 +220,11 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 1. **[OpenSpec](openspec/)**: Follow Spec-Driven Development (SDD). Ensure the corresponding capability spec under `openspec/specs/<domain>/<feature>.md` is created or updated with requirements and GIVEN/WHEN/THEN scenarios BEFORE implementing or modifying code.
 2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
-3. **[runners/main.sh](runners/main.sh)**: Register the new module in `run_module()`, `run_all()` steps, and the `show_help()` documentation. The CLI help in `runners/main.sh` is the single source of truth for available setup commands.
+3. **[runners/\_modules.sh](runners/_modules.sh) & [runners/main.sh](runners/main.sh)**: Register the new module in `runners/_modules.sh` (`MODULE_CATALOG`, `MODULE_SCRIPTS`, `MODULE_DESCRIPTIONS`) and in the appropriate pipeline array in `runners/_utils.sh` or distro runners. The module registry in `runners/_modules.sh` rendered by `show_help()` in `runners/main.sh` is the single source of truth for available setup commands.
 4. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
-   - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
+   - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`, `opensuse`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
-   - Maintain column alignment and strictly ensure at least one blank space before and after every `|` separator.
+   - Maintain column alignment (`GENERIC_NAME | DEBIAN | FEDORA | ARCH | OPENSUSE`) and strictly ensure at least one blank space before and after every `|` separator.
 
 ---
 

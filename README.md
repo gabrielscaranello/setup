@@ -1,6 +1,6 @@
 # 🚀 Desktop Setup
 
-Welcome! This repository automates provisioning a desktop development environment across multiple Linux distributions (Debian, Fedora, Arch Linux).
+Welcome! This repository automates provisioning a desktop development environment across multiple Linux distributions (Debian, Fedora, Arch Linux, openSUSE Leap & Tumbleweed).
 
 🇧🇷 **Documentação em Português (BR):** [README-pt-br.md](README-pt-br.md)
 
@@ -43,11 +43,12 @@ This project was created to unify and centralize several standalone distribution
 🐧 Supported Distributions & Desktops
 -------------------------------------
 
-| Distribution           | Package Manager | Desktop Environments | Dedicated Runner                         |
-| :--------------------- | :-------------- | :------------------- | :--------------------------------------- |
-| **Debian 13 (Trixie)** | `apt`           | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`) |
-| **Fedora 44**          | `dnf`           | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`) |
-| **Arch Linux**         | `pacman`        | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)     |
+| Distribution                 | Package Manager | Desktop Environments | Dedicated Runner                             |
+| :--------------------------- | :-------------- | :------------------- | :------------------------------------------- |
+| **Debian 13 (Trixie)**       | `apt`           | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`)     |
+| **Fedora 44**                | `dnf`           | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`)     |
+| **Arch Linux**               | `pacman`        | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)         |
+| **openSUSE Leap/Tumbleweed** | `zypper`        | GNOME, KDE Plasma    | `runners/opensuse.sh` (`./main.sh opensuse`) |
 
 ⚡ Quick start
 -------------
@@ -55,13 +56,14 @@ This project was created to unify and centralize several standalone distribution
 Run full setup with automatic distribution detection, invoke specific distro pipelines, or run individual modules:
 
 ```sh
-# Complete setup with auto-detection (Debian, Fedora, Arch):
+# Complete setup with auto-detection (Debian, Fedora, Arch, openSUSE Leap/Tumbleweed):
 make all # Or: ./main.sh all / ./main.sh
 
 # Explicit distribution pipelines:
-./main.sh debian # Run full Debian 13 pipeline
-./main.sh fedora # Run full Fedora 44 pipeline
-./main.sh arch   # Run full Arch Linux pipeline
+./main.sh debian   # Run full Debian 13 pipeline
+./main.sh fedora   # Run full Fedora 44 pipeline
+./main.sh arch     # Run full Arch Linux pipeline
+./main.sh opensuse # Run full openSUSE (Leap / Tumbleweed) pipeline
 
 # Individual modules:
 make neovim   # Or: ./main.sh neovim
@@ -83,10 +85,10 @@ make clean            # Remove temporary artifacts
 ------------------------------------
 
 - `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
-- `runners/` — Distro-specific setup pipelines and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
+- `runners/` — Distro-specific setup pipelines, declarative module registry, and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`, `main.sh`, `_modules.sh`, `_utils.sh`)
 - `Makefile` — Convenience wrapper for `./main.sh`, test runners, and code quality tools
-- `scripts/` — Modular setup scripts organized by domain (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
-- `scripts/_utils.sh` — Package manager and system helper abstractions
+- `scripts/` — Modular setup scripts organized by domain (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`, `utils/`)
+- `scripts/_utils.sh` — Package manager and system helper abstractions (sourced from `scripts/utils/*.sh`)
 - `scripts/packages.conf` — Cross-distro package mappings
 - `openspec/` — Spec-Driven Development (SDD) capability specifications
 - `tests/` — Bats unit and Docker multi-distro integration tests

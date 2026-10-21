@@ -1,6 +1,6 @@
 # 🚀 Desktop Setup
 
-Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux).
+Bem-vindo! Este repositório automatiza a configuração de um ambiente de desenvolvimento desktop Linux, funcionando em várias distribuições (Debian, Fedora, Arch Linux, openSUSE Leap & Tumbleweed).
 
 🇺🇸 **English Documentation:** [README.md](README.md)
 
@@ -43,11 +43,12 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 🐧 Distribuições & Ambientes Gráficos Suportados
 ------------------------------------------------
 
-| Distribuição           | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                          |
-| :--------------------- | :--------------------- | :---------------------- | :--------------------------------------- |
-| **Debian 13 (Trixie)** | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`) |
-| **Fedora 44**          | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`) |
-| **Arch Linux**         | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)     |
+| Distribuição                 | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                              |
+| :--------------------------- | :--------------------- | :---------------------- | :------------------------------------------- |
+| **Debian 13 (Trixie)**       | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`)     |
+| **Fedora 44**                | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`)     |
+| **Arch Linux**               | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)         |
+| **openSUSE Leap/Tumbleweed** | `zypper`               | GNOME, KDE Plasma       | `runners/opensuse.sh` (`./main.sh opensuse`) |
 
 ⚡️ Começando (rápido)
 ---------------------
@@ -55,13 +56,14 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 Execute o setup completo com detecção automática de distribuição, dispare pipelines específicos ou execute módulos isolados:
 
 ```sh
-# Setup completo com autodetecção (Debian, Fedora, Arch):
+# Setup completo com autodetecção (Debian, Fedora, Arch, openSUSE Leap/Tumbleweed):
 make all # Ou: ./main.sh all / ./main.sh
 
 # Pipelines explícitos por distribuição:
-./main.sh debian # Executa o pipeline completo do Debian 13
-./main.sh fedora # Executa o pipeline completo do Fedora 44
-./main.sh arch   # Executa o pipeline completo do Arch Linux
+./main.sh debian   # Executa o pipeline completo do Debian 13
+./main.sh fedora   # Executa o pipeline completo do Fedora 44
+./main.sh arch     # Executa o pipeline completo do Arch Linux
+./main.sh opensuse # Executa o pipeline completo do openSUSE (Leap / Tumbleweed)
 
 # Módulos ou ferramentas individuais:
 make neovim   # Ou: ./main.sh neovim
@@ -83,10 +85,10 @@ make clean            # Limpa artefatos temporários
 ---------------------------------------
 
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
-- `runners/` — Pipelines de instalação específicos por distribuição e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `main.sh`, `_utils.sh`)
+- `runners/` — Pipelines de instalação específicos por distribuição, registro declarativo de módulos e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`, `main.sh`, `_modules.sh`, `_utils.sh`)
 - `Makefile` — Runner e alias de conveniência para `./main.sh`, testes e ferramentas de qualidade de código
-- `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`)
-- `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes
+- `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`, `utils/`)
+- `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes (carregadas de `scripts/utils/*.sh`)
 - `scripts/packages.conf` — Mapeamento declarativo de pacotes entre distros
 - `openspec/` — Especificações de capacidades orientadas a testes (Spec-Driven Development / SDD)
 - `tests/` — Testes unitários (Bats) e de integração multi-distro (Docker)
