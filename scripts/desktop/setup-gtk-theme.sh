@@ -40,14 +40,14 @@ _install_upstream_theme() {
 
   local archive_name="adw-gtk3${version}.tar.xz"
   local download_url="https://github.com/${UPSTREAM_REPO}/releases/download/${version}/${archive_name}"
-  local tmp_dir="/tmp/adw_gtk3_$$"
-  local archive_path="/tmp/${archive_name}"
+  local tmp_dir
+  tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/adw_gtk3.XXXXXX")"
+  local archive_path="${tmp_dir}/${archive_name}"
 
-  rm -rf "$tmp_dir" "$archive_path"
-  mkdir -p "$tmp_dir"
-
-  download_file "$download_url" "$archive_path"
-  tar -xf "$archive_path" -C "$tmp_dir"
+  if ! download_file "$download_url" "$archive_path" || ! tar -xf "$archive_path" -C "$tmp_dir"; then
+    rm -rf "$tmp_dir"
+    return 1
+  fi
 
   if [ -d "$tmp_dir/adw-gtk3" ]; then
     echo "$version" > "$tmp_dir/adw-gtk3/.version"
@@ -59,7 +59,7 @@ _install_upstream_theme() {
   deploy_theme_directory "$tmp_dir/adw-gtk3" "themes" "adw-gtk3"
   deploy_theme_directory "$tmp_dir/adw-gtk3-dark" "themes" "adw-gtk3-dark"
 
-  rm -rf "$tmp_dir" "$archive_path"
+  rm -rf "$tmp_dir"
 }
 
 _install_theme_package() {

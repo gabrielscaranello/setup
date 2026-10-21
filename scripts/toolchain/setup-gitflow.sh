@@ -46,17 +46,17 @@ _install_gitflow() {
     return 0
   fi
 
-  local work_dir="/tmp/gitflow-installer"
+  local work_dir
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/gitflow-installer.XXXXXX")"
   local installer_file="$work_dir/gitflow-installer.sh"
 
   echo "Installing Gitflow CJS ($GITFLOW_VERSION)..."
 
-  echo "Cleaning temporary build directory..."
-  sudo rm -rf "$work_dir"
-  mkdir -p "$work_dir"
-
-  _download_gitflow_installer "$INSTALLER_URL" "$installer_file"
-  _run_gitflow_installer "$work_dir" "$installer_file" "$GITFLOW_VERSION"
+  if ! _download_gitflow_installer "$INSTALLER_URL" "$installer_file" \
+    || ! _run_gitflow_installer "$work_dir" "$installer_file" "$GITFLOW_VERSION"; then
+    sudo rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Cleaning up installer temporary files..."
   sudo rm -rf "$work_dir"

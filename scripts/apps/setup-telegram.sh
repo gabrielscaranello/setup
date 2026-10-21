@@ -114,25 +114,33 @@ _install_telegram_binary() {
   local file_name="td-setup-linux-x64-${latest_version}.tar.xz"
   local download_url="https://github.com/telegramdesktop/tdesktop/releases/download/v${latest_version}/${file_name}"
   local legacy_url="https://github.com/telegramdesktop/tdesktop/releases/download/v${latest_version}/tsetup.${latest_version}.tar.xz"
-  local output_dir="/tmp/${file_name}"
-  local extract_dir="/tmp/Telegram"
+  local work_dir
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/telegram-install.XXXXXX")"
+  local output_file="${work_dir}/${file_name}"
+  local extract_dir="${work_dir}/Telegram"
   local opt_dir="$HOME/.local/opt"
   local target_dir="$opt_dir/telegram-desktop"
 
   echo "Installing Telegram ($latest_version)..."
 
   echo "Removing old files if they exist..."
-  rm -rf "$output_dir" "$target_dir" "$extract_dir"
+  rm -rf "$target_dir"
 
   echo "Downloading Telegram..."
-  download_file "$download_url" "$output_dir" || download_file "$legacy_url" "$output_dir" || download_file "https://telegram.org/dl/desktop/linux" "$output_dir"
+  if ! (download_file "$download_url" "$output_file" || download_file "$legacy_url" "$output_file" || download_file "https://telegram.org/dl/desktop/linux" "$output_file"); then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Extracting Telegram..."
   mkdir -p "$opt_dir"
-  tar -xf "$output_dir" -C /tmp
+  if ! tar -xf "$output_file" -C "$work_dir"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
   mv "$extract_dir" "$target_dir"
 
-  rm -f "$output_dir"
+  rm -rf "$work_dir"
 
   _setup_desktop_integration
 

@@ -21,7 +21,7 @@
 @test "_install_neovim_from_source handles build failure" {
   source /setup/scripts/toolchain/setup-neovim.sh
   git() {
-    mkdir -p /tmp/neovim
+    mkdir -p "${!#}"
     return 0
   }
   make() { return 1; }
@@ -33,7 +33,7 @@
 @test "_install_neovim_from_source handles cpack failure" {
   source /setup/scripts/toolchain/setup-neovim.sh
   git() {
-    mkdir -p /tmp/neovim/build
+    mkdir -p "${!#}/build"
     return 0
   }
   make() { return 0; }
@@ -46,12 +46,12 @@
 @test "_install_neovim_from_source handles dpkg failure" {
   source /setup/scripts/toolchain/setup-neovim.sh
   git() {
-    mkdir -p /tmp/neovim/build
+    mkdir -p "${!#}/build"
     return 0
   }
   make() { return 0; }
   cpack() {
-    touch /tmp/neovim/build/nvim-linux64.deb
+    touch ./nvim-linux64.deb
     return 0
   }
   dpkg() { return 1; }

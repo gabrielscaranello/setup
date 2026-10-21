@@ -148,35 +148,20 @@ get_gpu_vendor() {
     return 0
   fi
 
-  if command -v has_nvidia_gpu > /dev/null 2>&1; then
-    if has_nvidia_gpu; then
-      echo "nvidia"
-      return 0
-    elif has_amd_gpu; then
-      echo "amd"
-      return 0
-    elif has_intel_gpu; then
-      echo "intel"
-      return 0
-    fi
-  elif command -v lspci > /dev/null 2>&1; then
-    local pci_display
-    pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
-    if [ -n "$pci_display" ]; then
-      if echo "$pci_display" | grep -iq "10de" || echo "$pci_display" | grep -iq "nvidia"; then
-        echo "nvidia"
-        return 0
-      elif echo "$pci_display" | grep -iq "1002" || echo "$pci_display" | grep -iqE "amd|advanced micro devices|radeon"; then
-        echo "amd"
-        return 0
-      elif echo "$pci_display" | grep -iq "8086" || echo "$pci_display" | grep -iq "intel"; then
-        echo "intel"
-        return 0
-      fi
-    fi
+  if ! command -v has_nvidia_gpu > /dev/null 2>&1; then
+    # shellcheck source=scripts/system/_gpu_utils.sh
+    source "$(get_repo_root)/scripts/system/_gpu_utils.sh" 2> /dev/null || true
   fi
 
-  echo "unknown"
+  if has_nvidia_gpu; then
+    echo "nvidia"
+  elif has_amd_gpu; then
+    echo "amd"
+  elif has_intel_gpu; then
+    echo "intel"
+  else
+    echo "unknown"
+  fi
 }
 
 get_shell_profile() {

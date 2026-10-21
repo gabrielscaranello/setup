@@ -8,21 +8,19 @@ source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
 source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
-# Configures the third-party repositories required for GPU driver installation
-# on the current distribution.
-# Usage: configure_gpu_repositories <distro>
+_list_pci_display_devices() {
+  command -v lspci > /dev/null 2>&1 || return 1
+  lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true
+}
+
 has_nvidia_gpu() {
   if [ "${NVIDIA_FORCE_DETECT:-0}" = "1" ] || [ "${GPU_VENDOR:-}" = "nvidia" ]; then
     return 0
   fi
 
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
   local pci_display
-  pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
-  [ -n "$pci_display" ] && (echo "$pci_display" | grep -iq "10de" || echo "$pci_display" | grep -iq "nvidia")
+  pci_display="$(_list_pci_display_devices)" || return 1
+  [ -n "$pci_display" ] && echo "$pci_display" | grep -iqE '10de|nvidia'
 }
 
 has_amd_gpu() {
@@ -30,13 +28,9 @@ has_amd_gpu() {
     return 0
   fi
 
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
   local pci_display
-  pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
-  [ -n "$pci_display" ] && (echo "$pci_display" | grep -iq "1002" || echo "$pci_display" | grep -iqE "amd|advanced micro devices|radeon")
+  pci_display="$(_list_pci_display_devices)" || return 1
+  [ -n "$pci_display" ] && echo "$pci_display" | grep -iqE '1002|amd|advanced micro devices|radeon'
 }
 
 has_intel_gpu() {
@@ -44,13 +38,9 @@ has_intel_gpu() {
     return 0
   fi
 
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
   local pci_display
-  pci_display="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true)"
-  [ -n "$pci_display" ] && (echo "$pci_display" | grep -iq "8086" || echo "$pci_display" | grep -iq "intel")
+  pci_display="$(_list_pci_display_devices)" || return 1
+  [ -n "$pci_display" ] && echo "$pci_display" | grep -iqE '8086|intel'
 }
 
 has_hybrid_gpu() {
@@ -58,12 +48,9 @@ has_hybrid_gpu() {
     return 0
   fi
 
-  if ! command -v lspci > /dev/null 2>&1; then
-    return 1
-  fi
-
-  local other_gpus
-  other_gpus="$(lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' | grep -iv "10de" | grep -iE 'intel|amd|advanced micro devices' || true)"
+  local pci_display other_gpus
+  pci_display="$(_list_pci_display_devices)" || return 1
+  other_gpus="$(echo "$pci_display" | grep -iv "10de" | grep -iE 'intel|amd|advanced micro devices' || true)"
   [ -n "$other_gpus" ]
 }
 

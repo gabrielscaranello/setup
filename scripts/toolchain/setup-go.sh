@@ -66,22 +66,26 @@ _install_go_from_binary() {
   arch="$(_resolve_go_arch)"
   local filename="go${GO_VERSION}.linux-${arch}.tar.gz"
   local download_url="https://go.dev/dl/${filename}"
-  local archive_path="/tmp/${filename}"
+  local work_dir
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/go-install.XXXXXX")"
+  local archive_path="${work_dir}/${filename}"
   local target_dir="/usr/local"
   local install_dir="${target_dir}/go"
 
   echo "Installing Golang ($GO_VERSION) from upstream binary archive..."
 
   echo "Removing previous installation..."
-  sudo rm -rf "$archive_path" "$install_dir"
+  sudo rm -rf "$install_dir"
 
   echo "Downloading Golang binary..."
-  download_file "$download_url" "$archive_path"
-
-  _extract_go_archive "$archive_path" "$target_dir"
+  if ! download_file "$download_url" "$archive_path" \
+    || ! _extract_go_archive "$archive_path" "$target_dir"; then
+    sudo rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Cleaning up download archive..."
-  sudo rm -rf "$archive_path"
+  sudo rm -rf "$work_dir"
 
   _setup_shell_profile
   export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"

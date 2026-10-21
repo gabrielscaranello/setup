@@ -62,25 +62,36 @@ _install_neovim_make() {
 
 _install_neovim_from_source() {
   local method="${1:-deb}"
-  local work_dir="/tmp/neovim"
+  local work_dir
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/neovim.XXXXXX")"
 
   echo "Installing Neovim from source ($method)..."
-  _clone_neovim_source "$work_dir" || return 1
-  _build_neovim_source "$work_dir" || return 1
+  if ! _clone_neovim_source "$work_dir" || ! _build_neovim_source "$work_dir"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   case "$method" in
     deb)
-      _package_and_install_neovim_deb "$work_dir" || return 1
+      if ! _package_and_install_neovim_deb "$work_dir"; then
+        rm -rf "$work_dir"
+        return 1
+      fi
       ;;
     make)
-      _install_neovim_make "$work_dir" || return 1
+      if ! _install_neovim_make "$work_dir"; then
+        rm -rf "$work_dir"
+        return 1
+      fi
       ;;
     *)
       echo "Unsupported source installation method: $method" >&2
+      rm -rf "$work_dir"
       return 1
       ;;
   esac
 
+  rm -rf "$work_dir"
   echo "Neovim installed successfully at $(command -v nvim)"
 }
 

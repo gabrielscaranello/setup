@@ -10,12 +10,12 @@ if [ ! -d "$_UTILS_DIR" ] && [ -d "/setup/scripts/utils" ]; then
 fi
 
 # shellcheck source=scripts/utils/_system.sh
-source "${_UTILS_DIR}/_system.sh" 2> /dev/null || true
+source "${_UTILS_DIR}/_system.sh"
 # shellcheck source=scripts/utils/_packages.sh
-source "${_UTILS_DIR}/_packages.sh" 2> /dev/null || true
+source "${_UTILS_DIR}/_packages.sh"
 # shellcheck source=scripts/utils/_desktop.sh
-source "${_UTILS_DIR}/_desktop.sh" 2> /dev/null || true
+source "${_UTILS_DIR}/_desktop.sh"
 # shellcheck source=scripts/utils/_download.sh
-source "${_UTILS_DIR}/_download.sh" 2> /dev/null || true
+source "${_UTILS_DIR}/_download.sh"
 # shellcheck source=scripts/utils/_terminal.sh
-source "${_UTILS_DIR}/_terminal.sh" 2> /dev/null || true
+source "${_UTILS_DIR}/_terminal.sh"

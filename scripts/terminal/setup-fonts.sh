@@ -47,25 +47,30 @@ _install_fonts_from_upstream() {
     return 0
   fi
 
-  local work_dir="/tmp/JetBrainsMono"
-  local archive_file="/tmp/${FONT_ARCHIVE}"
+  local work_dir
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/jetbrains-mono.XXXXXX")"
+  local archive_file="${work_dir}/${FONT_ARCHIVE}"
 
   echo "Installing JetBrains Mono Nerd Font from upstream release..."
 
-  echo "Cleaning up temporary directories..."
-  rm -rf "$archive_file" "$work_dir"
-  mkdir -p "$work_dir" "$TARGET_DIR"
+  mkdir -p "$TARGET_DIR"
 
   echo "Downloading JetBrains Mono Nerd Font..."
-  download_file "$DOWNLOAD_URL" "$archive_file"
+  if ! download_file "$DOWNLOAD_URL" "$archive_file"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   echo "Extracting font files..."
-  unzip -q "$archive_file" -d "$work_dir"
+  if ! unzip -q "$archive_file" -d "$work_dir"; then
+    rm -rf "$work_dir"
+    return 1
+  fi
 
   _copy_jetbrains_mono_fonts "$work_dir"
 
   echo "Cleaning temporary files..."
-  rm -rf "$archive_file" "$work_dir"
+  rm -rf "$work_dir"
 
   _update_font_cache
 

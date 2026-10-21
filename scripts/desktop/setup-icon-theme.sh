@@ -69,9 +69,14 @@ _install_papirus_folders_upstream() {
 
   echo "Installing papirus-folders ($version) from upstream..."
   local script_url="https://raw.githubusercontent.com/${FOLDERS_UPSTREAM_REPO}/${version}/papirus-folders"
-  local tmp_script="/tmp/papirus-folders_$$"
+  local tmp_dir
+  tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/papirus-folders.XXXXXX")"
+  local tmp_script="${tmp_dir}/papirus-folders"
 
-  download_file "$script_url" "$tmp_script"
+  if ! download_file "$script_url" "$tmp_script"; then
+    rm -rf "$tmp_dir"
+    return 1
+  fi
   chmod +x "$tmp_script"
 
   local target_bin="/usr/local/bin/papirus-folders"
@@ -84,7 +89,7 @@ _install_papirus_folders_upstream() {
     cp "$tmp_script" "$HOME/.local/bin/papirus-folders"
   fi
 
-  rm -f "$tmp_script"
+  rm -rf "$tmp_dir"
 }
 
 _ensure_papirus_folders() {

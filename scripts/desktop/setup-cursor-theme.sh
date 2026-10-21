@@ -34,19 +34,23 @@ _install_cursor_files() {
   fi
 
   local download_url="https://github.com/${UPSTREAM_REPO}/releases/download/${version}/${CURSOR_ARCHIVE}"
-  local tmp_dir="/tmp/bibata_cursor_$$"
-  local archive_path="/tmp/${CURSOR_ARCHIVE}"
-
-  rm -rf "$tmp_dir" "$archive_path"
-  mkdir -p "$tmp_dir"
+  local tmp_dir
+  tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/bibata_cursor.XXXXXX")"
+  local archive_path="${tmp_dir}/${CURSOR_ARCHIVE}"
 
   install_packages curl wget tar xz-utils || true
 
   echo "Downloading $CURSOR_NAME cursor theme ($version)..."
-  download_file "$download_url" "$archive_path" || download_file "https://github.com/${UPSTREAM_REPO}/releases/latest/download/${CURSOR_ARCHIVE}" "$archive_path"
+  if ! (download_file "$download_url" "$archive_path" || download_file "https://github.com/${UPSTREAM_REPO}/releases/latest/download/${CURSOR_ARCHIVE}" "$archive_path"); then
+    rm -rf "$tmp_dir"
+    return 1
+  fi
 
   echo "Extracting cursor archive..."
-  tar -xf "$archive_path" -C "$tmp_dir"
+  if ! tar -xf "$archive_path" -C "$tmp_dir"; then
+    rm -rf "$tmp_dir"
+    return 1
+  fi
 
   if [ -d "$tmp_dir/$CURSOR_NAME" ]; then
     echo "$version" > "$tmp_dir/$CURSOR_NAME/.version"
@@ -54,7 +58,7 @@ _install_cursor_files() {
 
   deploy_theme_directory "$tmp_dir/$CURSOR_NAME" "icons" "$CURSOR_NAME"
 
-  rm -rf "$tmp_dir" "$archive_path"
+  rm -rf "$tmp_dir"
 }
 
 _ensure_cursor_theme() {
