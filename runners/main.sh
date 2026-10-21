@@ -37,40 +37,36 @@ HELP_EOF
   done
 }
 
+# Declarative distribution-to-runner mapping (OCP)
+# Format: "distro_id|display_label|runner_script"
+DISTRO_RUNNERS=(
+  "debian|Debian|debian.sh"
+  "fedora|Fedora|fedora.sh"
+  "arch|Arch Linux|arch.sh"
+  "opensuse|openSUSE|opensuse.sh"
+  "opensuse-leap|openSUSE|opensuse.sh"
+  "opensuse-tumbleweed|openSUSE|opensuse.sh"
+)
+
 run_all() {
-  local distro
+  local distro entry d_id d_label d_script
   distro="$(get_distro_id 2> /dev/null || true)"
 
-  case "$distro" in
-    debian)
-      echo "Delegating complete setup to Debian runner..."
-      bash "$RUNNERS_DIR/debian.sh"
-      ;;
+  for entry in "${DISTRO_RUNNERS[@]}"; do
+    IFS='|' read -r d_id d_label d_script <<< "$entry"
+    if [ "$d_id" = "$distro" ]; then
+      echo "Delegating complete setup to ${d_label} runner..."
+      bash "$RUNNERS_DIR/${d_script}"
+      return 0
+    fi
+  done
 
-    fedora)
-      echo "Delegating complete setup to Fedora runner..."
-      bash "$RUNNERS_DIR/fedora.sh"
-      ;;
-
-    arch)
-      echo "Delegating complete setup to Arch Linux runner..."
-      bash "$RUNNERS_DIR/arch.sh"
-      ;;
-
-    opensuse | opensuse-leap | opensuse-tumbleweed)
-      echo "Delegating complete setup to openSUSE runner..."
-      bash "$RUNNERS_DIR/opensuse.sh"
-      ;;
-
-    *)
-      if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
-        echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', and 'opensuse' are currently supported." >&2
-      else
-        echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, opensuse)." >&2
-      fi
-      return 1
-      ;;
-  esac
+  if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
+    echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', and 'opensuse' are currently supported." >&2
+  else
+    echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, opensuse)." >&2
+  fi
+  return 1
 }
 
 # Resolves a command name (or alias) to its registry entry; returns 1 when unknown

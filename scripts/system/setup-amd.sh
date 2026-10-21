@@ -23,23 +23,20 @@ _install_arch_amd_packages() {
 _swap_fedora_freeworld_drivers() {
   echo "Swapping restricted Mesa VA-API/VDPAU drivers with RPM Fusion freeworld codecs..."
   if ! rpm -q mesa-va-drivers-freeworld > /dev/null 2>&1; then
-    sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld 2> /dev/null \
-      || sudo dnf install -y --allowerasing mesa-va-drivers-freeworld 2> /dev/null || true
+    swap_packages mesa-va-drivers mesa-va-drivers-freeworld
   fi
 
   if ! rpm -q mesa-vdpau-drivers-freeworld > /dev/null 2>&1; then
-    sudo dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld 2> /dev/null \
-      || sudo dnf install -y --allowerasing mesa-vdpau-drivers-freeworld 2> /dev/null || true
+    swap_packages mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
   fi
 }
 
 _install_fedora_32bit_packages() {
   if rpm -q glibc.i686 > /dev/null 2>&1 || [ "${FEDORA_ENABLE_MULTILIB:-0}" = "1" ]; then
     echo "Ensuring 32-bit freeworld drivers for gaming on Fedora..."
-    # Justification: dnf swap and architecture-specific packages (.i686) require direct package manager flags
-    sudo dnf swap -y mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686 2> /dev/null || true
-    sudo dnf swap -y mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686 2> /dev/null || true
-    sudo dnf install -y mesa-vulkan-drivers.i686 2> /dev/null || true
+    swap_packages mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686
+    swap_packages mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686
+    install_packages mesa-vulkan-drivers.i686 2> /dev/null || true
   fi
 }
 
@@ -69,8 +66,7 @@ _install_debian_backports_stack() {
   fi
 
   echo "Installing AMD GPU firmware and Mesa graphics stack from Debian backports (${codename}-backports)..."
-  # Justification: APT pinning (-t <release>-backports) is required for newer Mesa on Debian
-  sudo apt install -y -t "${codename}-backports" \
+  install_packages_from_repo "${codename}-backports" \
     firmware-amd-graphics \
     libegl-mesa0 \
     libgbm1 \
@@ -88,12 +84,11 @@ _install_debian_32bit_packages() {
   if command -v dpkg > /dev/null 2>&1 && dpkg --print-foreign-architectures 2> /dev/null | grep -q "i386"; then
     echo "Configuring 32-bit AMD graphics libraries on Debian..."
     if is_debian_testing "$codename"; then
-      sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
+      install_packages mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
       return 0
     fi
-    # Justification: Multiarch architecture suffix (:i386) with backports pinning
-    sudo apt install -y -t "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null \
-      || sudo apt install -y mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
+    install_packages_from_repo "${codename}-backports" mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null \
+      || install_packages mesa-vulkan-drivers:i386 libgl1-mesa-dri:i386 2> /dev/null || true
   fi
 }
 

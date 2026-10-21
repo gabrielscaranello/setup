@@ -115,11 +115,8 @@ _setup_plasma_start_icon() {
   fi
 }
 
-configure_plasma_preferences() {
-  ensure_kwriteconfig
-
+_configure_plasma_window_manager() {
   echo "Applying KDE Plasma 6 window manager preferences..."
-  # Window Management & Effects (kwinrc)
   plasma_write_config "kwinrc" "Desktops" "Number" "4"
   plasma_write_config "kwinrc" "Desktops" "Rows" "2"
   plasma_write_config "kwinrc" "Desktops" "Name_1" "Desktop 1"
@@ -135,14 +132,16 @@ configure_plasma_preferences() {
   plasma_write_config "kwinrc" "org.kde.kdecoration2" "ButtonsOnRight" "IAX"
   plasma_write_config "kwinrc" "Plugins" "blurEnabled" "true"
   plasma_write_config "kwinrc" "Plugins" "magiclampEnabled" "true"
+}
 
+_configure_plasma_peripherals() {
   echo "Applying KDE Plasma 6 peripherals preferences..."
-  # Mouse & Peripherals (kcminputrc)
   plasma_write_config "kcminputrc" "Mouse" "AccelerationProfile" "flat"
   plasma_write_config "kcminputrc" "Touchpad" "TwoFingerScroll" "true"
+}
 
+_configure_plasma_shortcuts() {
   echo "Applying KDE Plasma 6 keyboard shortcuts..."
-  # Global Shortcuts (kglobalshortcutsrc)
   plasma_write_config "kglobalshortcutsrc" "kwin" "Show Desktop" "Meta+D,Meta+D,Peek at Desktop"
   plasma_write_config "kglobalshortcutsrc" "kwin" "Window Maximize" "Meta+M,Meta+PgUp,Maximize Window"
   plasma_write_config "kglobalshortcutsrc" "kwin" "Window Minimize" "none,Meta+PgDown,Minimize Window"
@@ -157,95 +156,80 @@ configure_plasma_preferences() {
   plasma_write_config "kglobalshortcutsrc" "plasmashell" "show-on-mouse-pos" $'Meta+V\tMeta+Shift+V,Meta+V,Show Clipboard Items at Mouse Position'
   plasma_write_config "kglobalshortcutsrc" "plasmashell" "next activity" "Meta+A,none,Walk Through Activities"
   plasma_write_config "kglobalshortcutsrc" "plasmashell" "previous activity" "Meta+Shift+A,none,Walk Through Activities (Reverse)"
+}
 
+_configure_plasma_appearance_and_session() {
   echo "Applying KDE Plasma 6 appearance, typography and defaults..."
-  # Appearance & Defaults (kdeglobals)
   plasma_apply_colorscheme "BreezeDark"
   plasma_write_config "kdeglobals" "General" "TerminalApplication" "kitty"
   plasma_write_config "kdeglobals" "General" "TerminalService" "kitty.desktop"
   plasma_write_config "kdeglobals" "General" "fixed" "JetBrainsMono Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
 
   echo "Applying KDE Plasma 6 session preferences..."
-  # Session Management (ksmserverrc)
   plasma_write_config "ksmserverrc" "General" "loginMode" "emptySession"
 
   echo "Applying KDE Plasma 6 Dolphin preferences..."
-  # Dolphin (dolphinrc)
   plasma_write_config "dolphinrc" "General" "RememberOpenedTabs" "false"
   plasma_write_config "dolphinrc" "General" "HomeUrl" "file://${HOME}"
+}
 
+_configure_plasma_krunner() {
   echo "Applying KDE Plasma 6 KRunner preferences..."
-  # KRunner (krunnerrc)
   plasma_write_config "krunnerrc" "General" "FreeFloating" "true"
 
-  # Plasma Search Runners (krunnerrc - Plugins)
-  # Enabled runners
-  plasma_write_config "krunnerrc" "Plugins" "krunner_powerdevilEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_servicesEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_systemsettingsEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "helprunnerEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "calculatorEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_appstreamEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "unitconverterEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_colorsEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_killEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "windowsEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_kwinEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_shellEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_placesrunnerEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "locationsEnabled" "true"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_plasma-desktopEnabled" "true"
+  local enabled_runners=(
+    krunner_powerdevilEnabled krunner_servicesEnabled krunner_systemsettingsEnabled
+    helprunnerEnabled calculatorEnabled krunner_appstreamEnabled unitconverterEnabled
+    krunner_colorsEnabled krunner_killEnabled windowsEnabled krunner_kwinEnabled
+    krunner_shellEnabled krunner_placesrunnerEnabled locationsEnabled krunner_plasma-desktopEnabled
+  )
+  local disabled_runners=(
+    baloosearchEnabled browserhistoryEnabled browsertabsEnabled krunner_bookmarksrunnerEnabled
+    krunner_charrunnerEnabled org.kde.datetimeEnabled krunner_dictionaryEnabled
+    krunner_katesessionsEnabled krunner_keysEnabled krunner_konsoleprofilesEnabled
+    krunner_recentdocumentsEnabled krunner_sessionsEnabled krunner_spellcheckEnabled
+    krunner_webshortcutsEnabled org.kde.activities2Enabled
+  )
 
-  # Disabled runners
-  plasma_write_config "krunnerrc" "Plugins" "baloosearchEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "browserhistoryEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "browsertabsEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_bookmarksrunnerEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_charrunnerEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "org.kde.datetimeEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_dictionaryEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_katesessionsEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_keysEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_konsoleprofilesEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_recentdocumentsEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_sessionsEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_spellcheckEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "krunner_webshortcutsEnabled" "false"
-  plasma_write_config "krunnerrc" "Plugins" "org.kde.activities2Enabled" "false"
+  local runner
+  for runner in "${enabled_runners[@]}"; do
+    plasma_write_config "krunnerrc" "Plugins" "$runner" "true"
+  done
+  for runner in "${disabled_runners[@]}"; do
+    plasma_write_config "krunnerrc" "Plugins" "$runner" "false"
+  done
+}
 
+_configure_plasma_notifications() {
   echo "Applying KDE Plasma 6 audio volume preferences..."
-  # Audio Feedback (plasmaparc)
   plasma_write_config "plasmaparc" "General" "AudioFeedback" "false"
 
   echo "Applying KDE Plasma 6 notification sound preferences..."
-  # Notification Sounds (plasma_workspace.notifyrc, oom-notifier.notifyrc, plasma_applet_timer.notifyrc)
-  plasma_write_config "plasma_workspace.notifyrc" "Event/Trash: emptied" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/beep" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/catastrophe" "Action" "Popup"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/deviceAdded" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/deviceRemoved" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/fatalerror" "Action" "Popup"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/messageCritical" "Action" "Taskbar"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/messageInformation" "Action" "Taskbar"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/messageQuestion" "Action" "Taskbar"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/messageWarning" "Action" "Taskbar"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/notification" "Action" "Popup"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/printerror" "Action" "Popup"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/warning" "Action" "Popup"
-  plasma_write_config "plasma_workspace.notifyrc" "Event/startkde" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/startkde" "Sound" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/exitkde" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/exitkde" "Sound" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/cancellogout" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/cancellogout" "Sound" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/login" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/login" "Sound" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/logout" "Action" ""
-  plasma_write_config "plasma_workspace.notifyrc" "Event/logout" "Sound" ""
-  plasma_write_config "kscreenlocker.notifyrc" "Event/locked" "Action" ""
-  plasma_write_config "kscreenlocker.notifyrc" "Event/locked" "Sound" ""
-  plasma_write_config "kscreenlocker.notifyrc" "Event/unlocked" "Action" ""
-  plasma_write_config "kscreenlocker.notifyrc" "Event/unlocked" "Sound" ""
+  local silent_workspace_events=("Trash: emptied" beep deviceAdded deviceRemoved)
+  local popup_workspace_events=(catastrophe fatalerror notification printerror warning)
+  local taskbar_workspace_events=(messageCritical messageInformation messageQuestion messageWarning)
+  local silent_sound_workspace_events=(startkde exitkde cancellogout login logout)
+  local evt
+
+  for evt in "${silent_workspace_events[@]}"; do
+    plasma_write_config "plasma_workspace.notifyrc" "Event/${evt}" "Action" ""
+  done
+  for evt in "${popup_workspace_events[@]}"; do
+    plasma_write_config "plasma_workspace.notifyrc" "Event/${evt}" "Action" "Popup"
+  done
+  for evt in "${taskbar_workspace_events[@]}"; do
+    plasma_write_config "plasma_workspace.notifyrc" "Event/${evt}" "Action" "Taskbar"
+  done
+  for evt in "${silent_sound_workspace_events[@]}"; do
+    plasma_write_config "plasma_workspace.notifyrc" "Event/${evt}" "Action" ""
+    plasma_write_config "plasma_workspace.notifyrc" "Event/${evt}" "Sound" ""
+  done
+
+  for evt in locked unlocked; do
+    plasma_write_config "kscreenlocker.notifyrc" "Event/${evt}" "Action" ""
+    plasma_write_config "kscreenlocker.notifyrc" "Event/${evt}" "Sound" ""
+  done
+
   plasma_write_config "oom-notifier.notifyrc" "Event/catastrophe" "Action" "Popup"
   plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Action" "Popup|Sound"
   plasma_write_config "plasma_applet_timer.notifyrc" "Event/timerFinished" "Sound" "alarm-clock-elapsed"
@@ -259,21 +243,33 @@ configure_plasma_preferences() {
   plasma_write_config "powerdevil.notifyrc" "Event/criticalbattery" "Sound" "battery-low"
   plasma_write_config "polkit-kde-authentication-agent-1.notifyrc" "Event/authenticate" "Action" ""
   plasma_write_config "kwrited.notifyrc" "Event/NewMessage" "Action" "Popup"
+}
 
+_configure_plasma_privacy_and_indexing() {
   echo "Applying KDE Plasma 6 recent files and privacy preferences..."
-  # Recent Files & Privacy (kactivitymanagerd-pluginsrc, kactivitymanagerdrc, krunnerrc)
   plasma_write_config "kactivitymanagerd-pluginsrc" "Plugin-org.kde.ActivityManager.Resources.Scoring" "what-to-remember" "2"
   plasma_write_config "kactivitymanagerdrc" "Plugins" "org.kde.ActivityManager.ResourceScoringEnabled" "false"
   plasma_write_config "krunnerrc" "General" "historyBehavior" "Disabled"
 
   echo "Applying KDE Plasma 6 file indexing (Baloo) preferences..."
-  # File Indexing / Search (baloofilerc)
   plasma_write_config "baloofilerc" "Basic Settings" "Indexing-Enabled" "false"
   if command -v balooctl6 > /dev/null 2>&1; then
     balooctl6 disable > /dev/null 2>&1 || true
   elif command -v balooctl > /dev/null 2>&1; then
     balooctl disable > /dev/null 2>&1 || true
   fi
+}
+
+configure_plasma_preferences() {
+  ensure_kwriteconfig
+
+  _configure_plasma_window_manager
+  _configure_plasma_peripherals
+  _configure_plasma_shortcuts
+  _configure_plasma_appearance_and_session
+  _configure_plasma_krunner
+  _configure_plasma_notifications
+  _configure_plasma_privacy_and_indexing
 
   echo "Applying KDE Plasma 6 panel thickness and non-floating preferences..."
   _ensure_plasma_panel_non_floating

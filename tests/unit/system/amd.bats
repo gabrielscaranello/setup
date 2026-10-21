@@ -138,12 +138,13 @@ setup() {
 
 @test "_install_fedora_32bit_packages installs 32-bit drivers when multilib enabled" {
   export FEDORA_ENABLE_MULTILIB=1
+  _get_package_manager() { echo "dnf"; }
   sudo() { echo "sudo: $*"; return 0; }
 
   run _install_fedora_32bit_packages
   [ "$status" -eq 0 ]
   [[ "$output" =~ "sudo: dnf swap -y mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686" ]]
-  [[ "$output" =~ "sudo: dnf install -y mesa-vulkan-drivers.i686" ]]
+  [[ "$output" =~ "sudo: dnf install -y --allowerasing mesa-vulkan-drivers.i686" ]]
 }
 
 @test "_install_debian_backports_stack installs backports packages with fallback" {
@@ -183,6 +184,7 @@ setup() {
 @test "_install_debian_32bit_packages installs i386 graphics directly on Debian testing/forky" {
   get_debian_codename() { echo "forky"; }
   is_debian_testing() { return 0; }
+  _get_package_manager() { echo "apt"; }
   command() { return 0; }
   dpkg() { echo "i386"; return 0; }
   sudo() { echo "sudo: $*"; return 0; }

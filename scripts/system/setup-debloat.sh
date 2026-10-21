@@ -1,14 +1,16 @@
 #!/bin/bash
 
 # System Packages Debloat & Cleanup Script
-# Removes unused default packages and bloatware on Debian and Fedora,
+# Removes unused default packages and bloatware on Debian, Fedora, and openSUSE,
 # tailored specifically to the active Desktop Environment (GNOME or KDE Plasma).
 # Arch Linux is minimal by default and is gracefully bypassed.
 
 set -euo pipefail
 
-# Follow project conventions: source utility helpers and use private functions
+# Follow project conventions: source utility helpers and package catalogs
 source "scripts/_utils.sh" 2> /dev/null || true
+# shellcheck source=scripts/system/_debloat_packages.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_debloat_packages.sh" 2> /dev/null || source "scripts/system/_debloat_packages.sh"
 
 _filter_installed_debian() {
   local installed=()
@@ -34,7 +36,7 @@ _filter_installed_debian() {
   echo "${installed[@]:-}"
 }
 
-_filter_installed_fedora() {
+_filter_installed_rpm() {
   local installed=()
   for pkg in "$@"; do
     if rpm -q "$pkg" > /dev/null 2>&1; then
@@ -42,73 +44,15 @@ _filter_installed_fedora() {
     fi
   done
   echo "${installed[@]:-}"
+}
+
+_filter_installed_fedora() {
+  _filter_installed_rpm "$@"
 }
 
 _filter_installed_opensuse() {
-  local installed=()
-  for pkg in "$@"; do
-    if rpm -q "$pkg" > /dev/null 2>&1; then
-      installed+=("$pkg")
-    fi
-  done
-  echo "${installed[@]:-}"
+  _filter_installed_rpm "$@"
 }
-
-COMMON_DEBLOAT_PACKAGES=(
-  libreoffice-core
-  xterm
-  kate
-  brasero
-  deja-dup
-  transmission-common
-)
-
-COMMON_GNOME_DEBLOAT_PACKAGES=(
-  totem
-  gnome-music
-  rhythmbox
-  cheese
-  snapshot
-  gnome-photos
-  shotwell
-  gnome-terminal
-  ptyxis
-  evolution
-  gnome-boxes
-  gnome-characters
-  gnome-connections
-  gnome-maps
-  gnome-sound-recorder
-  gnome-tour
-  simple-scan
-  gedit
-  remmina
-  polari
-)
-
-COMMON_PLASMA_DEBLOAT_PACKAGES=(
-  juk
-  konsole
-  konqueror
-  akregator
-  kdepim
-  kdepim-runtime
-  kmail
-  kontact
-  korganizer
-  konversation
-  kamera
-  kcalc
-  kfind
-  kmag
-  kmousetool
-  kmouth
-  kontrast
-  kuiviewer
-  kwalletmanager
-  sweeper
-  skanlite
-)
 
 _debloat_debian() {
   local de
@@ -122,16 +66,10 @@ _debloat_debian() {
 
   case "$de" in
     gnome)
-      targets+=(
-        "${COMMON_GNOME_DEBLOAT_PACKAGES[@]}"
-        gnome-snapshot
-      )
+      targets+=("${COMMON_GNOME_DEBLOAT_PACKAGES[@]}" gnome-snapshot)
       ;;
     plasma)
-      targets+=(
-        dragonplayer
-        "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
-      )
+      targets+=(dragonplayer "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}")
       ;;
     *)
       echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
@@ -171,10 +109,7 @@ _debloat_fedora() {
       )
       ;;
     plasma)
-      targets+=(
-        dragon
-        "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
-      )
+      targets+=(dragon "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}")
       ;;
     *)
       echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
@@ -199,21 +134,13 @@ _debloat_fedora() {
 }
 
 _debloat_opensuse() {
-  local de
+  local de distro
   de="$(get_desktop_environment)"
-  local distro
   distro="$(get_distro_id 2> /dev/null || echo "opensuse-leap")"
 
   local targets=(
     "${COMMON_DEBLOAT_PACKAGES[@]}"
-    libreoffice
-    transmission
-    opensuse-welcome
-    opensuse-welcome-launcher
-    patterns-desktop-multimedia
-    patterns-office-office
-    vim
-    lftp
+    "${OPEN_SUSE_COMMON_DEBLOAT_PACKAGES[@]}"
   )
 
   if [ "$distro" != "opensuse-tumbleweed" ]; then
@@ -222,31 +149,10 @@ _debloat_opensuse() {
 
   case "$de" in
     gnome)
-      targets+=(
-        "${COMMON_GNOME_DEBLOAT_PACKAGES[@]}"
-        dconf-editor
-        gnome-console
-        gnome-packagekit
-        patterns-gnome-gnome_games
-        patterns-gnome-gnome_multimedia
-        patterns-gnome-gnome_office
-        patterns-gnome-gnome_utilities
-        system-config-printer
-        vinagre
-      )
+      targets+=("${COMMON_GNOME_DEBLOAT_PACKAGES[@]}" "${OPEN_SUSE_GNOME_DEBLOAT_PACKAGES[@]}")
       ;;
     plasma)
-      targets+=(
-        dragonplayer
-        "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}"
-        feh
-        icewm
-        patterns-kde-kde_games
-        patterns-kde-kde_multimedia
-        patterns-kde-kde_office
-        patterns-kde-kde_pim
-        patterns-kde-kde_utilities
-      )
+      targets+=(dragonplayer "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}" "${OPEN_SUSE_PLASMA_DEBLOAT_PACKAGES[@]}")
       ;;
     *)
       echo "Desktop environment '$de' is unknown or generic; applying only common debloat."

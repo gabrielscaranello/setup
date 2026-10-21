@@ -188,75 +188,49 @@ _set_default_office_suite() {
   echo "Default office suite configured successfully."
 }
 
+# Resolves a desktop launcher prioritizing Plasma or GNOME candidates based on active DE.
+# Usage: _resolve_de_desktop_app "<plasma_candidates>" "<default_candidates>"
+_resolve_de_desktop_app() {
+  local -a candidates
+  if [ "$(get_desktop_environment)" = "plasma" ]; then
+    read -r -a candidates <<< "$1"
+  else
+    read -r -a candidates <<< "$2"
+  fi
+  resolve_desktop_app "${candidates[@]}"
+}
+
 _set_default_file_manager() {
-  local de
-  de="$(get_desktop_environment)"
   local desktop_file
-
-  case "$de" in
-    plasma)
-      desktop_file="$(resolve_desktop_app "org.kde.dolphin.desktop" "dolphin.desktop" "org.gnome.Nautilus.desktop" "nautilus.desktop")"
-      ;;
-    *)
-      desktop_file="$(resolve_desktop_app "org.gnome.Nautilus.desktop" "nautilus.desktop" "org.kde.dolphin.desktop" "dolphin.desktop")"
-      ;;
-  esac
-
-  local dir_mimes=(
-    "inode/directory"
-  )
+  desktop_file="$(_resolve_de_desktop_app \
+    "org.kde.dolphin.desktop dolphin.desktop org.gnome.Nautilus.desktop nautilus.desktop" \
+    "org.gnome.Nautilus.desktop nautilus.desktop org.kde.dolphin.desktop dolphin.desktop")"
 
   echo "Setting $desktop_file as the default file manager..."
-  _set_mime_default "$desktop_file" "${dir_mimes[@]}"
+  _set_mime_default "$desktop_file" "inode/directory"
   echo "Default file manager configured successfully."
 }
 
 _set_default_pdf_viewer() {
-  local de
-  de="$(get_desktop_environment)"
   local desktop_file
-
-  case "$de" in
-    plasma)
-      desktop_file="$(resolve_desktop_app "org.kde.okular.desktop" "okular.desktop" "org.gnome.Papers.desktop" "papers.desktop" "org.gnome.Evince.desktop" "evince.desktop")"
-      ;;
-    *)
-      desktop_file="$(resolve_desktop_app "org.gnome.Papers.desktop" "papers.desktop" "org.gnome.Evince.desktop" "evince.desktop" "org.kde.okular.desktop" "okular.desktop")"
-      ;;
-  esac
-
-  local pdf_mimes=(
-    "application/pdf"
-    "application/x-pdf"
-  )
+  desktop_file="$(_resolve_de_desktop_app \
+    "org.kde.okular.desktop okular.desktop org.gnome.Papers.desktop papers.desktop org.gnome.Evince.desktop evince.desktop" \
+    "org.gnome.Papers.desktop papers.desktop org.gnome.Evince.desktop evince.desktop org.kde.okular.desktop okular.desktop")"
 
   echo "Setting $desktop_file as the default PDF viewer..."
-  _set_mime_default "$desktop_file" "${pdf_mimes[@]}"
+  _set_mime_default "$desktop_file" "application/pdf" "application/x-pdf"
   echo "Default PDF viewer configured successfully."
 }
 
 _set_default_image_viewer() {
-  local de
-  de="$(get_desktop_environment)"
   local desktop_file
-
-  case "$de" in
-    plasma)
-      desktop_file="$(resolve_desktop_app "org.kde.gwenview.desktop" "gwenview.desktop" "org.gnome.Loupe.desktop" "eog.desktop")"
-      ;;
-    *)
-      desktop_file="$(resolve_desktop_app "org.gnome.Loupe.desktop" "eog.desktop" "org.kde.gwenview.desktop" "gwenview.desktop")"
-      ;;
-  esac
+  desktop_file="$(_resolve_de_desktop_app \
+    "org.kde.gwenview.desktop gwenview.desktop org.gnome.Loupe.desktop eog.desktop" \
+    "org.gnome.Loupe.desktop eog.desktop org.kde.gwenview.desktop gwenview.desktop")"
 
   local image_mimes=(
-    "image/jpeg"
-    "image/png"
-    "image/gif"
-    "image/webp"
-    "image/bmp"
-    "image/tiff"
-    "image/x-png"
+    "image/jpeg" "image/png" "image/gif" "image/webp"
+    "image/bmp" "image/tiff" "image/x-png"
   )
 
   echo "Setting $desktop_file as the default image viewer..."
@@ -265,26 +239,13 @@ _set_default_image_viewer() {
 }
 
 _set_default_text_editor() {
-  local de
-  de="$(get_desktop_environment)"
   local desktop_file
-
-  case "$de" in
-    plasma)
-      desktop_file="$(resolve_desktop_app "org.kde.ghostwriter.desktop" "ghostwriter.desktop" "org.gnome.TextEditor.desktop" "gedit.desktop")"
-      ;;
-    *)
-      desktop_file="$(resolve_desktop_app "org.gnome.TextEditor.desktop" "gedit.desktop" "org.kde.ghostwriter.desktop" "ghostwriter.desktop")"
-      ;;
-  esac
-
-  local text_mimes=(
-    "text/plain"
-    "text/markdown"
-  )
+  desktop_file="$(_resolve_de_desktop_app \
+    "org.kde.ghostwriter.desktop ghostwriter.desktop org.gnome.TextEditor.desktop gedit.desktop" \
+    "org.gnome.TextEditor.desktop gedit.desktop org.kde.ghostwriter.desktop ghostwriter.desktop")"
 
   echo "Setting $desktop_file as the default text editor..."
-  _set_mime_default "$desktop_file" "${text_mimes[@]}"
+  _set_mime_default "$desktop_file" "text/plain" "text/markdown"
   echo "Default text editor configured successfully."
 }
 

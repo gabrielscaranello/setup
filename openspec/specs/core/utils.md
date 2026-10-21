@@ -249,7 +249,7 @@ The utility function `enable_cron_service` SHALL resolve and activate the distri
 
 ### Requirement: GPU Vendor Detection
 
-The utility function `get_gpu_vendor` SHALL inspect physical PCI devices via `lspci` to detect active GPU hardware, supporting environment override via `GPU_VENDOR`.
+The utility function `get_gpu_vendor` SHALL inspect physical PCI devices via `lspci` (delegating to `has_nvidia_gpu`, `has_amd_gpu`, and `has_intel_gpu` from `scripts/system/_gpu_utils.sh`) to detect active GPU hardware, supporting environment override via `GPU_VENDOR`.
 
 #### Scenario: GPU vendor detection via lspci
 
@@ -258,3 +258,14 @@ The utility function `get_gpu_vendor` SHALL inspect physical PCI devices via `ls
 - **THEN** it SHALL return `nvidia`, `amd`, or `intel` respectively
 - **AND** if no physical GPU matches, it SHALL return `unknown`
 - **AND** if `GPU_VENDOR` is exported in the environment, it SHALL honor the override value
+
+---
+
+### Requirement: Extended Package Manager Abstractions (`scripts/utils/_packages.sh`)
+
+To enforce Dependency Inversion (DIP) and Open/Closed (OCP) principles across all setup scripts:
+
+- `_resolve_pm_metadata` SHALL map distribution identifiers and package manager names to `<package_manager>|<packages.conf_column>` in a single place, dispatching to per-manager adapters (`_pm_<manager>_install`, `_pm_<manager>_remove`, `_pm_<manager>_upgrade`, `_pm_<manager>_is_installed`).
+- `install_packages_from_repo <repo_or_suite> <pkg>...` SHALL abstract suite/repository-pinned installations (`apt install -y -t <suite>` and `zypper --non-interactive install -y --from <repo>`).
+- `swap_packages [--allowerasing] <old_pkg> <new_pkg>` SHALL abstract package replacement with install fallback on DNF (`dnf swap -y`).
+- `remove_packages [--autoremove] <pkg>...`, `lock_packages <pkg>...`, and `upgrade_system` SHALL abstract removal, locking, and full-system upgrades across all supported package managers.

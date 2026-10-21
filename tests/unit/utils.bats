@@ -780,3 +780,34 @@ EOF
   run lock_packages foo
   [ -z "$output" ]
 }
+
+@test "install_packages_from_repo pins to suite on apt and repo on zypper" {
+  source /setup/scripts/_utils.sh
+  sudo() { echo "sudo $*"; }
+
+  run install_packages_from_repo "trixie-backports" linux-image-amd64
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo apt install -y -t trixie-backports linux-image-amd64" ]]
+
+  run install_packages_from_repo "Kernel:stable" kernel-default
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo zypper --non-interactive install -y --from Kernel:stable kernel-default" ]]
+
+  _get_package_manager() { echo "pacman"; }
+  run install_packages_from_repo "custom-repo" foo
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported package manager for repository pinning" ]]
+}
+
+@test "swap_packages uses dnf swap with optional --allowerasing" {
+  source /setup/scripts/_utils.sh
+  sudo() { echo "sudo $*"; }
+
+  run swap_packages mesa-va-drivers mesa-va-drivers-freeworld
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld" ]]
+
+  run swap_packages --allowerasing ffmpeg-free ffmpeg
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing" ]]
+}

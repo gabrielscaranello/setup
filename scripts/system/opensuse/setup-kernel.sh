@@ -10,9 +10,8 @@ _install_backports_kernel_leap() {
   add_opensuse_kernel_backports_repo
 
   echo "Installing latest Linux kernel and headers from Kernel:stable..."
-  # Justification: Specific repository selection (--from) to install the newer stable kernel
-  sudo zypper --non-interactive install -y --from Kernel:stable kernel-default kernel-default-devel 2> /dev/null \
-    || sudo zypper --non-interactive install -y --from Kernel_stable kernel-default kernel-default-devel 2> /dev/null \
+  install_packages_from_repo "Kernel:stable" kernel-default kernel-default-devel 2> /dev/null \
+    || install_packages_from_repo "Kernel_stable" kernel-default kernel-default-devel 2> /dev/null \
     || install_packages kernel-default kernel-default-devel
 }
 

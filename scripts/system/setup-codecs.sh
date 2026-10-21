@@ -9,8 +9,7 @@ source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 _swap_fedora_ffmpeg() {
   if rpm -q ffmpeg-free > /dev/null 2>&1 && ! rpm -q ffmpeg > /dev/null 2>&1; then
     echo "Swapping ffmpeg-free for full ffmpeg from RPM Fusion..."
-    sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing 2> /dev/null \
-      || sudo dnf install -y --allowerasing ffmpeg 2> /dev/null || true
+    swap_packages --allowerasing ffmpeg-free ffmpeg
   fi
 }
 

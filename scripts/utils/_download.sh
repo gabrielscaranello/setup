@@ -65,6 +65,29 @@ is_version_up_to_date() {
   return 1
 }
 
+_download_and_extract_tarball() {
+  local name="$1"
+  local download_url="$2"
+  local output_file="$3"
+  local extract_dir="$4"
+
+  echo "Downloading ${name}..."
+  download_file "$download_url" "$output_file" || return 1
+
+  echo "Extracting ${name}..."
+  mkdir -p "$extract_dir"
+  tar -xzf "$output_file" -C "$extract_dir"
+}
+
+_install_extracted_binary() {
+  local name="$1"
+  local src_bin="$2"
+  local target_dir="$3"
+
+  echo "Installing ${name} to ${target_dir}..."
+  sudo install "$src_bin" "$target_dir/"
+}
+
 # Downloads, extracts and installs a single binary from a GitHub Releases tar.gz archive.
 #
 # Usage:
@@ -92,21 +115,8 @@ install_github_binary() {
   output_file="${work_dir}/${file_name}"
   extract_dir="${work_dir}/extract"
 
-  echo "Downloading ${name}..."
-  if ! download_file "$download_url" "$output_file"; then
-    rm -rf "$work_dir"
-    return 1
-  fi
-
-  echo "Extracting ${name}..."
-  mkdir -p "$extract_dir"
-  if ! tar -xzf "$output_file" -C "$extract_dir"; then
-    rm -rf "$work_dir"
-    return 1
-  fi
-
-  echo "Installing ${name} to ${target_dir}..."
-  if ! sudo install "$extract_dir/$bin_name" "$target_dir/"; then
+  if ! _download_and_extract_tarball "$name" "$download_url" "$output_file" "$extract_dir" \
+    || ! _install_extracted_binary "$name" "$extract_dir/$bin_name" "$target_dir"; then
     rm -rf "$work_dir"
     return 1
   fi

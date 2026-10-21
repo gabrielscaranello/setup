@@ -20,9 +20,8 @@ _install_debian_driver() {
   fi
 
   echo "Installing kernel headers, firmware, and NVIDIA driver on Debian from backports (${codename}-backports)..."
-  # Justification: APT pinning (-t <release>-backports) required for newer NVIDIA drivers on Debian
-  sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings 2> /dev/null \
-    || sudo apt install -y -t "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 2> /dev/null \
+  install_packages_from_repo "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings 2> /dev/null \
+    || install_packages_from_repo "${codename}-backports" nvidia-driver firmware-misc-nonfree linux-headers-amd64 2> /dev/null \
     || install_packages linux-headers-amd64 firmware-misc-nonfree nvidia-driver nvidia-smi nvidia-settings
 }
 
@@ -44,13 +43,13 @@ _install_opensuse_driver() {
 
   if [ "$version" = "tumbleweed" ]; then
     echo "openSUSE Tumbleweed utilizes native upstream kernel graphics drivers. Ensuring utilities..."
-    install_packages nvidia-settings suse-prime 2> /dev/null || true
+    install_packages nvidia-settings suse-prime
     return 0
   fi
 
   echo "Installing NVIDIA driver on openSUSE Leap (${version})..."
   install_packages x11-video-nvidiaG06 nvidia-settings suse-prime 2> /dev/null \
-    || install_packages x11-video-nvidiaG06 2> /dev/null || true
+    || install_packages x11-video-nvidiaG06
 }
 
 _install_driver_packages() {
