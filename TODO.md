@@ -146,6 +146,16 @@ Implementation roadmap for full openSUSE Leap 16.1 and openSUSE Tumbleweed suppo
 
 ---
 
+## 🐧 Milestone 3.0: WSL2 Development Environment [Concluído]
+
+- [x] Add WSL environment detection helper (`is_wsl`) — `scripts/utils/_system.sh`
+- [x] Decouple CLI utilities, Zsh default shell, and `wl-clipboard` from physical hardware packages — `scripts/terminal/setup-cli.sh`, `scripts/system/setup-packages.sh`
+- [x] Implement WSL-exclusive GitHub CLI (`gh`) setup script — `scripts/toolchain/setup-gh.sh`
+- [x] Implement Python 3, `pip`, and `venv` setup script — `scripts/toolchain/setup-python.sh`
+- [x] Create WSL development runner and auto-delegation in `main.sh` — `runners/wsl.sh`, `runners/main.sh`
+
+---
+
 ## 🔮 Future Secondary Distributions
 
 - [ ] Vanilla Ubuntu (GNOME)

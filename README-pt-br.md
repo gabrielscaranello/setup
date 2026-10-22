@@ -49,6 +49,7 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 | **Fedora 44**                | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`)     |
 | **Arch Linux**               | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)         |
 | **openSUSE Leap/Tumbleweed** | `zypper`               | GNOME, KDE Plasma       | `runners/opensuse.sh` (`./main.sh opensuse`) |
+| **WSL2 (Arch / Debian 13)**  | `pacman` / `apt`       | CLI / WSLg              | `runners/wsl.sh` (`./main.sh wsl`)           |
 
 ⚡️ Começando (rápido)
 ---------------------
@@ -64,6 +65,7 @@ make all # Ou: ./main.sh all / ./main.sh
 ./main.sh fedora   # Executa o pipeline completo do Fedora 44
 ./main.sh arch     # Executa o pipeline completo do Arch Linux
 ./main.sh opensuse # Executa o pipeline completo do openSUSE (Leap / Tumbleweed)
+./main.sh wsl      # Executa o pipeline de desenvolvimento para WSL (CLI, Zsh, Gitflow, gh, Python, Go, Rust, NVM, Lazygit, Lazydocker, Neovim)
 
 # Módulos ou ferramentas individuais:
 make neovim   # Ou: ./main.sh neovim
