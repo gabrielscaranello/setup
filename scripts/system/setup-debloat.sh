@@ -39,7 +39,7 @@ _filter_installed_debian() {
 _filter_installed_rpm() {
   local installed=()
   for pkg in "$@"; do
-    if rpm -q "$pkg" > /dev/null 2>&1; then
+    if is_package_installed "$pkg"; then
       installed+=("$pkg")
     fi
   done

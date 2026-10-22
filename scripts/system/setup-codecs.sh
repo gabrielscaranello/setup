@@ -7,7 +7,7 @@ source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _swap_fedora_ffmpeg() {
-  if rpm -q ffmpeg-free > /dev/null 2>&1 && ! rpm -q ffmpeg > /dev/null 2>&1; then
+  if is_package_installed ffmpeg-free && ! is_package_installed ffmpeg; then
     echo "Swapping ffmpeg-free for full ffmpeg from RPM Fusion..."
     swap_packages --allowerasing ffmpeg-free ffmpeg
   fi

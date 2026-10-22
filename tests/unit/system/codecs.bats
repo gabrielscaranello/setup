@@ -32,6 +32,7 @@ setup() {
 }
 
 @test "_swap_fedora_ffmpeg swaps ffmpeg-free for ffmpeg when ffmpeg-free is present" {
+  get_distro_id() { echo "fedora"; }
   rpm() {
     if [ "$2" = "ffmpeg-free" ]; then return 0; fi
     if [ "$2" = "ffmpeg" ]; then return 1; fi

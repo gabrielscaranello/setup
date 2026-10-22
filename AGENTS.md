@@ -42,6 +42,8 @@ Common operations must reuse helper functions from `scripts/_utils.sh` (which so
 - `configure_de_wallpaper <wallpaper_path>`: Sets the desktop wallpaper idempotently on GNOME or KDE Plasma.
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+- `get_os_release_field <KEY>`: Reads a field from os-release (honors `OS_RELEASE_PATH`, falls back to `/usr/lib/os-release`).
+- `update_grub_config`: Regenerates the GRUB configuration with `grub2-mkconfig`, `grub-mkconfig` or `update-grub`, whichever is available.
 - `get_gpu_vendor`: Returns detected physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
 - `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch/openSUSE).
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.

@@ -38,6 +38,7 @@ setup() {
 }
 
 @test "_filter_installed_fedora filters packages matching rpm -q" {
+  get_distro_id() { echo "fedora"; }
   rpm() {
     if [ "$2" = "installed-pkg" ]; then
       return 0
@@ -167,6 +168,7 @@ setup() {
 }
 
 @test "_filter_installed_opensuse filters packages matching rpm -q" {
+  get_distro_id() { echo "opensuse-tumbleweed"; }
   rpm() {
     if [ "$2" = "installed-pkg" ]; then
       return 0

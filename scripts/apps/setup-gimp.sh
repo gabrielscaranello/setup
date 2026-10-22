@@ -24,7 +24,7 @@ _install_gimp() {
           remove_packages gimp 2> /dev/null || true
         fi
       elif [ "$distro" != "opensuse-tumbleweed" ]; then
-        if rpm -q gimp > /dev/null 2>&1; then
+        if is_package_installed gimp; then
           echo "Removing native GIMP from openSUSE Leap to prevent duplicate launchers..."
           remove_packages gimp 2> /dev/null || true
           lock_packages gimp 2> /dev/null || true
