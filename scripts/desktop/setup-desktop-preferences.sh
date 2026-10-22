@@ -59,7 +59,6 @@ EOF
 }
 
 main() {
-  set -euo pipefail
   local de
   de="$(get_desktop_environment)"
 

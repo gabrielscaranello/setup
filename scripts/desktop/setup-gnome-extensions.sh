@@ -90,7 +90,7 @@ _download_and_install_extension() {
   full_download_url="$(_resolve_extension_url "$download_url")"
 
   local tmp_zip
-  tmp_zip="$(mktemp /tmp/gnome_ext_XXXXXX.zip)"
+  tmp_zip="$(mktemp "${TMPDIR:-/tmp}/gnome_ext_XXXXXX.zip")"
   if download_file "$full_download_url" "$tmp_zip"; then
     _install_extension_archive "$tmp_zip"
     _enable_extension "$uuid"

@@ -54,7 +54,6 @@ _configure_arch_update() {
 }
 
 main() {
-  set -euo pipefail
   local de
   de="$(get_desktop_environment)"
 

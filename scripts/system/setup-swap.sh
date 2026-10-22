@@ -136,11 +136,6 @@ _create_standard_swapfile() {
   sudo mkswap "$swap_file"
 }
 
-_enable_swapfile() {
-  local swap_file="$1"
-  sudo swapon "$swap_file" 2> /dev/null || true
-}
-
 _persist_swapfile_in_fstab() {
   local swap_file="$1"
   if [ -f /etc/fstab ] && ! grep -q "^$swap_file" /etc/fstab; then
@@ -169,7 +164,7 @@ _configure_swapfile() {
     _create_standard_swapfile "$swap_file" "$size_gb"
   fi
 
-  _enable_swapfile "$swap_file"
+  sudo swapon "$swap_file" 2> /dev/null || true
   _persist_swapfile_in_fstab "$swap_file"
 
   echo "Swapfile $swap_file configured successfully."

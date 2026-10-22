@@ -10,7 +10,6 @@ THEME_NAME="Papirus-Dark"
 DEFAULT_FOLDER_COLOR="adwaita"
 FOLDER_COLOR="${FOLDER_COLOR:-$DEFAULT_FOLDER_COLOR}"
 FOLDERS_UPSTREAM_REPO="PapirusDevelopmentTeam/papirus-folders"
-ICON_UPSTREAM_REPO="PapirusDevelopmentTeam/papirus-icon-theme"
 
 _is_icon_theme_installed() {
   is_theme_installed "icons" "$THEME_NAME"
