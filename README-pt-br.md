@@ -43,13 +43,13 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 🐧 Distribuições & Ambientes Gráficos Suportados
 ------------------------------------------------
 
-| Distribuição                 | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                              |
-| :--------------------------- | :--------------------- | :---------------------- | :------------------------------------------- |
-| **Debian 13 (Trixie)**       | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`)     |
-| **Fedora 44**                | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`)     |
-| **Arch Linux**               | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)         |
-| **openSUSE Leap/Tumbleweed** | `zypper`               | GNOME, KDE Plasma       | `runners/opensuse.sh` (`./main.sh opensuse`) |
-| **WSL2 (Arch / Debian 13)**  | `pacman` / `apt`       | CLI / WSLg              | `runners/wsl.sh` (`./main.sh wsl`)           |
+| Distribuição                 | Gerenciador de Pacotes | Ambientes Gráficos (DE) | Runner Dedicado                                                              |
+| :--------------------------- | :--------------------- | :---------------------- | :--------------------------------------------------------------------------- |
+| **Debian 13 (Trixie)**       | `apt`                  | GNOME, KDE Plasma       | `runners/debian.sh` (`./main.sh debian`)                                     |
+| **Fedora 44**                | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`)                                     |
+| **Arch Linux**               | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)                                         |
+| **openSUSE Leap/Tumbleweed** | `zypper`               | GNOME, KDE Plasma       | `runners/opensuse.sh` (`./main.sh opensuse`)                                 |
+| **WSL2 (Arch / Debian 13)**  | `pacman` / `apt`       | CLI / WSLg              | `runners/wsl.sh` (`./main.sh wsl`) — [Guia de Instalação](docs/wsl-pt-br.md) |
 
 ⚡️ Começando (rápido)
 ---------------------
@@ -92,6 +92,7 @@ make clean            # Limpa artefatos temporários
 - `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`, `utils/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes (carregadas de `scripts/utils/*.sh`)
 - `scripts/packages.conf` — Mapeamento declarativo de pacotes entre distros
+- `docs/` — Guias e documentações complementares (ex: [Guia de Instalação e Provisionamento do WSL2](docs/wsl-pt-br.md))
 - `openspec/` — Especificações de capacidades orientadas a testes (Spec-Driven Development / SDD)
 - `tests/` — Testes unitários (Bats) e de integração multi-distro (Docker)
 - `.husky/` — Git hooks (`pre-commit` executando `lint-staged`, `commit-msg` validando Conventional Commits)
@@ -105,6 +106,7 @@ make clean            # Limpa artefatos temporários
 
 ## 📖 Mais informações
 
+- Consulte o [docs/wsl-pt-br.md](docs/wsl-pt-br.md) para o guia oficial de instalação do WSL2 (Arch Linux, Debian 13, `systemd` e disco persistente `.vhdx` `ext4` compartilhado).
 - Consulte o arquivo [TODO.md](TODO.md) para o roadmap do projeto, funcionalidades implementadas e tarefas planejadas.
 - Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
 - Consulte o arquivo [AGENTS.md](AGENTS.md) para regras operacionais de IA e governança de arquitetura.
