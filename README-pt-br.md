@@ -49,7 +49,7 @@ Este projeto nasceu para unificar e centralizar diversos repositórios isolados 
 | **Fedora 44**                | `dnf`                  | GNOME, KDE Plasma       | `runners/fedora.sh` (`./main.sh fedora`)                                     |
 | **Arch Linux**               | `pacman`               | GNOME, KDE Plasma       | `runners/arch.sh` (`./main.sh arch`)                                         |
 | **openSUSE Leap/Tumbleweed** | `zypper`               | GNOME, KDE Plasma       | `runners/opensuse.sh` (`./main.sh opensuse`)                                 |
-| **WSL (Arch / Debian 13)**   | `pacman` / `apt`       | CLI / WSLg              | `runners/wsl.sh` (`./main.sh wsl`) — [Guia de Instalação](docs/wsl-pt-br.md) |
+| **WSL (Debian 13)**          | `apt`                  | CLI / WSLg              | `runners/wsl.sh` (`./main.sh wsl`) — [Guia de Instalação](docs/wsl-pt-br.md) |
 
 ⚡️ Começando (rápido)
 ---------------------
@@ -106,7 +106,7 @@ make clean            # Limpa artefatos temporários
 
 ## 📖 Mais informações
 
-- Consulte o [docs/wsl-pt-br.md](docs/wsl-pt-br.md) para o guia oficial de instalação do WSL 3 (Arch Linux, Debian 13, `systemd`, JetBrains Mono Nerd Font e disco persistente `.vhdx` `ext4` compartilhado).
+- Consulte o [docs/wsl-pt-br.md](docs/wsl-pt-br.md) para o guia oficial de instalação do WSL 3 (Debian 13, `systemd`, JetBrains Mono Nerd Font e disco persistente `.vhdx` `ext4`).
 - Consulte o arquivo [TODO.md](TODO.md) para o roadmap do projeto, funcionalidades implementadas e tarefas planejadas.
 - Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
 - Consulte o arquivo [AGENTS.md](AGENTS.md) para regras operacionais de IA e governança de arquitetura.

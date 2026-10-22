@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Installs the official GitHub CLI (`gh`) via native distribution repositories (`github-cli` generic package mapping) exclusively when running inside a Windows Subsystem for Linux (WSL) environment.
+Installs the official GitHub CLI (`gh`) via the native Debian repository exclusively when running inside a Debian Windows Subsystem for Linux (WSL) environment.
 
 ---
 
@@ -12,9 +12,9 @@ Installs the official GitHub CLI (`gh`) via native distribution repositories (`g
 
 The script SHALL inspect the execution environment via `is_wsl`. When not running inside WSL, it SHALL print an informative message and exit gracefully with code 0 without installing any packages.
 
-### Requirement: Distribution Validation & Native Package Installation
+### Requirement: Debian Distribution Validation & Native Package Installation
 
-When running inside WSL, the script SHALL validate that the target distribution is supported via `require_supported_distro` and install `github-cli` via `install_packages github-cli` (`gh` on Debian, Fedora, and openSUSE; `github-cli` on Arch Linux).
+When running inside WSL, the script SHALL validate that the target distribution is `debian` via `is_distro "debian"` and install `gh` via `install_packages gh`. If invoked inside WSL on any other distribution, it SHALL print an error message to `stderr` and exit with code 1.
 
 #### Scenario: Running outside WSL (Bare Metal or Standard Container)
 
@@ -22,21 +22,21 @@ When running inside WSL, the script SHALL validate that the target distribution 
 - **WHEN** `scripts/toolchain/setup-gh.sh` runs
 - **THEN** it SHALL output a message indicating GitHub CLI setup is restricted to WSL and exit with code 0
 
-#### Scenario: Running inside WSL on a supported distribution
+#### Scenario: Running inside WSL on Debian
 
-- **GIVEN** `is_wsl` returns 0 and `require_supported_distro` succeeds (`debian`, `fedora`, `arch`, `opensuse-leap`, `opensuse-tumbleweed`, or `opensuse`)
+- **GIVEN** `is_wsl` returns 0 and `is_distro "debian"` returns 0
 - **WHEN** `scripts/toolchain/setup-gh.sh` runs
-- **THEN** `github-cli` SHALL be installed via `install_packages github-cli`
+- **THEN** `gh` SHALL be installed via `install_packages gh`
 - **AND** the `gh` binary SHALL be available in `PATH`
 
-#### Scenario: Running inside WSL on an unsupported distribution
+#### Scenario: Running inside WSL on a non-Debian distribution
 
-- **GIVEN** `is_wsl` returns 0 and `require_supported_distro` returns 1
+- **GIVEN** `is_wsl` returns 0 and `is_distro "debian"` returns 1
 - **WHEN** `scripts/toolchain/setup-gh.sh` runs
 - **THEN** it SHALL exit with code 1 and write an error message to `stderr`
 
-#### Scenario: Re-running setup-gh inside WSL (Idempotency)
+#### Scenario: Re-running setup-gh inside WSL on Debian (Idempotency)
 
-- **GIVEN** `gh` is already installed inside WSL
+- **GIVEN** `gh` is already installed inside Debian WSL
 - **WHEN** `scripts/toolchain/setup-gh.sh` is re-run
 - **THEN** package installation SHALL succeed idempotently with exit code 0

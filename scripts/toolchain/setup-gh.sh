@@ -11,10 +11,13 @@ _install_gh() {
     return 0
   fi
 
-  require_supported_distro > /dev/null || return 1
+  if ! is_distro "debian"; then
+    echo "Error: GitHub CLI WSL setup is only supported on Debian." >&2
+    return 1
+  fi
 
   echo "Installing GitHub CLI from distribution repository..."
-  install_packages github-cli
+  install_packages gh
 }
 
 main() {

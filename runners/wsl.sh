@@ -19,7 +19,10 @@ WSL_STEPS=(
 )
 
 run_all() {
-  require_supported_distro > /dev/null || return 1
+  if ! is_distro "debian"; then
+    echo "Error: WSL development pipeline is only supported on Debian." >&2
+    return 1
+  fi
   run_pipeline "WSL Development Setup" "${WSL_STEPS[@]}"
 }
 

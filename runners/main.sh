@@ -52,16 +52,21 @@ run_all() {
   local distro entry d_id d_label d_script
   distro="$(get_distro_id 2> /dev/null || true)"
 
+  if is_wsl; then
+    if [ "$distro" != "debian" ]; then
+      echo "Unsupported WSL distribution: '${distro:-unknown}'. Only 'debian' is supported in WSL." >&2
+      return 1
+    fi
+    echo "Delegating complete setup to WSL (Debian) runner..."
+    bash "$RUNNERS_DIR/wsl.sh"
+    return 0
+  fi
+
   for entry in "${DISTRO_RUNNERS[@]}"; do
     IFS='|' read -r d_id d_label d_script <<< "$entry"
     if [ "$d_id" = "$distro" ]; then
-      if is_wsl; then
-        echo "Delegating complete setup to WSL (${d_label}) runner..."
-        bash "$RUNNERS_DIR/wsl.sh"
-      else
-        echo "Delegating complete setup to ${d_label} runner..."
-        bash "$RUNNERS_DIR/${d_script}"
-      fi
+      echo "Delegating complete setup to ${d_label} runner..."
+      bash "$RUNNERS_DIR/${d_script}"
       return 0
     fi
   done

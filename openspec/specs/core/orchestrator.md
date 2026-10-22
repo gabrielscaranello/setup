@@ -17,7 +17,7 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 ### 2. Automatic Distribution Delegation (`run_all`)
 
-- When `is_wsl` returns 0 on a supported distribution, delegates full setup pipeline to `runners/wsl.sh`.
+- When `is_wsl` returns 0 on `debian`, delegates full setup pipeline to `runners/wsl.sh`; on any other distribution inside WSL, outputs an informative error message and exits with status 1.
 - Otherwise, queries `get_distro_id` to detect the running Linux distribution and delegates full setup pipeline to the dedicated runner:
   - `debian`: executes `runners/debian.sh`
   - `fedora`: executes `runners/fedora.sh`

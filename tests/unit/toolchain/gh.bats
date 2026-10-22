@@ -11,32 +11,27 @@
   [[ "$output" =~ "restricted to WSL environments, skipping" ]]
 }
 
-@test "_install_gh fails when distribution is unsupported inside WSL" {
+@test "_install_gh fails when distribution is not debian inside WSL" {
   source /setup/scripts/toolchain/setup-gh.sh
   is_wsl() { return 0; }
-  get_distro_id() {
-    echo "unknown-distro"
-    return 1
-  }
+  is_distro() { return 1; }
   run _install_gh
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported distribution" ]]
+  [[ "$output" =~ "only supported on Debian" ]]
 }
 
-@test "_install_gh installs github-cli on supported distributions inside WSL" {
+@test "_install_gh installs gh on debian inside WSL" {
   source /setup/scripts/toolchain/setup-gh.sh
   is_wsl() { return 0; }
+  is_distro() { [ "$1" = "debian" ]; }
   install_packages() {
     echo "installed: $*"
     return 0
   }
 
-  for distro in debian fedora arch opensuse-leap opensuse-tumbleweed; do
-    require_supported_distro() { echo "$distro"; }
-    run _install_gh
-    [ "$status" -eq 0 ]
-    [[ "$output" =~ "installed: github-cli" ]]
-  done
+  run _install_gh
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "installed: gh" ]]
 }
 
 @test "main executes _install_gh and outputs completion message" {

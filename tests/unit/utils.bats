@@ -813,17 +813,6 @@ EOF
   [[ "$output" =~ "sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing" ]]
 }
 
-@test "_get_package_name resolves github-cli for all managers and distros" {
-  [ "$(_get_package_name "github-cli" "apt")" = "gh" ]
-  [ "$(_get_package_name "github-cli" "dnf")" = "gh" ]
-  [ "$(_get_package_name "github-cli" "pacman")" = "github-cli" ]
-  [ "$(_get_package_name "github-cli" "zypper")" = "gh" ]
-  [ "$(_get_package_name "github-cli" "debian")" = "gh" ]
-  [ "$(_get_package_name "github-cli" "fedora")" = "gh" ]
-  [ "$(_get_package_name "github-cli" "arch")" = "github-cli" ]
-  [ "$(_get_package_name "github-cli" "opensuse-tumbleweed")" = "gh" ]
-}
-
 @test "_get_package_name resolves python3 and python-pip for all managers and distros" {
   [ "$(_get_package_name "python3" "debian")" = "python3" ]
   [ "$(_get_package_name "python3" "fedora")" = "python3" ]
@@ -846,7 +835,7 @@ EOF
   WSL_DISTRO_NAME="" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
   [ "$status" -eq 1 ]
 
-  WSL_DISTRO_NAME="Arch" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
+  WSL_DISTRO_NAME="Debian" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
   [ "$status" -eq 0 ]
 
   touch "$fake_interop"

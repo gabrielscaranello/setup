@@ -43,13 +43,13 @@ This project was created to unify and centralize several standalone distribution
 🐧 Supported Distributions & Desktops
 -------------------------------------
 
-| Distribution                 | Package Manager  | Desktop Environments | Dedicated Runner                                                |
-| :--------------------------- | :--------------- | :------------------- | :-------------------------------------------------------------- |
-| **Debian 13 (Trixie)**       | `apt`            | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`)                        |
-| **Fedora 44**                | `dnf`            | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`)                        |
-| **Arch Linux**               | `pacman`         | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)                            |
-| **openSUSE Leap/Tumbleweed** | `zypper`         | GNOME, KDE Plasma    | `runners/opensuse.sh` (`./main.sh opensuse`)                    |
-| **WSL (Arch / Debian 13)**   | `pacman` / `apt` | CLI / WSLg           | `runners/wsl.sh` (`./main.sh wsl`) — [Setup Guide](docs/wsl.md) |
+| Distribution                 | Package Manager | Desktop Environments | Dedicated Runner                                                |
+| :--------------------------- | :-------------- | :------------------- | :-------------------------------------------------------------- |
+| **Debian 13 (Trixie)**       | `apt`           | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`)                        |
+| **Fedora 44**                | `dnf`           | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`)                        |
+| **Arch Linux**               | `pacman`        | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)                            |
+| **openSUSE Leap/Tumbleweed** | `zypper`        | GNOME, KDE Plasma    | `runners/opensuse.sh` (`./main.sh opensuse`)                    |
+| **WSL (Debian 13)**          | `apt`           | CLI / WSLg           | `runners/wsl.sh` (`./main.sh wsl`) — [Setup Guide](docs/wsl.md) |
 
 ⚡ Quick start
 -------------
@@ -106,7 +106,7 @@ make clean            # Remove temporary artifacts
 
 ## 📖 More
 
-- See [docs/wsl.md](docs/wsl.md) for the official WSL 3 installation guide (Arch Linux, Debian 13, `systemd`, JetBrains Mono Nerd Font, and shared `.vhdx` `ext4` persistent storage).
+- See [docs/wsl.md](docs/wsl.md) for the official WSL 3 installation guide (Debian 13, `systemd`, JetBrains Mono Nerd Font, and `.vhdx` `ext4` persistent storage).
 - See [TODO.md](TODO.md) for the project roadmap, implemented features, and planned tasks.
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical script template and developer guidelines.
 - See [AGENTS.md](AGENTS.md) for operational AI rules and architectural governance standards.

@@ -117,9 +117,9 @@
   [ "$desktop_apps_idx" -lt "$default_apps_idx" ]
 }
 
-@test "runners/wsl.sh run_all calls run_pipeline with WSL pipeline on supported distributions" {
+@test "runners/wsl.sh run_all calls run_pipeline with WSL pipeline on Debian" {
   source /setup/runners/wsl.sh 2>/dev/null || source runners/wsl.sh
-  require_supported_distro() { echo "arch"; }
+  is_distro() { [ "$1" = "debian" ]; }
 
   run_pipeline() {
     echo "pipeline: $1"
@@ -141,15 +141,12 @@
   [[ ! "$output" =~ "desktop/" ]]
 }
 
-@test "runners/wsl.sh run_all fails on unsupported distribution" {
+@test "runners/wsl.sh run_all fails on non-Debian distribution" {
   source /setup/runners/wsl.sh 2>/dev/null || source runners/wsl.sh
-  get_distro_id() {
-    echo "unknown-distro"
-    return 1
-  }
+  is_distro() { return 1; }
 
   run run_all
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "Unsupported distribution" ]]
+  [[ "$output" =~ "Error: WSL development pipeline is only supported on Debian." ]]
 }
 
