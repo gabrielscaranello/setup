@@ -55,13 +55,17 @@ _configure_steam_flatpak_permissions() {
   fi
 }
 
-_install_debian_steam() {
-  echo "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on Debian..."
+_install_flatpak_steam_bundle() {
   install_packages gamemode
   install_flatpak_app "com.valvesoftware.Steam" "Steam"
   _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
   _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
   _configure_steam_flatpak_permissions
+}
+
+_install_debian_steam() {
+  echo "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on Debian..."
+  _install_flatpak_steam_bundle
 }
 
 _install_fedora_steam() {
@@ -107,11 +111,7 @@ _install_arch_steam() {
 _install_leap_steam() {
   _enable_leap_32bit
   echo "Installing Steam, GameMode, MangoHud, and Gamescope via Flatpak on openSUSE Leap..."
-  install_packages gamemode
-  install_flatpak_app "com.valvesoftware.Steam" "Steam"
-  _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.MangoHud" "MangoHud Vulkan Layer"
-  _install_flatpak_gaming_layer "org.freedesktop.Platform.VulkanLayer.gamescope" "Gamescope Vulkan Layer"
-  _configure_steam_flatpak_permissions
+  _install_flatpak_steam_bundle
 }
 
 _install_tumbleweed_steam() {

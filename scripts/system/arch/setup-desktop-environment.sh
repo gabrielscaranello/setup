@@ -32,6 +32,17 @@ _resolve_target_de() {
   ensure_desktop_environment "Selecione o Desktop Environment para o Arch Linux:"
 }
 
+_enable_arch_desktop_services() {
+  local display_manager="$1"
+  sudo systemctl enable NetworkManager.service 2> /dev/null \
+    || sudo systemctl enable NetworkManager 2> /dev/null || true
+  sudo systemctl enable bluetooth.service 2> /dev/null \
+    || sudo systemctl enable bluetooth 2> /dev/null || true
+  sudo systemctl enable fstrim.timer 2> /dev/null || true
+  sudo systemctl enable "${display_manager}.service" 2> /dev/null \
+    || sudo systemctl enable "$display_manager" 2> /dev/null || true
+}
+
 _install_plasma_stack() {
   echo "Installing KDE Plasma desktop environment stack..."
   if [ "${ARCH_DE_SKIP_PACKAGE_INSTALL:-0}" = "1" ]; then
@@ -47,13 +58,7 @@ _install_plasma_stack() {
   fi
 
   echo "Enabling NetworkManager, Bluetooth, and plasmalogin services..."
-  sudo systemctl enable NetworkManager.service 2> /dev/null \
-    || sudo systemctl enable NetworkManager 2> /dev/null || true
-  sudo systemctl enable bluetooth.service 2> /dev/null \
-    || sudo systemctl enable bluetooth 2> /dev/null || true
-  sudo systemctl enable fstrim.timer 2> /dev/null || true
-  sudo systemctl enable plasmalogin.service 2> /dev/null \
-    || sudo systemctl enable plasmalogin 2> /dev/null || true
+  _enable_arch_desktop_services plasmalogin
 }
 
 _install_gnome_stack() {
@@ -71,13 +76,7 @@ _install_gnome_stack() {
   fi
 
   echo "Enabling NetworkManager, Bluetooth, and gdm services..."
-  sudo systemctl enable NetworkManager.service 2> /dev/null \
-    || sudo systemctl enable NetworkManager 2> /dev/null || true
-  sudo systemctl enable bluetooth.service 2> /dev/null \
-    || sudo systemctl enable bluetooth 2> /dev/null || true
-  sudo systemctl enable fstrim.timer 2> /dev/null || true
-  sudo systemctl enable gdm.service 2> /dev/null \
-    || sudo systemctl enable gdm 2> /dev/null || true
+  _enable_arch_desktop_services gdm
 }
 
 main() {
