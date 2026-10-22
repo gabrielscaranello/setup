@@ -9,6 +9,7 @@ MODULES=(
   "arch||runners/arch.sh|Run complete setup pipeline for Arch Linux"
   "arch-de|desktop-environment|scripts/system/arch/setup-desktop-environment.sh|Provision Desktop Environment (GNOME, KDE Plasma) on Arch Linux"
   "browsers||scripts/apps/setup-browsers.sh|Install Web Browsers (Chromium, Firefox)"
+  "cli||scripts/terminal/setup-cli.sh|Install CLI productivity tools, Zsh and clipboard utilities"
   "codecs||scripts/system/setup-codecs.sh|Install Multimedia Codecs and A/V Plugins"
   "cursor||scripts/desktop/setup-cursor-theme.sh|Install and configure Bibata cursor theme (GNOME, KDE Plasma)"
   "dbeaver||scripts/apps/setup-dbeaver.sh|Install DBeaver"

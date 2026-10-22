@@ -2,11 +2,9 @@
 set -euo pipefail
 
 source "scripts/_utils.sh" 2> /dev/null || true
-
-_install_cli_tools() {
-  echo "Installing CLI productivity tools..."
-  install_packages bat btop eza gdu zsh zsh-completions man-db util-linux-user
-}
+# shellcheck source=scripts/terminal/setup-cli.sh
+source "$(get_repo_root)/scripts/terminal/setup-cli.sh" 2> /dev/null \
+  || source "scripts/terminal/setup-cli.sh" 2> /dev/null || true
 
 _install_hardware_tools() {
   echo "Installing hardware, energy, and firmware tools..."
@@ -18,9 +16,14 @@ _install_filesystem_tools() {
   install_packages dosfstools mtools ntfs-3g
 }
 
+_install_xdg_tools() {
+  echo "Installing XDG desktop integration utilities..."
+  install_packages xdg-user-dirs xdg-utils
+}
+
 _install_session_tools() {
-  echo "Installing XDG standards, connectivity, and session utilities..."
-  install_packages xdg-user-dirs xdg-utils openssh dialog keychain clipboard
+  _install_xdg_tools
+  _install_cli_session_tools
 }
 
 _install_spelling_dictionaries() {
@@ -85,13 +88,19 @@ _enable_system_services() {
 main() {
   echo "Setting up core system packages..."
   _install_cli_tools
-  _install_hardware_tools
-  _install_filesystem_tools
-  _install_session_tools
+  if ! is_wsl; then
+    _install_hardware_tools
+    _install_filesystem_tools
+    _install_xdg_tools
+  fi
+  _install_cli_session_tools
   _install_spelling_dictionaries
-  _initialize_xdg_dirs
-  _configure_bluetooth
-  _enable_system_services
+  _configure_default_shell
+  if ! is_wsl; then
+    _initialize_xdg_dirs
+    _configure_bluetooth
+    _enable_system_services
+  fi
   echo "setup-packages complete"
 }
 

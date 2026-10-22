@@ -86,9 +86,10 @@ setup() {
   [ "$(_get_package_name "containerd" "pacman")" = "" ]
 }
 @test "_get_package_name resolves neovim runtime dependencies for distros" {
-  [ "$(_get_package_name "clipboard" "apt")" = "xclip" ]
-  [ "$(_get_package_name "clipboard" "dnf")" = "xsel" ]
+  [ "$(_get_package_name "clipboard" "apt")" = "wl-clipboard xclip" ]
+  [ "$(_get_package_name "clipboard" "dnf")" = "wl-clipboard xsel" ]
   [ "$(_get_package_name "clipboard" "pacman")" = "wl-clipboard" ]
+  [ "$(_get_package_name "clipboard" "zypper")" = "wl-clipboard" ]
 
   [ "$(_get_package_name "fd-find" "apt")" = "fd-find" ]
   [ "$(_get_package_name "fd-find" "dnf")" = "fd-find" ]

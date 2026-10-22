@@ -33,7 +33,8 @@ setup() {
   }
   run _install_session_tools
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
+  [[ "$output" =~ "installed: xdg-user-dirs xdg-utils" ]]
+  [[ "$output" =~ "installed: openssh dialog keychain clipboard" ]]
 }
 
 _initialize_xdg_dirs() {
@@ -157,12 +158,17 @@ EOF
 @test "main runs all setup steps in order" {
   get_distro_id() { echo "debian"; }
   get_desktop_environment() { echo "gnome"; }
+  is_wsl() { return 1; }
   install_packages() {
     echo "mock installed: $*"
     return 0
   }
   xdg-user-dirs-update() {
     echo "mock xdg updated"
+    return 0
+  }
+  _configure_default_shell() {
+    echo "mock default shell configured"
     return 0
   }
   _configure_bluetooth() {
@@ -180,9 +186,44 @@ EOF
   [[ "$output" =~ "mock installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
   [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev" ]]
   [[ "$output" =~ "mock installed: dosfstools mtools ntfs-3g" ]]
-  [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils openssh dialog keychain clipboard" ]]
+  [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils" ]]
+  [[ "$output" =~ "mock installed: openssh dialog keychain clipboard" ]]
   [[ "$output" =~ "mock installed: spell-pt-br spell-en" ]]
+  [[ "$output" =~ "mock default shell configured" ]]
   [[ "$output" =~ "mock bluetooth configured" ]]
   [[ "$output" =~ "mock services enabled" ]]
   [[ "$output" =~ "setup-packages complete" ]]
+}
+
+@test "main skips hardware, filesystem, bluetooth, and systemd services when running in WSL" {
+  get_distro_id() { echo "debian"; }
+  is_wsl() { return 0; }
+  install_packages() {
+    echo "mock installed: $*"
+    return 0
+  }
+  _configure_default_shell() {
+    echo "mock default shell configured"
+    return 0
+  }
+  _configure_bluetooth() {
+    echo "mock bluetooth configured"
+    return 0
+  }
+  _enable_system_services() {
+    echo "mock services enabled"
+    return 0
+  }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "mock installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
+  [[ "$output" =~ "mock installed: openssh dialog keychain clipboard" ]]
+  [[ "$output" =~ "mock installed: spell-pt-br spell-en" ]]
+  [[ "$output" =~ "mock default shell configured" ]]
+  [[ ! "$output" =~ "power-profiles-daemon" ]]
+  [[ ! "$output" =~ "dosfstools" ]]
+  [[ ! "$output" =~ "xdg-user-dirs" ]]
+  [[ ! "$output" =~ "mock bluetooth configured" ]]
+  [[ ! "$output" =~ "mock services enabled" ]]
 }

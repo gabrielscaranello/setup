@@ -125,7 +125,7 @@ The script SHALL install standard desktop integration utilities, SSH connectivit
 - `openssh`: SSH client utilities (`openssh-client` on Debian, `openssh-clients` on Fedora, `openssh` on Arch Linux).
 - `dialog`: Utility for displaying friendly dialog boxes from shell scripts.
 - `keychain`: SSH agent and GPG agent manager for shells.
-- `clipboard`: System clipboard provider (`xclip` on Debian, `xsel` on Fedora, `wl-clipboard` on Arch Linux).
+- `clipboard`: System clipboard provider (`wl-clipboard xclip` on Debian, `wl-clipboard xsel` on Fedora, `wl-clipboard` on Arch Linux and openSUSE).
 
 #### Scenario: Installing XDG, connectivity, and clipboard utilities
 
@@ -166,7 +166,7 @@ After installing `xdg-user-dirs`, the script SHALL initialize the default user d
 
 Package differences across distributions SHALL be declared in `scripts/packages.conf` in alphabetical order, following the column-aligned format `GENERIC_NAME | DEBIAN | FEDORA | ARCH | OPENSUSE`:
 
-- `clipboard`: `clipboard | xclip | xsel | wl-clipboard | wl-clipboard`
+- `clipboard`: `clipboard | wl-clipboard xclip | wl-clipboard xsel | wl-clipboard | wl-clipboard`
 - `fwupd`: `fwupd | fwupd | fwupd | fwupd fwupd-efi | fwupd`
 - `libu2f-udev`: `libu2f-udev | - | - | - | -`
 - `man-db`: `man-db | man-db | man-db | man-db | man`
@@ -207,3 +207,16 @@ The script SHALL adhere to the project coding standard:
 - **GIVEN** packages already installed on the system
 - **WHEN** `scripts/system/setup-packages.sh` is executed multiple times
 - **THEN** execution completes with exit code 0 without errors or re-installing unchanged components
+
+---
+
+### Requirement: WSL Hardware Bypass & CLI Delegation
+
+`scripts/system/setup-packages.sh` SHALL source `scripts/terminal/setup-cli.sh` to reuse `_install_cli_tools`, `_install_cli_session_tools`, and `_configure_default_shell`. When running inside a WSL environment (`is_wsl` returns 0), `main` SHALL skip physical hardware, filesystem driver, XDG desktop folder initialization, Bluetooth, and systemd hardware daemon configuration (`_install_hardware_tools`, `_install_filesystem_tools`, `_install_xdg_tools`, `_initialize_xdg_dirs`, `_configure_bluetooth`, `_enable_system_services`).
+
+#### Scenario: Running setup-packages inside WSL
+
+- **GIVEN** `is_wsl` returns 0
+- **WHEN** `scripts/system/setup-packages.sh` executes
+- **THEN** CLI tools, connectivity/clipboard tools, spelling dictionaries, and default shell SHALL be configured
+- **AND** hardware tools, filesystem tools, XDG desktop directory tools, Bluetooth configuration, and hardware system services SHALL be skipped gracefully
