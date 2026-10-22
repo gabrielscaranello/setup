@@ -823,6 +823,18 @@ EOF
   [ "$(_get_package_name "github-cli" "opensuse-tumbleweed")" = "gh" ]
 }
 
+@test "_get_package_name resolves python3 and python-pip for all managers and distros" {
+  [ "$(_get_package_name "python3" "debian")" = "python3" ]
+  [ "$(_get_package_name "python3" "fedora")" = "python3" ]
+  [ "$(_get_package_name "python3" "arch")" = "python" ]
+  [ "$(_get_package_name "python3" "opensuse-tumbleweed")" = "python3" ]
+
+  [ "$(_get_package_name "python-pip" "debian")" = "python3-pip" ]
+  [ "$(_get_package_name "python-pip" "fedora")" = "python3-pip" ]
+  [ "$(_get_package_name "python-pip" "arch")" = "python-pip" ]
+  [ "$(_get_package_name "python-pip" "opensuse-tumbleweed")" = "python3-pip" ]
+}
+
 @test "is_wsl detects WSL environment via WSL_DISTRO_NAME, WSLInterop, or /proc/version" {
   source /setup/scripts/_utils.sh
   local fake_proc="/tmp/test-proc-version-$$"

@@ -202,6 +202,10 @@ setup() {
   run run_module "github-cli"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "scripts/toolchain/setup-gh.sh" ]]
+
+  run run_module "python"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "scripts/toolchain/setup-python.sh" ]]
 }
 
 @test "MODULES registry entries are unique, well-formed and point to existing files" {

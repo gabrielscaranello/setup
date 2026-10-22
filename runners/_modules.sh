@@ -47,6 +47,7 @@ MODULES=(
   "onlyoffice||scripts/apps/setup-onlyoffice.sh|Install ONLYOFFICE Desktop Editors (Flatpak)"
   "opensuse|opensuse-leap,opensuse-tumbleweed|runners/opensuse.sh|Run complete setup pipeline for openSUSE (Leap, Tumbleweed)"
   "packages||scripts/system/setup-packages.sh|Install core system packages and CLI utilities"
+  "python||scripts/toolchain/setup-python.sh|Install Python 3, pip and venv"
   "rust||scripts/toolchain/setup-rust.sh|Install Rust, Cargo and tools (tree-sitter-cli)"
   "screenshot||scripts/apps/setup-screenshot-tool.sh|Configure Screenshot Tool (Flameshot on GNOME, Spectacle on Plasma)"
   "snapper||scripts/system/setup-timeshift.sh|Configure Snapper snapshots and GRUB integration (openSUSE)"
