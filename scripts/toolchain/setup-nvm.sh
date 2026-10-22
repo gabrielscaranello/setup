@@ -61,11 +61,7 @@ _install_nvm_script() {
 
   # PROFILE=/dev/null (and NVM_PROFILE=/dev/null) prevents the installer from auto-modifying shell profile
   # files — we handle that ourselves idempotently in _setup_shell_profile
-  if command -v curl > /dev/null 2>&1; then
-    curl -fsSL "$NVM_INSTALL_URL" | PROFILE=/dev/null NVM_PROFILE=/dev/null bash
-  else
-    wget -qO- "$NVM_INSTALL_URL" | PROFILE=/dev/null NVM_PROFILE=/dev/null bash
-  fi
+  fetch_url "$NVM_INSTALL_URL" | PROFILE=/dev/null NVM_PROFILE=/dev/null bash
 }
 
 _setup_shell_profile() {

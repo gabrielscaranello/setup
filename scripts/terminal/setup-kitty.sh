@@ -105,14 +105,7 @@ _install_kitty_binary() {
 
   local installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
 
-  if command -v curl > /dev/null 2>&1; then
-    curl -fsSL "$installer_url" | sh /dev/stdin launch=n
-  elif command -v wget > /dev/null 2>&1; then
-    wget -qO- "$installer_url" | sh /dev/stdin launch=n
-  else
-    echo "Neither curl nor wget available to download kitty" >&2
-    return 1
-  fi
+  fetch_url "$installer_url" | sh /dev/stdin launch=n
 
   _setup_desktop_integration
 

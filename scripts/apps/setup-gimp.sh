@@ -19,7 +19,7 @@ _install_gimp() {
       install_flatpak_app "org.gimp.GIMP" "GIMP"
 
       if [ "$distro" = "debian" ]; then
-        if dpkg -s gimp > /dev/null 2>&1; then
+        if is_package_installed gimp; then
           echo "Removing native GIMP from Debian to prevent duplicate launchers..."
           remove_packages gimp 2> /dev/null || true
         fi

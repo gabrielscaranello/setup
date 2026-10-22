@@ -22,17 +22,17 @@ _install_arch_amd_packages() {
 
 _swap_fedora_freeworld_drivers() {
   echo "Swapping restricted Mesa VA-API/VDPAU drivers with RPM Fusion freeworld codecs..."
-  if ! rpm -q mesa-va-drivers-freeworld > /dev/null 2>&1; then
+  if ! is_package_installed mesa-va-drivers-freeworld; then
     swap_packages mesa-va-drivers mesa-va-drivers-freeworld
   fi
 
-  if ! rpm -q mesa-vdpau-drivers-freeworld > /dev/null 2>&1; then
+  if ! is_package_installed mesa-vdpau-drivers-freeworld; then
     swap_packages mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
   fi
 }
 
 _install_fedora_32bit_packages() {
-  if rpm -q glibc.i686 > /dev/null 2>&1 || [ "${FEDORA_ENABLE_MULTILIB:-0}" = "1" ]; then
+  if is_package_installed glibc.i686 || [ "${FEDORA_ENABLE_MULTILIB:-0}" = "1" ]; then
     echo "Ensuring 32-bit freeworld drivers for gaming on Fedora..."
     swap_packages mesa-va-drivers.i686 mesa-va-drivers-freeworld.i686
     swap_packages mesa-vdpau-drivers.i686 mesa-vdpau-drivers-freeworld.i686

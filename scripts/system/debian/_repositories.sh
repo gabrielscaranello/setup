@@ -91,7 +91,8 @@ add_debian_vscodium_repo() {
 
   if ! command -v gpg > /dev/null 2>&1; then
     echo "Installing gnupg for GPG keyring management..."
-    sudo apt update -qq && sudo apt install -y gnupg 2> /dev/null || true
+    sudo apt update -qq || true
+    install_packages gnupg 2> /dev/null || true
   fi
 
   fetch_url "$gpg_key_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
