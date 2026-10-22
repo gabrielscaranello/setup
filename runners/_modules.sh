@@ -23,6 +23,7 @@ MODULES=(
   "firewall||scripts/security/setup-firewall.sh|Configure Firewall (firewalld on Fedora, UFW on Debian/Arch) and GUI"
   "flatpak||scripts/system/setup-flatpak.sh|Configure Flatpak and Flathub repository"
   "fonts||scripts/terminal/setup-fonts.sh|Install JetBrains Mono Nerd Font"
+  "gh|github-cli|scripts/toolchain/setup-gh.sh|Install GitHub CLI (WSL)"
   "gimp||scripts/apps/setup-gimp.sh|Install GIMP image editor"
   "gitflow||scripts/toolchain/setup-gitflow.sh|Install Gitflow CJS"
   "gnome-extensions||scripts/desktop/setup-gnome-extensions.sh|Install and enable GNOME Shell extensions"

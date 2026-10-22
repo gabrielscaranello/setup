@@ -208,3 +208,11 @@ enable_cron_service() {
   echo "Enabling cron scheduler service..."
   sudo systemctl enable --now "${service}.service" 2> /dev/null || sudo systemctl enable "${service}.service" 2> /dev/null || true
 }
+
+# Detects whether the current system is running inside a Windows Subsystem for Linux (WSL) environment.
+# Honors WSL_DISTRO_NAME, WSL_INTEROP_PATH, and PROC_VERSION_PATH overrides for testing.
+is_wsl() {
+  [ -n "${WSL_DISTRO_NAME:-}" ] \
+    || [ -f "${WSL_INTEROP_PATH:-/proc/sys/fs/binfmt_misc/WSLInterop}" ] \
+    || grep -qi "microsoft" "${PROC_VERSION_PATH:-/proc/version}" 2> /dev/null
+}

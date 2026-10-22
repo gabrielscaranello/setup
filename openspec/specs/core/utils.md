@@ -269,3 +269,21 @@ To enforce Dependency Inversion (DIP) and Open/Closed (OCP) principles across al
 - `install_packages_from_repo <repo_or_suite> <pkg>...` SHALL abstract suite/repository-pinned installations (`apt install -y -t <suite>` and `zypper --non-interactive install -y --from <repo>`).
 - `swap_packages [--allowerasing] <old_pkg> <new_pkg>` SHALL abstract package replacement with install fallback on DNF (`dnf swap -y`).
 - `remove_packages [--autoremove] <pkg>...`, `lock_packages <pkg>...`, and `upgrade_system` SHALL abstract removal, locking, and full-system upgrades across all supported package managers.
+
+---
+
+### Requirement: WSL Environment Detection (`scripts/utils/_system.sh`)
+
+The utility function `is_wsl` SHALL detect whether the current system is running inside a Windows Subsystem for Linux (WSL) environment.
+
+#### Scenario: Running inside WSL via `WSL_DISTRO_NAME` or `WSLInterop` or `/proc/version`
+
+- **GIVEN** `WSL_DISTRO_NAME` is non-empty, OR `${WSL_INTEROP_PATH:-/proc/sys/fs/binfmt_misc/WSLInterop}` exists, OR `${PROC_VERSION_PATH:-/proc/version}` contains `microsoft` (case-insensitive)
+- **WHEN** `is_wsl` is called
+- **THEN** it SHALL return 0
+
+#### Scenario: Running on bare metal or standard Linux container
+
+- **GIVEN** `WSL_DISTRO_NAME` is empty, `WSLInterop` does not exist, and `/proc/version` does not contain `microsoft`
+- **WHEN** `is_wsl` is called
+- **THEN** it SHALL return 1

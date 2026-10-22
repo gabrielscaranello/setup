@@ -811,3 +811,39 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing" ]]
 }
+
+@test "_get_package_name resolves github-cli for all managers and distros" {
+  [ "$(_get_package_name "github-cli" "apt")" = "gh" ]
+  [ "$(_get_package_name "github-cli" "dnf")" = "gh" ]
+  [ "$(_get_package_name "github-cli" "pacman")" = "github-cli" ]
+  [ "$(_get_package_name "github-cli" "zypper")" = "gh" ]
+  [ "$(_get_package_name "github-cli" "debian")" = "gh" ]
+  [ "$(_get_package_name "github-cli" "fedora")" = "gh" ]
+  [ "$(_get_package_name "github-cli" "arch")" = "github-cli" ]
+  [ "$(_get_package_name "github-cli" "opensuse-tumbleweed")" = "gh" ]
+}
+
+@test "is_wsl detects WSL environment via WSL_DISTRO_NAME, WSLInterop, or /proc/version" {
+  source /setup/scripts/_utils.sh
+  local fake_proc="/tmp/test-proc-version-$$"
+  local fake_interop="/tmp/test-wsl-interop-$$"
+  rm -f "$fake_proc" "$fake_interop"
+
+  echo "Linux version 6.8.0-generic (gcc)" > "$fake_proc"
+  WSL_DISTRO_NAME="" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
+  [ "$status" -eq 1 ]
+
+  WSL_DISTRO_NAME="Arch" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
+  [ "$status" -eq 0 ]
+
+  touch "$fake_interop"
+  WSL_DISTRO_NAME="" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
+  [ "$status" -eq 0 ]
+  rm -f "$fake_interop"
+
+  echo "Linux version 5.15.153.1-microsoft-standard-WSL2" > "$fake_proc"
+  WSL_DISTRO_NAME="" WSL_INTEROP_PATH="$fake_interop" PROC_VERSION_PATH="$fake_proc" run is_wsl
+  [ "$status" -eq 0 ]
+
+  rm -f "$fake_proc"
+}

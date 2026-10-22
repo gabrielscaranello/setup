@@ -194,6 +194,14 @@ setup() {
   run run_module "opensuse-leap"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "runners/opensuse.sh" ]]
+
+  run run_module "gh"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "scripts/toolchain/setup-gh.sh" ]]
+
+  run run_module "github-cli"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "scripts/toolchain/setup-gh.sh" ]]
 }
 
 @test "MODULES registry entries are unique, well-formed and point to existing files" {
