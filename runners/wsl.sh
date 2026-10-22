@@ -7,6 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../scripts/_utils.sh" 2> /dev/null || tru
 WSL_STEPS=(
   "system/setup-update.sh:System packages and repositories update"
   "terminal/setup-cli.sh:CLI utilities, Zsh and clipboard setup"
+  "toolchain/setup-docker.sh:Docker setup"
   "toolchain/setup-gitflow.sh:Gitflow setup"
   "toolchain/setup-gh.sh:GitHub CLI (gh) setup"
   "toolchain/setup-python.sh:Python, pip and venv setup"

@@ -43,13 +43,13 @@ This project was created to unify and centralize several standalone distribution
 🐧 Supported Distributions & Desktops
 -------------------------------------
 
-| Distribution                 | Package Manager | Desktop Environments | Dedicated Runner                             |
-| :--------------------------- | :-------------- | :------------------- | :------------------------------------------- |
-| **Debian 13 (Trixie)**       | `apt`           | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`)     |
-| **Fedora 44**                | `dnf`           | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`)     |
-| **Arch Linux**               | `pacman`        | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)         |
-| **openSUSE Leap/Tumbleweed** | `zypper`        | GNOME, KDE Plasma    | `runners/opensuse.sh` (`./main.sh opensuse`) |
-| **WSL2 (Arch / Debian 13)**  | `pacman` / `apt`| CLI / WSLg           | `runners/wsl.sh` (`./main.sh wsl`)           |
+| Distribution                 | Package Manager  | Desktop Environments | Dedicated Runner                             |
+| :--------------------------- | :--------------- | :------------------- | :------------------------------------------- |
+| **Debian 13 (Trixie)**       | `apt`            | GNOME, KDE Plasma    | `runners/debian.sh` (`./main.sh debian`)     |
+| **Fedora 44**                | `dnf`            | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`)     |
+| **Arch Linux**               | `pacman`         | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)         |
+| **openSUSE Leap/Tumbleweed** | `zypper`         | GNOME, KDE Plasma    | `runners/opensuse.sh` (`./main.sh opensuse`) |
+| **WSL2 (Arch / Debian 13)**  | `pacman` / `apt` | CLI / WSLg           | `runners/wsl.sh` (`./main.sh wsl`)           |
 
 ⚡ Quick start
 -------------
@@ -65,7 +65,7 @@ make all # Or: ./main.sh all / ./main.sh
 ./main.sh fedora   # Run full Fedora 44 pipeline
 ./main.sh arch     # Run full Arch Linux pipeline
 ./main.sh opensuse # Run full openSUSE (Leap / Tumbleweed) pipeline
-./main.sh wsl      # Run WSL development pipeline (CLI, Zsh, Gitflow, gh, Python, Go, Rust, NVM, Lazygit, Lazydocker, Neovim)
+./main.sh wsl      # Run WSL development pipeline (CLI, Zsh, Docker, Gitflow, gh, Python, Go, Rust, NVM, Lazygit, Lazydocker, Neovim)
 
 # Individual modules:
 make neovim   # Or: ./main.sh neovim

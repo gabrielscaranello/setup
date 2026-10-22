@@ -132,6 +132,7 @@
   [ "$status" -eq 0 ]
   [[ "$output" =~ "pipeline: WSL Development Setup" ]]
   [[ "$output" =~ "terminal/setup-cli.sh" ]]
+  [[ "$output" =~ "toolchain/setup-docker.sh" ]]
   [[ "$output" =~ "toolchain/setup-gh.sh" ]]
   [[ "$output" =~ "toolchain/setup-python.sh" ]]
   [[ "$output" =~ "toolchain/setup-neovim.sh" ]]
