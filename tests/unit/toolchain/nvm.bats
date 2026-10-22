@@ -89,6 +89,23 @@
   [[ "$output" =~ "No global npm packages" ]]
 }
 
+@test "_install_npm_packages skips already installed packages and installs missing ones" {
+  source /setup/scripts/toolchain/setup-nvm.sh
+  NPM_PACKAGES=("@github/copilot" "@styled/typescript-styled-plugin")
+  nvm() {
+    if [[ "$*" =~ "npm list -g" ]]; then
+      echo "├── @github/copilot@1.0.0"
+      return 0
+    fi
+    echo "nvm $*"
+    return 0
+  }
+  run _install_npm_packages
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "@github/copilot already installed, skipping" ]]
+  [[ "$output" =~ "nvm exec 24 npm install -g @styled/typescript-styled-plugin" ]]
+}
+
 @test "_install_nvm calls _install_nvm_script on debian" {
   source /setup/scripts/toolchain/setup-nvm.sh
   require_supported_distro() { echo "debian"; }

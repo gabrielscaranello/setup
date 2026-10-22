@@ -2,18 +2,8 @@
 # shellcheck disable=SC2218
 
 setup() {
-  source /setup/scripts/system/setup-packages.sh 2>/dev/null || \
-  source "${BATS_TEST_DIRNAME}/../../../scripts/system/setup-packages.sh"
-}
-
-@test "_install_cli_tools installs modern CLI utilities" {
-  install_packages() {
-    echo "installed: $*"
-    return 0
-  }
-  run _install_cli_tools
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
+  source /setup/scripts/system/setup-packages.sh 2> /dev/null \
+    || source "${BATS_TEST_DIRNAME}/../../../scripts/system/setup-packages.sh"
 }
 
 @test "_install_hardware_tools installs hardware, power management, and bluetooth packages" {
@@ -26,22 +16,14 @@ setup() {
   [[ "$output" =~ "installed: power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev" ]]
 }
 
-@test "_install_session_tools installs XDG standards, connectivity, and clipboard utilities" {
+@test "_install_xdg_tools installs XDG desktop integration utilities" {
   install_packages() {
     echo "installed: $*"
     return 0
   }
-  run _install_session_tools
+  run _install_xdg_tools
   [ "$status" -eq 0 ]
   [[ "$output" =~ "installed: xdg-user-dirs xdg-utils" ]]
-  [[ "$output" =~ "installed: openssh dialog keychain clipboard" ]]
-}
-
-_initialize_xdg_dirs() {
-  if command -v xdg-user-dirs-update > /dev/null 2>&1; then
-    echo "Initializing XDG user directories..."
-    xdg-user-dirs-update || true
-  fi
 }
 
 @test "_configure_bluetooth sets AutoEnable=true when main.conf exists" {
@@ -59,7 +41,6 @@ EOF
     "$@"
   }
 
-  # Temporarily override /etc/bluetooth via function environment or mock
   _test_configure_bt() {
     local conf="$test_etc/bluetooth/main.conf"
     if grep -q "^\[Policy\]" "$conf"; then
@@ -159,16 +140,16 @@ EOF
   get_distro_id() { echo "debian"; }
   get_desktop_environment() { echo "gnome"; }
   is_wsl() { return 1; }
+  bash() {
+    echo "mock bash: $*"
+    return 0
+  }
   install_packages() {
     echo "mock installed: $*"
     return 0
   }
   xdg-user-dirs-update() {
     echo "mock xdg updated"
-    return 0
-  }
-  _configure_default_shell() {
-    echo "mock default shell configured"
     return 0
   }
   _configure_bluetooth() {
@@ -183,13 +164,11 @@ EOF
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Setting up core system packages" ]]
-  [[ "$output" =~ "mock installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
+  [[ "$output" =~ "scripts/terminal/setup-cli.sh" ]]
   [[ "$output" =~ "mock installed: power-profiles-daemon numlockx fwupd bluez cups cron libu2f-udev" ]]
   [[ "$output" =~ "mock installed: dosfstools mtools ntfs-3g" ]]
   [[ "$output" =~ "mock installed: xdg-user-dirs xdg-utils" ]]
-  [[ "$output" =~ "mock installed: openssh dialog keychain clipboard" ]]
   [[ "$output" =~ "mock installed: spell-pt-br spell-en" ]]
-  [[ "$output" =~ "mock default shell configured" ]]
   [[ "$output" =~ "mock bluetooth configured" ]]
   [[ "$output" =~ "mock services enabled" ]]
   [[ "$output" =~ "setup-packages complete" ]]
@@ -198,12 +177,12 @@ EOF
 @test "main skips hardware, filesystem, bluetooth, and systemd services when running in WSL" {
   get_distro_id() { echo "debian"; }
   is_wsl() { return 0; }
-  install_packages() {
-    echo "mock installed: $*"
+  bash() {
+    echo "mock bash: $*"
     return 0
   }
-  _configure_default_shell() {
-    echo "mock default shell configured"
+  install_packages() {
+    echo "mock installed: $*"
     return 0
   }
   _configure_bluetooth() {
@@ -217,10 +196,8 @@ EOF
 
   run main
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "mock installed: bat btop eza gdu zsh zsh-completions man-db util-linux-user" ]]
-  [[ "$output" =~ "mock installed: openssh dialog keychain clipboard" ]]
+  [[ "$output" =~ "scripts/terminal/setup-cli.sh" ]]
   [[ "$output" =~ "mock installed: spell-pt-br spell-en" ]]
-  [[ "$output" =~ "mock default shell configured" ]]
   [[ ! "$output" =~ "power-profiles-daemon" ]]
   [[ ! "$output" =~ "dosfstools" ]]
   [[ ! "$output" =~ "xdg-user-dirs" ]]

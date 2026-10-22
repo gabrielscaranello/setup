@@ -212,7 +212,7 @@ The script SHALL adhere to the project coding standard:
 
 ### Requirement: WSL Hardware Bypass & CLI Delegation
 
-`scripts/system/setup-packages.sh` SHALL source `scripts/terminal/setup-cli.sh` to reuse `_install_cli_tools`, `_install_cli_session_tools`, and `_configure_default_shell`. When running inside a WSL environment (`is_wsl` returns 0), `main` SHALL skip physical hardware, filesystem driver, XDG desktop folder initialization, Bluetooth, and systemd hardware daemon configuration (`_install_hardware_tools`, `_install_filesystem_tools`, `_install_xdg_tools`, `_initialize_xdg_dirs`, `_configure_bluetooth`, `_enable_system_services`).
+`scripts/system/setup-packages.sh` SHALL delegate CLI productivity, connectivity/clipboard, and default Zsh shell configuration to `scripts/terminal/setup-cli.sh`. When running inside a WSL environment (`is_wsl` returns 0), `main` SHALL skip physical hardware, filesystem driver, XDG desktop folder initialization, Bluetooth, and systemd hardware daemon configuration (`_install_hardware_tools`, `_install_filesystem_tools`, `_install_xdg_tools`, `_initialize_xdg_dirs`, `_configure_bluetooth`, `_enable_system_services`).
 
 #### Scenario: Running setup-packages inside WSL
 

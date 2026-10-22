@@ -2,9 +2,6 @@
 set -euo pipefail
 
 source "scripts/_utils.sh" 2> /dev/null || true
-# shellcheck source=scripts/terminal/setup-cli.sh
-source "$(get_repo_root)/scripts/terminal/setup-cli.sh" 2> /dev/null \
-  || source "scripts/terminal/setup-cli.sh" 2> /dev/null || true
 
 _install_hardware_tools() {
   echo "Installing hardware, energy, and firmware tools..."
@@ -19,11 +16,6 @@ _install_filesystem_tools() {
 _install_xdg_tools() {
   echo "Installing XDG desktop integration utilities..."
   install_packages xdg-user-dirs xdg-utils
-}
-
-_install_session_tools() {
-  _install_xdg_tools
-  _install_cli_session_tools
 }
 
 _install_spelling_dictionaries() {
@@ -87,15 +79,13 @@ _enable_system_services() {
 
 main() {
   echo "Setting up core system packages..."
-  _install_cli_tools
+  bash "$(get_repo_root)/scripts/terminal/setup-cli.sh"
   if ! is_wsl; then
     _install_hardware_tools
     _install_filesystem_tools
     _install_xdg_tools
   fi
-  _install_cli_session_tools
   _install_spelling_dictionaries
-  _configure_default_shell
   if ! is_wsl; then
     _initialize_xdg_dirs
     _configure_bluetooth

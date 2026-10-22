@@ -170,11 +170,29 @@ _install_npm_packages() {
     return 0
   fi
 
-  echo "Installing global npm packages: ${NPM_PACKAGES[*]}"
-  nvm exec "${NODE_VERSION}" npm install -g "${NPM_PACKAGES[@]}"
+  local missing_pkgs=()
+  local installed_list
+  installed_list="$(nvm exec "${NODE_VERSION}" npm list -g --depth=0 2> /dev/null || true)"
+  for pkg in "${NPM_PACKAGES[@]}"; do
+    if echo "$installed_list" | grep -qF " ${pkg}@"; then
+      echo "$pkg already installed, skipping"
+    else
+      missing_pkgs+=("$pkg")
+    fi
+  done
+
+  if [ ${#missing_pkgs[@]} -gt 0 ]; then
+    echo "Installing global npm packages: ${missing_pkgs[*]}"
+    nvm exec "${NODE_VERSION}" npm install -g "${missing_pkgs[@]}"
+  fi
 }
 
 _install_node() {
+  if nvm ls "${NODE_VERSION}" 2> /dev/null | grep -q "v${NODE_VERSION}\."; then
+    echo "Node ${NODE_VERSION} is already installed via nvm, ensuring default alias"
+    nvm alias default "${NODE_VERSION}"
+    return 0
+  fi
   echo "Installing Node ${NODE_VERSION} via nvm"
   nvm install "${NODE_VERSION}"
   nvm alias default "${NODE_VERSION}"
