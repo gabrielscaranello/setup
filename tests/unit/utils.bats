@@ -263,28 +263,18 @@ EOF
   rm -f "$tmp_file"
 }
 
-@test "get_shell_profile detects correct profile based on SHELL variable and /etc/passwd login shell" {
-  local fake_passwd="/tmp/test-passwd-profile-$$"
-  echo "testuser:x:1000:1000::/home/testuser:/bin/bash" > "$fake_passwd"
-
-  USER="testuser" PASSWD_PATH="$fake_passwd" SHELL=/bin/zsh run get_shell_profile
+@test "get_shell_profile detects correct profile based on SHELL variable" {
+  SHELL=/bin/zsh run get_shell_profile
   [ "$status" -eq 0 ]
   [ "$output" = "$HOME/.zshrc" ]
 
-  USER="testuser" PASSWD_PATH="$fake_passwd" SHELL=/bin/bash run get_shell_profile
+  SHELL=/bin/bash run get_shell_profile
   [ "$status" -eq 0 ]
   [ "$output" = "$HOME/.bashrc" ]
 
-  USER="testuser" PASSWD_PATH="$fake_passwd" SHELL=/bin/sh run get_shell_profile
+  SHELL=/bin/sh run get_shell_profile
   [ "$status" -eq 0 ]
   [ "$output" = "$HOME/.profile" ]
-
-  echo "testuser:x:1000:1000::/home/testuser:/usr/bin/zsh" > "$fake_passwd"
-  USER="testuser" PASSWD_PATH="$fake_passwd" SHELL=/bin/bash run get_shell_profile
-  [ "$status" -eq 0 ]
-  [ "$output" = "$HOME/.zshrc" ]
-
-  rm -f "$fake_passwd"
 }
 
 @test "install_flatpak_app updates when already installed" {

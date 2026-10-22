@@ -180,17 +180,7 @@ get_gpu_vendor() {
 }
 
 get_shell_profile() {
-  local active_shell="${SHELL:-}"
-  local target_user="${USER:-$(id -un 2> /dev/null || echo "")}"
-  if [ -n "$target_user" ] && [ -f "${PASSWD_PATH:-/etc/passwd}" ]; then
-    local login_shell
-    login_shell="$(awk -F: -v u="$target_user" '$1 == u {print $7}' "${PASSWD_PATH:-/etc/passwd}" 2> /dev/null || true)"
-    if [ "${login_shell##*/}" = "zsh" ]; then
-      active_shell="$login_shell"
-    fi
-  fi
-
-  case "${active_shell##*/}" in
+  case "${SHELL##*/}" in
     zsh) echo "$HOME/.zshrc" ;;
     bash) echo "$HOME/.bashrc" ;;
     *) echo "$HOME/.profile" ;;

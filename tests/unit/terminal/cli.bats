@@ -28,55 +28,6 @@ setup() {
   [[ ! "$output" =~ "xdg-utils" ]]
 }
 
-@test "_configure_default_shell sets zsh as login shell when not already configured" {
-  local fake_passwd="/tmp/test-passwd-$$"
-  echo "testuser:x:1000:1000::/home/testuser:/bin/bash" > "$fake_passwd"
-
-  command() {
-    if [ "${2:-}" = "zsh" ]; then
-      echo "/usr/bin/zsh"
-      return 0
-    fi
-    if [ "${2:-}" = "usermod" ]; then
-      return 0
-    fi
-    builtin command "$@"
-  }
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  USER="testuser" PASSWD_PATH="$fake_passwd" run _configure_default_shell
-  [ "$status" -eq 0 ]
-  [[ "$output" =~ "sudo usermod -s /usr/bin/zsh testuser" ]]
-
-  rm -f "$fake_passwd"
-}
-
-@test "_configure_default_shell skips usermod when zsh is already the login shell" {
-  local fake_passwd="/tmp/test-passwd-$$"
-  echo "testuser:x:1000:1000::/home/testuser:/usr/bin/zsh" > "$fake_passwd"
-
-  command() {
-    if [ "${2:-}" = "zsh" ]; then
-      echo "/usr/bin/zsh"
-      return 0
-    fi
-    builtin command "$@"
-  }
-  sudo() {
-    echo "sudo $*"
-    return 0
-  }
-
-  USER="testuser" PASSWD_PATH="$fake_passwd" run _configure_default_shell
-  [ "$status" -eq 0 ]
-  [[ ! "$output" =~ "sudo usermod" ]]
-
-  rm -f "$fake_passwd"
-}
-
 @test "main fails when distribution is unsupported" {
   get_distro_id() {
     echo "unknown-distro"
@@ -91,12 +42,10 @@ setup() {
   require_supported_distro() { echo "debian"; }
   _install_cli_tools() { echo "step: cli_tools"; }
   _install_cli_session_tools() { echo "step: cli_session_tools"; }
-  _configure_default_shell() { echo "step: default_shell"; }
 
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "step: cli_tools" ]]
   [[ "$output" =~ "step: cli_session_tools" ]]
-  [[ "$output" =~ "step: default_shell" ]]
   [[ "$output" =~ "setup-cli complete" ]]
 }
