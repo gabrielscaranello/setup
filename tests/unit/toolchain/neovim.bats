@@ -80,12 +80,10 @@
 
 @test "_install_neovim builds from source on debian" {
   source /setup/scripts/toolchain/setup-neovim.sh
-  _ensure_rust() { echo "step: ensure_rust"; }
   _install_build_deps() { echo "step: install_build_deps"; }
   _install_neovim_from_source() { echo "step: install_neovim_from_source"; }
   run _install_neovim "debian"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "step: ensure_rust" ]]
   [[ "$output" =~ "step: install_build_deps" ]]
   [[ "$output" =~ "step: install_neovim_from_source" ]]
 }
@@ -111,7 +109,7 @@
   run _install_runtime_deps "arch"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
-  [[ "$output" =~ "build-tools rust tree-sitter-cli luarocks" ]]
+  [[ "$output" =~ "build-tools luarocks" ]]
 }
 
 @test "main executes _ensure_nvm, _ensure_go, _ensure_rust, _install_runtime_deps and _install_neovim in order" {
@@ -210,24 +208,20 @@
 
 @test "_install_neovim builds from source on opensuse-leap" {
   source /setup/scripts/toolchain/setup-neovim.sh
-  _ensure_rust() { echo "step: ensure_rust"; }
   _install_build_deps() { echo "step: install_build_deps"; }
   _install_neovim_from_source() { echo "step: install_neovim_from_source with method $1"; }
   run _install_neovim "opensuse-leap"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "step: ensure_rust" ]]
   [[ "$output" =~ "step: install_build_deps" ]]
   [[ "$output" =~ "step: install_neovim_from_source with method make" ]]
 }
 
 @test "_install_neovim builds from source on opensuse" {
   source /setup/scripts/toolchain/setup-neovim.sh
-  _ensure_rust() { echo "step: ensure_rust"; }
   _install_build_deps() { echo "step: install_build_deps"; }
   _install_neovim_from_source() { echo "step: install_neovim_from_source with method $1"; }
   run _install_neovim "opensuse"
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "step: ensure_rust" ]]
   [[ "$output" =~ "step: install_build_deps" ]]
   [[ "$output" =~ "step: install_neovim_from_source with method make" ]]
 }

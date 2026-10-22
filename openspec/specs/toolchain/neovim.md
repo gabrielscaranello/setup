@@ -29,7 +29,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 - **Distro-specific independent dependencies**:
   - **Debian (`debian`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`)
   - **Fedora (`fedora`)**: `luarocks`, `cargo`, `lua-5.1`
-  - **Arch Linux (`arch`)**: `build-tools` (`base-devel`), `rust`, `tree-sitter-cli`, `luarocks`
+  - **Arch Linux (`arch`)**: `build-tools` (`base-devel`), `luarocks` (Rust and `tree-sitter-cli` are provisioned via `_ensure_rust`)
   - **openSUSE (`opensuse-tumbleweed`, `opensuse-leap`, `opensuse`)**: `luarocks` (`lua54-luarocks`), `python3`, `lua54-devel`, `build-tools` (`patterns-devel-base-devel_basis`)
 
 #### Scenario: Installing runtime packages on Debian
@@ -48,7 +48,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 
 - **GIVEN** an Arch Linux system (`get_distro_id` returns `arch`)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` installs runtime dependencies
-- **THEN** common packages (`jq`, `fd`, `wl-clipboard`, `imagemagick`, `sqlite`, `tidy`, `protobuf`, `ripgrep`, `unzip`) and Arch-specific packages (`base-devel`, `rust`, `tree-sitter-cli`, `luarocks`) SHALL be installed
+- **THEN** common packages (`jq`, `fd`, `wl-clipboard`, `imagemagick`, `sqlite`, `tidy`, `protobuf`, `ripgrep`, `unzip`) and Arch-specific packages (`base-devel`, `luarocks`) SHALL be installed
 
 #### Scenario: Installing runtime packages on openSUSE
 

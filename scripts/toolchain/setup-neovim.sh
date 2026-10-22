@@ -96,16 +96,37 @@ _install_neovim_from_source() {
 }
 
 _ensure_nvm() {
+  if [ -s /usr/share/nvm/init-nvm.sh ] \
+    || [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ] \
+    || [ -s "${XDG_CONFIG_HOME:-$HOME/.config}/nvm/nvm.sh" ]; then
+    echo "NVM is already installed, skipping setup-nvm.sh."
+    return 0
+  fi
   echo "Ensuring nvm is installed (required by neovim toolchain)..."
   bash "${BASH_SOURCE[0]%/*}/setup-nvm.sh"
 }
 
 _ensure_go() {
+  export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
+  if command -v go > /dev/null 2>&1; then
+    echo "Golang is already installed, skipping setup-go.sh."
+    return 0
+  fi
   echo "Ensuring go is installed (required by neovim toolchain)..."
   bash "${BASH_SOURCE[0]%/*}/setup-go.sh"
 }
 
 _ensure_rust() {
+  if [ -s "$HOME/.cargo/env" ]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.cargo/env"
+  elif [ -d "$HOME/.cargo/bin" ]; then
+    export PATH="$PATH:$HOME/.cargo/bin"
+  fi
+  if command -v cargo > /dev/null 2>&1 && command -v tree-sitter > /dev/null 2>&1; then
+    echo "Rust/Cargo and tree-sitter-cli are already installed, skipping setup-rust.sh."
+    return 0
+  fi
   echo "Ensuring rust/cargo is installed (required by neovim toolchain)..."
   bash "${BASH_SOURCE[0]%/*}/setup-rust.sh"
   if [ -s "$HOME/.cargo/env" ]; then
@@ -130,12 +151,10 @@ _install_neovim() {
       install_packages neovim
       ;;
     debian)
-      _ensure_rust
       _install_build_deps
       _install_neovim_from_source "deb"
       ;;
     opensuse | opensuse-leap)
-      _ensure_rust
       _install_build_deps
       _install_neovim_from_source "make"
       ;;
@@ -162,7 +181,7 @@ _install_runtime_deps() {
       install_packages luarocks cargo lua-5.1
       ;;
     arch)
-      install_packages build-tools rust tree-sitter-cli luarocks
+      install_packages build-tools luarocks
       ;;
     opensuse*)
       install_packages luarocks python3 lua54-devel build-tools
