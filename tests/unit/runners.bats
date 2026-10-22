@@ -136,6 +136,7 @@
   [[ "$output" =~ "toolchain/setup-gh.sh" ]]
   [[ "$output" =~ "toolchain/setup-python.sh" ]]
   [[ "$output" =~ "toolchain/setup-neovim.sh" ]]
+  [[ ! "$output" =~ "toolchain/setup-rust.sh" ]]
   [[ ! "$output" =~ "system/setup-packages.sh" ]]
   [[ ! "$output" =~ "desktop/" ]]
 }

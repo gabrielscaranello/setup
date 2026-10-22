@@ -12,7 +12,6 @@ WSL_STEPS=(
   "toolchain/setup-gh.sh:GitHub CLI (gh) setup"
   "toolchain/setup-python.sh:Python, pip and venv setup"
   "toolchain/setup-go.sh:Golang setup"
-  "toolchain/setup-rust.sh:Rust, Cargo and tree-sitter-cli setup"
   "toolchain/setup-nvm.sh:NVM, Node.js and global npm packages setup"
   "terminal/setup-lazygit.sh:Lazygit setup"
   "terminal/setup-lazydocker.sh:Lazydocker setup"

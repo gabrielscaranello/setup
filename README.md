@@ -65,7 +65,7 @@ make all # Or: ./main.sh all / ./main.sh
 ./main.sh fedora   # Run full Fedora 44 pipeline
 ./main.sh arch     # Run full Arch Linux pipeline
 ./main.sh opensuse # Run full openSUSE (Leap / Tumbleweed) pipeline
-./main.sh wsl      # Run WSL development pipeline (CLI, Zsh, Docker, Gitflow, gh, Python, Go, Rust, NVM, Lazygit, Lazydocker, Neovim)
+./main.sh wsl      # Run WSL development pipeline (CLI, Zsh, Docker, Gitflow, gh, Python, Go, NVM, Lazygit, Lazydocker, Neovim)
 
 # Individual modules:
 make neovim   # Or: ./main.sh neovim

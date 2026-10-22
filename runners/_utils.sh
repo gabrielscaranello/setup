@@ -31,6 +31,10 @@ run_pipeline() {
     echo ">>> Running $step_desc..."
     echo ""
     bash "$scripts_dir/$step_file"
+    if [[ "$step_file" == "terminal/setup-cli.sh" || "$step_file" == "system/setup-packages.sh" ]] && command -v zsh > /dev/null 2>&1; then
+      export SHELL
+      SHELL="$(command -v zsh)"
+    fi
     echo ""
     echo "✓ $step_desc completed"
     echo ""
