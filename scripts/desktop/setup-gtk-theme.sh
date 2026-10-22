@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 
 THEME_NAME="adw-gtk3-dark"
@@ -89,9 +90,9 @@ _install_flatpak_theme() {
 _configure_gnome_gtk_theme() {
   echo "Configuring GNOME GTK theme and dark mode..."
   if command -v gsettings > /dev/null 2>&1; then
-    gsettings set org.gnome.desktop.interface gtk-theme "$THEME_NAME" 2> /dev/null || true
-    gsettings set org.gnome.desktop.wm.preferences theme "$THEME_NAME" 2> /dev/null || true
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2> /dev/null || true
+    gsettings_exec set org.gnome.desktop.interface gtk-theme "$THEME_NAME" 2> /dev/null || true
+    gsettings_exec set org.gnome.desktop.wm.preferences theme "$THEME_NAME" 2> /dev/null || true
+    gsettings_exec set org.gnome.desktop.interface color-scheme 'prefer-dark' 2> /dev/null || true
   fi
 }
 

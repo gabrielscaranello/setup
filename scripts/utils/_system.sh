@@ -4,20 +4,35 @@
 # Handles OS distribution identification, hardware discovery (GPU),
 # root filesystem detection, and user shell profile resolution.
 
-get_distro_id() {
+# Reads a field from os-release (honors OS_RELEASE_PATH, falls back to /usr/lib/os-release).
+# Usage: get_os_release_field <FIELD_NAME>
+get_os_release_field() {
+  local field="${1:?Field name is required}"
   local os_release_file="${OS_RELEASE_PATH:-/etc/os-release}"
   if [ ! -f "$os_release_file" ] && [ -f /usr/lib/os-release ]; then
     os_release_file="/usr/lib/os-release"
   fi
+  [ -f "$os_release_file" ] || return 0
+  grep "^${field}=" "$os_release_file" 2> /dev/null | head -n 1 | cut -d= -f2 | tr -d '"'\'' ' || true
+}
 
-  if [ -f "$os_release_file" ]; then
-    local distro_id
-    distro_id="$(grep '^ID=' "$os_release_file" 2> /dev/null | head -n 1 | cut -d= -f2 | tr -d '"'\'' ' | tr '[:upper:]' '[:lower:]' || true)"
+# Regenerates the GRUB configuration with whichever tool the distribution provides.
+update_grub_config() {
+  if command -v grub2-mkconfig > /dev/null 2>&1; then
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null || true
+  elif command -v grub-mkconfig > /dev/null 2>&1; then
+    sudo grub-mkconfig -o /boot/grub/grub.cfg 2> /dev/null || true
+  elif command -v update-grub > /dev/null 2>&1; then
+    sudo update-grub 2> /dev/null || true
+  fi
+}
 
-    if [ -n "$distro_id" ]; then
-      echo "$distro_id"
-      return 0
-    fi
+get_distro_id() {
+  local distro_id
+  distro_id="$(get_os_release_field ID | tr '[:upper:]' '[:lower:]')"
+  if [ -n "$distro_id" ]; then
+    echo "$distro_id"
+    return 0
   fi
 
   if command -v lsb_release > /dev/null 2>&1; then

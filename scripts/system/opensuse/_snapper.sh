@@ -33,9 +33,7 @@ _configure_opensuse_snapper() {
       echo 'SUSE_BTRFS_SNAPSHOT_BOOTING="true"' | sudo tee -a /etc/default/grub > /dev/null
     fi
 
-    if command -v grub2-mkconfig > /dev/null 2>&1; then
-      sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null || true
-    fi
+    update_grub_config
   fi
 }
 

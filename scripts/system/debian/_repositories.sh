@@ -4,21 +4,14 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../../_utils.sh" 2> /dev/null || source "scripts/_utils.sh" 2> /dev/null || true
 
 get_debian_codename() {
-  if [ -f /etc/os-release ]; then
-    # shellcheck source=/dev/null
-    local version_codename
-    version_codename="$(grep '^VERSION_CODENAME=' /etc/os-release 2> /dev/null | cut -d= -f2 | tr -d '"' || true)"
-    if [ -n "$version_codename" ]; then
-      echo "$version_codename"
-      return 0
-    fi
-
-    local debian_codename
-    debian_codename="$(grep '^DEBIAN_CODENAME=' /etc/os-release 2> /dev/null | cut -d= -f2 | tr -d '"' || true)"
-    if [ -n "$debian_codename" ]; then
-      echo "$debian_codename"
-      return 0
-    fi
+  local codename
+  codename="$(get_os_release_field VERSION_CODENAME)"
+  if [ -z "$codename" ]; then
+    codename="$(get_os_release_field DEBIAN_CODENAME)"
+  fi
+  if [ -n "$codename" ]; then
+    echo "$codename"
+    return 0
   fi
 
   if command -v lsb_release > /dev/null 2>&1; then

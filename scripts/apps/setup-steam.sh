@@ -132,9 +132,7 @@ _enable_leap_32bit() {
     if ! grep -q "ia32_emulation=1" /etc/default/grub; then
       echo "Configuring ia32_emulation=1 in /etc/default/grub..."
       sudo sed -i 's/\(GRUB_CMDLINE_LINUX="[^"]*\)/\1 ia32_emulation=1/' /etc/default/grub 2> /dev/null || true
-      if command -v grub2-mkconfig > /dev/null 2>&1; then
-        sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null || true
-      fi
+      update_grub_config
     fi
   fi
 }

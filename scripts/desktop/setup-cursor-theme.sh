@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_plasma.sh" 2> /dev/null || true
 
@@ -81,8 +82,8 @@ _ensure_cursor_theme() {
 _configure_gnome_cursor() {
   echo "Configuring GNOME cursor theme..."
   if command -v gsettings > /dev/null 2>&1; then
-    gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR_NAME" 2> /dev/null || true
-    gsettings set org.gnome.desktop.interface cursor-size "$CURSOR_SIZE" 2> /dev/null || true
+    gsettings_exec set org.gnome.desktop.interface cursor-theme "$CURSOR_NAME" 2> /dev/null || true
+    gsettings_exec set org.gnome.desktop.interface cursor-size "$CURSOR_SIZE" 2> /dev/null || true
   fi
 }
 

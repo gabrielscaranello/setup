@@ -31,30 +31,37 @@ ensure_dconf() {
   fi
 }
 
-dconf_exec() {
+# Runs a command inside a D-Bus session when none is active.
+# If <cmd> is a shell function (e.g. a Bats mock) and dbus-run-session is not
+# itself mocked, the function is invoked directly.
+_dbus_session_exec() {
+  local cmd="$1"
+  shift
+
+  if [ "$(type -t "$cmd" 2> /dev/null || true)" = "function" ] \
+    && [ "$(type -t dbus-run-session 2> /dev/null || true)" != "function" ]; then
+    "$cmd" "$@"
+    return $?
+  fi
+
   local dbus_cmd="dbus-run-session"
   if ! command -v "$dbus_cmd" > /dev/null 2>&1 && [ -x "/usr/sbin/dbus-run-session" ]; then
     dbus_cmd="/usr/sbin/dbus-run-session"
   fi
 
   if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v "$dbus_cmd" > /dev/null 2>&1; then
-    "$dbus_cmd" -- dconf "$@"
+    "$dbus_cmd" -- "$cmd" "$@"
   else
-    dconf "$@"
+    "$cmd" "$@"
   fi
 }
 
-gsettings_exec() {
-  local dbus_cmd="dbus-run-session"
-  if ! command -v "$dbus_cmd" > /dev/null 2>&1 && [ -x "/usr/sbin/dbus-run-session" ]; then
-    dbus_cmd="/usr/sbin/dbus-run-session"
-  fi
+dconf_exec() {
+  _dbus_session_exec dconf "$@"
+}
 
-  if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v "$dbus_cmd" > /dev/null 2>&1; then
-    "$dbus_cmd" -- gsettings "$@"
-  else
-    gsettings "$@"
-  fi
+gsettings_exec() {
+  _dbus_session_exec gsettings "$@"
 }
 
 load_dconf_file() {

@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Source utilities
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 
 THEME_NAME="Papirus-Dark"
@@ -139,7 +140,7 @@ _apply_papirus_folders_color() {
 _configure_gnome_icon_theme() {
   echo "Configuring GNOME icon theme..."
   if command -v gsettings > /dev/null 2>&1; then
-    gsettings set org.gnome.desktop.interface icon-theme "$THEME_NAME" 2> /dev/null || true
+    gsettings_exec set org.gnome.desktop.interface icon-theme "$THEME_NAME" 2> /dev/null || true
   fi
 }
 

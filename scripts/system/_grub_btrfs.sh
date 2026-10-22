@@ -87,13 +87,7 @@ _regenerate_grub_btrfs_menu() {
     echo "Updating GRUB snapshot menu entries..."
     sudo /etc/grub.d/41_snapshots-btrfs 2> /dev/null || true
 
-    if command -v grub2-mkconfig > /dev/null 2>&1; then
-      sudo grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null || true
-    elif command -v grub-mkconfig > /dev/null 2>&1; then
-      sudo grub-mkconfig -o /boot/grub/grub.cfg 2> /dev/null || true
-    elif command -v update-grub > /dev/null 2>&1; then
-      sudo update-grub 2> /dev/null || true
-    fi
+    update_grub_config
   fi
 }
 

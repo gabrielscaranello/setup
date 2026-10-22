@@ -4,25 +4,16 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../../_utils.sh" 2> /dev/null || source "scripts/_utils.sh" 2> /dev/null || true
 
 get_opensuse_version() {
-  local os_release_file="${OS_RELEASE_PATH:-/etc/os-release}"
-  if [ ! -f "$os_release_file" ] && [ -f /usr/lib/os-release ]; then
-    os_release_file="/usr/lib/os-release"
+  if [ "$(get_distro_id 2> /dev/null || true)" = "opensuse-tumbleweed" ]; then
+    echo "tumbleweed"
+    return 0
   fi
 
-  if [ -f "$os_release_file" ]; then
-    local distro_id
-    distro_id="$(grep '^ID=' "$os_release_file" 2> /dev/null | cut -d= -f2 | tr -d '"'\'' ' | tr '[:upper:]' '[:lower:]' || true)"
-    if [ "$distro_id" = "opensuse-tumbleweed" ]; then
-      echo "tumbleweed"
-      return 0
-    fi
-
-    local version_id
-    version_id="$(grep '^VERSION_ID=' "$os_release_file" 2> /dev/null | cut -d= -f2 | tr -d '"'\'' ' || true)"
-    if [ -n "$version_id" ]; then
-      echo "$version_id"
-      return 0
-    fi
+  local version_id
+  version_id="$(get_os_release_field VERSION_ID)"
+  if [ -n "$version_id" ]; then
+    echo "$version_id"
+    return 0
   fi
 
   echo "16.0"
