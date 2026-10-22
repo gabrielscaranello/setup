@@ -17,17 +17,18 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 ### 2. Automatic Distribution Delegation (`run_all`)
 
-- Queries `get_distro_id` to detect the running Linux distribution.
-- Delegates full setup pipeline to the dedicated runner:
+- When `is_wsl` returns 0 on a supported distribution, delegates full setup pipeline to `runners/wsl.sh`.
+- Otherwise, queries `get_distro_id` to detect the running Linux distribution and delegates full setup pipeline to the dedicated runner:
   - `debian`: executes `runners/debian.sh`
   - `fedora`: executes `runners/fedora.sh`
   - `arch`: executes `runners/arch.sh`
+  - `opensuse*`: executes `runners/opensuse.sh`
 - When the distribution is unrecognized or unsupported, outputs an informative error message and exits with status 1.
 
 ### 3. Direct Module and Runner Invocations (`run_module`)
 
-- Supports direct invocation of individual toolchain, desktop, and app scripts.
-- Supports direct invocation of distro runners (`arch`, `debian`, `fedora`) to allow explicit target overrides.
+- Supports direct invocation of individual toolchain, desktop, and app scripts (`cli`, `python`, `gh`, etc.).
+- Supports direct invocation of distro and environment runners (`arch`, `debian`, `fedora`, `opensuse`, `wsl`) to allow explicit target overrides.
 - For unknown commands or targets, outputs an error message and shows help with exit status 1.
 
 ## Test Scenarios

@@ -58,4 +58,5 @@ MODULES=(
   "timeshift||scripts/system/setup-timeshift.sh|Install and configure Timeshift (Btrfs / Rsync)"
   "update||scripts/system/setup-update.sh|Update package repositories and upgrade system packages"
   "vscodium||scripts/apps/setup-vscodium.sh|Install VSCodium (Code - OSS on Arch)"
+  "wsl||runners/wsl.sh|Run complete development setup pipeline for WSL"
 )

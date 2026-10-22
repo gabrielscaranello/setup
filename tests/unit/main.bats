@@ -95,6 +95,7 @@ setup() {
 }
 
 @test "run_all dispatches to debian runner when distribution is debian" {
+  is_wsl() { return 1; }
   get_distro_id() { echo "debian"; }
   bash() { echo "executed: $*"; return 0; }
 
@@ -105,6 +106,7 @@ setup() {
 }
 
 @test "run_all dispatches to fedora runner when distribution is fedora" {
+  is_wsl() { return 1; }
   get_distro_id() { echo "fedora"; }
   bash() { echo "executed: $*"; return 0; }
 
@@ -115,6 +117,7 @@ setup() {
 }
 
 @test "run_all dispatches to arch runner when distribution is arch" {
+  is_wsl() { return 1; }
   get_distro_id() { echo "arch"; }
   bash() { echo "executed: $*"; return 0; }
 
@@ -125,6 +128,7 @@ setup() {
 }
 
 @test "run_all dispatches to opensuse runner when distribution is opensuse-tumbleweed" {
+  is_wsl() { return 1; }
   get_distro_id() { echo "opensuse-tumbleweed"; }
   bash() { echo "executed: $*"; return 0; }
 
@@ -135,6 +139,7 @@ setup() {
 }
 
 @test "run_all dispatches to opensuse runner when distribution is opensuse-leap" {
+  is_wsl() { return 1; }
   get_distro_id() { echo "opensuse-leap"; }
   bash() { echo "executed: $*"; return 0; }
 
@@ -142,6 +147,17 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Delegating complete setup to openSUSE runner..." ]]
   [[ "$output" =~ "opensuse.sh" ]]
+}
+
+@test "run_all dispatches to wsl runner when running inside WSL on supported distro" {
+  is_wsl() { return 0; }
+  get_distro_id() { echo "arch"; }
+  bash() { echo "executed: $*"; return 0; }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Delegating complete setup to WSL (Arch Linux) runner..." ]]
+  [[ "$output" =~ "wsl.sh" ]]
 }
 
 @test "run_all fails when distribution is an unsupported derivative like ubuntu" {
@@ -210,6 +226,10 @@ setup() {
   run run_module "cli"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "scripts/terminal/setup-cli.sh" ]]
+
+  run run_module "wsl"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "runners/wsl.sh" ]]
 }
 
 @test "MODULES registry entries are unique, well-formed and point to existing files" {

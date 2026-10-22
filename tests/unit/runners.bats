@@ -117,3 +117,37 @@
   [ "$desktop_apps_idx" -lt "$default_apps_idx" ]
 }
 
+@test "runners/wsl.sh run_all calls run_pipeline with WSL pipeline on supported distributions" {
+  source /setup/runners/wsl.sh 2>/dev/null || source runners/wsl.sh
+  require_supported_distro() { echo "arch"; }
+
+  run_pipeline() {
+    echo "pipeline: $1"
+    shift
+    printf "step: %s\n" "$@"
+    return 0
+  }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "pipeline: WSL Development Setup" ]]
+  [[ "$output" =~ "terminal/setup-cli.sh" ]]
+  [[ "$output" =~ "toolchain/setup-gh.sh" ]]
+  [[ "$output" =~ "toolchain/setup-python.sh" ]]
+  [[ "$output" =~ "toolchain/setup-neovim.sh" ]]
+  [[ ! "$output" =~ "system/setup-packages.sh" ]]
+  [[ ! "$output" =~ "desktop/" ]]
+}
+
+@test "runners/wsl.sh run_all fails on unsupported distribution" {
+  source /setup/runners/wsl.sh 2>/dev/null || source runners/wsl.sh
+  get_distro_id() {
+    echo "unknown-distro"
+    return 1
+  }
+
+  run run_all
+  [ "$status" -eq 1 ]
+  [[ "$output" =~ "Unsupported distribution" ]]
+}
+
