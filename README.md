@@ -49,7 +49,7 @@ This project was created to unify and centralize several standalone distribution
 | **Fedora 44**                | `dnf`            | GNOME, KDE Plasma    | `runners/fedora.sh` (`./main.sh fedora`)                        |
 | **Arch Linux**               | `pacman`         | GNOME, KDE Plasma    | `runners/arch.sh` (`./main.sh arch`)                            |
 | **openSUSE Leap/Tumbleweed** | `zypper`         | GNOME, KDE Plasma    | `runners/opensuse.sh` (`./main.sh opensuse`)                    |
-| **WSL2 (Arch / Debian 13)**  | `pacman` / `apt` | CLI / WSLg           | `runners/wsl.sh` (`./main.sh wsl`) — [Setup Guide](docs/wsl.md) |
+| **WSL (Arch / Debian 13)**   | `pacman` / `apt` | CLI / WSLg           | `runners/wsl.sh` (`./main.sh wsl`) — [Setup Guide](docs/wsl.md) |
 
 ⚡ Quick start
 -------------
@@ -92,7 +92,7 @@ make clean            # Remove temporary artifacts
 - `scripts/` — Modular setup scripts organized by domain (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`, `utils/`)
 - `scripts/_utils.sh` — Package manager and system helper abstractions (sourced from `scripts/utils/*.sh`)
 - `scripts/packages.conf` — Cross-distro package mappings
-- `docs/` — Additional guides and documentation (e.g. [WSL2 Installation & Provisioning Guide](docs/wsl.md))
+- `docs/` — Additional guides and documentation (e.g. [WSL Installation & Provisioning Guide](docs/wsl.md))
 - `openspec/` — Spec-Driven Development (SDD) capability specifications
 - `tests/` — Bats unit and Docker multi-distro integration tests
 - `.husky/` — Git hooks (`pre-commit` running `lint-staged`, `commit-msg` checking Conventional Commits)
@@ -106,7 +106,7 @@ make clean            # Remove temporary artifacts
 
 ## 📖 More
 
-- See [docs/wsl.md](docs/wsl.md) for the official WSL2 installation guide (Arch Linux, Debian 13, `systemd`, and shared `.vhdx` `ext4` persistent storage).
+- See [docs/wsl.md](docs/wsl.md) for the official WSL 3 installation guide (Arch Linux, Debian 13, `systemd`, JetBrains Mono Nerd Font, and shared `.vhdx` `ext4` persistent storage).
 - See [TODO.md](TODO.md) for the project roadmap, implemented features, and planned tasks.
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical script template and developer guidelines.
 - See [AGENTS.md](AGENTS.md) for operational AI rules and architectural governance standards.
