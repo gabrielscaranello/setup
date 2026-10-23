@@ -33,7 +33,7 @@ Configuration settings are organized into individual `.dconf` dump files within 
    - `sort-folder-contents=true`
 
 2. **Blur my Shell** (`blur-my-shell.dconf`):
-   - Schema paths: `[org/gnome/shell/extensions/blur-my-shell]`, `[.../appfolder]`, `[.../applications]`, `[.../coverflow-alt-tab]`, `[.../dash-to-dock]`, `[.../dash-to-panel]`, `[.../hidetopbar]`, `[.../lockscreen]`, `[.../overview]`, `[.../panel]`, `[.../screenshot]`
+   - Schema paths: `[org/gnome/shell/extensions/blur-my-shell]`, `[.../appfolder]`, `[.../applications]`, `[.../coverflow-alt-tab]`, `[.../dash-to-dock]`, `[.../dash-to-panel]`, `[.../lockscreen]`, `[.../overview]`, `[.../panel]`, `[.../popup]`, `[.../screenshot]`, `[.../window-list]`
    - Preserves blur pipelines and aesthetic styling across GNOME Shell components.
 
 3. **Caffeine** (`caffeine.dconf`):

@@ -1,52 +1,50 @@
 [org/gnome/shell/extensions/blur-my-shell]
-settings-version=2
+rounded-blur-found=false
+settings-version=7
 
 [org/gnome/shell/extensions/blur-my-shell/appfolder]
 blur=true
-customize=false
-style-dialogs=2
+pipeline='pipeline_default'
 
 [org/gnome/shell/extensions/blur-my-shell/applications]
-blur=false
 pipeline='pipeline_default'
-static-blur=false
 
 [org/gnome/shell/extensions/blur-my-shell/coverflow-alt-tab]
-blur=false
 pipeline='pipeline_default'
 
 [org/gnome/shell/extensions/blur-my-shell/dash-to-dock]
-pipeline='pipeline_default_rounded'
-static-blur=true
+override-background=true
+pipeline='pipeline_default'
+static-blur=false
+style-dash-to-dock=3
+unblur-in-overview=false
 
 [org/gnome/shell/extensions/blur-my-shell/dash-to-panel]
-blur-original-panel=true
-
-[org/gnome/shell/extensions/blur-my-shell/hidetopbar]
-compatibility=false
+blur-original-panel=false
 
 [org/gnome/shell/extensions/blur-my-shell/lockscreen]
-blur=true
 pipeline='pipeline_default'
 
 [org/gnome/shell/extensions/blur-my-shell/overview]
-blur=true
 pipeline='pipeline_default'
-style-components=1
+style-components=4
 
 [org/gnome/shell/extensions/blur-my-shell/panel]
-blur=true
-force-light-text=false
+corner-radius=0
+override-background=true
+override-background-dynamically=false
 pipeline='pipeline_default'
-static-blur=true
+static-blur=false
+style-panel=0
 unblur-in-overview=true
 
 [org/gnome/shell/extensions/blur-my-shell/popup]
-blur=false
-override-background=true
-pipeline='pipeline_default_rounded'
+blur=true
+pipeline='pipeline_default'
 static-blur=false
 
 [org/gnome/shell/extensions/blur-my-shell/screenshot]
-blur=true
+pipeline='pipeline_default'
+
+[org/gnome/shell/extensions/blur-my-shell/window-list]
 pipeline='pipeline_default'
