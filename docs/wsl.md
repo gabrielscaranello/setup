@@ -157,11 +157,15 @@ sudo chsh -s /usr/bin/zsh "$USER"
 sudo tee /etc/wsl.conf > /dev/null << EOF
 [boot]
 systemd=true
-command="/bin/sh -c 'if ! mountpoint -q /mnt/wsl/workspace; then /mnt/c/Windows/System32/schtasks.exe /run /tn WSL-Mount-Workspace >/dev/null 2>&1 || true; for i in 1 2 3 4 5; do mountpoint -q /mnt/wsl/workspace && break; sleep 1; done; fi; if mountpoint -q /mnt/wsl/workspace && ! mountpoint -q /home/$USER; then mkdir -p /mnt/wsl/workspace/home/$USER && cp -rn /home/$USER/. /mnt/wsl/workspace/home/$USER/ && chown -R 1000:1000 /mnt/wsl/workspace/home/$USER && mount --bind /mnt/wsl/workspace/home/$USER /home/$USER; fi'"
+command="/bin/sh -c 'if ! mountpoint -q /mnt/wsl/workspace; then /mnt/c/Windows/System32/schtasks.exe /run /tn WSL-Mount-Workspace >/dev/null 2>&1 || true; for i in 1 2 3 4 5; do mountpoint -q /mnt/wsl/workspace && break; sleep 1; done; fi; if mountpoint -q /mnt/wsl/workspace && ! mountpoint -q /home/$USER; then if [ ! -d /mnt/wsl/workspace/home/$USER ]; then mkdir -p /mnt/wsl/workspace/home/$USER && cp -rn /home/$USER/. /mnt/wsl/workspace/home/$USER/ && chown -R 1000:1000 /mnt/wsl/workspace/home/$USER; fi; mount --bind /mnt/wsl/workspace/home/$USER /home/$USER; fi'"
 
 [user]
 default=$USER
 EOF
+
+# 4. Register the bind-mount in /etc/fstab for synchronous mounting before the login shell starts
+grep -q "/mnt/wsl/workspace/home/$USER" /etc/fstab || \
+  echo "/mnt/wsl/workspace/home/$USER /home/$USER none bind,nofail 0 0" | sudo tee -a /etc/fstab > /dev/null
 ```
 
 Exit Debian (`exit`) and restart the instance in PowerShell:
