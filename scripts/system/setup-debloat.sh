@@ -186,7 +186,7 @@ main() {
   distro="$(get_distro_id)"
 
   case "$distro" in
-    debian)
+    debian | linuxmint)
       _debloat_debian
       ;;
     fedora)

@@ -20,10 +20,10 @@ Before starting the implementation for each distribution, consult the author's r
 - [x] **Discovery & Specification**:
   - [x] Inspect packages, themes, and configurations in `gabrielscaranello/mint-setup` (main branch).
   - [x] Author OpenSpec specification in `openspec/specs/system/linuxmint.md` with GIVEN/WHEN/THEN scenarios.
-- [ ] **System Detection & Package Mapping**:
-  - [ ] Update `scripts/utils/_system.sh` (`get_distro_id` detecting `ID=linuxmint` with `ID_LIKE=ubuntu`).
-  - [ ] Update `require_supported_distro` and `is_distro "linuxmint"`.
-  - [ ] Configure package resolution for Linux Mint in `scripts/utils/_packages.sh` and `scripts/packages.conf`.
+- [x] **System Detection & Package Mapping**:
+  - [x] Update `scripts/utils/_system.sh` (`get_distro_id` detecting `ID=linuxmint` with `ID_LIKE=ubuntu`).
+  - [x] Update `require_supported_distro` and `is_distro "linuxmint"`.
+  - [x] Configure package resolution for Linux Mint in `scripts/utils/_packages.sh` and `scripts/packages.conf`.
 - [ ] **Desktop Environment (Cinnamon)**:
   - [ ] Update `scripts/utils/_desktop.sh` to detect `cinnamon` via `get_desktop_environment`.
   - [ ] Create `scripts/desktop/setup-cinnamon.sh` (dark mode via gsettings, keybindings, default terminal emulator).
