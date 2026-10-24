@@ -2,8 +2,11 @@ FROM fedora:44
 
 ARG BATS_VERSION=1.11.0
 
-# Install base tools
-RUN dnf install -y sudo curl wget git bash ca-certificates kcov sqlite \
+# Configure DNF performance and caching optimizations
+RUN printf 'fastestmirror=True\nmax_parallel_downloads=10\nkeepcache=True\n' >> /etc/dnf/dnf.conf \
+    && dnf install -y \
+        sudo curl wget git bash ca-certificates kcov sqlite \
+        python3 python3-pip zsh fzf ripgrep fd-find tar xz unzip procps-ng file \
     && dnf clean all
 
 # Install bats-core from source for a consistent version across all distros

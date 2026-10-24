@@ -2,8 +2,11 @@ FROM archlinux:latest
 
 ARG BATS_VERSION=1.11.0
 
-# Sync and install base tools
-RUN pacman -Sy --noconfirm sudo curl wget git kcov sqlite \
+# Configure Pacman performance optimizations and install base tools
+RUN sed -i 's/^#ParallelDownloads = .*/ParallelDownloads = 10/' /etc/pacman.conf \
+    && pacman -Sy --noconfirm \
+        sudo curl wget git kcov sqlite \
+        python python-pip zsh fzf ripgrep fd tar xz unzip procps-ng file \
     && pacman -Sc --noconfirm
 
 # Install bats-core from source for a consistent version across all distros

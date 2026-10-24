@@ -10,6 +10,7 @@ SELECTED_DISTRO=""
 SELECTED_FILTER=""
 RUN_UNIT=0
 RUN_INTEGRATION=0
+PARALLEL=0
 
 _show_help() {
   echo "Usage: ./tests/run-tests.sh [options]"
@@ -18,6 +19,7 @@ _show_help() {
   echo "  --unit                Run fast unit test suite only (mocked / logic tests)"
   echo "  --integration         Run container integration test suite only"
   echo "  --coverage            Generate code coverage reports with kcov"
+  echo "  --parallel            Run integration test containers concurrently"
   echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse|tumbleweed)"
   echo "  --filter=<pattern>    Run only tests matching pattern (e.g. nvm, neovim, utils)"
   echo "  -h, --help            Show this help message"
@@ -35,6 +37,9 @@ for arg in "$@"; do
       ;;
     --coverage)
       COVERAGE=1
+      ;;
+    --parallel)
+      PARALLEL=1
       ;;
     --distro=*)
       SELECTED_DISTRO="${arg#*=}"
@@ -103,11 +108,44 @@ _get_docker_resource_flags() {
   echo "${flags[@]}"
 }
 
+_get_distro_cache_flags() {
+  local distro="$1"
+  local flags=()
+  case "$distro" in
+    archlinux | arch)
+      flags+=(-v "setup-pkg-cache-archlinux:/var/cache/pacman/pkg")
+      ;;
+    debian)
+      flags+=(-v "setup-pkg-cache-debian:/var/cache/apt/archives")
+      ;;
+    fedora)
+      flags+=(-v "setup-pkg-cache-fedora:/var/cache/libdnf5" -v "setup-pkg-cache-fedora-legacy:/var/cache/dnf")
+      ;;
+    opensuse | leap)
+      flags+=(-v "setup-pkg-cache-opensuse:/var/cache/zypp/packages")
+      ;;
+    tumbleweed)
+      flags+=(-v "setup-pkg-cache-tumbleweed:/var/cache/zypp/packages")
+      ;;
+  esac
+  echo "${flags[@]}"
+}
+
 _find_test_files() {
   local dir="$1"
+  local target_distro="${2:-}"
   local files=()
   if [[ -d "$dir" ]]; then
     while IFS= read -r f; do
+      if [[ -n "$target_distro" ]]; then
+        case "$f" in
+          */system/debian/*) [[ "$target_distro" == "debian" ]] || continue ;;
+          */system/fedora/*) [[ "$target_distro" == "fedora" ]] || continue ;;
+          */system/arch/*) [[ "$target_distro" == "archlinux" || "$target_distro" == "arch" ]] || continue ;;
+          */system/opensuse/*) [[ "$target_distro" == "opensuse" || "$target_distro" == "tumbleweed" || "$target_distro" == "leap" ]] || continue ;;
+        esac
+      fi
+
       if [[ -z "$SELECTED_FILTER" ]] || [[ "$f" =~ $SELECTED_FILTER ]]; then
         files+=("$f")
       fi
@@ -130,11 +168,15 @@ _run_bats_container() {
   local res_flags=()
   read -r -a res_flags <<< "$(_get_docker_resource_flags)"
 
+  local cache_flags=()
+  read -r -a cache_flags <<< "$(_get_distro_cache_flags "$target_name")"
+
   if [[ "$COVERAGE" -eq 1 ]]; then
     rm -rf "coverage/$target_name"
     mkdir -p "coverage/$target_name"
     docker run --rm \
       "${res_flags[@]}" \
+      "${cache_flags[@]}" \
       --ulimit "nofile=1024:1024" \
       --cap-add=SYS_PTRACE \
       --security-opt seccomp=unconfined \
@@ -145,6 +187,7 @@ _run_bats_container() {
   else
     docker run --rm \
       "${res_flags[@]}" \
+      "${cache_flags[@]}" \
       -w /setup \
       -v "$ROOT_DIR:/setup" \
       "$image" bats "${test_files[@]}"
@@ -193,11 +236,49 @@ _run_integration_distro() {
   fi
 
   local integration_tests=()
-  read -r -a integration_tests <<< "$(_find_test_files tests/integration)"
+  read -r -a integration_tests <<< "$(_find_test_files tests/integration "$distro")"
 
   if [[ ${#integration_tests[@]} -gt 0 ]]; then
     _run_bats_container "$image" "$distro" "${integration_tests[@]}"
   fi
+}
+
+_run_all_integration_parallel() {
+  local distros=("archlinux" "debian" "fedora" "opensuse" "tumbleweed")
+  local log_dir
+  log_dir="$(mktemp -d "${TMPDIR:-/tmp}/setup-tests-parallel.XXXXXX")"
+  local pids=()
+  local distro_names=()
+
+  echo "=== Running Integration Tests Concurrently Across All Distros ==="
+  echo "Distros running in parallel: ${distros[*]}"
+  echo ""
+
+  for d in "${distros[@]}"; do
+    (
+      _run_integration_distro "$d" > "${log_dir}/${d}.log" 2>&1
+    ) &
+    pids+=($!)
+    distro_names+=("$d")
+  done
+
+  local exit_code=0
+  for i in "${!pids[@]}"; do
+    local pid="${pids[$i]}"
+    local d="${distro_names[$i]}"
+    if ! wait "$pid"; then
+      echo "❌ Integration tests FAILED on ${d^}!"
+      cat "${log_dir}/${d}.log"
+      exit_code=1
+    else
+      echo "✓ Integration tests PASSED on ${d^}."
+      tail -n 10 "${log_dir}/${d}.log"
+    fi
+    echo ""
+  done
+
+  rm -rf "$log_dir"
+  return "$exit_code"
 }
 
 _merge_coverage() {
@@ -261,6 +342,8 @@ main() {
           exit 1
           ;;
       esac
+    elif [[ "$PARALLEL" -eq 1 ]]; then
+      _run_all_integration_parallel
     else
       _run_integration_distro "archlinux"
       echo ""

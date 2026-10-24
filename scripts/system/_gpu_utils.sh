@@ -54,7 +54,14 @@ configure_gpu_repositories() {
 
   case "$distro" in
     debian | apt)
+      local backports_mock=""
+      if declare -f add_debian_backports_repo > /dev/null 2>&1; then
+        backports_mock="$(declare -f add_debian_backports_repo)"
+      fi
       declare -F add_debian_nonfree_repo > /dev/null 2>&1 || source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
+      if [ -n "$backports_mock" ]; then
+        eval "$backports_mock"
+      fi
       add_debian_nonfree_repo
       add_debian_backports_repo
       ;;

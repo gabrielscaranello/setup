@@ -7,6 +7,7 @@ TESTS_DIR := tests
 
 DISTRO ?=
 FILTER ?=
+PARALLEL ?=
 
 help:
 	@./main.sh help
@@ -17,13 +18,13 @@ all:
 # ── Tests ────────────────────────────────────────────────────────────────────
 
 test:
-	@./$(TESTS_DIR)/run-tests.sh $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER))
+	@./$(TESTS_DIR)/run-tests.sh $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER)) $(if $(PARALLEL),--parallel)
 
 test-coverage:
-	@./$(TESTS_DIR)/run-tests.sh --coverage $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER))
+	@./$(TESTS_DIR)/run-tests.sh --coverage $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER)) $(if $(PARALLEL),--parallel)
 
 test-integration:
-	@./$(TESTS_DIR)/run-tests.sh --integration $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER))
+	@./$(TESTS_DIR)/run-tests.sh --integration $(if $(DISTRO),--distro=$(DISTRO)) $(if $(FILTER),--filter=$(FILTER)) $(if $(PARALLEL),--parallel)
 
 test-unit:
 	@./$(TESTS_DIR)/run-tests.sh --unit $(if $(FILTER),--filter=$(FILTER))

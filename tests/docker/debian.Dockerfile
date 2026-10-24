@@ -3,10 +3,12 @@ FROM debian:${DEBIAN_VERSION}
 
 ARG BATS_VERSION=1.11.0
 
-# Install base tools
-RUN apt-get update -qq \
+# Configure APT performance, pipelining, and package caching optimizations
+RUN printf 'Acquire::http::Pipeline-Depth "5";\nAcquire::Languages "none";\nBinary::apt::APT::Keep-Downloaded-Packages "true";\n' > /etc/apt/apt.conf.d/99optimizations \
+    && apt-get update -qq \
     && apt-get install -y --no-install-recommends \
         sudo curl wget git bash ca-certificates kcov sqlite3 \
+        python3 python3-pip zsh fzf ripgrep fd-find tar xz-utils unzip procps file \
     && rm -rf /var/lib/apt/lists/*
 
 # Install bats-core from source for a consistent version across all distros

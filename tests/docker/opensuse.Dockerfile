@@ -3,10 +3,12 @@ FROM opensuse/leap:${OPENSUSE_VERSION}
 
 ARG BATS_VERSION=1.11.0
 
-# Install base tools
-RUN zypper --non-interactive refresh \
+# Configure Zypp caching optimizations and install base tools
+RUN sed -i 's/^# keeppackages = 0/keeppackages = 1/' /etc/zypp/zypp.conf 2>/dev/null || true \
+    && zypper --non-interactive refresh \
     && zypper --non-interactive install -y --no-recommends \
         sudo curl wget git bash ca-certificates sqlite3 shadow \
+        python3 python3-pip zsh fzf ripgrep fd tar xz unzip procps file \
     && zypper clean --all
 
 # Install bats-core from source for a consistent version across all distros
