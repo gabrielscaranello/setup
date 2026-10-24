@@ -164,8 +164,8 @@ default=$USER
 EOF
 
 # 4. Registrar o bind-mount no /etc/fstab para montagem síncrona antes de iniciar o shell
-grep -q "/mnt/wsl/workspace/home/$USER" /etc/fstab || \
-  echo "/mnt/wsl/workspace/home/$USER /home/$USER none bind,nofail 0 0" | sudo tee -a /etc/fstab > /dev/null
+grep -q "/mnt/wsl/workspace/home/$USER" /etc/fstab \
+  || echo "/mnt/wsl/workspace/home/$USER /home/$USER none bind,nofail 0 0" | sudo tee -a /etc/fstab > /dev/null
 ```
 
 Saia do Debian (`exit`) e reinicie a instância no PowerShell:

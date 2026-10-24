@@ -87,7 +87,7 @@ make clean            # Remove temporary artifacts
 ------------------------------------
 
 - `main.sh` — Master CLI entrypoint forwarder (calls `runners/main.sh`)
-- `runners/` — Distro-specific setup pipelines, declarative module registry, and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`, `main.sh`, `_modules.sh`, `_utils.sh`)
+- `runners/` — Distro-specific setup pipelines, declarative module registry, and CLI dispatcher (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`, `wsl.sh`, `main.sh`, `_modules.sh`, `_utils.sh`)
 - `Makefile` — Convenience wrapper for `./main.sh`, test runners, and code quality tools
 - `scripts/` — Modular setup scripts organized by domain (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`, `utils/`)
 - `scripts/_utils.sh` — Package manager and system helper abstractions (sourced from `scripts/utils/*.sh`)
@@ -107,7 +107,6 @@ make clean            # Remove temporary artifacts
 ## 📖 More
 
 - See [docs/wsl.md](docs/wsl.md) for the official WSL 3 installation guide (Debian 13, `systemd`, JetBrains Mono Nerd Font, and `.vhdx` `ext4` persistent storage).
-- See [TODO.md](TODO.md) for the project roadmap, implemented features, and planned tasks.
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical script template and developer guidelines.
 - See [AGENTS.md](AGENTS.md) for operational AI rules and architectural governance standards.
 

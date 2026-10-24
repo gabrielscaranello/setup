@@ -27,25 +27,33 @@ This repository provides automated, modular, and idempotent bash setup scripts f
 
 ### 2. Common Reusable Utilities (`scripts/_utils.sh` & `scripts/utils/*.sh`)
 
-Common operations must reuse helper functions from `scripts/_utils.sh` (which sources `scripts/utils/_packages.sh`, `_system.sh`, `_desktop.sh`, and `_download.sh`):
+Common operations must reuse helper functions from `scripts/_utils.sh` (which sources `scripts/utils/_packages.sh`, `_system.sh`, `_desktop.sh`, `_download.sh`, and `_terminal.sh`):
 
 - `install_packages <generic_pkg>...`: Resolves packages across distributions via `packages.conf` and installs them idempotently.
-- `install_packages_from_repo <repo> <generic_pkg>...`: Resolves packages via `packages.conf` and installs them targeting a specific repository (`apt -t`, `zypper --from`, or standard fallback on Fedora/Arch).
-- `swap_packages <old_pkg> <new_pkg>`: Replaces a conflicting package atomically (`dnf swap --allowerasing` on Fedora, or `install_packages` elsewhere).
+- `install_packages_from_repo <repo> <native_pkg>...`: Installs native packages targeting a specific repository suite (`apt -t` on Debian or `zypper --from` on openSUSE).
+- `swap_packages <old_pkg> <new_pkg>`: Replaces a conflicting package atomically (`dnf swap --allowerasing` on Fedora with fallback install).
 - `remove_packages <pkg>...`: Removes installed packages idempotently across distributions.
 - `upgrade_system`: Refreshes repository metadata and upgrades installed system packages across distributions.
-- `lock_packages <pkg>...`: Locks/holds packages to prevent unintended upgrades (`apt-mark hold`, `dnf versionlock`, `zypper addlock`).
+- `lock_packages <pkg>...`: Locks/holds packages to prevent unintended upgrades on openSUSE (`zypper addlock`; no-op elsewhere).
+- `is_package_installed <pkg>`: Checks whether a native package is installed across package managers.
 - `get_distro_id`: Returns current distribution identifier (`debian`, `fedora`, `arch`, `opensuse`, or `unknown`).
 - `require_supported_distro`: Validates that current system is supported (`debian`, `fedora`, `arch`, `opensuse`) and prints distro ID; exits 1 otherwise.
 - `is_distro <distro>`: Checks whether current system matches target distribution.
+- `is_wsl`: Detects whether the current system is running inside Windows Subsystem for Linux (WSL).
 - `get_desktop_environment`: Returns current desktop environment (`gnome`, `plasma`, or `unknown`).
-- `configure_de_wallpaper <wallpaper_path>`: Sets the desktop wallpaper idempotently on GNOME or KDE Plasma.
+- `save_desktop_environment <de>`: Persists target desktop environment choice to `~/.config/setup/desktop-environment`.
+- `prompt_desktop_environment [prompt] [default]`: Interactively prompts user for desktop environment selection in headless/terminal sessions.
+- `ensure_desktop_environment [prompt]`: Resolves, prompts when necessary, and persists desktop environment selection.
+- `resolve_desktop_app <candidates...>`: Inspects standard XDG and Flatpak directories to resolve the first matching `.desktop` entry.
 - `get_root_filesystem`: Returns root partition filesystem type (`btrfs`, `ext4`, etc.).
+- `get_repo_root`: Resolves absolute path to root of setup repository.
+- `write_ini_key <file> <section> <key> <val>`: Updates or creates a key=value pair inside a given section in an INI or desktop file.
 - `get_shell_profile`: Returns user profile path (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
 - `get_os_release_field <KEY>`: Reads a field from os-release (honors `OS_RELEASE_PATH`, falls back to `/usr/lib/os-release`).
 - `update_grub_config`: Regenerates the GRUB configuration with `grub2-mkconfig`, `grub-mkconfig` or `update-grub`, whichever is available.
 - `get_gpu_vendor`: Returns detected physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
 - `enable_cron_service [service_name]`: Enables and starts the distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch/openSUSE).
+- `ensure_xdg_terminal_exec`: Deploys `xdg-terminal-exec`, symlinks `x-terminal-emulator` / `gnome-terminal`, and configures environment PATH.
 - `install_flatpak_app <app_id> [app_name]`: Idempotently configures Flatpak and installs Flathub applications.
 - `download_file <url> <dest>`: Downloads file with transparent `curl` / `wget` fallback.
 - `fetch_url <url>`: Fetches remote content directly with `curl` / `wget` fallback.
@@ -67,6 +75,7 @@ Third-party repository configurations and hardware primitives must reside in the
   - `add_arch_multilib_repo`: Idempotently enables the multilib repository in `/etc/pacman.conf` and updates the pacman database.
 - **Debian (`scripts/system/debian/_repositories.sh`)**:
   - `get_debian_codename`: Resolves Debian release codename (`trixie`, `bookworm`, etc.).
+  - `is_debian_testing`: Checks whether current Debian release is a testing or unstable codename.
   - `add_debian_backports_repo`: Idempotently configures Debian Backports.
   - `add_debian_vscodium_repo`: Idempotently imports GPG key and adds VSCodium APT source.
   - `add_debian_mozilla_repo`: Idempotently imports Mozilla GPG key, adds source, and sets APT pinning priority.
@@ -76,8 +85,14 @@ Third-party repository configurations and hardware primitives must reside in the
   - `add_fedora_vscodium_repo`: Idempotently adds VSCodium DNF repository.
   - `add_fedora_rpmfusion_repo`: Idempotently adds RPM Fusion Free and Non-Free DNF repositories.
 - **openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`)**:
+  - `get_opensuse_version`: Resolves openSUSE version (`tumbleweed` or Leap version ID).
   - `add_opensuse_packman_repo`: Idempotently adds the Packman Essentials repository (auto-detecting Leap `$releasever` or Tumbleweed).
+  - `add_opensuse_nonfree_repo`: Idempotently ensures openSUSE Non-OSS repository is enabled.
   - `add_opensuse_nvidia_repo`: Idempotently adds the official NVIDIA repository for openSUSE Leap & Tumbleweed.
+  - `add_opensuse_vscodium_repo`: Idempotently adds the VSCodium RPM repository.
+  - `add_opensuse_mozilla_repo`: Idempotently adds the Mozilla repository.
+  - `add_opensuse_kernel_backports_repo`: Idempotently adds the Kernel:stable backports repository on Leap.
+  - `configure_opensuse_snapper`: Idempotently configures Snapper timeline and Btrfs snapshot retention.
   - `add_opensuse_vscodium_repo`: Idempotently adds the VSCodium RPM repository.
   - `configure_opensuse_snapper`: Idempotently configures Snapper timeline and Btrfs snapshot retention.
 
@@ -187,14 +202,14 @@ _install_docker_packages
 
 ### 5. Never Add Identical Package Names to `packages.conf`
 
-Only add entries when package names **differ** across Debian / Fedora / Arch, or when a package is **unsupported** (`-`) on a specific distro.
+Only add entries when package names **differ** across Debian / Fedora / Arch / openSUSE, or when a package is **unsupported** (`-`) on a specific distro.
 
 ```
 # ✅ CORRECT — names differ across distros, must be in packages.conf
-fd-find | fd-find | fd-find | fd
+fd-find | fd-find | fd-find | fd | fd
 
 # ❌ NEVER — identical everywhere, NOT added to packages.conf
-# ripgrep | ripgrep | ripgrep | ripgrep
+# ripgrep | ripgrep | ripgrep | ripgrep | ripgrep
 ```
 
 ---
@@ -212,7 +227,7 @@ fd-find | fd-find | fd-find | fd
   1. Linters and formatters: `make lint` (or `yarn lint:sh` and `yarn lint:bats`) and format with `make format` (or `yarn format`).
   2. The unit test suite (`make test-unit` or `./tests/run-tests.sh --unit`).
   3. The relevant integration tests if containers/Docker are available (`./tests/run-tests.sh --integration --filter=<feature>`).
-- **Doc-Only Optimization**: If changes are strictly limited to documentation or markdown files (`*.md`, `TODO.md`, `README*.md`, `CONTRIBUTING.md`, `AGENTS.md`) with no changes to code, configurations, or tests, AI agents must **NOT** execute the test or lint suites.
+- **Doc-Only Optimization**: If changes are strictly limited to documentation or markdown files (`*.md`, `README*.md`, `CONTRIBUTING.md`, `AGENTS.md`) with no changes to code, configurations, or tests, AI agents must **NOT** execute the test or lint suites.
 
 ---
 
@@ -221,9 +236,8 @@ fd-find | fd-find | fd-find | fd
 Whenever a new script is added or an existing script/flow is modified under `scripts/`, `main.sh`, or `Makefile`:
 
 1. **[OpenSpec](openspec/)**: Follow Spec-Driven Development (SDD). Ensure the corresponding capability spec under `openspec/specs/<domain>/<feature>.md` is created or updated with requirements and GIVEN/WHEN/THEN scenarios BEFORE implementing or modifying code.
-2. **[TODO.md](TODO.md)**: Check off completed tasks (`[x]`) and reference the implemented script file. AI agents must consult this file to plan upcoming work following the established phase priority order.
-3. **[runners/\_modules.sh](runners/_modules.sh) & [runners/main.sh](runners/main.sh)**: Register the new module in `runners/_modules.sh` (`MODULE_CATALOG`, `MODULE_SCRIPTS`, `MODULE_DESCRIPTIONS`) and in the appropriate pipeline array in `runners/_utils.sh` or distro runners. The module registry in `runners/_modules.sh` rendered by `show_help()` in `runners/main.sh` is the single source of truth for available setup commands.
-4. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
+2. **[runners/\_modules.sh](runners/_modules.sh) & [runners/main.sh](runners/main.sh)**: Register the new module in `runners/_modules.sh` (`MODULES` declarative array) and in the appropriate pipeline array in `runners/_utils.sh` or distro runners. The module registry in `runners/_modules.sh` rendered by `show_help()` in `runners/main.sh` is the single source of truth for available setup commands.
+3. **[scripts/packages.conf](scripts/packages.conf)** (Package Mappings):
    - Only add entries to `packages.conf` when the package name differs across distributions (`debian`, `fedora`, `arch`, `opensuse`) or is unsupported (`-`) in a specific distro. Packages with identical names across all distros are resolved automatically by fallback and must NOT be added.
    - Maintain alphabetical order by generic package name.
    - Maintain column alignment (`GENERIC_NAME | DEBIAN | FEDORA | ARCH | OPENSUSE`) and strictly ensure at least one blank space before and after every `|` separator.
@@ -247,7 +261,6 @@ Whenever a new script is added or an existing script/flow is modified under `scr
 
 ## 📖 Deep-Dive References & Upstream Sources
 
-- **[TODO.md](TODO.md)**: Master task list, milestone priorities, and execution roadmap.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**: Architecture, script patterns, coding standards, test guidelines, and PR checklist.
 - **[README.md](README.md)**: Canonical user-facing documentation and quick start.
 - **[README-pt-br.md](README-pt-br.md)**: Documentação em português.

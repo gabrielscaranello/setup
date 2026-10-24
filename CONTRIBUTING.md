@@ -24,11 +24,12 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 │   ├── debian.sh                  # Debian setup pipeline
 │   ├── fedora.sh                  # Fedora setup pipeline
 │   ├── opensuse.sh                # openSUSE (Leap & Tumbleweed) setup pipeline
+│   ├── wsl.sh                     # WSL (Debian) development setup pipeline
 │   └── main.sh                    # Central CLI dispatcher and module runner
 ├── scripts/                       # Modular setup scripts (organized by domain)
 │   ├── _utils.sh                  # Core entrypoint sourcing scripts/utils/*.sh
 │   ├── packages.conf              # Declarative cross-distro package mappings
-│   ├── utils/                     # Modular core utilities (_packages, _system, _desktop, _download)
+│   ├── utils/                     # Modular core utilities (_packages, _system, _desktop, _download, _terminal)
 │   ├── apps/                      # Application setup scripts
 │   ├── desktop/                   # Desktop environment & theming setup scripts
 │   ├── security/                  # Security setup scripts
@@ -43,7 +44,7 @@ This file is the reference for contributors, maintainers, and tools (linters, AI
 │   ├── terminal/                  # Terminal tools & fonts setup scripts
 │   └── toolchain/                 # Dev runtimes & toolchains
 └── tests/                         # Test suite
-    ├── docker/                    # Base Dockerfiles per distro (archlinux, debian, fedora, opensuse)
+    ├── docker/                    # Base Dockerfiles per distro (archlinux, debian, fedora, opensuse, tumbleweed)
     ├── integration/               # Integration tests per domain/feature
     ├── unit/                      # Fast Bats unit tests per domain/feature
     └── run-tests.sh               # Master test orchestrator
@@ -66,14 +67,14 @@ source "scripts/_utils.sh" 2> /dev/null || true
 
 - Private functions: prefix with `_` (e.g., `_install_node`). Public functions have no prefix (e.g., `install_packages` from `_utils.sh`). Keep functions small and idempotent.
 - **Rule for One-Line Functions**: Do not create trivial one-line proxy functions if called in only one place. Inline the helper or command directly. Only keep one-line functions if reused across multiple locations.
-- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`install_packages`, `install_packages_from_repo`, `swap_packages`, `remove_packages`, `upgrade_system`, `lock_packages`, `get_distro_id`, `get_os_release_field`, `update_grub_config`, `require_supported_distro`, `is_distro`, `get_desktop_environment`, `configure_de_wallpaper`, `get_root_filesystem`, `get_shell_profile`, `get_gpu_vendor`, `enable_cron_service`, `install_flatpak_app`, `download_file`, `fetch_url`, `fetch_github_latest_version`, `is_version_up_to_date`, `install_github_binary`).
+- **Common Helpers**: Reuse abstractions from `scripts/_utils.sh` (`install_packages`, `install_packages_from_repo`, `swap_packages`, `remove_packages`, `upgrade_system`, `lock_packages`, `get_distro_id`, `get_os_release_field`, `update_grub_config`, `require_supported_distro`, `is_distro`, `is_wsl`, `get_desktop_environment`, `save_desktop_environment`, `prompt_desktop_environment`, `ensure_desktop_environment`, `resolve_desktop_app`, `get_root_filesystem`, `get_repo_root`, `get_shell_profile`, `get_gpu_vendor`, `enable_cron_service`, `install_flatpak_app`, `download_file`, `fetch_url`, `fetch_github_latest_version`, `is_version_up_to_date`, `install_github_binary`, `write_ini_key`, `is_package_installed`, `ensure_xdg_terminal_exec`).
 - **Distribution Repository & Hardware Helpers**: Reuse distro repository and hardware utilities:
   - GPU Utilities (`scripts/system/_gpu_utils.sh`): `has_nvidia_gpu`, `has_amd_gpu`, `has_intel_gpu`, `has_hybrid_gpu`, `configure_gpu_repositories`.
   - Shared System Helpers: `scripts/system/_grub_btrfs.sh` (`configure_grub_btrfs`), `scripts/system/_debloat_packages.sh`.
   - Arch Linux (`scripts/system/arch/_repositories.sh`): `add_arch_multilib_repo`.
-  - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
+  - Debian (`scripts/system/debian/_repositories.sh`): `get_debian_codename`, `is_debian_testing`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - Fedora (`scripts/system/fedora/_repositories.sh`): `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
-  - openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`): `add_opensuse_packman_repo`, `add_opensuse_nvidia_repo`, `add_opensuse_vscodium_repo`, `configure_opensuse_snapper`.
+  - openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`): `get_opensuse_version`, `add_opensuse_packman_repo`, `add_opensuse_nonfree_repo`, `add_opensuse_nvidia_repo`, `add_opensuse_vscodium_repo`, `add_opensuse_mozilla_repo`, `add_opensuse_kernel_backports_repo`, `configure_opensuse_snapper`.
 - **Desktop Environment Handling**: Use `get_desktop_environment` to guard DE-specific steps (GNOME, KDE Plasma). When the DE is not recognized (`unknown`), do nothing for DE-specific tasks.
 - **SOLID Design Principles**: All scripts and helpers must adhere to SOLID principles:
   - **S (Single Responsibility)**: Small, cohesive private functions (`_`) where each function has one reason to change (decouple detection, repos, installation, 32-bit compatibility, service management).
@@ -129,13 +130,13 @@ if a script depends on another (e.g., neovim depends on nvm), document or instal
 
 ## 🧪 Integration Tests
 
-Tests live under `tests/` and use [bats-core](https://github.com/bats-core/bats-core). Each test runs inside Docker to guarantee a clean, distro-specific environment across all supported distributions (Arch Linux, Debian, Fedora).
+Tests live under `tests/` and use [bats-core](https://github.com/bats-core/bats-core). Each test runs inside Docker to guarantee a clean, distro-specific environment across all supported distributions (Arch Linux, Debian, Fedora, openSUSE Leap & Tumbleweed).
 
 ### Directory structure pattern
 
 ```
 tests/
-├── docker/                        # Generic base Dockerfiles (one per distro: archlinux, debian, fedora)
+├── docker/                        # Generic base Dockerfiles per distro (archlinux, debian, fedora, opensuse, tumbleweed)
 │   ├── <distro>.Dockerfile
 │   └── ...
 ├── unit/                          # Fast unit tests (mocked, testing internal functions)
@@ -155,7 +156,7 @@ tests/
   - Run quickly via `make test-unit`.
 - **Integration tests** (`tests/integration/<feature>.bats`):
   - Use `setup_file()` to run the script once per test file in a clean container.
-  - Shared across all supported distributions (Arch Linux, Debian, Fedora) to avoid duplication.
+  - Shared across all supported distributions (Arch Linux, Debian, Fedora, openSUSE Leap & Tumbleweed) to avoid duplication.
   - Implement tests (`@test`) verifying that required binaries, packages, configs, or outputs exist.
   - Always include an idempotency check (running the script a second time should exit with status 0).
 - **Running tests**:
@@ -186,7 +187,6 @@ Minor edits (typos/formatting) may omit AGENTS.md — document the reason in the
 - [ ] Code added to scripts/
 - [ ] scripts/packages.conf updated (if cross-distro package mappings needed)
 - [ ] Makefile updated (when applicable)
-- [ ] Task checked off in TODO.md (when applicable)
 - [ ] Makefile target added (when applicable)
 - [ ] README.md and README-pt-br.md updated (when applicable)
 - [ ] AGENTS.md updated (when applicable)

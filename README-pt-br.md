@@ -87,7 +87,7 @@ make clean            # Limpa artefatos temporários
 ---------------------------------------
 
 - `main.sh` — Ponto de entrada central que redireciona para `runners/main.sh`
-- `runners/` — Pipelines de instalação específicos por distribuição, registro declarativo de módulos e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`, `main.sh`, `_modules.sh`, `_utils.sh`)
+- `runners/` — Pipelines de instalação específicos por distribuição, registro declarativo de módulos e despachante CLI (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`, `wsl.sh`, `main.sh`, `_modules.sh`, `_utils.sh`)
 - `Makefile` — Runner e alias de conveniência para `./main.sh`, testes e ferramentas de qualidade de código
 - `scripts/` — Scripts modulares organizados por domínios (`apps/`, `desktop/`, `security/`, `system/`, `terminal/`, `toolchain/`, `utils/`)
 - `scripts/_utils.sh` — Abstrações de sistema e gerenciadores de pacotes (carregadas de `scripts/utils/*.sh`)
@@ -107,7 +107,6 @@ make clean            # Limpa artefatos temporários
 ## 📖 Mais informações
 
 - Consulte o [docs/wsl-pt-br.md](docs/wsl-pt-br.md) para o guia oficial de instalação do WSL 3 (Debian 13, `systemd`, JetBrains Mono Nerd Font e disco persistente `.vhdx` `ext4`).
-- Consulte o arquivo [TODO.md](TODO.md) para o roadmap do projeto, funcionalidades implementadas e tarefas planejadas.
 - Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para o template de scripts e o fluxo de contribuição.
 - Consulte o arquivo [AGENTS.md](AGENTS.md) para regras operacionais de IA e governança de arquitetura.
 

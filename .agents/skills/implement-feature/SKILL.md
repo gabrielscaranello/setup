@@ -12,7 +12,7 @@ description: >-
 This skill defines the canonical step-by-step procedure for introducing new configurations, tools, applications, or setup modules into this repository.
 
 > [!NOTE]
-> **Skill Lifecycle & Scope**: All initial roadmap tasks (Phases 1–7) tracked in [TODO.md](../../../TODO.md) have been completed. This skill now governs ongoing maintenance, incremental enhancements, refactoring workflows, and future milestone implementations.
+> **Skill Lifecycle & Scope**: All roadmap tasks across supported distributions have been completed. This skill now governs ongoing maintenance, incremental enhancements, refactoring workflows, and future capability implementations.
 
 ---
 
@@ -26,17 +26,17 @@ This skill defines the canonical step-by-step procedure for introducing new conf
 
 ### Step 1: Reference Repositories & Implementation Inspiration (MANDATORY)
 
-Before drafting any specification or script, consult the author's previous distribution setup repositories listed in [AGENTS.md — Reference Repositories](../../../AGENTS.md) (using `search_web`, `read_url_content`, or raw GitHub URLs) to understand exact packages, PPAs, dependencies, installation methods, and configurations used previously. Always adapt findings to conform to this project's modular conventions (`scripts/_utils.sh`, `packages.conf`, idempotency, and automated tests).
+Before drafting any specification or script, consult the author's previous distribution setup repositories listed in [AGENTS.md — Reference Repositories](../../../AGENTS.md) (using `search_web`, `read_url_content`, or raw GitHub URLs) to understand exact packages, PPPs, dependencies, installation methods, and configurations used previously. Always adapt findings to conform to this project's modular conventions (`scripts/_utils.sh`, `packages.conf`, idempotency, and automated tests).
 
 ---
 
 ### Step 2: Spec-Driven Development (Autonomous Drafting)
 
-1. **Target Identification from TODO.md**:
-   - Identify the specific target task/feature requested from [TODO.md](../../../TODO.md) along with its phase, dependencies, and requirements.
+1. **Target Identification**:
+   - Identify the specific target capability, enhancement, or tool requested along with its dependencies and requirements.
 2. **Draft Specification**:
-   - Create or update the feature specification file under `openspec/specs/<domain>/<feature>.md` based directly on the requested item in `TODO.md` and the findings from reference repos.
-   - Document the requirements, constraints, package dependencies, and testable scenarios using the **GIVEN / WHEN / THEN** syntax across supported distros (Debian, Fedora, Arch Linux).
+   - Create or update the feature specification file under `openspec/specs/<domain>/<feature>.md` based on requested features and findings from reference repos.
+   - Document the requirements, constraints, package dependencies, and testable scenarios using the **GIVEN / WHEN / THEN** syntax across supported distros (Debian, Fedora, Arch Linux, openSUSE).
 3. **Autonomous Implementation**:
    - Per `AGENTS.md`, AI agents have permission to proceed directly with script implementation, package mapping, tests, and documentation autonomously without waiting for explicit approval.
    - **Exception**: Any modifications to **Protected Core Governance Files** (`AGENTS.md`, `CONTRIBUTING.md`, `.agents/skills/**`) strictly require explicit prior user confirmation.
@@ -55,33 +55,41 @@ Follow the script conventions from [CONTRIBUTING.md](../../../CONTRIBUTING.md):
   Always reuse existing helpers from `scripts/_utils.sh` (`scripts/utils/*.sh`) instead of reimplementing or calling raw tools directly:
   1. [`get_distro_id`](../../../scripts/_utils.sh): Returns current distribution identifier (`debian`, `fedora`, `arch`, `opensuse`, or `unknown`).
   2. [`is_distro <distro>`](../../../scripts/_utils.sh): Checks whether current system matches target distribution.
-  3. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`, `opensuse`) and installs them idempotently.
-  4. [`install_packages_from_repo <repo> <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` and installs them targeting a specific repository (`apt -t`, `zypper --from`, or fallback).
-  5. [`swap_packages <old_pkg> <new_pkg>`](../../../scripts/_utils.sh): Atomically swaps conflicting packages (`dnf swap --allowerasing` on Fedora, or `install_packages` fallback).
-  6. [`remove_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Removes installed packages idempotently across distributions.
-  7. [`upgrade_system`](../../../scripts/_utils.sh): Refreshes repository metadata and upgrades installed system packages across distributions.
-  8. [`lock_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Locks/holds packages against unintended upgrades.
-  9. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
-  10. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
-  11. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
-  12. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
-  13. [`configure_de_wallpaper <wallpaper_path>`](../../../scripts/_utils.sh): Sets the desktop wallpaper idempotently on GNOME or KDE Plasma.
-  14. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
-  15. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
-  16. [`get_gpu_vendor`](../../../scripts/_utils.sh): Detects physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
-  17. [`enable_cron_service [service_name]`](../../../scripts/_utils.sh): Enables and starts distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch/openSUSE).
-  18. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`, `opensuse`) and prints distro ID; exits 1 otherwise.
-  19. [`fetch_github_latest_version <owner/repo>`](../../../scripts/_utils.sh): Resolves latest release tag from GitHub with resilient fallback against API rate limits.
-  20. [`is_version_up_to_date <local_ver> <remote_ver>`](../../../scripts/_utils.sh): Compares local and remote version strings idempotently.
-  21. [`install_github_binary <name> <repo> <version> <file_name> <bin_name>`](../../../scripts/_utils.sh): Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
+  3. [`is_wsl`](../../../scripts/_utils.sh): Detects whether the system is running inside Windows Subsystem for Linux.
+  4. [`install_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Resolves packages via `packages.conf` across distributions (`debian`, `fedora`, `arch`, `opensuse`) and installs them idempotently.
+  5. [`install_packages_from_repo <repo> <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Installs native packages targeting a specific repository suite (`apt -t` on Debian, `zypper --from` on openSUSE).
+  6. [`swap_packages <old_pkg> <new_pkg>`](../../../scripts/_utils.sh): Atomically swaps conflicting packages (`dnf swap --allowerasing` on Fedora with fallback install).
+  7. [`remove_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Removes installed packages idempotently across distributions.
+  8. [`upgrade_system`](../../../scripts/_utils.sh): Refreshes repository metadata and upgrades installed system packages across distributions.
+  9. [`lock_packages <pkg1> [pkg2...]`](../../../scripts/_utils.sh): Locks packages against unintended upgrades on openSUSE (`zypper addlock`).
+  10. [`is_package_installed <pkg>`](../../../scripts/_utils.sh): Checks whether a native package is installed across package managers.
+  11. [`install_flatpak_app <app_id> [app_name]`](../../../scripts/_utils.sh): Ensures Flatpak/Flathub is configured and idempotently installs Flatpak applications.
+  12. [`download_file <url> <dest>`](../../../scripts/_utils.sh): Downloads remote files to a destination path with automatic `curl` / `wget` fallback and fail-fast validation.
+  13. [`fetch_url <url>`](../../../scripts/_utils.sh): Fetches remote content directly to stdout with `curl` / `wget` fallback.
+  14. [`get_desktop_environment`](../../../scripts/_utils.sh): Detects current desktop environment (`gnome`, `plasma`, or `unknown`).
+  15. [`save_desktop_environment <de>`](../../../scripts/_utils.sh): Persists target desktop environment choice.
+  16. [`prompt_desktop_environment [prompt] [def]`](../../../scripts/_utils.sh): Prompts user for DE selection in terminal.
+  17. [`ensure_desktop_environment [prompt]`](../../../scripts/_utils.sh): Resolves, prompts, and persists DE.
+  18. [`resolve_desktop_app <candidates...>`](../../../scripts/_utils.sh): Finds first matching `.desktop` entry across standard XDG paths.
+  19. [`get_root_filesystem`](../../../scripts/_utils.sh): Returns root filesystem type (e.g. `btrfs`, `ext4`, or `unknown`).
+  20. [`get_repo_root`](../../../scripts/_utils.sh): Returns absolute root directory of repository.
+  21. [`write_ini_key <file> <section> <k> <v>`](../../../scripts/_utils.sh): Safely edits or appends keys in INI/.desktop files.
+  22. [`get_shell_profile`](../../../scripts/_utils.sh): Resolves user configuration file path based on `$SHELL` (`~/.zshrc`, `~/.bashrc`, or `~/.profile`).
+  23. [`get_gpu_vendor`](../../../scripts/_utils.sh): Detects physical GPU vendor (`nvidia`, `amd`, `intel`, or `unknown`).
+  24. [`enable_cron_service [service_name]`](../../../scripts/_utils.sh): Enables and starts distribution cron service (`cron` on Debian, `crond` on Fedora, `cronie` on Arch/openSUSE).
+  25. [`ensure_xdg_terminal_exec`](../../../scripts/_utils.sh): Deploys `xdg-terminal-exec` and terminal symlinks.
+  26. [`require_supported_distro`](../../../scripts/_utils.sh): Validates that current system is supported (`debian`, `fedora`, `arch`, `opensuse`) and prints distro ID; exits 1 otherwise.
+  27. [`fetch_github_latest_version <owner/repo>`](../../../scripts/_utils.sh): Resolves latest release tag from GitHub with resilient fallback against API rate limits.
+  28. [`is_version_up_to_date <local_ver> <remote_ver>`](../../../scripts/_utils.sh): Compares local and remote version strings idempotently.
+  29. [`install_github_binary <name> <repo> <version> <file_name> <bin_name>`](../../../scripts/_utils.sh): Downloads, extracts, and installs a GitHub tarball binary to `/usr/local/bin`.
 - **Distribution-Specific Repository & Hardware Utilities**:
   When configuring third-party or upstream repositories and hardware detection, reuse or register functions in:
   - **Shared GPU Utilities (`scripts/system/_gpu_utils.sh`)**: `has_nvidia_gpu`, `has_amd_gpu`, `has_intel_gpu`, `has_hybrid_gpu`, `configure_gpu_repositories`.
   - **Shared System Helpers**: `scripts/system/_grub_btrfs.sh` (`configure_grub_btrfs`), `scripts/system/_debloat_packages.sh`.
   - **Arch Linux (`scripts/system/arch/_repositories.sh`)**: `add_arch_multilib_repo`.
-  - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
+  - **Debian (`scripts/system/debian/_repositories.sh`)**: `get_debian_codename`, `is_debian_testing`, `add_debian_backports_repo`, `add_debian_vscodium_repo`, `add_debian_mozilla_repo`, `add_debian_nonfree_repo`.
   - **Fedora (`scripts/system/fedora/_repositories.sh`)**: `add_fedora_docker_repo`, `add_fedora_vscodium_repo`, `add_fedora_rpmfusion_repo`.
-  - **openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`)**: `add_opensuse_packman_repo`, `add_opensuse_nvidia_repo`, `add_opensuse_vscodium_repo`, `configure_opensuse_snapper`.
+  - **openSUSE (`scripts/system/opensuse/_repositories.sh` & `_snapper.sh`)**: `get_opensuse_version`, `add_opensuse_packman_repo`, `add_opensuse_nonfree_repo`, `add_opensuse_nvidia_repo`, `add_opensuse_vscodium_repo`, `add_opensuse_mozilla_repo`, `add_opensuse_kernel_backports_repo`, `configure_opensuse_snapper`.
 - **Helper Function Conventions**:
   - Prefix script-private functions with `_` (e.g., `_configure_app`).
   - **No trivial one-line wrappers**: Do not create one-line functions that merely proxy a call if used only once. Inline the helper call directly.
@@ -165,7 +173,7 @@ main "$@" # At the end of file with no BASH_SOURCE check
 
 #### B. Cross-Distro Package Mapping (`scripts/packages.conf`)
 
-Add an entry to `scripts/packages.conf` when package names differ across distributions or a package is unsupported on a specific distro. Follow the format and rules defined in [CONTRIBUTING.md § Package Mappings](../../../CONTRIBUTING.md#-package-mappings-scriptspackagesconf): format is `GENERIC_NAME | DEBIAN | FEDORA | ARCH`, use `-` for unsupported distros, maintain alphabetical order and column alignment, do **not** add packages with identical names across all three distributions.
+Add an entry to `scripts/packages.conf` when package names differ across distributions or a package is unsupported on a specific distro. Follow the format and rules defined in [CONTRIBUTING.md § Package Mappings](../../../CONTRIBUTING.md#-package-mappings-scriptspackagesconf): format is `GENERIC_NAME | DEBIAN | FEDORA | ARCH | OPENSUSE`, use `-` for unsupported distros, maintain alphabetical order and column alignment, do **not** add packages with identical names across all distributions.
 
 ---
 
@@ -178,7 +186,7 @@ All code paths and conditional branches must be thoroughly tested:
    - Test Desktop Environment conditionals (`gnome`, `plasma`, `unknown`).
    - Mock external utilities and verify flag logic, package manager resolution, and fail-fast/exit-code behavior on errors.
 2. **Integration Tests (`tests/integration/<domain>/<feature>.bats`)**:
-   - Test end-to-end execution inside clean containers across all supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**).
+   - Test end-to-end execution inside clean containers across all supported distributions (**Debian 13**, **Fedora 44**, **Arch Linux**, **openSUSE Leap & Tumbleweed**).
    - Validate idempotency: running the script a second time must succeed without errors or redundant modifications.
 
 ---
@@ -187,10 +195,8 @@ All code paths and conditional branches must be thoroughly tested:
 
 1. **Master CLI & Orchestrator (`runners/_modules.sh`, `runners/main.sh` / `main.sh`)**:
    - Register the module invocation in the appropriate distro runner(s) under `runners/` (`arch.sh`, `debian.sh`, `fedora.sh`, `opensuse.sh`) or shared pipeline arrays in `runners/_utils.sh` if it belongs to the automated complete setup.
-   - Register the module in `runners/_modules.sh` (`MODULE_CATALOG`, `MODULE_SCRIPTS`, and `MODULE_DESCRIPTIONS`) for standalone execution (e.g. `./main.sh <feature>` and `make <feature>`) and CLI help generation. **The declarative registry in `runners/_modules.sh` rendered by `show_help()` in `runners/main.sh` is the single source of truth for all available setup commands.**
-2. **Roadmap & Tracking (`TODO.md`)**:
-   - Mark the corresponding task item as done `[x]` with script references.
-3. **Skill Synchronization**:
+   - Register the module in `runners/_modules.sh` (`MODULES` declarative array) for standalone execution (e.g. `./main.sh <feature>` and `make <feature>`) and CLI help generation. **The declarative registry in `runners/_modules.sh` rendered by `show_help()` in `runners/main.sh` is the single source of truth for all available setup commands.**
+2. **Skill Synchronization**:
    - **`.agents/skills/implement-feature/SKILL.md`**: **Mandatory Update**: If any new reusable helper or utility is added to `scripts/_utils.sh` or `runners/_utils.sh`, it must be immediately documented in this skill with its signature and purpose.
 
 ---
@@ -216,7 +222,7 @@ Before marking any implementation as finished or reporting completion to the use
    ./tests/run-tests.sh --integration --filter=<feature>
    ```
 
-   _Validate execution inside Debian 13, Fedora 44, and Arch Linux containers. All distro containers must succeed._
+   _Validate execution inside Debian 13, Fedora 44, Arch Linux, and openSUSE containers. All distro containers must succeed._
 
 3. **Full Unit Test Suite (Regression Prevention)** _(safe on host — mocked)_:
 

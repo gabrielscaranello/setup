@@ -2,7 +2,7 @@
 
 ## Overview
 
-The central CLI orchestrator provides a single, unified entry point (`./main.sh` and `make <target>`) for running setup modules individually or orchestrating the complete desktop setup pipeline with automatic distribution detection across **Debian**, **Fedora**, and **Arch Linux**.
+The central CLI orchestrator provides a single, unified entry point (`./main.sh` and `make <target>`) for running setup modules individually or orchestrating the complete desktop setup pipeline with automatic distribution detection across **Debian**, **Fedora**, **Arch Linux**, **openSUSE** (Leap and Tumbleweed), and **WSL**.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 - `main.sh` acts as root launcher forwarding all parameters to `runners/main.sh`.
 - When invoked without arguments, it defaults to displaying interactive CLI help (`show_help`).
-- `show_help` documents all supported modules, available distro commands (`arch`, `debian`, `fedora`), and the global setup target (`all`).
+- `show_help` documents all supported modules, available distro commands (`arch`, `debian`, `fedora`, `opensuse`, `wsl`), and the global setup target (`all`).
 
 - Modules are declared in a single registry (`runners/_modules.sh`, format `name|aliases|path|description`). Both `run_module` dispatch and `show_help` are generated from it, so adding a module requires only a new registry entry.
 - Extra CLI arguments after the module name are forwarded to the module script, and execution always starts from the repository root.
@@ -39,7 +39,7 @@ The central CLI orchestrator provides a single, unified entry point (`./main.sh`
 
 - **GIVEN** `runners/main.sh` is invoked with no arguments, `help`, or `--help`
 - **WHEN** execution starts
-- **THEN** it displays available setup commands including `all`, `arch`, `debian`, and `fedora`
+- **THEN** it displays available setup commands including `all`, `arch`, `debian`, `fedora`, `opensuse`, and `wsl`
 - **AND** exits with status 0
 
 **Scenario: Auto-delegation to Debian, Fedora, and Arch runners**

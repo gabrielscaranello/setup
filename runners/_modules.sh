@@ -14,7 +14,7 @@ MODULES=(
   "cursor||scripts/desktop/setup-cursor-theme.sh|Install and configure Bibata cursor theme (GNOME, KDE Plasma)"
   "dbeaver||scripts/apps/setup-dbeaver.sh|Install DBeaver"
   "debian||runners/debian.sh|Run complete setup pipeline for Debian"
-  "debloat||scripts/system/setup-debloat.sh|Remove unused default packages and bloatware (Debian, Fedora)"
+  "debloat||scripts/system/setup-debloat.sh|Remove unused default packages and bloatware (Debian, Fedora, openSUSE)"
   "default-apps||scripts/apps/setup-default-apps.sh|Configure default desktop applications (MIME types, handlers, terminal)"
   "desktop-apps||scripts/desktop/setup-desktop-apps.sh|Install desktop environment specific applications (GNOME / KDE Plasma)"
   "desktop-preferences||scripts/desktop/setup-desktop-preferences.sh|Configure desktop environment preferences (GNOME, KDE Plasma)"
