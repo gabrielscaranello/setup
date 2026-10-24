@@ -66,7 +66,7 @@ _install_lazygit() {
       echo "Installing lazygit from distribution repository..."
       install_packages lazygit
       ;;
-    debian | fedora | opensuse | opensuse-leap)
+    debian | fedora | opensuse | opensuse-leap | linuxmint)
       _install_lazygit_binary
       ;;
   esac

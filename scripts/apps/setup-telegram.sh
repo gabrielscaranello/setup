@@ -165,7 +165,7 @@ _install_telegram() {
     fedora | arch | opensuse-tumbleweed)
       _install_telegram_repo "$distro"
       ;;
-    debian | opensuse | opensuse-leap)
+    debian | opensuse | opensuse-leap | linuxmint)
       _install_telegram_binary
       ;;
   esac

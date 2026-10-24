@@ -135,6 +135,11 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" =~ "apt called: install -y -t trixie-backports nvidia-driver firmware-misc-nonfree linux-headers-amd64 nvidia-smi nvidia-settings" ]]
 
+  run _install_driver_packages "linuxmint"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing NVIDIA driver and utilities on Linux Mint..." ]]
+  [[ "$output" =~ "installed: nvidia-driver nvidia-smi nvidia-settings" ]]
+
   get_debian_codename() { echo "forky"; }
   is_debian_testing() { return 0; }
   run _install_driver_packages "debian"

@@ -28,18 +28,18 @@ Before starting the implementation for each distribution, consult the author's r
   - [x] Update `scripts/utils/_desktop.sh` to detect `cinnamon` via `get_desktop_environment`.
   - [x] Create `scripts/desktop/setup-cinnamon.sh` (dark mode via gsettings, keybindings, default terminal emulator).
   - [x] Configure recommended settings for the Nemo file manager.
-- [ ] **Repositories & System Policy**:
-  - [ ] Validate default repositories and keyring for `packages.linuxmint.com`.
-  - [ ] Ensure Mint's native snap-blocking policy (`/etc/apt/preferences.d/nosnap.pref`) is respected.
-- [ ] **Orchestration & Runners**:
-  - [ ] Create `runners/linuxmint.sh`.
-  - [ ] Register `linuxmint|Linux Mint|linuxmint.sh` in the `DISTRO_RUNNERS` array in `runners/main.sh`.
-  - [ ] Expose runner targets in `Makefile` and register commands in `runners/_modules.sh` if applicable.
-- [ ] **Testing & Quality Assurance**:
-  - [ ] Create test Dockerfile `tests/docker/linuxmint.Dockerfile`.
-  - [ ] Update `tests/run-tests.sh` to support `--distro=linuxmint`.
-  - [ ] Create Bats unit tests covering all conditional branches for Linux Mint.
-  - [ ] Execute and verify all unit tests and integration tests inside Docker.
+- [x] **Repositories & System Policy**:
+  - [x] Validate default repositories and keyring for `packages.linuxmint.com`.
+  - [x] Ensure Mint's native snap-blocking policy (`/etc/apt/preferences.d/nosnap.pref`) is respected.
+- [x] **Orchestration & Runners**:
+  - [x] Create `runners/linuxmint.sh`.
+  - [x] Register `linuxmint|Linux Mint|linuxmint.sh` in the `DISTRO_RUNNERS` array in `runners/main.sh`.
+  - [x] Expose runner targets in `Makefile` and register commands in `runners/_modules.sh` if applicable.
+- [x] **Testing & Quality Assurance**:
+  - [x] Create test Dockerfile `tests/docker/linuxmint.Dockerfile`.
+  - [x] Update `tests/run-tests.sh` to support `--distro=linuxmint`.
+  - [x] Create Bats unit tests covering all conditional branches for Linux Mint.
+  - [x] Execute and verify all unit tests and integration tests inside Docker.
 
 ---
 

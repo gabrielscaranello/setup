@@ -16,7 +16,7 @@ setup_file() {
 
 @test "zram-generator configuration is created on systemd-zram distros" {
   source /setup/scripts/_utils.sh
-  if ! is_distro debian; then
+  if ! is_distro debian && ! is_distro linuxmint; then
     [ -f "/etc/systemd/zram-generator.conf" ]
     grep -q "zram-size = ram / 2" "/etc/systemd/zram-generator.conf"
   fi

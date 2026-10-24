@@ -58,7 +58,7 @@ The package management subsystem (`scripts/utils/_packages.sh`) SHALL resolve `l
 
 Linux Mint natively disables and blocks `snapd` through APT pinning. The setup scripts SHALL preserve and validate this policy:
 
-- The system SHALL verify the presence of `/etc/apt/preferences.d/nosnap.pref` (or configure it if missing).
+- The setup scripts SHALL respect Linux Mint's native `/etc/apt/preferences.d/nosnap.pref` policy.
 - The setup scripts SHALL NOT attempt to install `snapd` or snap packages.
 - All desktop applications and dev tools SHALL be provisioned as native `.deb` packages (from `packages.linuxmint.com` / Ubuntu repositories) or Flatpaks via Flathub.
 

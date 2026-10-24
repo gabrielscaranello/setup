@@ -5,6 +5,8 @@ set -euo pipefail
 source "scripts/_utils.sh" 2> /dev/null || true
 # shellcheck source=scripts/desktop/_dconf.sh
 source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || source "scripts/desktop/_dconf.sh" 2> /dev/null || true
+# shellcheck source=scripts/desktop/_favorite_apps.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_favorite_apps.sh" 2> /dev/null || source "scripts/desktop/_favorite_apps.sh" 2> /dev/null || true
 
 _configure_cinnamon_interface() {
   echo "Configuring Cinnamon interface and dark mode preferences..."
@@ -64,6 +66,7 @@ main() {
   _configure_cinnamon_terminal
   _configure_cinnamon_keybindings
   _configure_nemo
+  configure_cinnamon_favorite_apps
 
   echo "setup-cinnamon complete"
 }

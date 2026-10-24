@@ -141,7 +141,7 @@ _install_steam_packages() {
   local distro="$1"
 
   case "$distro" in
-    debian) _install_debian_steam ;;
+    debian | linuxmint) _install_debian_steam ;;
     fedora) _install_fedora_steam ;;
     arch) _install_arch_steam ;;
     opensuse-tumbleweed) _install_tumbleweed_steam ;;

@@ -25,6 +25,12 @@ _install_debian_driver() {
     || install_packages linux-headers-amd64 firmware-misc-nonfree nvidia-driver nvidia-smi nvidia-settings
 }
 
+_install_linuxmint_driver() {
+  echo "Installing NVIDIA driver and utilities on Linux Mint..."
+  install_packages nvidia-driver nvidia-smi nvidia-settings 2> /dev/null \
+    || install_packages nvidia-driver 2> /dev/null || true
+}
+
 _install_fedora_driver() {
   echo "Installing NVIDIA driver via RPM Fusion on Fedora..."
   install_packages akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-power
@@ -62,6 +68,7 @@ _install_driver_packages() {
 
   case "$distro" in
     debian) _install_debian_driver ;;
+    linuxmint) _install_linuxmint_driver ;;
     fedora) _install_fedora_driver ;;
     arch) _install_arch_driver ;;
     opensuse*) _install_opensuse_driver ;;

@@ -45,6 +45,15 @@ _install_gnome_apps() {
   esac
 }
 
+_install_cinnamon_apps() {
+  echo "Installing Cinnamon desktop applications..."
+  _should_skip_package_install && return 0
+  install_packages \
+    file-roller nemo-fileroller \
+    gnome-calculator gnome-disk-utility baobab \
+    vlc
+}
+
 main() {
   local de
   if [ -t 0 ]; then
@@ -64,6 +73,10 @@ main() {
     gnome)
       echo "Configuring applications for GNOME..."
       _install_gnome_apps
+      ;;
+    cinnamon)
+      echo "Configuring applications for Cinnamon..."
+      _install_cinnamon_apps
       ;;
     *)
       echo "Desktop environment not recognized ($de), skipping desktop applications setup."

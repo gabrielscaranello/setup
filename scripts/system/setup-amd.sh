@@ -99,6 +99,15 @@ _install_debian_amd_packages() {
   _install_debian_32bit_packages
 }
 
+_install_linuxmint_amd_packages() {
+  echo "Installing diagnostic and utility tools for AMD GPU on Linux Mint..."
+  install_packages mesa-vulkan-drivers libvulkan1 vainfo vulkan-tools 2> /dev/null || true
+  if command -v dpkg > /dev/null 2>&1 && dpkg --print-foreign-architectures 2> /dev/null | grep -q "i386"; then
+    echo "Configuring 32-bit AMD graphics libraries on Linux Mint..."
+    install_packages mesa-vulkan-drivers:i386 2> /dev/null || true
+  fi
+}
+
 _install_opensuse_32bit_packages() {
   echo "Installing 32-bit AMD graphics libraries on openSUSE..."
   install_packages libvulkan_radeon-32bit 2> /dev/null || true
@@ -119,6 +128,7 @@ _install_amd_packages() {
   fi
 
   case "$distro" in
+    linuxmint) _install_linuxmint_amd_packages ;;
     debian) _install_debian_amd_packages ;;
     fedora) _install_fedora_amd_packages ;;
     arch) _install_arch_amd_packages ;;

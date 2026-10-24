@@ -127,7 +127,7 @@ _install_kitty() {
       install_packages kitty kitty-shell-integration
       ensure_xdg_terminal_exec
       ;;
-    debian | opensuse-leap | opensuse)
+    debian | opensuse-leap | opensuse | linuxmint)
       _install_kitty_binary
       ;;
   esac

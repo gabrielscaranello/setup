@@ -10,7 +10,7 @@ _install_vscodium() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    debian)
+    debian | linuxmint)
       declare -F add_debian_vscodium_repo > /dev/null 2>&1 || source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
       add_debian_vscodium_repo
       ;;

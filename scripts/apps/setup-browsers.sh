@@ -31,7 +31,7 @@ _install_firefox_opensuse_leap() {
 
 _install_firefox_repo() {
   echo "Installing Firefox from distribution repository..."
-  install_packages firefox firefox-i18n-pt-br
+  install_packages firefox firefox-i18n-pt-br 2> /dev/null || install_packages firefox
 }
 
 _install_firefox() {
@@ -39,7 +39,7 @@ _install_firefox() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch)
+    fedora | arch | linuxmint)
       _install_firefox_repo
       ;;
     debian)
@@ -64,7 +64,7 @@ _install_chromium() {
       echo "Installing Chromium from distribution repository..."
       install_packages chromium
       ;;
-    debian)
+    debian | linuxmint)
       echo "Installing Chromium with flatpak..."
       install_flatpak_app "org.chromium.Chromium" "Chromium"
       ;;

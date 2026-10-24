@@ -62,6 +62,19 @@
   [[ "$output" =~ "pipeline: Fedora Desktop Setup" ]]
 }
 
+@test "runners/linuxmint.sh run_all calls run_pipeline with Linux Mint pipeline" {
+  source /setup/runners/linuxmint.sh 2>/dev/null || source runners/linuxmint.sh
+
+  run_pipeline() {
+    echo "pipeline: $1"
+    return 0
+  }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "pipeline: Linux Mint Desktop Setup" ]]
+}
+
 @test "runners/opensuse.sh run_all calls run_pipeline with openSUSE pipeline and includes kernel on Leap" {
   source /setup/runners/opensuse.sh 2>/dev/null || source runners/opensuse.sh
   get_distro_id() { echo "opensuse-leap"; }

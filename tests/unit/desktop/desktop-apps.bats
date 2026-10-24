@@ -97,6 +97,30 @@ setup() {
   [[ "$output" =~ "setup-desktop-apps complete" ]]
 }
 
+@test "main runs Cinnamon application setup when DE is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  _install_cinnamon_apps() { echo "mock cinnamon apps installed"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring applications for Cinnamon" ]]
+  [[ "$output" =~ "mock cinnamon apps installed" ]]
+  [[ "$output" =~ "setup-desktop-apps complete" ]]
+}
+
+@test "_install_cinnamon_apps installs Cinnamon packages" {
+  install_packages() {
+    echo "installed: $*"
+    return 0
+  }
+
+  run _install_cinnamon_apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "file-roller" ]]
+  [[ "$output" =~ "gnome-calculator gnome-disk-utility baobab" ]]
+  [[ "$output" =~ "vlc" ]]
+}
+
 @test "main calls save_desktop_environment when DE is known" {
   get_desktop_environment() { echo "plasma"; }
   save_desktop_environment() { echo "saved DE: $1"; }
