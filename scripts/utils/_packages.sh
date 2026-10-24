@@ -55,13 +55,83 @@ _pm_dnf_remove() {
 }
 
 _pm_pacman_remove() {
+  local autoremove="$1"
   shift
   sudo pacman -Rns --noconfirm "$@"
+  [ "$autoremove" -eq 0 ] || true
 }
 
 _pm_zypper_remove() {
+  local autoremove="$1"
   shift
   sudo zypper --non-interactive remove -u "$@"
+  [ "$autoremove" -eq 0 ] || true
+}
+
+_pm_apt_swap() {
+  local allowerasing="$1"
+  local old_pkg="$2"
+  local new_pkg="$3"
+  sudo apt install -y "$new_pkg"
+  [ "$allowerasing" -eq 0 ] || true
+  : "$old_pkg"
+}
+
+_pm_dnf_swap() {
+  local allowerasing="$1"
+  local old_pkg="$2"
+  local new_pkg="$3"
+  local extra_flags=()
+  [ "$allowerasing" -eq 1 ] && extra_flags+=("--allowerasing")
+
+  sudo dnf swap -y "$old_pkg" "$new_pkg" "${extra_flags[@]}" 2> /dev/null \
+    || sudo dnf install -y --allowerasing "$new_pkg" 2> /dev/null || true
+}
+
+_pm_pacman_swap() {
+  local allowerasing="$1"
+  local old_pkg="$2"
+  local new_pkg="$3"
+  sudo pacman -S --needed --noconfirm "$new_pkg"
+  [ "$allowerasing" -eq 0 ] || true
+  : "$old_pkg"
+}
+
+_pm_zypper_swap() {
+  local allowerasing="$1"
+  local old_pkg="$2"
+  local new_pkg="$3"
+  sudo zypper --non-interactive install -y --allow-vendor-change "$new_pkg"
+  [ "$allowerasing" -eq 0 ] || true
+  : "$old_pkg"
+}
+
+_pm_apt_lock() {
+  : "$@"
+}
+
+_pm_dnf_lock() {
+  : "$@"
+}
+
+_pm_pacman_lock() {
+  : "$@"
+}
+
+_pm_zypper_lock() {
+  sudo zypper --non-interactive addlock "$@"
+}
+
+_pm_apt_install_from_repo() {
+  local repo="$1"
+  shift
+  sudo apt install -y -t "$repo" "$@"
+}
+
+_pm_zypper_install_from_repo() {
+  local repo="$1"
+  shift
+  sudo zypper --non-interactive install -y --from "$repo" "$@"
 }
 
 _pm_apt_upgrade() {
@@ -232,33 +302,39 @@ install_packages_from_repo() {
     *) pm="$(_get_package_manager 2> /dev/null || true)" ;;
   esac
 
-  case "$pm" in
-    apt)
-      sudo apt install -y -t "$repo" "$@"
-      ;;
-    zypper)
-      sudo zypper --non-interactive install -y --from "$repo" "$@"
-      ;;
-    *)
-      echo "Unsupported package manager for repository pinning: $pm" >&2
-      return 1
-      ;;
-  esac
+  local adapter="_pm_${pm}_install_from_repo"
+  if command -v "$adapter" > /dev/null 2>&1; then
+    "$adapter" "$repo" "$@"
+  else
+    echo "Unsupported package manager for repository pinning: $pm" >&2
+    return 1
+  fi
 }
 
-# Replaces a restricted/stub package with its full implementation (DNF swap with install fallback).
+# Replaces a restricted/stub package with its full implementation.
 # Usage: swap_packages [--allowerasing] <old_pkg> <new_pkg>
 swap_packages() {
-  local extra_flags=()
+  local allowerasing=0
   if [ "${1:-}" = "--allowerasing" ]; then
-    extra_flags+=("--allowerasing")
+    allowerasing=1
     shift
   fi
+
+  [ $# -ge 2 ] || return 0
+
   local old_pkg="$1"
   local new_pkg="$2"
+  local package_manager
+  package_manager="$(_get_package_manager 2> /dev/null || true)"
+  [ -n "$package_manager" ] || package_manager="dnf"
 
-  sudo dnf swap -y "$old_pkg" "$new_pkg" "${extra_flags[@]}" 2> /dev/null \
-    || sudo dnf install -y --allowerasing "$new_pkg" 2> /dev/null || true
+  local adapter="_pm_${package_manager}_swap"
+  if ! command -v "$adapter" > /dev/null 2>&1; then
+    echo "Unsupported package manager: $package_manager" >&2
+    return 1
+  fi
+
+  "$adapter" "$allowerasing" "$old_pkg" "$new_pkg"
 }
 
 # Removes native packages using the distribution package manager.
@@ -289,12 +365,18 @@ remove_packages() {
 }
 
 # Prevents removed packages from being reinstalled as dependencies.
-# Only zypper supports package locks in this project; it is a no-op elsewhere.
+# Dispatches to per-package-manager adapters (active on Zypper, extensible elsewhere).
 # Usage: lock_packages <native_pkg>...
 lock_packages() {
   [ $# -gt 0 ] || return 0
-  if [ "$(_get_package_manager 2> /dev/null || true)" = "zypper" ]; then
-    sudo zypper --non-interactive addlock "$@"
+
+  local package_manager
+  package_manager="$(_get_package_manager 2> /dev/null || true)" || return 0
+  [ -n "$package_manager" ] || return 0
+
+  local adapter="_pm_${package_manager}_lock"
+  if command -v "$adapter" > /dev/null 2>&1; then
+    "$adapter" "$@"
   fi
 }
 

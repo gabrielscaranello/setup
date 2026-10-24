@@ -85,6 +85,7 @@ setup() {
 }
 
 @test "_install_fedora_amd_packages installs mesa-vulkan and performs freeworld swap" {
+  _get_package_manager() { echo "dnf"; }
   install_packages() {
     echo "installed: $*"
     return 0
@@ -127,6 +128,7 @@ setup() {
 }
 
 @test "_swap_fedora_freeworld_drivers swaps restricted drivers for freeworld drivers" {
+  _get_package_manager() { echo "dnf"; }
   rpm() { return 1; }
   sudo() { echo "sudo: $*"; return 0; }
 

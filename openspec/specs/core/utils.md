@@ -265,9 +265,9 @@ The utility function `get_gpu_vendor` SHALL inspect physical PCI devices via `ls
 
 To enforce Dependency Inversion (DIP) and Open/Closed (OCP) principles across all setup scripts:
 
-- `_resolve_pm_metadata` SHALL map distribution identifiers and package manager names to `<package_manager>|<packages.conf_column>` in a single place, dispatching to per-manager adapters (`_pm_<manager>_install`, `_pm_<manager>_remove`, `_pm_<manager>_upgrade`, `_pm_<manager>_is_installed`).
+- `_resolve_pm_metadata` SHALL map distribution identifiers and package manager names to `<package_manager>|<packages.conf_column>` in a single place, dispatching to per-manager adapters (`_pm_<manager>_install`, `_pm_<manager>_remove`, `_pm_<manager>_upgrade`, `_pm_<manager>_is_installed`, `_pm_<manager>_swap`, `_pm_<manager>_lock`).
 - `install_packages_from_repo <repo_or_suite> <pkg>...` SHALL abstract suite/repository-pinned installations (`apt install -y -t <suite>` and `zypper --non-interactive install -y --from <repo>`).
-- `swap_packages [--allowerasing] <old_pkg> <new_pkg>` SHALL abstract package replacement with install fallback on DNF (`dnf swap -y`).
+- `swap_packages [--allowerasing] <old_pkg> <new_pkg>` SHALL abstract package replacement with install fallback across package managers (`dnf swap -y` on Fedora, `zypper install --allow-vendor-change` on openSUSE, native install on Debian/Arch).
 - `remove_packages [--autoremove] <pkg>...`, `lock_packages <pkg>...`, and `upgrade_system` SHALL abstract removal, locking, and full-system upgrades across all supported package managers.
 
 ---

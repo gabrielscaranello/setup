@@ -769,7 +769,7 @@ EOF
   [ -z "$output" ]
 }
 
-@test "lock_packages only locks on zypper" {
+@test "lock_packages locks on zypper and is no-op on other package managers" {
   source /setup/scripts/_utils.sh
   sudo() { echo "sudo $*"; }
 
@@ -779,6 +779,17 @@ EOF
 
   _get_package_manager() { echo "apt"; }
   run lock_packages foo
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+
+  _get_package_manager() { echo "dnf"; }
+  run lock_packages foo
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+
+  _get_package_manager() { echo "pacman"; }
+  run lock_packages foo
+  [ "$status" -eq 0 ]
   [ -z "$output" ]
 }
 
@@ -800,10 +811,11 @@ EOF
   [[ "$output" =~ "Unsupported package manager for repository pinning" ]]
 }
 
-@test "swap_packages uses dnf swap with optional --allowerasing" {
+@test "swap_packages dispatches to package manager swap adapters" {
   source /setup/scripts/_utils.sh
   sudo() { echo "sudo $*"; }
 
+  _get_package_manager() { echo "dnf"; }
   run swap_packages mesa-va-drivers mesa-va-drivers-freeworld
   [ "$status" -eq 0 ]
   [[ "$output" =~ "sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld" ]]
@@ -811,6 +823,21 @@ EOF
   run swap_packages --allowerasing ffmpeg-free ffmpeg
   [ "$status" -eq 0 ]
   [[ "$output" =~ "sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing" ]]
+
+  _get_package_manager() { echo "apt"; }
+  run swap_packages libavcodec58 libavcodec-extra58
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo apt install -y libavcodec-extra58" ]]
+
+  _get_package_manager() { echo "zypper"; }
+  run swap_packages ffmpeg-4 ffmpeg-6
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo zypper --non-interactive install -y --allow-vendor-change ffmpeg-6" ]]
+
+  _get_package_manager() { echo "pacman"; }
+  run swap_packages pkg-a pkg-b
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "sudo pacman -S --needed --noconfirm pkg-b" ]]
 }
 
 @test "_get_package_name resolves python3 and python-pip for all managers and distros" {
