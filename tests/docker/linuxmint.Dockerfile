@@ -3,7 +3,10 @@ FROM ubuntu:24.04
 ARG BATS_VERSION=1.11.0
 
 # Enable universe and multiverse on Ubuntu 24.04 base and configure APT optimizations
-RUN sed -i 's/Components: .*/Components: main universe restricted multiverse/' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
+RUN rm -f /etc/apt/apt.conf.d/docker-clean \
+    && mkdir -p /etc/dpkg/dpkg.cfg.d \
+    && echo 'force-unsafe-io' > /etc/dpkg/dpkg.cfg.d/force-unsafe-io \
+    && sed -i 's/Components: .*/Components: main universe restricted multiverse/' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
     && printf 'Acquire::http::Pipeline-Depth "5";\nAcquire::Languages "none";\nBinary::apt::APT::Keep-Downloaded-Packages "true";\n' > /etc/apt/apt.conf.d/99optimizations \
     && apt-get update -qq \
     && apt-get install -y --no-install-recommends \
