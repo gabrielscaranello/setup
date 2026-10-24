@@ -41,6 +41,11 @@ main() {
       configure_plasma_preferences || return 1
       echo "KDE Plasma 6 desktop preferences configuration completed successfully."
       ;;
+    cinnamon)
+      echo "Starting Cinnamon desktop preferences configuration..."
+      bash "$(get_repo_root)/scripts/desktop/setup-cinnamon.sh"
+      echo "Cinnamon desktop preferences configuration completed successfully."
+      ;;
     *)
       echo "Desktop Environment is '$de' (unsupported desktop environment). Skipping desktop preferences configuration."
       return 0

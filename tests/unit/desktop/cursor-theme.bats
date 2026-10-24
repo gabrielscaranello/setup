@@ -50,6 +50,18 @@ teardown() {
   [[ "$output" =~ "Cursor theme setup completed successfully." ]]
 }
 
+@test "main proceeds when desktop environment is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  _is_cursor_installed() { return 0; }
+  _configure_cinnamon_cursor() { echo "configured cinnamon cursor"; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Bibata-Modern-Ice cursor theme for cinnamon..." ]]
+  [[ "$output" =~ "configured cinnamon cursor" ]]
+  [[ "$output" =~ "Cursor theme setup completed successfully." ]]
+}
+
 @test "_is_cursor_installed returns 0 when cursors exist in user directory" {
   local mock_home
   mock_home="$(mktemp -d)"

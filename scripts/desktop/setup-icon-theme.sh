@@ -143,11 +143,21 @@ _configure_gnome_icon_theme() {
   fi
 }
 
+_configure_cinnamon_icon_theme() {
+  echo "Configuring Cinnamon icon theme..."
+  if command -v gsettings > /dev/null 2>&1; then
+    gsettings_exec set org.cinnamon.desktop.interface icon-theme "$THEME_NAME" 2> /dev/null || true
+  fi
+}
+
 _configure_icon_theme() {
   local de="$1"
   case "$de" in
     gnome)
       _configure_gnome_icon_theme
+      ;;
+    cinnamon)
+      _configure_cinnamon_icon_theme
       ;;
     *)
       return 0
@@ -159,7 +169,7 @@ main() {
   local de
   de="$(get_desktop_environment)"
 
-  if [ "$de" != "gnome" ]; then
+  if [ "$de" != "gnome" ] && [ "$de" != "cinnamon" ]; then
     echo "Desktop Environment is '$de' (unsupported or unrecognized). Skipping icon theme setup."
     return 0
   fi

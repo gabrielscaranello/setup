@@ -392,6 +392,14 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "plasma" ]
 
+  XDG_CURRENT_DESKTOP="X-Cinnamon" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
+
+  XDG_CURRENT_DESKTOP="cinnamon" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
+
   TARGET_DE="gnome" XDG_CURRENT_DESKTOP="KDE" run get_desktop_environment
   [ "$status" -eq 0 ]
   [ "$output" = "gnome" ]
@@ -432,6 +440,11 @@ EOF
   run prompt_desktop_environment "Test prompt"
   [ "$status" -eq 0 ]
   [ "$output" = "plasma" ]
+
+  get_distro_id() { echo "linuxmint"; }
+  run prompt_desktop_environment "Test prompt"
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
 }
 
 @test "ensure_desktop_environment resolves and saves DE" {

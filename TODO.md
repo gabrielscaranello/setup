@@ -24,10 +24,10 @@ Before starting the implementation for each distribution, consult the author's r
   - [x] Update `scripts/utils/_system.sh` (`get_distro_id` detecting `ID=linuxmint` with `ID_LIKE=ubuntu`).
   - [x] Update `require_supported_distro` and `is_distro "linuxmint"`.
   - [x] Configure package resolution for Linux Mint in `scripts/utils/_packages.sh` and `scripts/packages.conf`.
-- [ ] **Desktop Environment (Cinnamon)**:
-  - [ ] Update `scripts/utils/_desktop.sh` to detect `cinnamon` via `get_desktop_environment`.
-  - [ ] Create `scripts/desktop/setup-cinnamon.sh` (dark mode via gsettings, keybindings, default terminal emulator).
-  - [ ] Configure recommended settings for the Nemo file manager.
+- [x] **Desktop Environment (Cinnamon)**:
+  - [x] Update `scripts/utils/_desktop.sh` to detect `cinnamon` via `get_desktop_environment`.
+  - [x] Create `scripts/desktop/setup-cinnamon.sh` (dark mode via gsettings, keybindings, default terminal emulator).
+  - [x] Configure recommended settings for the Nemo file manager.
 - [ ] **Repositories & System Policy**:
   - [ ] Validate default repositories and keyring for `packages.linuxmint.com`.
   - [ ] Ensure Mint's native snap-blocking policy (`/etc/apt/preferences.d/nosnap.pref`) is respected.

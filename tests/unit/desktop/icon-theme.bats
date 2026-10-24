@@ -44,6 +44,21 @@ teardown() {
   [[ "$output" =~ "Icon theme setup completed successfully." ]]
 }
 
+@test "main proceeds when desktop environment is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  _is_icon_theme_installed() { return 0; }
+  _is_system_icon_package_installed() { return 0; }
+  _ensure_papirus_folders() { echo "ensured papirus folders"; }
+  _apply_papirus_folders_color() { echo "applied folder color"; }
+  _configure_icon_theme() { echo "configured $1 icon theme"; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Papirus-Dark icon theme for cinnamon..." ]]
+  [[ "$output" =~ "configured cinnamon icon theme" ]]
+  [[ "$output" =~ "Icon theme setup completed successfully." ]]
+}
+
 @test "_is_icon_theme_installed returns 0 when theme directory exists" {
   local mock_home
   mock_home="$(mktemp -d)"
