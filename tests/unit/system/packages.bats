@@ -37,18 +37,7 @@ Name=BlueZ
 #AutoEnable=false
 EOF
 
-  sudo() {
-    "$@"
-  }
-
-  _test_configure_bt() {
-    local conf="$test_etc/bluetooth/main.conf"
-    if grep -q "^\[Policy\]" "$conf"; then
-      sed -i 's/^#AutoEnable=.*/AutoEnable=true/' "$conf"
-    fi
-  }
-
-  _test_configure_bt
+  _configure_bluetooth "$test_etc/bluetooth/main.conf"
   grep -q "^AutoEnable=true" "$test_etc/bluetooth/main.conf"
   rm -rf "$test_etc"
 }

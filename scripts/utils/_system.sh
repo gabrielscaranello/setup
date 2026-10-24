@@ -116,7 +116,8 @@ get_root_filesystem() {
 }
 
 # Sets or updates a key=value pair inside a given [section] in an INI or desktop file.
-# Preserves surrounding formatting and creates missing sections or files cleanly.
+# Preserves surrounding formatting, replaces active or commented keys (#key=),
+# and creates missing sections or files cleanly with transparent root privilege fallback.
 # Usage: write_ini_key <file> <section> <key> <value>
 write_ini_key() {
   local file="$1"
@@ -124,8 +125,26 @@ write_ini_key() {
   local key="$3"
   local val="$4"
 
-  mkdir -p "$(dirname "$file")"
-  [ -f "$file" ] || touch "$file"
+  local dir
+  dir="$(dirname "$file")"
+
+  if [ ! -d "$dir" ]; then
+    mkdir -p "$dir" 2> /dev/null || sudo mkdir -p "$dir" 2> /dev/null || return 1
+  fi
+
+  local use_sudo=0
+  if [ -f "$file" ] && [ ! -w "$file" ]; then
+    use_sudo=1
+  elif [ ! -f "$file" ] && [ ! -w "$dir" ]; then
+    use_sudo=1
+  fi
+
+  local tmp_file
+  tmp_file="$(mktemp "${TMPDIR:-/tmp}/ini_write.XXXXXX")" || return 1
+
+  if [ -f "$file" ]; then
+    cp "$file" "$tmp_file" 2> /dev/null || sudo cp "$file" "$tmp_file" 2> /dev/null || true
+  fi
 
   # Values are passed via ENVIRON so awk does not interpret backslash escape sequences
   INI_VALUE="$val" awk -v sec="[$section]" -v k="$key" '
@@ -139,7 +158,7 @@ write_ini_key() {
       line = $0
       sub(/^[ \t]+/, "", line)
       if (line == "") { last_line_blank = 1 } else { last_line_blank = 0 }
-      if (in_sec && substr(line, 1, length(k) + 1) == (k "=")) {
+      if (in_sec && (substr(line, 1, length(k) + 1) == (k "=") || substr(line, 1, length(k) + 2) == ("#" k "="))) {
         print k "=" v
         replaced = 1
         next
@@ -154,7 +173,15 @@ write_ini_key() {
         print k "=" v
       }
     }
-  ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
+  ' "$tmp_file" > "${tmp_file}.out" && {
+    if [ "$use_sudo" -eq 1 ]; then
+      sudo cp "${tmp_file}.out" "$file" 2> /dev/null || true
+      sudo rm -f "$tmp_file" "${tmp_file}.out" 2> /dev/null || true
+    else
+      cp "${tmp_file}.out" "$file" 2> /dev/null || true
+      rm -f "$tmp_file" "${tmp_file}.out" 2> /dev/null || true
+    fi
+  }
 }
 
 get_gpu_vendor() {

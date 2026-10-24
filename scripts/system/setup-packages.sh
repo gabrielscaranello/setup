@@ -31,24 +31,10 @@ _initialize_xdg_dirs() {
 }
 
 _configure_bluetooth() {
-  if [ -d /etc/bluetooth ] || [ -f /etc/bluetooth/main.conf ]; then
+  local conf_file="${1:-/etc/bluetooth/main.conf}"
+  if [ -d "$(dirname "$conf_file")" ] || [ -f "$conf_file" ]; then
     echo "Configuring Bluetooth policy (AutoEnable=true)..."
-    if [ -f /etc/bluetooth/main.conf ]; then
-      if grep -q "^\[Policy\]" /etc/bluetooth/main.conf; then
-        if grep -q "^AutoEnable=" /etc/bluetooth/main.conf; then
-          sudo sed -i 's/^AutoEnable=.*/AutoEnable=true/' /etc/bluetooth/main.conf 2> /dev/null || true
-        elif grep -q "^#AutoEnable=" /etc/bluetooth/main.conf; then
-          sudo sed -i 's/^#AutoEnable=.*/AutoEnable=true/' /etc/bluetooth/main.conf 2> /dev/null || true
-        else
-          sudo sed -i '/^\[Policy\]/a AutoEnable=true' /etc/bluetooth/main.conf 2> /dev/null || true
-        fi
-      else
-        printf "\n[Policy]\nAutoEnable=true\n" | sudo tee -a /etc/bluetooth/main.conf > /dev/null 2>&1 || true
-      fi
-    else
-      sudo mkdir -p /etc/bluetooth 2> /dev/null || true
-      printf "[Policy]\nAutoEnable=true\n" | sudo tee /etc/bluetooth/main.conf > /dev/null 2>&1 || true
-    fi
+    write_ini_key "$conf_file" "Policy" "AutoEnable" "true"
   fi
 }
 

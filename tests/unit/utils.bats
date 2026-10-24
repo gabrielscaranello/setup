@@ -246,6 +246,22 @@ EOF
   rm -f "$tmp_file"
 }
 
+@test "write_ini_key replaces commented key in existing section" {
+  local tmp_file="/tmp/test_write_ini_$$.ini"
+  cat << 'EOF' > "$tmp_file"
+[Policy]
+#AutoEnable=false
+Name=BlueZ
+EOF
+
+  run write_ini_key "$tmp_file" "Policy" "AutoEnable" "true"
+  [ "$status" -eq 0 ]
+  grep -q "^AutoEnable=true" "$tmp_file"
+  [ "$(grep -c "AutoEnable" "$tmp_file")" -eq 1 ]
+
+  rm -f "$tmp_file"
+}
+
 @test "write_ini_key appends new section without altering existing sections" {
   local tmp_file="/tmp/test_write_ini_$$.ini"
   cat << 'EOF' > "$tmp_file"

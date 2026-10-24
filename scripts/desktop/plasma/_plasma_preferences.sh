@@ -9,6 +9,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_plasma_config.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_plasma_favorites.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_plasma_panel.sh" 2> /dev/null || true
+source "$(dirname "${BASH_SOURCE[0]}")/../_workspace_env.sh" 2> /dev/null || true
 
 _configure_plasma_desktops_dbus() {
   local qdbus_cmd
@@ -59,22 +60,6 @@ _reload_plasma_shortcuts_dbus() {
   if "$qdbus_cmd" org.kde.kglobalaccel /kglobalaccel > /dev/null 2>&1; then
     "$qdbus_cmd" org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel.reconfigure > /dev/null 2>&1 \
       || "$qdbus_cmd" org.kde.kglobalaccel /kglobalaccel reconfigure > /dev/null 2>&1 || true
-  fi
-}
-
-_setup_plasma_workspace_env() {
-  local config_dir="${KDE_CONFIG_DIR:-$HOME/.config}"
-  local env_dir="${config_dir}/plasma-workspace/env"
-  local target_file="${env_dir}/nvm.sh"
-  local repo_root
-  repo_root="$(get_repo_root)"
-  local template_file="${PLASMA_WORKSPACE_ENV_NVM:-${repo_root}/config/plasma/plasma-workspace/env/nvm.sh}"
-
-  if [ -f "$template_file" ]; then
-    echo "Configuring KDE Plasma workspace startup environment script for NVM..."
-    mkdir -p "$env_dir"
-    cp "$template_file" "$target_file"
-    chmod +x "$target_file"
   fi
 }
 
