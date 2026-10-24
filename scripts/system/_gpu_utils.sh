@@ -3,11 +3,6 @@
 # Shared GPU setup utilities — sourced by setup-nvidia.sh and setup-amd.sh.
 # Do NOT execute this file directly.
 
-source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
-source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
-source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
-
 _list_pci_display_devices() {
   command -v lspci > /dev/null 2>&1 || return 1
   lspci -nn 2> /dev/null | grep -iE 'vga|3d|display' || true
@@ -59,16 +54,20 @@ configure_gpu_repositories() {
 
   case "$distro" in
     debian | apt)
+      declare -F add_debian_nonfree_repo > /dev/null 2>&1 || source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
       add_debian_nonfree_repo
       add_debian_backports_repo
       ;;
     fedora | dnf)
+      declare -F add_fedora_rpmfusion_repo > /dev/null 2>&1 || source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
       add_fedora_rpmfusion_repo
       ;;
     arch | pacman)
+      declare -F add_arch_multilib_repo > /dev/null 2>&1 || source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
       add_arch_multilib_repo
       ;;
     opensuse* | zypper)
+      declare -F add_opensuse_packman_repo > /dev/null 2>&1 || source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
       add_opensuse_nonfree_repo
       add_opensuse_packman_repo
       add_opensuse_nvidia_repo

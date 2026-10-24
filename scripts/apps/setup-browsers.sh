@@ -4,8 +4,6 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
-source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
-source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _remove_firefox_esr_apt() {
   echo "Removing firefox-esr if installed..."
@@ -19,12 +17,14 @@ _remove_firefox_esr_opensuse() {
 
 _install_firefox_apt() {
   _remove_firefox_esr_apt
+  declare -F add_debian_mozilla_repo > /dev/null 2>&1 || source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
   add_debian_mozilla_repo
   install_packages firefox firefox-i18n-pt-br
 }
 
 _install_firefox_opensuse_leap() {
   _remove_firefox_esr_opensuse
+  declare -F add_opensuse_mozilla_repo > /dev/null 2>&1 || source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
   add_opensuse_mozilla_repo
   install_packages firefox firefox-i18n-pt-br
 }

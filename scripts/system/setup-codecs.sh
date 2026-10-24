@@ -3,8 +3,6 @@ set -euo pipefail
 
 # Source utilities
 source "scripts/_utils.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
-source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _swap_fedora_ffmpeg() {
   if is_package_installed ffmpeg-free && ! is_package_installed ffmpeg; then
@@ -14,6 +12,7 @@ _swap_fedora_ffmpeg() {
 }
 
 _setup_fedora_repos() {
+  declare -F add_fedora_rpmfusion_repo > /dev/null 2>&1 || source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
   add_fedora_rpmfusion_repo
   _swap_fedora_ffmpeg
 }
@@ -32,6 +31,7 @@ main() {
   if [ "$distro" = "fedora" ]; then
     _setup_fedora_repos
   elif is_distro opensuse; then
+    declare -F add_opensuse_packman_repo > /dev/null 2>&1 || source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
     add_opensuse_packman_repo
   fi
 

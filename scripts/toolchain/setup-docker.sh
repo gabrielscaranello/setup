@@ -4,11 +4,11 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
 _install_docker_packages() {
   local distro="${1:-}"
   if [ "$distro" = "fedora" ]; then
+    declare -F add_fedora_docker_repo > /dev/null 2>&1 || source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
     add_fedora_docker_repo
   fi
 

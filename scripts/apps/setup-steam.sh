@@ -5,8 +5,6 @@ set -euo pipefail
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
 source "scripts/system/_gpu_utils.sh" 2> /dev/null || true
-source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
 
 _install_proton_manager() {
   local de
@@ -70,6 +68,7 @@ _install_debian_steam() {
 
 _install_fedora_steam() {
   echo "Configuring repositories and installing Steam, MangoHud, Gamescope, and GameMode on Fedora..."
+  declare -F add_fedora_rpmfusion_repo > /dev/null 2>&1 || source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
   add_fedora_rpmfusion_repo
   install_packages steam mangohud gamescope gamemode
 }
@@ -98,6 +97,7 @@ _get_arch_steam_gpu_packages() {
 
 _install_arch_steam() {
   echo "Configuring repositories and installing Steam, MangoHud, Gamescope, GameMode, fonts, and GPU Vulkan drivers on Arch Linux..."
+  declare -F add_arch_multilib_repo > /dev/null 2>&1 || source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
   add_arch_multilib_repo
   local -a gpu_pkgs
   # shellcheck disable=SC2207

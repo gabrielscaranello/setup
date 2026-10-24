@@ -4,9 +4,6 @@ set -euo pipefail
 
 # Follow project conventions: source utility helpers and use private functions
 source "scripts/_utils.sh" 2> /dev/null || true
-source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
-source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
-source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
 
 _install_vscodium() {
   local distro
@@ -14,12 +11,15 @@ _install_vscodium() {
 
   case "$distro" in
     debian)
+      declare -F add_debian_vscodium_repo > /dev/null 2>&1 || source "scripts/system/debian/_repositories.sh" 2> /dev/null || true
       add_debian_vscodium_repo
       ;;
     fedora)
+      declare -F add_fedora_vscodium_repo > /dev/null 2>&1 || source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
       add_fedora_vscodium_repo
       ;;
     opensuse*)
+      declare -F add_opensuse_vscodium_repo > /dev/null 2>&1 || source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
       add_opensuse_vscodium_repo
       ;;
   esac
