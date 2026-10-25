@@ -279,6 +279,16 @@ setup() {
   [[ "$output" =~ "setup-debloat complete" ]]
 }
 
+@test "main delegates to _debloat_debian on linuxmint" {
+  get_distro_id() { echo "linuxmint"; }
+  _debloat_debian() { echo "called debloat debian"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called debloat debian" ]]
+  [[ "$output" =~ "setup-debloat complete" ]]
+}
+
 @test "main delegates to _debloat_fedora on fedora" {
   get_distro_id() { echo "fedora"; }
   _debloat_fedora() { echo "called debloat fedora"; return 0; }

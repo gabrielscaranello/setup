@@ -495,6 +495,11 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "opensuse-tumbleweed" ]
 
+  echo -e 'ID=linuxmint\nID_LIKE="ubuntu debian"' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "linuxmint" ]
+
   echo -e 'ID=linuxmint\nID_LIKE=ubuntu' > "$test_os_release"
   OS_RELEASE_PATH="$test_os_release" run get_distro_id
   [ "$status" -eq 0 ]

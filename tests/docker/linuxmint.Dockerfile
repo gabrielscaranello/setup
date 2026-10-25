@@ -15,7 +15,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Emulate Linux Mint os-release and APT preferences
-RUN printf 'NAME="Linux Mint"\nVERSION="22.3 (Zena)"\nID=linuxmint\nID_LIKE=ubuntu\nPLATFORM_ID="platform:mint22"\nVERSION_ID="22.3"\nVERSION_CODENAME=zena\nUBUNTU_CODENAME=noble\n' > /etc/os-release \
+RUN printf 'NAME="Linux Mint"\nVERSION="22.3 (Zena)"\nID=linuxmint\nID_LIKE="ubuntu debian"\nPLATFORM_ID="platform:mint22"\nVERSION_ID="22.3"\nVERSION_CODENAME=zena\nUBUNTU_CODENAME=noble\n' > /etc/os-release \
     && mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d /usr/share/keyrings /etc/dpkg/dpkg.cfg.d \
     && printf 'force-confdef\nforce-confold\n' > /etc/dpkg/dpkg.cfg.d/force-conf \
     && printf 'Dpkg::Options {\n  "--force-confdef";\n  "--force-confold";\n};\n' > /etc/apt/apt.conf.d/99force-conf \

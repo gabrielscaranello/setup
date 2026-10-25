@@ -34,6 +34,10 @@ get_distro_id() {
 
   if [ "$distro_id" = "linuxmint" ]; then
     case "$id_like" in
+      *ubuntu*)
+        echo "linuxmint"
+        return 0
+        ;;
       *debian*)
         echo "lmde"
         return 0
