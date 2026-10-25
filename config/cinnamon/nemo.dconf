@@ -1,0 +1,14 @@
+[org/nemo/desktop]
+desktop-layout='false::false'
+font='Ubuntu 10'
+show-orphaned-desktop-icons=false
+volumes-visible=false
+
+[org/nemo/preferences]
+date-format='iso'
+default-folder-viewer='list-view'
+
+[org/nemo/window-state]
+maximized=false
+sidebar-bookmark-breakpoint=5
+start-with-sidebar=true

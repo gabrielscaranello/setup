@@ -142,6 +142,40 @@ teardown() {
   rm -rf "$test_root" "$test_target"
 }
 
+@test "CINNAMON_DCONF_FILES contains all 9 expected configuration files" {
+  [ "${#CINNAMON_DCONF_FILES[@]}" -eq 9 ]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "interface.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "gtk.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "peripherals.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "window-manager.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "night-light.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "privacy.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "nemo.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "shell.dconf" ]]
+  [[ "${CINNAMON_DCONF_FILES[*]}" =~ "apps.dconf" ]]
+}
+
+@test "_load_cinnamon_dconf calls load_dconf_files with CINNAMON_DCONF_FILES" {
+  local test_root
+  test_root="$(mktemp -d "/tmp/cinnamon_dconf_test.XXXXXX")"
+  mkdir -p "$test_root/config/cinnamon"
+
+  get_repo_root() { echo "$test_root"; }
+  load_dconf_files() {
+    local dir="$1"
+    shift
+    echo "loaded from $dir: $*"
+    return 0
+  }
+
+  run _load_cinnamon_dconf
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Loading Cinnamon desktop dconf preferences..." ]]
+  [[ "$output" =~ "loaded from $test_root/config/cinnamon: interface.dconf gtk.dconf peripherals.dconf window-manager.dconf night-light.dconf privacy.dconf nemo.dconf shell.dconf apps.dconf" ]]
+
+  rm -rf "$test_root"
+}
+
 @test "main executes all configuration steps when environment is cinnamon" {
   get_desktop_environment() { echo "cinnamon"; }
   ensure_dconf() { return 0; }
@@ -150,11 +184,13 @@ teardown() {
   _configure_cinnamon_keybindings() { echo "configured keybindings"; }
   _configure_nemo() { echo "configured nemo"; }
   _copy_cinnamon_config() { echo "copied config"; }
+  _load_cinnamon_dconf() { echo "loaded dconf"; }
 
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Starting Cinnamon desktop preferences configuration..." ]]
   [[ "$output" =~ "copied config" ]]
+  [[ "$output" =~ "loaded dconf" ]]
   [[ "$output" =~ "configured interface" ]]
   [[ "$output" =~ "configured terminal" ]]
   [[ "$output" =~ "configured keybindings" ]]

@@ -45,6 +45,15 @@ get_favorite_apps() {
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
       steam="$(_resolve_desktop_app "com.valvesoftware.Steam.desktop" "steam.desktop")"
       ;;
+    linuxmint)
+      editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
+      firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
+      browser="$(_resolve_desktop_app "org.chromium.Chromium.desktop" "chromium.desktop" "chromium-browser.desktop")"
+      notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
+      gimp="$(_resolve_desktop_app "org.gimp.GIMP.desktop" "gimp.desktop")"
+      chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
+      steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
+      ;;
     fedora)
       editor="$(_resolve_desktop_app "com.visualstudio.CodeOSS.desktop" "code-oss.desktop" "codium.desktop")"
       firefox="$(_resolve_desktop_app "org.mozilla.firefox.desktop" "firefox.desktop")"
@@ -116,6 +125,32 @@ configure_gnome_favorite_apps() {
   fi
 }
 
+_update_cinnamon_pinned_apps_json() {
+  local json_file="$1"
+  shift
+  local -a apps=("$@")
+
+  if command -v python3 > /dev/null 2>&1; then
+    python3 -c '
+import json, sys
+
+filepath = sys.argv[1]
+apps = sys.argv[2:]
+
+try:
+    with open(filepath, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if "pinned-apps" in data and isinstance(data["pinned-apps"], dict):
+        data["pinned-apps"]["value"] = apps
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")
+except Exception:
+    pass
+' "$json_file" "${apps[@]}"
+  fi
+}
+
 configure_cinnamon_favorite_apps() {
   local -a apps=()
   mapfile -t apps < <(get_favorite_apps "cinnamon")
@@ -123,9 +158,24 @@ configure_cinnamon_favorite_apps() {
   gvariant_array="$(format_gvariant_array "${apps[@]}")"
 
   echo "  Configuring Cinnamon favorite applications..."
+  if command -v dconf > /dev/null 2>&1; then
+    dconf_exec write /org/cinnamon/favorite-apps "$gvariant_array" || true
+  fi
   if command -v gsettings > /dev/null 2>&1; then
     gsettings_exec set org.cinnamon favorite-apps "$gvariant_array" 2> /dev/null || true
   fi
+
+  local config_dirs=(
+    "${HOME}/.config/cinnamon/spices/grouped-window-list@cinnamon.org"
+    "${HOME}/.cinnamon/configs/grouped-window-list@cinnamon.org"
+  )
+  for dir in "${config_dirs[@]}"; do
+    [ -d "$dir" ] || continue
+    for json_file in "$dir"/*.json; do
+      [ -f "$json_file" ] || continue
+      _update_cinnamon_pinned_apps_json "$json_file" "${apps[@]}"
+    done
+  done
 }
 
 get_plasma_launchers() {

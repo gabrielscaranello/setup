@@ -8,6 +8,18 @@ source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || source "script
 # shellcheck source=scripts/desktop/_favorite_apps.sh
 source "$(dirname "${BASH_SOURCE[0]}")/_favorite_apps.sh" 2> /dev/null || source "scripts/desktop/_favorite_apps.sh" 2> /dev/null || true
 
+CINNAMON_DCONF_FILES=(
+  "interface.dconf"
+  "gtk.dconf"
+  "peripherals.dconf"
+  "window-manager.dconf"
+  "night-light.dconf"
+  "privacy.dconf"
+  "nemo.dconf"
+  "shell.dconf"
+  "apps.dconf"
+)
+
 _configure_cinnamon_interface() {
   echo "Configuring Cinnamon interface and dark mode preferences..."
   if command -v gsettings > /dev/null 2>&1; then
@@ -62,12 +74,29 @@ _copy_cinnamon_config() {
   if [ -d "$source_dir" ]; then
     echo "Copying Cinnamon desktop configuration templates to $target_dir..."
     mkdir -p "$target_dir"
-    cp -r "$source_dir"/* "$target_dir"/ 2> /dev/null || true
+    for item in "${source_dir}"/*; do
+      [ -e "$item" ] || continue
+      case "$(basename "$item")" in
+        *.dconf) continue ;;
+        *) cp -r "$item" "$target_dir"/ 2> /dev/null || true ;;
+      esac
+    done
 
     local user_folders="${target_dir}/backgrounds/user-folders.lst"
     if [ -f "$user_folders" ]; then
       sed -i "s|/home/[^/]*|$HOME|g" "$user_folders" 2> /dev/null || true
     fi
+  fi
+}
+
+_load_cinnamon_dconf() {
+  local repo_root
+  repo_root="$(get_repo_root)"
+  local config_dir="${repo_root}/config/cinnamon"
+
+  if [ -d "$config_dir" ]; then
+    echo "Loading Cinnamon desktop dconf preferences..."
+    load_dconf_files "$config_dir" "${CINNAMON_DCONF_FILES[@]}" || return 1
   fi
 }
 
@@ -84,6 +113,7 @@ main() {
   ensure_dconf || return 1
 
   _copy_cinnamon_config
+  _load_cinnamon_dconf
   _configure_cinnamon_interface
   _configure_cinnamon_terminal
   _configure_cinnamon_keybindings

@@ -107,3 +107,51 @@ The script SHALL copy repository configuration templates from `config/cinnamon` 
 - **GIVEN** `config/cinnamon` exists in the repository
 - **WHEN** `_copy_cinnamon_config` executes
 - **THEN** template files and spices configurations SHALL be copied into `$HOME/.config/cinnamon`
+
+---
+
+### Requirement: Cinnamon Desktop Modular dconf Configuration
+
+The script SHALL load Cinnamon desktop dconf preferences from modular configuration files under `config/cinnamon` using `load_dconf_files`:
+
+- `interface.dconf`: Configures interface fonts, clock settings, accessibility, and portal preferences.
+- `gtk.dconf`: Configures GTK file-chooser sorting, path-bar location mode, and menu icons.
+- `peripherals.dconf`: Configures mouse/touchpad flat acceleration profile, keyboard repeat rate/delay, accessibility, and Bluetooth power manager.
+- `window-manager.dconf`: Configures titlebar buttons (`:close`), middle-click minimization, Flameshot shortcut (`<Primary><Super>s`, `<Shift><Super>s`, `Print`), workspace switching, and Muffin window placement/tiling.
+- `night-light.dconf`: Configures night light schedule (`4700K`) and power management/sleep timeouts.
+- `privacy.dconf`: Configures privacy settings (disabling recent files history).
+- `nemo.dconf`: Configures Nemo file manager (list-view, ISO dates, hiding desktop volume icons).
+- `shell.dconf`: Configures Cinnamon panels (height `36px`), zone icon sizes, applet layout, coverflow alt-tab switcher, hot corners, gestures, notifications, screensaver, and silent sound theme.
+- `apps.dconf`: Configures Linux Mint update manager, default calculator, Xed editor plugins, and system monitor.
+
+#### Scenario: Loading Cinnamon modular dconf preferences
+
+- **GIVEN** modular `.dconf` files exist in `config/cinnamon`
+- **WHEN** `_load_cinnamon_dconf` executes
+- **THEN** it SHALL call `load_dconf_files` with all 9 configuration files in `CINNAMON_DCONF_FILES`
+
+---
+
+### Requirement: Cinnamon Panel and Menu Favorite Applications
+
+The script SHALL configure Cinnamon favorite applications for both the start menu and the panel taskbar (`grouped-window-list@cinnamon.org`), matching the canonical order defined across GNOME and KDE Plasma:
+
+1. Nemo file manager (`nemo.desktop`)
+2. Kitty terminal (`kitty.desktop`)
+3. Code editor (`codium.desktop`)
+4. Firefox (`firefox.desktop`)
+5. Chromium (`org.chromium.Chromium.desktop`)
+6. DBeaver (`io.dbeaver.DBeaverCommunity.desktop`)
+7. ONLYOFFICE (`org.onlyoffice.desktopeditors.desktop`)
+8. Obsidian (`md.obsidian.Obsidian.desktop`)
+9. GIMP (`org.gimp.GIMP.desktop`)
+10. Telegram (`org.telegram.desktop.desktop`)
+11. Steam (`steam.desktop`)
+12. Discord (`com.discordapp.Discord.desktop`)
+
+#### Scenario: Configuring Cinnamon favorite applications
+
+- **GIVEN** desktop environment is Cinnamon
+- **WHEN** `configure_cinnamon_favorite_apps` executes
+- **THEN** it SHALL write `/org/cinnamon/favorite-apps` via dconf/gsettings
+- **AND** it SHALL update `pinned-apps` in any `grouped-window-list@cinnamon.org` configuration JSON files with the identical application order

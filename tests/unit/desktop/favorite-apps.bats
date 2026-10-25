@@ -171,6 +171,83 @@ teardown() {
   [[ "$output" =~ "discord.desktop" ]]
 }
 
+@test "configure_cinnamon_favorite_apps writes favorite-apps to dconf and gsettings" {
+  get_distro_id() { echo "linuxmint"; }
+  dconf_exec() { echo "dconf_exec: $*"; }
+  gsettings_exec() { echo "gsettings_exec: $*"; }
+  command() {
+    if [ "$2" = "dconf" ] || [ "$2" = "gsettings" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  run configure_cinnamon_favorite_apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Configuring Cinnamon favorite applications..." ]]
+  [[ "$output" =~ "dconf_exec: write /org/cinnamon/favorite-apps" ]]
+  [[ "$output" =~ "gsettings_exec: set org.cinnamon favorite-apps" ]]
+  [[ "$output" =~ "nemo.desktop" ]]
+  [[ "$output" =~ "kitty.desktop" ]]
+}
+
+@test "configure_cinnamon_favorite_apps updates pinned-apps in grouped-window-list json" {
+  local mock_home
+  mock_home="$(mktemp -d)"
+  HOME="$mock_home"
+  local spices_dir="$mock_home/.config/cinnamon/spices/grouped-window-list@cinnamon.org"
+  mkdir -p "$spices_dir"
+  cat << 'EOF' > "$spices_dir/19.json"
+{
+  "pinned-apps": {
+    "type": "generic",
+    "value": ["old-app.desktop"]
+  }
+}
+EOF
+
+  get_distro_id() { echo "linuxmint"; }
+  dconf_exec() { return 0; }
+  gsettings_exec() { return 0; }
+  command() {
+    if [ "$2" = "dconf" ] || [ "$2" = "gsettings" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  run configure_cinnamon_favorite_apps
+  [ "$status" -eq 0 ]
+
+  run cat "$spices_dir/19.json"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "nemo.desktop" ]]
+  [[ "$output" =~ "kitty.desktop" ]]
+  [[ "$output" =~ "codium.desktop" ]]
+  [[ "$output" =~ "firefox.desktop" ]]
+  [[ "$output" =~ "com.discordapp.Discord.desktop" ]]
+
+  rm -rf "$mock_home"
+}
+
+@test "get_favorite_apps on linuxmint maintains identical order to gnome and plasma" {
+  get_distro_id() { echo "linuxmint"; }
+
+  run get_favorite_apps "cinnamon"
+  [ "$status" -eq 0 ]
+
+  # Check line-by-line canonical order
+  local -a lines=("${lines[@]}")
+  [ "${lines[0]}" = "nemo.desktop" ]
+  [ "${lines[1]}" = "kitty.desktop" ]
+  [ "${lines[2]}" = "codium.desktop" ]
+  [ "${lines[3]}" = "firefox.desktop" ]
+  [ "${lines[4]}" = "org.chromium.Chromium.desktop" ]
+  [ "${lines[5]}" = "io.dbeaver.DBeaverCommunity.desktop" ]
+  [ "${lines[6]}" = "org.onlyoffice.desktopeditors.desktop" ]
+  [ "${lines[7]}" = "md.obsidian.Obsidian.desktop" ]
+  [ "${lines[8]}" = "org.gimp.GIMP.desktop" ]
+  [ "${lines[9]}" = "org.telegram.desktop.desktop" ]
+  [ "${lines[10]}" = "steam.desktop" ]
+  [ "${lines[11]}" = "com.discordapp.Discord.desktop" ]
+}
+
 @test "get_plasma_launchers formats applications list for Plasma taskbar" {
   get_distro_id() { echo "arch"; }
 

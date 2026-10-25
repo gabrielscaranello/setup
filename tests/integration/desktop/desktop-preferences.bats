@@ -141,3 +141,36 @@ teardown() {
   [ "$status" -eq 0 ]
   [[ "$output" =~ "KDE Plasma 6 desktop preferences configuration completed successfully." ]]
 }
+
+@test "setup-desktop-preferences.sh applies Cinnamon preferences and dconf idempotently" {
+  export XDG_CURRENT_DESKTOP="X-Cinnamon"
+
+  run bash /setup/scripts/desktop/setup-desktop-preferences.sh
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Starting Cinnamon desktop preferences configuration..." ]]
+  [[ "$output" =~ "Cinnamon desktop preferences configuration completed successfully." ]]
+
+  source /setup/scripts/desktop/_dconf.sh
+  run dconf_exec read /org/cinnamon/alttab-switcher-style
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "coverflow" ]]
+
+  run dconf_exec read /org/cinnamon/favorite-apps
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "nemo.desktop" ]]
+
+  run dconf_exec read /org/cinnamon/desktop/interface/clock-show-date
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "true" ]]
+
+  [ -f "$HOME/.config/cinnamon/spices/grouped-window-list@cinnamon.org/19.json" ]
+  run cat "$HOME/.config/cinnamon/spices/grouped-window-list@cinnamon.org/19.json"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "nemo.desktop" ]]
+  [[ "$output" =~ "kitty.desktop" ]]
+
+  # Idempotent second execution
+  run bash /setup/scripts/desktop/setup-desktop-preferences.sh
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Cinnamon desktop preferences configuration completed successfully." ]]
+}
