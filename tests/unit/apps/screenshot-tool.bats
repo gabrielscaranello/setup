@@ -41,6 +41,24 @@ setup() {
   [[ "$output" =~ "mocked _configure_flameshot_portal_permission" ]]
 }
 
+@test "_install_screenshot_tool installs flameshot and configures portal permissions on Cinnamon" {
+  require_supported_distro() { echo "linuxmint"; }
+  get_desktop_environment() { echo "cinnamon"; }
+  install_packages() {
+    echo "installed packages: $*"
+    return 0
+  }
+  _configure_flameshot_portal_permission() {
+    echo "mocked _configure_flameshot_portal_permission"
+    return 0
+  }
+  run _install_screenshot_tool
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Installing Flameshot for Cinnamon..." ]]
+  [[ "$output" =~ "installed packages: flameshot" ]]
+  [[ "$output" =~ "mocked _configure_flameshot_portal_permission" ]]
+}
+
 @test "_install_screenshot_tool installs spectacle on KDE Plasma" {
   require_supported_distro() { echo "fedora"; }
   get_desktop_environment() { echo "plasma"; }
