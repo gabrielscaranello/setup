@@ -97,6 +97,28 @@ setup() {
   [[ "$output" =~ "sudo apt purge -y dragonplayer juk konsole akregator kmail korganizer kontact" ]]
 }
 
+@test "_debloat_debian purges packages on Cinnamon including rhythmbox when installed" {
+  get_desktop_environment() { echo "cinnamon"; }
+  _filter_installed_debian() {
+    local args="$*"
+    [[ "$args" =~ "rhythmbox" ]]
+    [[ "$args" =~ "celluloid" ]]
+    [[ "$args" =~ "hypnotix" ]]
+    [[ "$args" =~ "mintchat" ]]
+    echo "rhythmbox celluloid hypnotix mintchat"
+  }
+  sudo() {
+    echo "sudo $*"
+    return 0
+  }
+
+  run _debloat_debian
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Purging unused Debian packages: rhythmbox celluloid hypnotix mintchat" ]]
+  [[ "$output" =~ "sudo apt purge -y rhythmbox celluloid hypnotix mintchat" ]]
+  [[ "$output" =~ "sudo apt autoremove --purge -y" ]]
+}
+
 @test "_debloat_debian handles no installed packages gracefully" {
   get_desktop_environment() { echo "gnome"; }
   _filter_installed_debian() {

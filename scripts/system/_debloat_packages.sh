@@ -63,10 +63,11 @@ COMMON_CINNAMON_DEBLOAT_PACKAGES=(
   celluloid
   hypnotix
   mintchat
+  rhythmbox
+  simple-scan
   sticky
   thingy
   thunderbird
-  simple-scan
 )
 
 OPEN_SUSE_COMMON_DEBLOAT_PACKAGES=(

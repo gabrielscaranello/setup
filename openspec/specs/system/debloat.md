@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Removes unused default packages, redundant applications, legacy utilities, and distro bloatware on **Debian 13**, **Fedora 44**, and **openSUSE Leap 16.1 / Tumbleweed**, tailored specifically to the active Desktop Environment (**GNOME** or **KDE Plasma**).
+Removes unused default packages, redundant applications, legacy utilities, and distro bloatware on **Debian 13**, **Fedora 44**, **openSUSE Leap 16.1 / Tumbleweed**, and **Linux Mint**, tailored specifically to the active Desktop Environment (**GNOME**, **KDE Plasma**, or **Cinnamon**).
 
 On **Arch Linux**, this module gracefully bypasses package removal because Arch installations are user-composed and inherently minimal.
 
@@ -116,6 +116,22 @@ When the detected Desktop Environment is `plasma`, the script SHALL remove redun
 - **GIVEN** active desktop environment is `plasma`
 - **WHEN** `scripts/system/setup-debloat.sh` executes
 - **THEN** Dragon player, Juk, Konsole, Konqueror, KDE PIM, and legacy KDE accessibility tools SHALL be removed
+
+---
+
+### Requirement: Cinnamon Desktop Environment Debloat
+
+When the detected Desktop Environment is `cinnamon`, the script SHALL remove redundant Cinnamon and Linux Mint pre-installed software:
+
+- **Audio & Video**: `celluloid`, `hypnotix`, `rhythmbox` (replaced by VLC).
+- **Communication & Chat**: `mintchat`, `thunderbird` (replaced by Telegram / Discord).
+- **Redundant Utilities**: `sticky`, `thingy`, `simple-scan`.
+
+#### Scenario: Running debloat under Cinnamon
+
+- **GIVEN** active desktop environment is `cinnamon`
+- **WHEN** `scripts/system/setup-debloat.sh` executes
+- **THEN** Celluloid, Hypnotix, Mintchat, Rhythmbox, Sticky, Thingy, Thunderbird, and Simple Scan SHALL be removed
 
 ---
 
