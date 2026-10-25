@@ -11,6 +11,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/_favorite_apps.sh" 2> /dev/null || source
 _configure_cinnamon_interface() {
   echo "Configuring Cinnamon interface and dark mode preferences..."
   if command -v gsettings > /dev/null 2>&1; then
+    gsettings_exec set org.cinnamon.desktop.interface gtk-theme 'Mint-Y-Dark-Aqua' 2> /dev/null || true
+    gsettings_exec set org.cinnamon.desktop.wm.preferences theme 'Mint-Y-Dark-Aqua' 2> /dev/null || true
+    gsettings_exec set org.cinnamon.theme name 'Mint-Y-Dark-Aqua' 2> /dev/null || true
     gsettings_exec set org.cinnamon.desktop.interface color-scheme 'prefer-dark' 2> /dev/null || true
     gsettings_exec set org.x.apps.portal color-scheme 'prefer-dark' 2> /dev/null || true
     gsettings_exec set org.cinnamon.desktop.interface clock-show-date true 2> /dev/null || true
@@ -50,6 +53,24 @@ _configure_nemo() {
   fi
 }
 
+_copy_cinnamon_config() {
+  local repo_root
+  repo_root="$(get_repo_root)"
+  local source_dir="${repo_root}/config/cinnamon"
+  local target_dir="${CINNAMON_CONFIG_DIR:-$HOME/.config/cinnamon}"
+
+  if [ -d "$source_dir" ]; then
+    echo "Copying Cinnamon desktop configuration templates to $target_dir..."
+    mkdir -p "$target_dir"
+    cp -r "$source_dir"/* "$target_dir"/ 2> /dev/null || true
+
+    local user_folders="${target_dir}/backgrounds/user-folders.lst"
+    if [ -f "$user_folders" ]; then
+      sed -i "s|/home/[^/]*|$HOME|g" "$user_folders" 2> /dev/null || true
+    fi
+  fi
+}
+
 main() {
   local de
   de="$(get_desktop_environment)"
@@ -62,6 +83,7 @@ main() {
   echo "Starting Cinnamon desktop preferences configuration..."
   ensure_dconf || return 1
 
+  _copy_cinnamon_config
   _configure_cinnamon_interface
   _configure_cinnamon_terminal
   _configure_cinnamon_keybindings

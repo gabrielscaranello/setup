@@ -87,6 +87,17 @@ _install_flatpak_theme() {
   fi
 }
 
+_configure_cinnamon_gtk_theme() {
+  local theme="Mint-Y-Dark-Aqua"
+  echo "Configuring Cinnamon GTK and shell theme ($theme)..."
+  if command -v gsettings > /dev/null 2>&1; then
+    gsettings_exec set org.cinnamon.desktop.interface gtk-theme "$theme" 2> /dev/null || true
+    gsettings_exec set org.cinnamon.desktop.wm.preferences theme "$theme" 2> /dev/null || true
+    gsettings_exec set org.cinnamon.theme name "$theme" 2> /dev/null || true
+    gsettings_exec set org.cinnamon.desktop.interface color-scheme 'prefer-dark' 2> /dev/null || true
+  fi
+}
+
 _configure_gnome_gtk_theme() {
   echo "Configuring GNOME GTK theme and dark mode..."
   if command -v gsettings > /dev/null 2>&1; then
@@ -119,15 +130,22 @@ main() {
   local de
   de="$(get_desktop_environment)"
 
-  if [ "$de" != "gnome" ]; then
-    echo "Desktop Environment is '$de' (unsupported or unrecognized). Skipping GTK theme setup."
-    return 0
-  fi
-
-  echo "Setting up $THEME_NAME GTK theme for GNOME..."
-  _ensure_gnome_gtk_theme
-  _install_flatpak_theme
-  _configure_gnome_gtk_theme
+  case "$de" in
+    gnome)
+      echo "Setting up $THEME_NAME GTK theme for GNOME..."
+      _ensure_gnome_gtk_theme
+      _install_flatpak_theme
+      _configure_gnome_gtk_theme
+      ;;
+    cinnamon)
+      echo "Setting up Cinnamon GTK and shell theme..."
+      _configure_cinnamon_gtk_theme
+      ;;
+    *)
+      echo "Desktop Environment is '$de' (unsupported or unrecognized). Skipping GTK theme setup."
+      return 0
+      ;;
+  esac
 
   echo "GTK theme setup completed successfully."
 }

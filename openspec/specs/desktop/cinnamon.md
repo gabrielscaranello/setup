@@ -33,6 +33,9 @@ The script SHALL detect the current desktop environment using `get_desktop_envir
 
 The script SHALL configure dark mode and interface parameters through `gsettings` under active D-Bus session:
 
+- `org.cinnamon.desktop.interface gtk-theme`: set to `'Mint-Y-Dark-Aqua'`.
+- `org.cinnamon.desktop.wm.preferences theme`: set to `'Mint-Y-Dark-Aqua'`.
+- `org.cinnamon.theme name`: set to `'Mint-Y-Dark-Aqua'`.
 - `org.cinnamon.desktop.interface color-scheme`: set to `'prefer-dark'`.
 - `org.x.apps.portal color-scheme`: set to `'prefer-dark'`.
 - `org.cinnamon.desktop.interface clock-show-date`: set to `true`.
@@ -89,3 +92,18 @@ The script SHALL configure user preferences for the Nemo file manager:
 - **GIVEN** Cinnamon environment
 - **WHEN** `_configure_nemo` executes
 - **THEN** Nemo preferences for list-view and iso date format SHALL be persisted
+
+---
+
+### Requirement: Cinnamon Configuration Templates (`config/cinnamon`)
+
+The script SHALL copy repository configuration templates from `config/cinnamon` into the target user configuration directory (`$HOME/.config/cinnamon`):
+
+- Preserves all spices presets and backgrounds directory.
+- Dynamically resolves user home path inside `backgrounds/user-folders.lst`.
+
+#### Scenario: Seeding Cinnamon configuration templates
+
+- **GIVEN** `config/cinnamon` exists in the repository
+- **WHEN** `_copy_cinnamon_config` executes
+- **THEN** template files and spices configurations SHALL be copied into `$HOME/.config/cinnamon`

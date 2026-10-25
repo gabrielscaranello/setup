@@ -59,6 +59,40 @@ teardown() {
   [[ "$output" =~ "Icon theme setup completed successfully." ]]
 }
 
+@test "_resolve_folder_color returns paleorange on cinnamon" {
+  unset FOLDER_COLOR
+  run _resolve_folder_color "cinnamon"
+  [ "$status" -eq 0 ]
+  [ "$output" = "paleorange" ]
+
+  run _resolve_folder_color "gnome"
+  [ "$status" -eq 0 ]
+  [ "$output" = "adwaita" ]
+
+  export FOLDER_COLOR="blue"
+  run _resolve_folder_color "cinnamon"
+  [ "$status" -eq 0 ]
+  [ "$output" = "blue" ]
+  unset FOLDER_COLOR
+}
+
+@test "_apply_papirus_folders_color passes paleorange on cinnamon" {
+  papirus-folders() {
+    echo "papirus-folders called: $*"
+    return 0
+  }
+  command() {
+    if [ "${1:-}" = "-v" ] && [ "${2:-}" = "papirus-folders" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  unset FOLDER_COLOR
+  run _apply_papirus_folders_color "cinnamon"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Applying 'paleorange' folder color via papirus-folders..." ]]
+  [[ "$output" =~ "papirus-folders called: -C paleorange" ]]
+}
+
 @test "_is_icon_theme_installed returns 0 when theme directory exists" {
   local mock_home
   mock_home="$(mktemp -d)"
@@ -230,11 +264,12 @@ teardown() {
 }
 
 @test "_apply_papirus_folders_color invokes papirus-folders with adwaita" {
+  get_desktop_environment() { echo "gnome"; }
   papirus-folders() {
     echo "papirus-folders called: $*"
   }
 
-  run _apply_papirus_folders_color
+  run _apply_papirus_folders_color "gnome"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "papirus-folders called: -C adwaita" ]]
 }

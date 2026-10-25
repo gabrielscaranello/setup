@@ -45,6 +45,9 @@ teardown() {
 
   run _configure_cinnamon_interface
   [ "$status" -eq 0 ]
+  [[ "$output" =~ "gsettings: set org.cinnamon.desktop.interface gtk-theme Mint-Y-Dark-Aqua" ]]
+  [[ "$output" =~ "gsettings: set org.cinnamon.desktop.wm.preferences theme Mint-Y-Dark-Aqua" ]]
+  [[ "$output" =~ "gsettings: set org.cinnamon.theme name Mint-Y-Dark-Aqua" ]]
   [[ "$output" =~ "gsettings: set org.cinnamon.desktop.interface color-scheme prefer-dark" ]]
   [[ "$output" =~ "gsettings: set org.x.apps.portal color-scheme prefer-dark" ]]
   [[ "$output" =~ "gsettings: set org.cinnamon.desktop.interface clock-show-date true" ]]
@@ -119,6 +122,26 @@ teardown() {
   [[ "$output" =~ "gsettings: set org.nemo.preferences date-format iso" ]]
 }
 
+@test "_copy_cinnamon_config copies templates and adjusts user path" {
+  local test_root
+  test_root="$(mktemp -d "/tmp/cinnamon_test_root.XXXXXX")"
+  local test_target
+  test_target="$(mktemp -d "/tmp/cinnamon_test_target.XXXXXX")"
+
+  mkdir -p "$test_root/config/cinnamon/backgrounds"
+  echo "/home/gabriel/Imagens" > "$test_root/config/cinnamon/backgrounds/user-folders.lst"
+
+  get_repo_root() { echo "$test_root"; }
+  export CINNAMON_CONFIG_DIR="$test_target"
+
+  run _copy_cinnamon_config
+  [ "$status" -eq 0 ]
+  [ -f "$test_target/backgrounds/user-folders.lst" ]
+  grep -q "$HOME" "$test_target/backgrounds/user-folders.lst"
+
+  rm -rf "$test_root" "$test_target"
+}
+
 @test "main executes all configuration steps when environment is cinnamon" {
   get_desktop_environment() { echo "cinnamon"; }
   ensure_dconf() { return 0; }
@@ -126,10 +149,12 @@ teardown() {
   _configure_cinnamon_terminal() { echo "configured terminal"; }
   _configure_cinnamon_keybindings() { echo "configured keybindings"; }
   _configure_nemo() { echo "configured nemo"; }
+  _copy_cinnamon_config() { echo "copied config"; }
 
   run main
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Starting Cinnamon desktop preferences configuration..." ]]
+  [[ "$output" =~ "copied config" ]]
   [[ "$output" =~ "configured interface" ]]
   [[ "$output" =~ "configured terminal" ]]
   [[ "$output" =~ "configured keybindings" ]]

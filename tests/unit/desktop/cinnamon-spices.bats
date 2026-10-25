@@ -159,3 +159,15 @@ teardown() {
   [[ "$output" =~ "Enabling Cinnamon extension: transparent-panels-reloaded@marcelovbcfilho" ]]
   [[ "$output" =~ "gsettings: set org.cinnamon enabled-extensions ['transparent-panels-reloaded@marcelovbcfilho']" ]]
 }
+
+@test "_copy_cinnamon_spices_config copies spices templates" {
+  local test_root="$TEST_TMP_DIR/repo"
+  mkdir -p "$test_root/config/cinnamon/spices/sample@spice"
+  echo '{"test": 1}' > "$test_root/config/cinnamon/spices/sample@spice/sample.json"
+
+  get_repo_root() { echo "$test_root"; }
+
+  run _copy_cinnamon_spices_config
+  [ "$status" -eq 0 ]
+  [ -f "$HOME/.config/cinnamon/spices/sample@spice/sample.json" ]
+}

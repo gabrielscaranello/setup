@@ -9,7 +9,8 @@ Automate installation and configuration of the `Papirus-Dark` icon theme on the 
 ### Desktop Environment Support
 
 - **GNOME**: Installs theme packages/assets, configures folder icon color (`adwaita`) via `papirus-folders`, and sets GNOME preferences via `gsettings` (`org.gnome.desktop.interface icon-theme`).
-- **Unsupported / Unknown DE**: Per project governance, when `get_desktop_environment` returns anything other than `gnome`, the script must **NOT** install or configure anything, and must gracefully exit 0.
+- **Cinnamon**: Installs theme packages/assets, configures folder icon color to `paleorange` via `papirus-folders`, and sets Cinnamon preferences via `gsettings` (`org.cinnamon.desktop.interface icon-theme`).
+- **Unsupported / Unknown DE**: Per project governance, when `get_desktop_environment` returns anything other than `gnome` or `cinnamon`, the script must **NOT** install or configure anything, and must gracefully exit 0.
 
 ### Icon Theme Package (`papirus-icon-theme`)
 
@@ -39,6 +40,14 @@ Automate installation and configuration of the `Papirus-Dark` icon theme on the 
 - **WHEN** `setup-icon-theme.sh` is executed
 - **THEN** it should output a skip message
 - **AND** exit with return code 0 without installing packages or configuring themes
+
+**Scenario: Cinnamon Desktop Environment**
+
+- **GIVEN** `get_desktop_environment` returns `cinnamon`
+- **WHEN** `setup-icon-theme.sh` is executed
+- **THEN** it should ensure `papirus-icon-theme` and `papirus-folders` are installed
+- **AND** apply `papirus-folders -C paleorange`
+- **AND** configure Cinnamon GSettings icon-theme to "Papirus-Dark"
 
 **Scenario: GNOME Desktop Environment on Arch Linux**
 

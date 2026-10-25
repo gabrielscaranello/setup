@@ -200,6 +200,19 @@ _enable_cinnamon_extension() {
   gsettings_exec set org.cinnamon enabled-extensions "$updated" 2> /dev/null || true
 }
 
+_copy_cinnamon_spices_config() {
+  local repo_root
+  repo_root="$(get_repo_root)"
+  local source_spices="${repo_root}/config/cinnamon/spices"
+  local target_spices="${CINNAMON_CONFIG_DIR}/spices"
+
+  if [ -d "$source_spices" ]; then
+    echo "Copying Cinnamon spices configuration templates to $target_spices..."
+    mkdir -p "$target_spices"
+    cp -r "$source_spices"/* "$target_spices"/ 2> /dev/null || true
+  fi
+}
+
 main() {
   local de
   de="$(get_desktop_environment)"
@@ -211,6 +224,8 @@ main() {
 
   echo "Setting up Cinnamon Spices (applets and extensions)..."
   ensure_dconf || return 1
+
+  _copy_cinnamon_spices_config
 
   # Install and configure Applets
   _install_cinnamon_spice "color-picker@fmete" "applets"
