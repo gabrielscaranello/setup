@@ -238,14 +238,14 @@ EOF
   [ "${lines[1]}" = "kitty.desktop" ]
   [ "${lines[2]}" = "codium.desktop" ]
   [ "${lines[3]}" = "firefox.desktop" ]
-  [ "${lines[4]}" = "org.chromium.Chromium.desktop" ]
-  [ "${lines[5]}" = "io.dbeaver.DBeaverCommunity.desktop" ]
-  [ "${lines[6]}" = "org.onlyoffice.desktopeditors.desktop" ]
-  [ "${lines[7]}" = "md.obsidian.Obsidian.desktop" ]
-  [ "${lines[8]}" = "org.gimp.GIMP.desktop" ]
+  [ "${lines[4]}" = "org.chromium.Chromium.desktop:flatpak" ]
+  [ "${lines[5]}" = "io.dbeaver.DBeaverCommunity.desktop:flatpak" ]
+  [ "${lines[6]}" = "org.onlyoffice.desktopeditors.desktop:flatpak" ]
+  [ "${lines[7]}" = "md.obsidian.Obsidian.desktop:flatpak" ]
+  [ "${lines[8]}" = "org.gimp.GIMP.desktop:flatpak" ]
   [ "${lines[9]}" = "org.telegram.desktop.desktop" ]
-  [ "${lines[10]}" = "steam.desktop" ]
-  [ "${lines[11]}" = "com.discordapp.Discord.desktop" ]
+  [ "${lines[10]}" = "com.valvesoftware.Steam.desktop:flatpak" ]
+  [ "${lines[11]}" = "com.discordapp.Discord.desktop:flatpak" ]
 }
 
 @test "get_plasma_launchers formats applications list for Plasma taskbar" {

@@ -140,14 +140,16 @@ The script SHALL configure Cinnamon favorite applications for both the start men
 2. Kitty terminal (`kitty.desktop`)
 3. Code editor (`codium.desktop`)
 4. Firefox (`firefox.desktop`)
-5. Chromium (`org.chromium.Chromium.desktop`)
-6. DBeaver (`io.dbeaver.DBeaverCommunity.desktop`)
-7. ONLYOFFICE (`org.onlyoffice.desktopeditors.desktop`)
-8. Obsidian (`md.obsidian.Obsidian.desktop`)
-9. GIMP (`org.gimp.GIMP.desktop`)
+5. Chromium (`org.chromium.Chromium.desktop:flatpak`)
+6. DBeaver (`io.dbeaver.DBeaverCommunity.desktop:flatpak`)
+7. ONLYOFFICE (`org.onlyoffice.desktopeditors.desktop:flatpak`)
+8. Obsidian (`md.obsidian.Obsidian.desktop:flatpak`)
+9. GIMP (`org.gimp.GIMP.desktop:flatpak`)
 10. Telegram (`org.telegram.desktop.desktop`)
-11. Steam (`steam.desktop`)
-12. Discord (`com.discordapp.Discord.desktop`)
+11. Steam (`com.valvesoftware.Steam.desktop:flatpak`)
+12. Discord (`com.discordapp.Discord.desktop:flatpak`)
+
+Flatpak applications SHALL be formatted with the `:flatpak` suffix as required by Cinnamon's desktop menu parser (`gmenu-desktopappinfo.c`).
 
 #### Scenario: Configuring Cinnamon favorite applications
 

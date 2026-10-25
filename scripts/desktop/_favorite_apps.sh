@@ -6,6 +6,44 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../_utils.sh" 2> /dev/null || true
 source "$(dirname "${BASH_SOURCE[0]}")/_dconf.sh" 2> /dev/null || true
 
+_format_cinnamon_app_id() {
+  local app="$1"
+  local clean_app="${app%:flatpak}"
+  local distro
+  distro="$(get_distro_id 2> /dev/null || echo "unknown")"
+
+  if [ -f "/var/lib/flatpak/exports/share/applications/${clean_app}" ] || \
+     [ -f "$HOME/.local/share/flatpak/exports/share/applications/${clean_app}" ]; then
+    echo "${clean_app}:flatpak"
+    return 0
+  fi
+
+  for dir in "/usr/share/applications" "/usr/local/share/applications" "$HOME/.local/share/applications"; do
+    if [ -f "$dir/${clean_app}" ] && grep -q -E "^Exec=(.*[ /])?(flatpak|bwrap) " "$dir/${clean_app}" 2> /dev/null; then
+      echo "${clean_app}:flatpak"
+      return 0
+    fi
+  done
+
+  # Fallback for known Flatpak installs on Linux Mint/Debian when running before app installation
+  if [ "$distro" = "linuxmint" ] || [ "$distro" = "debian" ]; then
+    case "$clean_app" in
+      org.chromium.Chromium.desktop | \
+      io.dbeaver.DBeaverCommunity.desktop | \
+      org.onlyoffice.desktopeditors.desktop | \
+      md.obsidian.Obsidian.desktop | \
+      org.gimp.GIMP.desktop | \
+      com.discordapp.Discord.desktop | \
+      com.valvesoftware.Steam.desktop)
+        echo "${clean_app}:flatpak"
+        return 0
+        ;;
+    esac
+  fi
+
+  echo "$clean_app"
+}
+
 _resolve_desktop_app() {
   resolve_desktop_app "$@"
 }
@@ -52,7 +90,7 @@ get_favorite_apps() {
       notes="$(_resolve_desktop_app "md.obsidian.Obsidian.desktop" "obsidian.desktop")"
       gimp="$(_resolve_desktop_app "org.gimp.GIMP.desktop" "gimp.desktop")"
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
-      steam="$(_resolve_desktop_app "steam.desktop" "com.valvesoftware.Steam.desktop")"
+      steam="$(_resolve_desktop_app "com.valvesoftware.Steam.desktop" "steam.desktop")"
       ;;
     fedora)
       editor="$(_resolve_desktop_app "com.visualstudio.CodeOSS.desktop" "code-oss.desktop" "codium.desktop")"
@@ -95,19 +133,32 @@ get_favorite_apps() {
   local telegram
   telegram="$(_resolve_desktop_app "org.telegram.desktop.desktop" "org.telegram.desktop.*.desktop" "telegramdesktop.desktop")"
 
-  printf "%s\n" \
-    "$fm" \
-    "kitty.desktop" \
-    "$editor" \
-    "$firefox" \
-    "$browser" \
-    "io.dbeaver.DBeaverCommunity.desktop" \
-    "org.onlyoffice.desktopeditors.desktop" \
-    "$notes" \
-    "$gimp" \
-    "$telegram" \
-    "$steam" \
+  local raw_apps=(
+    "$fm"
+    "kitty.desktop"
+    "$editor"
+    "$firefox"
+    "$browser"
+    "io.dbeaver.DBeaverCommunity.desktop"
+    "org.onlyoffice.desktopeditors.desktop"
+    "$notes"
+    "$gimp"
+    "$telegram"
+    "$steam"
     "$chat"
+  )
+
+  if [ "$de" = "cinnamon" ]; then
+    for app in "${raw_apps[@]}"; do
+      [ -n "$app" ] || continue
+      _format_cinnamon_app_id "$app"
+    done
+  else
+    for app in "${raw_apps[@]}"; do
+      [ -n "$app" ] || continue
+      echo "$app"
+    done
+  fi
 }
 
 configure_gnome_favorite_apps() {

@@ -342,14 +342,14 @@
       "kitty.desktop",
       "codium.desktop",
       "firefox.desktop",
-      "org.chromium.Chromium.desktop",
-      "io.dbeaver.DBeaverCommunity.desktop",
-      "org.onlyoffice.desktopeditors.desktop",
-      "md.obsidian.Obsidian.desktop",
-      "org.gimp.GIMP.desktop",
+      "org.chromium.Chromium.desktop:flatpak",
+      "io.dbeaver.DBeaverCommunity.desktop:flatpak",
+      "org.onlyoffice.desktopeditors.desktop:flatpak",
+      "md.obsidian.Obsidian.desktop:flatpak",
+      "org.gimp.GIMP.desktop:flatpak",
       "org.telegram.desktop.desktop",
-      "steam.desktop",
-      "com.discordapp.Discord.desktop"
+      "com.valvesoftware.Steam.desktop:flatpak",
+      "com.discordapp.Discord.desktop:flatpak"
     ]
   },
   "__md5__": "b7d0a7558cf87c22c50195c9d408485f"
