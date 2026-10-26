@@ -154,7 +154,7 @@ _install_runtime_deps() {
   # Distro-specific independent dependencies
   case "$distro" in
     debian)
-      install_packages luarocks python3 python-venv
+      install_packages luarocks python3 python-venv libicu-dev
       ;;
     fedora)
       install_packages luarocks cargo lua-5.1

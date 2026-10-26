@@ -27,7 +27,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 - **Common across all distributions**:
   - `jq`, `ripgrep`, `fd-find`, `clipboard`, `imagemagick`, `sqlite`, `tidy`, `protobuf-compiler`, `unzip`
 - **Distro-specific independent dependencies**:
-  - **Debian (`debian`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`)
+  - **Debian (`debian`)**: `luarocks`, `python3`, `python-venv` (`python3-venv`), `libicu-dev` (ICU runtime required by the `marksman` Markdown LSP, notably on WSL Debian)
   - **Fedora (`fedora`)**: `luarocks`, `cargo`, `lua-5.1`
   - **Arch Linux (`arch`)**: `build-tools` (`base-devel`), `luarocks` (Rust and `tree-sitter-cli` are provisioned via `_ensure_rust`)
   - **openSUSE (`opensuse-tumbleweed`, `opensuse-leap`, `opensuse`)**: `luarocks` (`lua54-luarocks`), `python3`, `lua54-devel`, `build-tools` (`patterns-devel-base-devel_basis`)
@@ -36,7 +36,7 @@ The script SHALL install runtime dependencies, language runtimes, package manage
 
 - **GIVEN** a Debian system (`get_distro_id` returns `debian`)
 - **WHEN** `scripts/toolchain/setup-neovim.sh` installs runtime dependencies
-- **THEN** common packages (`jq`, `fd-find`, `xclip`, `imagemagick`, `sqlite3`, `libsqlite3-dev`, `tidy`, `protobuf-compiler`, `ripgrep`, `unzip`) and Debian-specific packages (`luarocks`, `python3`, `python3-venv`) SHALL be installed
+- **THEN** common packages (`jq`, `fd-find`, `xclip`, `imagemagick`, `sqlite3`, `libsqlite3-dev`, `tidy`, `protobuf-compiler`, `ripgrep`, `unzip`) and Debian-specific packages (`luarocks`, `python3`, `python3-venv`, `libicu-dev`) SHALL be installed
 
 #### Scenario: Installing runtime packages on Fedora
 

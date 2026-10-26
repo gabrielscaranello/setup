@@ -75,7 +75,7 @@
   run _install_runtime_deps "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
-  [[ "$output" =~ "luarocks python3 python-venv" ]]
+  [[ "$output" =~ "luarocks python3 python-venv libicu-dev" ]]
 }
 
 @test "_install_neovim builds from source on debian" {
