@@ -157,7 +157,7 @@ teardown() {
 
   run dconf_exec read /org/cinnamon/favorite-apps
   [ "$status" -eq 0 ]
-  [[ "$output" =~ "nemo.desktop" ]]
+  [ "$output" = "@as []" ]
 
   run dconf_exec read /org/cinnamon/desktop/interface/clock-show-date
   [ "$status" -eq 0 ]

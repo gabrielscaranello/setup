@@ -205,15 +205,14 @@ except Exception:
 configure_cinnamon_favorite_apps() {
   local -a apps=()
   mapfile -t apps < <(get_favorite_apps "cinnamon")
-  local gvariant_array
-  gvariant_array="$(format_gvariant_array "${apps[@]}")"
 
   echo "  Configuring Cinnamon favorite applications..."
+  # Start menu favorite apps are cleared because panel has its own independent pinned apps
   if command -v dconf > /dev/null 2>&1; then
-    dconf_exec write /org/cinnamon/favorite-apps "$gvariant_array" || true
+    dconf_exec write /org/cinnamon/favorite-apps "@as []" || true
   fi
   if command -v gsettings > /dev/null 2>&1; then
-    gsettings_exec set org.cinnamon favorite-apps "$gvariant_array" 2> /dev/null || true
+    gsettings_exec set org.cinnamon favorite-apps "@as []" 2> /dev/null || true
   fi
 
   local config_dirs=(

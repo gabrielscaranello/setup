@@ -171,7 +171,7 @@ teardown() {
   [[ "$output" =~ "discord.desktop" ]]
 }
 
-@test "configure_cinnamon_favorite_apps writes favorite-apps to dconf and gsettings" {
+@test "configure_cinnamon_favorite_apps writes empty favorite-apps to dconf and gsettings" {
   get_distro_id() { echo "linuxmint"; }
   dconf_exec() { echo "dconf_exec: $*"; }
   gsettings_exec() { echo "gsettings_exec: $*"; }
@@ -183,10 +183,8 @@ teardown() {
   run configure_cinnamon_favorite_apps
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Configuring Cinnamon favorite applications..." ]]
-  [[ "$output" =~ "dconf_exec: write /org/cinnamon/favorite-apps" ]]
-  [[ "$output" =~ "gsettings_exec: set org.cinnamon favorite-apps" ]]
-  [[ "$output" =~ "nemo.desktop" ]]
-  [[ "$output" =~ "kitty.desktop" ]]
+  [[ "$output" =~ "dconf_exec: write /org/cinnamon/favorite-apps @as []" ]]
+  [[ "$output" =~ "gsettings_exec: set org.cinnamon favorite-apps @as []" ]]
 }
 
 @test "configure_cinnamon_favorite_apps updates pinned-apps in grouped-window-list json" {

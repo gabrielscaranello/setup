@@ -134,7 +134,7 @@ The script SHALL load Cinnamon desktop dconf preferences from modular configurat
 
 ### Requirement: Cinnamon Panel and Menu Favorite Applications
 
-The script SHALL configure Cinnamon favorite applications for both the start menu and the panel taskbar (`grouped-window-list@cinnamon.org`), matching the canonical order defined across GNOME and KDE Plasma:
+The script SHALL configure Cinnamon panel pinned applications (`grouped-window-list@cinnamon.org`) matching the canonical order defined across GNOME and KDE Plasma:
 
 1. Nemo file manager (`nemo.desktop`)
 2. Kitty terminal (`kitty.desktop`)
@@ -151,9 +151,11 @@ The script SHALL configure Cinnamon favorite applications for both the start men
 
 Flatpak applications SHALL be formatted with the `:flatpak` suffix as required by Cinnamon's desktop menu parser (`gmenu-desktopappinfo.c`).
 
+Start Menu favorite applications (`/org/cinnamon/favorite-apps`) SHALL be cleared (`@as []`) to eliminate duplicate launcher icons between the panel taskbar and the start menu favorites pane.
+
 #### Scenario: Configuring Cinnamon favorite applications
 
 - **GIVEN** desktop environment is Cinnamon
 - **WHEN** `configure_cinnamon_favorite_apps` executes
-- **THEN** it SHALL write `/org/cinnamon/favorite-apps` via dconf/gsettings
+- **THEN** it SHALL clear `/org/cinnamon/favorite-apps` (`@as []`) via dconf and gsettings
 - **AND** it SHALL update `pinned-apps` in any `grouped-window-list@cinnamon.org` configuration JSON files with the identical application order
