@@ -12,8 +12,8 @@ _format_cinnamon_app_id() {
   local distro
   distro="$(get_distro_id 2> /dev/null || echo "unknown")"
 
-  if [ -f "/var/lib/flatpak/exports/share/applications/${clean_app}" ] || \
-     [ -f "$HOME/.local/share/flatpak/exports/share/applications/${clean_app}" ]; then
+  if [ -f "/var/lib/flatpak/exports/share/applications/${clean_app}" ] \
+    || [ -f "$HOME/.local/share/flatpak/exports/share/applications/${clean_app}" ]; then
     echo "${clean_app}:flatpak"
     return 0
   fi
@@ -29,12 +29,12 @@ _format_cinnamon_app_id() {
   if [ "$distro" = "linuxmint" ] || [ "$distro" = "debian" ]; then
     case "$clean_app" in
       org.chromium.Chromium.desktop | \
-      io.dbeaver.DBeaverCommunity.desktop | \
-      org.onlyoffice.desktopeditors.desktop | \
-      md.obsidian.Obsidian.desktop | \
-      org.gimp.GIMP.desktop | \
-      com.discordapp.Discord.desktop | \
-      com.valvesoftware.Steam.desktop)
+        io.dbeaver.DBeaverCommunity.desktop | \
+        org.onlyoffice.desktopeditors.desktop | \
+        md.obsidian.Obsidian.desktop | \
+        org.gimp.GIMP.desktop | \
+        com.discordapp.Discord.desktop | \
+        com.valvesoftware.Steam.desktop)
         echo "${clean_app}:flatpak"
         return 0
         ;;
