@@ -84,14 +84,15 @@ The script SHALL register custom keybindings for developer productivity:
 The script SHALL configure user preferences for the Nemo file manager:
 
 - Desktop volumes: `org.nemo.desktop volumes-visible` set to `false`.
-- View mode: `org.nemo.preferences default-folder-viewer` set to `'list-view'`.
+- View mode: `org.nemo.preferences default-folder-viewer` set to `'icon-view'`.
+- Hidden files: `org.nemo.preferences show-hidden-files` set to `true`.
 - Date format: `org.nemo.preferences date-format` set to `'iso'`.
 
 #### Scenario: Configuring Nemo preferences
 
 - **GIVEN** Cinnamon environment
 - **WHEN** `_configure_nemo` executes
-- **THEN** Nemo preferences for list-view and iso date format SHALL be persisted
+- **THEN** Nemo preferences for icon-view, show-hidden-files, and iso date format SHALL be persisted
 
 ---
 
@@ -120,7 +121,7 @@ The script SHALL load Cinnamon desktop dconf preferences from modular configurat
 - `window-manager.dconf`: Configures titlebar buttons (`:close`), middle-click minimization, Flameshot shortcut (`<Primary><Super>s`, `<Shift><Super>s`, `Print`), workspace switching, and Muffin window placement/tiling.
 - `night-light.dconf`: Configures night light schedule (`4700K`) and power management/sleep timeouts.
 - `privacy.dconf`: Configures privacy settings (disabling recent files history).
-- `nemo.dconf`: Configures Nemo file manager (list-view, ISO dates, hiding desktop volume icons).
+- `nemo.dconf`: Configures Nemo file manager (icon-view, show hidden files, ISO dates, hiding desktop volume icons).
 - `shell.dconf`: Configures Cinnamon panels (height `36px`), zone icon sizes, applet layout, coverflow alt-tab switcher, hot corners, gestures, notifications, screensaver, and silent sound theme.
 - `apps.dconf`: Configures Linux Mint update manager, default calculator, Xed editor plugins, and system monitor.
 

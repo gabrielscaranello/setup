@@ -6,7 +6,8 @@ volumes-visible=false
 
 [org/nemo/preferences]
 date-format='iso'
-default-folder-viewer='list-view'
+default-folder-viewer='icon-view'
+show-hidden-files=true
 
 [org/nemo/window-state]
 maximized=false

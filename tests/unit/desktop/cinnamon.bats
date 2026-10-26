@@ -105,7 +105,7 @@ teardown() {
   [[ "$output" =~ "flameshot gui" ]]
 }
 
-@test "_configure_nemo sets list-view, iso date and hides desktop volumes" {
+@test "_configure_nemo sets icon-view, show-hidden-files, iso date and hides desktop volumes" {
   gsettings_exec() {
     echo "gsettings: $*"
     return 0
@@ -118,7 +118,8 @@ teardown() {
   run _configure_nemo
   [ "$status" -eq 0 ]
   [[ "$output" =~ "gsettings: set org.nemo.desktop volumes-visible false" ]]
-  [[ "$output" =~ "gsettings: set org.nemo.preferences default-folder-viewer list-view" ]]
+  [[ "$output" =~ "gsettings: set org.nemo.preferences default-folder-viewer icon-view" ]]
+  [[ "$output" =~ "gsettings: set org.nemo.preferences show-hidden-files true" ]]
   [[ "$output" =~ "gsettings: set org.nemo.preferences date-format iso" ]]
 }
 

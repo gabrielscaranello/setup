@@ -60,7 +60,8 @@ _configure_nemo() {
   if command -v gsettings > /dev/null 2>&1; then
     gsettings_exec set org.nemo.desktop volumes-visible false 2> /dev/null || true
     gsettings_exec set org.nemo.desktop show-orphaned-desktop-icons false 2> /dev/null || true
-    gsettings_exec set org.nemo.preferences default-folder-viewer 'list-view' 2> /dev/null || true
+    gsettings_exec set org.nemo.preferences default-folder-viewer 'icon-view' 2> /dev/null || true
+    gsettings_exec set org.nemo.preferences show-hidden-files true 2> /dev/null || true
     gsettings_exec set org.nemo.preferences date-format 'iso' 2> /dev/null || true
   fi
 }
