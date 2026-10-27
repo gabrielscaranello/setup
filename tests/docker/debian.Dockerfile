@@ -4,7 +4,10 @@ FROM debian:${DEBIAN_VERSION}
 ARG BATS_VERSION=1.11.0
 
 # Configure APT performance, pipelining, and package caching optimizations
-RUN printf 'Acquire::http::Pipeline-Depth "5";\nAcquire::Languages "none";\nBinary::apt::APT::Keep-Downloaded-Packages "true";\n' > /etc/apt/apt.conf.d/99optimizations \
+RUN rm -f /etc/apt/apt.conf.d/docker-clean \
+    && mkdir -p /etc/dpkg/dpkg.cfg.d \
+    && echo 'force-unsafe-io' > /etc/dpkg/dpkg.cfg.d/force-unsafe-io \
+    && printf 'Acquire::http::Pipeline-Depth "5";\nAcquire::Languages "none";\nBinary::apt::APT::Keep-Downloaded-Packages "true";\n' > /etc/apt/apt.conf.d/99optimizations \
     && apt-get update -qq \
     && apt-get install -y --no-install-recommends \
         sudo curl wget git bash ca-certificates kcov sqlite3 \

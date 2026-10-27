@@ -14,7 +14,7 @@ _install_discord() {
       echo "Installing Discord from distribution repository..."
       install_packages discord
       ;;
-    debian | fedora | opensuse | opensuse-leap)
+    debian | fedora | opensuse | opensuse-leap | linuxmint)
       echo "Installing Discord with flatpak..."
       install_flatpak_app "com.discordapp.Discord" "Discord"
       ;;

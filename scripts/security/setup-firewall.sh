@@ -34,14 +34,14 @@ _configure_gui_frontend() {
   local de="$2"
 
   case "$de" in
-    gnome)
+    gnome | cinnamon)
       case "$distro" in
-        debian | arch)
-          echo "Installing GUFW for GNOME..."
+        debian | arch | linuxmint)
+          echo "Installing GUFW for $de..."
           install_packages gufw
           ;;
         fedora | opensuse*)
-          echo "Installing firewall-config for GNOME..."
+          echo "Installing firewall-config for $de..."
           install_packages firewall-config
           ;;
       esac
@@ -63,7 +63,7 @@ main() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    debian | arch)
+    debian | arch | linuxmint)
       _configure_ufw
       ;;
 

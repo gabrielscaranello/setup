@@ -35,8 +35,8 @@ setup_file() {
   apt)
     source /setup/scripts/system/setup-amd.sh
     configure_gpu_repositories "apt"
-    apt-cache show firmware-amd-graphics >/dev/null 2>&1 || apt-cache search firmware-amd-graphics | grep -q "firmware-amd-graphics"
-    apt-cache show mesa-vulkan-drivers >/dev/null 2>&1 || apt-cache search mesa-vulkan-drivers | grep -q "mesa-vulkan-drivers"
+    apt-cache show firmware-amd-graphics >/dev/null 2>&1 || apt-cache search firmware-amd-graphics | grep "firmware-amd-graphics" >/dev/null
+    apt-cache show mesa-vulkan-drivers >/dev/null 2>&1 || apt-cache search mesa-vulkan-drivers | grep "mesa-vulkan-drivers" >/dev/null
     ;;
   dnf)
     source /setup/scripts/system/fedora/_repositories.sh

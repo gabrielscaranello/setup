@@ -20,7 +20,7 @@ _show_help() {
   echo "  --integration         Run container integration test suite only"
   echo "  --coverage            Generate code coverage reports with kcov"
   echo "  --parallel            Run integration test containers concurrently"
-  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse|tumbleweed)"
+  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse|tumbleweed|linuxmint)"
   echo "  --filter=<pattern>    Run only tests matching pattern (e.g. nvm, neovim, utils)"
   echo "  -h, --help            Show this help message"
   echo ""
@@ -79,15 +79,34 @@ _check_docker() {
 _detect_host_resources() {
   local total_cpus
   total_cpus="$(nproc 2> /dev/null || echo 1)"
-  ALLOCATED_CPUS="$(LC_ALL=C awk -v c="$total_cpus" 'BEGIN { printf "%.2f", (c * 0.8 < 1 ? 1 : c * 0.8) }')"
+
+  # Allow explicit environment override via DOCKER_CPUS.
+  # If unset, do not set CFS bandwidth quota throttling (--cpus).
+  # Leaving --cpus unconstrained allows the Linux CFS scheduler to dynamically
+  # burst across 100% of available CPU cores on any machine architecture.
+  if [[ -n "${DOCKER_CPUS:-}" ]]; then
+    ALLOCATED_CPUS="$DOCKER_CPUS"
+  else
+    ALLOCATED_CPUS=""
+  fi
 
   local total_mem_kb
   total_mem_kb="$(grep MemTotal /proc/meminfo 2> /dev/null | awk '{print $2}' || echo 0)"
-  if [[ "$total_mem_kb" -gt 0 ]]; then
-    ALLOCATED_MEM_BYTES="$(LC_ALL=C awk -v m="$total_mem_kb" 'BEGIN { printf "%.0f", (m * 1024 * 0.8) }')"
-    TMPFS_SIZE_M="$(LC_ALL=C awk -v m="$total_mem_kb" 'BEGIN { sz = int((m / 1024) * 0.25); printf "%dm", (sz < 512 ? 512 : sz) }')"
+
+  # Allow explicit environment override via DOCKER_MEMORY.
+  # If unset, allow full host memory access without artificial cgroup caps.
+  if [[ -n "${DOCKER_MEMORY:-}" ]]; then
+    ALLOCATED_MEM_BYTES="$DOCKER_MEMORY"
   else
     ALLOCATED_MEM_BYTES=""
+  fi
+
+  if [[ -n "${DOCKER_TMPFS_SIZE:-}" ]]; then
+    TMPFS_SIZE_M="$DOCKER_TMPFS_SIZE"
+  elif [[ "$total_mem_kb" -gt 0 ]]; then
+    # Dynamically allocate 25% of host memory to tmpfs (min 512m, max 8g)
+    TMPFS_SIZE_M="$(LC_ALL=C awk -v m="$total_mem_kb" 'BEGIN { sz = int((m / 1024) * 0.25); if (sz < 512) sz = 512; if (sz > 8192) sz = 8192; printf "%dm", sz }')"
+  else
     TMPFS_SIZE_M="1g"
   fi
 }
@@ -127,6 +146,9 @@ _get_distro_cache_flags() {
     tumbleweed)
       flags+=(-v "setup-pkg-cache-tumbleweed:/var/cache/zypp/packages")
       ;;
+    linuxmint | mint)
+      flags+=(-v "setup-pkg-cache-linuxmint:/var/cache/apt/archives")
+      ;;
   esac
   echo "${flags[@]}"
 }
@@ -143,6 +165,7 @@ _find_test_files() {
           */system/fedora/*) [[ "$target_distro" == "fedora" ]] || continue ;;
           */system/arch/*) [[ "$target_distro" == "archlinux" || "$target_distro" == "arch" ]] || continue ;;
           */system/opensuse/*) [[ "$target_distro" == "opensuse" || "$target_distro" == "tumbleweed" || "$target_distro" == "leap" ]] || continue ;;
+          */system/linuxmint/*) [[ "$target_distro" == "linuxmint" || "$target_distro" == "mint" ]] || continue ;;
         esac
       fi
 
@@ -244,7 +267,7 @@ _run_integration_distro() {
 }
 
 _run_all_integration_parallel() {
-  local distros=("archlinux" "debian" "fedora" "opensuse" "tumbleweed")
+  local distros=("archlinux" "debian" "fedora" "opensuse" "tumbleweed" "linuxmint")
   local log_dir
   log_dir="$(mktemp -d "${TMPDIR:-/tmp}/setup-tests-parallel.XXXXXX")"
   local pids=()
@@ -295,7 +318,7 @@ _merge_coverage() {
       "$image" \
       bash -c '
         dirs_to_merge=()
-        for d in unit archlinux debian fedora opensuse tumbleweed; do
+        for d in unit archlinux debian fedora opensuse tumbleweed linuxmint; do
           if [[ -d "/setup/coverage/$d" ]]; then
             while IFS= read -r cov_db_dir; do
               dirs_to_merge+=("$cov_db_dir")
@@ -337,8 +360,9 @@ main() {
         fedora) _run_integration_distro "fedora" ;;
         opensuse | leap | suse) _run_integration_distro "opensuse" ;;
         tumbleweed) _run_integration_distro "tumbleweed" ;;
+        linuxmint | mint) _run_integration_distro "linuxmint" ;;
         *)
-          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, opensuse, tumbleweed" >&2
+          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, opensuse, tumbleweed, linuxmint" >&2
           exit 1
           ;;
       esac

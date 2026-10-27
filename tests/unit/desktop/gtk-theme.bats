@@ -26,6 +26,26 @@ teardown() {
   [[ "$output" =~ "Desktop Environment is 'plasma' (unsupported or unrecognized). Skipping GTK theme setup." ]]
 }
 
+@test "main configures Mint-Y-Dark-Aqua when desktop environment is cinnamon" {
+  get_desktop_environment() { echo "cinnamon"; }
+  gsettings_exec() {
+    echo "gsettings: $*"
+    return 0
+  }
+  command() {
+    if [ "${1:-}" = "-v" ] && [ "${2:-}" = "gsettings" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Setting up Cinnamon GTK and shell theme..." ]]
+  [[ "$output" =~ "gsettings: set org.cinnamon.desktop.interface gtk-theme Mint-Y-Dark-Aqua" ]]
+  [[ "$output" =~ "gsettings: set org.cinnamon.desktop.wm.preferences theme Mint-Y-Dark-Aqua" ]]
+  [[ "$output" =~ "gsettings: set org.cinnamon.theme name Mint-Y-Dark-Aqua" ]]
+  [[ "$output" =~ "gsettings: set org.cinnamon.desktop.interface color-scheme prefer-dark" ]]
+}
+
 @test "main proceeds when desktop environment is gnome and managed by package manager" {
   get_desktop_environment() { echo "gnome"; }
   _is_gtk_theme_installed() { return 0; }

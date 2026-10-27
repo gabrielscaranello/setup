@@ -15,7 +15,7 @@ setup() {
 @test "get_distro_id identifies supported distro in container environment" {
   run get_distro_id
   [ "$status" -eq 0 ]
-  [ "$output" = "debian" ] || [ "$output" = "fedora" ] || [ "$output" = "arch" ] || [ "$output" = "opensuse-leap" ] || [ "$output" = "opensuse-tumbleweed" ]
+  [ "$output" = "debian" ] || [ "$output" = "fedora" ] || [ "$output" = "arch" ] || [ "$output" = "opensuse-leap" ] || [ "$output" = "opensuse-tumbleweed" ] || [ "$output" = "linuxmint" ]
 }
 
 @test "install_packages can successfully install a lightweight utility" {

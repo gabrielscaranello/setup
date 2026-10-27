@@ -392,6 +392,14 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "plasma" ]
 
+  XDG_CURRENT_DESKTOP="X-Cinnamon" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
+
+  XDG_CURRENT_DESKTOP="cinnamon" run get_desktop_environment
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
+
   TARGET_DE="gnome" XDG_CURRENT_DESKTOP="KDE" run get_desktop_environment
   [ "$status" -eq 0 ]
   [ "$output" = "gnome" ]
@@ -432,6 +440,11 @@ EOF
   run prompt_desktop_environment "Test prompt"
   [ "$status" -eq 0 ]
   [ "$output" = "plasma" ]
+
+  get_distro_id() { echo "linuxmint"; }
+  run prompt_desktop_environment "Test prompt"
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
 }
 
 @test "ensure_desktop_environment resolves and saves DE" {
@@ -482,6 +495,21 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "opensuse-tumbleweed" ]
 
+  echo -e 'ID=linuxmint\nID_LIKE="ubuntu debian"' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "linuxmint" ]
+
+  echo -e 'ID=linuxmint\nID_LIKE=ubuntu' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "linuxmint" ]
+
+  echo -e 'ID=linuxmint\nID_LIKE="debian"' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "lmde" ]
+
   rm -f "$test_os_release"
 }
 
@@ -518,6 +546,16 @@ EOF
   get_distro_id() { echo "opensuse-tumbleweed"; }
   run is_distro "opensuse"
   [ "$status" -eq 0 ]
+
+  get_distro_id() { echo "linuxmint"; }
+  run is_distro "linuxmint"
+  [ "$status" -eq 0 ]
+
+  run is_distro "mint"
+  [ "$status" -eq 0 ]
+
+  run is_distro "debian"
+  [ "$status" -eq 1 ]
 }
 
 @test "require_supported_distro validates supported distributions" {
@@ -546,6 +584,11 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "opensuse-tumbleweed" ]
 
+  get_distro_id() { echo "linuxmint"; }
+  run require_supported_distro
+  [ "$status" -eq 0 ]
+  [ "$output" = "linuxmint" ]
+
   get_distro_id() { echo "ubuntu"; }
   run require_supported_distro
   [ "$status" -eq 1 ]
@@ -560,30 +603,37 @@ EOF
   [ "$(_get_package_name "golang" "debian")" = "golang" ]
   [ "$(_get_package_name "golang" "fedora")" = "golang" ]
   [ "$(_get_package_name "golang" "arch")" = "go" ]
+  [ "$(_get_package_name "golang" "linuxmint")" = "golang" ]
 
   [ "$(_get_package_name "build-tools" "debian")" = "build-essential" ]
   [ "$(_get_package_name "build-tools" "fedora")" = "@development-tools" ]
   [ "$(_get_package_name "build-tools" "arch")" = "base-devel" ]
+  [ "$(_get_package_name "build-tools" "linuxmint")" = "build-essential" ]
 
   [ "$(_get_package_name "nvidia-driver" "debian")" = "nvidia-driver" ]
   [ "$(_get_package_name "nvidia-driver" "fedora")" = "akmod-nvidia" ]
   [ "$(_get_package_name "nvidia-driver" "arch")" = "nvidia-open-dkms nvidia-utils" ]
+  [ "$(_get_package_name "nvidia-driver" "linuxmint")" = "nvidia-driver" ]
 
   [ "$(_get_package_name "power-profiles-daemon" "debian")" = "power-profiles-daemon" ]
   [ "$(_get_package_name "power-profiles-daemon" "fedora")" = "tuned-ppd" ]
   [ "$(_get_package_name "power-profiles-daemon" "arch")" = "power-profiles-daemon" ]
+  [ "$(_get_package_name "power-profiles-daemon" "linuxmint")" = "power-profiles-daemon" ]
 
   [ "$(_get_package_name "bluez" "debian")" = "bluez" ]
   [ "$(_get_package_name "bluez" "fedora")" = "bluez" ]
   [ "$(_get_package_name "bluez" "arch")" = "bluez bluez-utils" ]
+  [ "$(_get_package_name "bluez" "linuxmint")" = "bluez" ]
 
   [ "$(_get_package_name "cron" "debian")" = "cron" ]
   [ "$(_get_package_name "cron" "fedora")" = "cronie" ]
   [ "$(_get_package_name "cron" "arch")" = "cronie" ]
+  [ "$(_get_package_name "cron" "linuxmint")" = "cron" ]
 
   [ "$(_get_package_name "extension-manager" "debian")" = "" ]
   [ "$(_get_package_name "extension-manager" "fedora")" = "" ]
   [ "$(_get_package_name "extension-manager" "arch")" = "extension-manager" ]
+  [ "$(_get_package_name "extension-manager" "linuxmint")" = "" ]
 }
 
 @test "get_gpu_vendor honors GPU_VENDOR environment override" {

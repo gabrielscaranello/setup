@@ -71,6 +71,9 @@ _debloat_debian() {
     plasma)
       targets+=(dragonplayer "${COMMON_PLASMA_DEBLOAT_PACKAGES[@]}")
       ;;
+    cinnamon)
+      targets+=("${COMMON_CINNAMON_DEBLOAT_PACKAGES[@]}")
+      ;;
     *)
       echo "Desktop environment '$de' is unknown or generic; applying only common debloat."
       ;;
@@ -186,7 +189,7 @@ main() {
   distro="$(get_distro_id)"
 
   case "$distro" in
-    debian)
+    debian | linuxmint)
       _debloat_debian
       ;;
     fedora)

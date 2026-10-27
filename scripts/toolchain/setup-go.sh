@@ -122,7 +122,7 @@ _install_go() {
       echo "Installing Golang from distribution repository..."
       install_packages golang
       ;;
-    debian | opensuse-leap | opensuse)
+    debian | opensuse-leap | opensuse | linuxmint)
       install_packages curl wget tar git || true
       _install_go_from_binary
       ;;

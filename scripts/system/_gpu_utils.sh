@@ -50,10 +50,16 @@ has_hybrid_gpu() {
 }
 
 configure_gpu_repositories() {
-  local distro="$1"
+  local distro="${1:-$(get_distro_id)}"
+  if [ "$distro" = "apt" ] || [ "$distro" = "dnf" ] || [ "$distro" = "pacman" ] || [ "$distro" = "zypper" ]; then
+    distro="$(get_distro_id)"
+  fi
 
   case "$distro" in
-    debian | apt)
+    linuxmint)
+      echo "Linux Mint has GPU repositories configured out of the box."
+      ;;
+    debian)
       local backports_mock=""
       if declare -f add_debian_backports_repo > /dev/null 2>&1; then
         backports_mock="$(declare -f add_debian_backports_repo)"
@@ -65,15 +71,15 @@ configure_gpu_repositories() {
       add_debian_nonfree_repo
       add_debian_backports_repo
       ;;
-    fedora | dnf)
+    fedora)
       declare -F add_fedora_rpmfusion_repo > /dev/null 2>&1 || source "scripts/system/fedora/_repositories.sh" 2> /dev/null || true
       add_fedora_rpmfusion_repo
       ;;
-    arch | pacman)
+    arch)
       declare -F add_arch_multilib_repo > /dev/null 2>&1 || source "scripts/system/arch/_repositories.sh" 2> /dev/null || true
       add_arch_multilib_repo
       ;;
-    opensuse* | zypper)
+    opensuse*)
       declare -F add_opensuse_packman_repo > /dev/null 2>&1 || source "scripts/system/opensuse/_repositories.sh" 2> /dev/null || true
       add_opensuse_nonfree_repo
       add_opensuse_packman_repo

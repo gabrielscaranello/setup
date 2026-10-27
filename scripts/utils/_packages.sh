@@ -7,7 +7,7 @@
 # Maps a distribution ID or package manager name to "<package_manager>|<packages.conf_column>".
 _resolve_pm_metadata() {
   case "${1:-}" in
-    debian | apt) echo "apt|2" ;;
+    debian | apt | linuxmint) echo "apt|2" ;;
     fedora | dnf) echo "dnf|3" ;;
     arch | pacman) echo "pacman|4" ;;
     opensuse | opensuse-leap | opensuse-tumbleweed | zypper) echo "zypper|5" ;;

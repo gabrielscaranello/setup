@@ -9,7 +9,8 @@ Automate installation and configuration of the modern `adw-gtk3` theme and its d
 ### Desktop Environment Support
 
 - **GNOME**: Installs theme packages/assets (`adw-gtk3-dark`), configures Flatpak theme runtime, and sets GNOME preferences via `gsettings`.
-- **Unsupported / Unknown DE**: Per project governance, when `get_desktop_environment` returns anything other than `gnome`, the script must **NOT** install or configure anything, and must gracefully exit 0.
+- **Cinnamon**: Applies the pre-installed native `Mint-Y-Dark-Aqua` theme for GTK (`org.cinnamon.desktop.interface gtk-theme`), window borders (`org.cinnamon.desktop.wm.preferences theme`), and Cinnamon shell theme (`org.cinnamon.theme name`).
+- **Unsupported / Unknown DE**: Per project governance, when `get_desktop_environment` returns anything other than `gnome` or `cinnamon`, the script must **NOT** install or configure anything, and must gracefully exit 0.
 
 ### Theme Assets & Package Management
 
@@ -38,6 +39,13 @@ Automate installation and configuration of the modern `adw-gtk3` theme and its d
 - **WHEN** `setup-gtk-theme.sh` is executed
 - **THEN** it should output a skip message
 - **AND** exit with return code 0 without installing packages, Flatpak runtimes, or downloading assets
+
+**Scenario: Cinnamon Desktop Environment**
+
+- **GIVEN** `get_desktop_environment` returns `cinnamon`
+- **WHEN** `setup-gtk-theme.sh` is executed
+- **THEN** it should configure `Mint-Y-Dark-Aqua` as GTK theme, window manager theme, and Cinnamon shell theme
+- **AND** complete with exit code 0 without downloading adw-gtk3
 
 **Scenario: GNOME Desktop Environment on Fedora**
 

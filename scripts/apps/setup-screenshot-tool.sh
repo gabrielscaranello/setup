@@ -29,6 +29,12 @@ _install_screenshot_tool() {
       echo "Configuring Flameshot portal permissions..."
       _configure_flameshot_portal_permission
       ;;
+    cinnamon)
+      echo "Installing Flameshot for Cinnamon..."
+      install_packages flameshot
+      echo "Configuring Flameshot portal permissions..."
+      _configure_flameshot_portal_permission
+      ;;
     plasma)
       echo "Installing Spectacle for KDE Plasma..."
       install_packages spectacle

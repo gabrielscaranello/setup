@@ -66,7 +66,7 @@
   [[ "$output" =~ "Failed to install DEB package" ]]
 }
 
-@test "_install_runtime_deps installs common and debian specific dependencies on debian" {
+@test "_install_runtime_deps installs common and debian specific dependencies on debian and linuxmint" {
   source /setup/scripts/toolchain/setup-neovim.sh
   install_packages() {
     echo "installing packages: $*"
@@ -75,6 +75,10 @@
   run _install_runtime_deps "debian"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "jq ripgrep fd-find clipboard imagemagick sqlite tidy protobuf-compiler unzip" ]]
+  [[ "$output" =~ "luarocks python3 python-venv libicu-dev" ]]
+
+  run _install_runtime_deps "linuxmint"
+  [ "$status" -eq 0 ]
   [[ "$output" =~ "luarocks python3 python-venv libicu-dev" ]]
 }
 

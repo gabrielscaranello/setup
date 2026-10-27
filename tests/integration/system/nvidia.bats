@@ -23,8 +23,8 @@ setup_file() {
     # In Debian, ensure contrib/non-free is present then check package availability
     source /setup/scripts/system/setup-nvidia.sh
     configure_gpu_repositories "apt"
-    apt-cache show nvidia-driver >/dev/null 2>&1 || apt-cache search nvidia-driver | grep -q "nvidia-driver"
-    apt-cache show firmware-misc-nonfree >/dev/null 2>&1 || apt-cache search firmware-misc-nonfree | grep -q "firmware-misc-nonfree"
+    apt-cache show nvidia-driver >/dev/null 2>&1 || apt-cache search nvidia-driver | grep "nvidia-driver" >/dev/null
+    apt-cache show firmware-misc-nonfree >/dev/null 2>&1 || apt-cache search firmware-misc-nonfree | grep "firmware-misc-nonfree" >/dev/null
     ;;
   dnf)
     # In Fedora, configure RPM Fusion repository then verify akmod-nvidia

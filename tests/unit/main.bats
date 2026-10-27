@@ -149,6 +149,17 @@ setup() {
   [[ "$output" =~ "opensuse.sh" ]]
 }
 
+@test "run_all dispatches to linuxmint runner when distribution is linuxmint" {
+  is_wsl() { return 1; }
+  get_distro_id() { echo "linuxmint"; }
+  bash() { echo "executed: $*"; return 0; }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Delegating complete setup to Linux Mint runner..." ]]
+  [[ "$output" =~ "linuxmint.sh" ]]
+}
+
 @test "run_all dispatches to wsl runner when running inside WSL on debian" {
   is_wsl() { return 0; }
   get_distro_id() { echo "debian"; }

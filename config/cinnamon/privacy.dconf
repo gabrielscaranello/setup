@@ -1,0 +1,12 @@
+[org/cinnamon/desktop/privacy]
+remember-recent-files=false
+
+[org/gnome/desktop/privacy]
+disable-camera=false
+disable-microphone=false
+disable-sound-output=false
+old-files-age=uint32 30
+recent-files-max-age=7
+remember-recent-files=false
+remove-old-temp-files=false
+remove-old-trash-files=false

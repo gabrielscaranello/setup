@@ -51,6 +51,11 @@ _is_debian_backports_configured() {
 }
 
 add_debian_backports_repo() {
+  if ! is_distro debian; then
+    echo "Current distribution is not Debian, skipping Debian backports."
+    return 0
+  fi
+
   local codename
   codename="$(get_debian_codename)"
 
@@ -110,6 +115,11 @@ EOF_SOURCES
 }
 
 add_debian_mozilla_repo() {
+  if ! is_distro debian; then
+    echo "Current distribution is not Debian, skipping Debian Mozilla repo."
+    return 0
+  fi
+
   local keyring_path="${APT_MOZILLA_KEYRING:-/etc/apt/keyrings/packages.mozilla.org.asc}"
   local sources_path="${APT_MOZILLA_SOURCES:-/etc/apt/sources.list.d/mozilla.sources}"
   local preferences_path="${APT_MOZILLA_PREFERENCES:-/etc/apt/preferences.d/mozilla}"
@@ -145,6 +155,11 @@ EOF_PIN
 }
 
 add_debian_nonfree_repo() {
+  if ! is_distro debian; then
+    echo "Current distribution is not Debian, skipping Debian non-free repo."
+    return 0
+  fi
+
   local sources_list="${APT_SOURCES_LIST:-/etc/apt/sources.list}"
   local debian_sources="${APT_DEBIAN_SOURCES:-/etc/apt/sources.list.d/debian.sources}"
 

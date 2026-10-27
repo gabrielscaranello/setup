@@ -28,8 +28,27 @@ update_grub_config() {
 }
 
 get_distro_id() {
-  local distro_id
+  local distro_id id_like
   distro_id="$(get_os_release_field ID | tr '[:upper:]' '[:lower:]')"
+  id_like="$(get_os_release_field ID_LIKE | tr '[:upper:]' '[:lower:]')"
+
+  if [ "$distro_id" = "linuxmint" ]; then
+    case "$id_like" in
+      *ubuntu*)
+        echo "linuxmint"
+        return 0
+        ;;
+      *debian*)
+        echo "lmde"
+        return 0
+        ;;
+      *)
+        echo "linuxmint"
+        return 0
+        ;;
+    esac
+  fi
+
   if [ -n "$distro_id" ]; then
     echo "$distro_id"
     return 0
@@ -38,6 +57,10 @@ get_distro_id() {
   if command -v lsb_release > /dev/null 2>&1; then
     local lsb_id
     lsb_id="$(lsb_release -si 2> /dev/null | tr '[:upper:]' '[:lower:]' || true)"
+    if [ "$lsb_id" = "linuxmint" ]; then
+      echo "linuxmint"
+      return 0
+    fi
     if [ -n "$lsb_id" ]; then
       echo "$lsb_id"
       return 0
@@ -58,10 +81,16 @@ is_distro() {
       *) return 1 ;;
     esac
   fi
+  if [ "$target" = "mint" ] || [ "$target" = "linuxmint" ]; then
+    case "$current" in
+      linuxmint*) return 0 ;;
+      *) return 1 ;;
+    esac
+  fi
   [ "$current" = "$target" ]
 }
 
-# Validates and returns the current distro if it is one of: debian, fedora, arch, opensuse (leap/tumbleweed).
+# Validates and returns the current distro if it is one of: debian, fedora, arch, opensuse (leap/tumbleweed), linuxmint.
 # Prints the distro ID to stdout on success; prints error and returns 1 on failure.
 # Usage: distro="$(require_supported_distro)" || return 1
 require_supported_distro() {
@@ -71,7 +100,7 @@ require_supported_distro() {
     return 1
   }
   case "$distro" in
-    debian | fedora | arch | opensuse | opensuse-leap | opensuse-tumbleweed)
+    debian | fedora | arch | opensuse | opensuse-leap | opensuse-tumbleweed | linuxmint)
       echo "$distro"
       return 0
       ;;
@@ -223,7 +252,7 @@ enable_cron_service() {
 
   local service="${1:-}"
   if [ -z "$service" ]; then
-    if is_distro debian || is_distro opensuse; then
+    if is_distro debian || is_distro opensuse || is_distro linuxmint; then
       service="cron"
     elif is_distro fedora; then
       service="crond"

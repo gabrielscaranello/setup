@@ -8,7 +8,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/_theme_utils.sh" 2> /dev/null || true
 
 THEME_NAME="Papirus-Dark"
 DEFAULT_FOLDER_COLOR="adwaita"
-FOLDER_COLOR="${FOLDER_COLOR:-$DEFAULT_FOLDER_COLOR}"
+FOLDER_COLOR="${FOLDER_COLOR:-}"
 FOLDERS_UPSTREAM_REPO="PapirusDevelopmentTeam/papirus-folders"
 
 _is_icon_theme_installed() {
@@ -122,17 +122,35 @@ _ensure_papirus_folders() {
   fi
 }
 
+_resolve_folder_color() {
+  if [ -n "${FOLDER_COLOR:-}" ]; then
+    echo "$FOLDER_COLOR"
+    return 0
+  fi
+
+  local de="${1:-$(get_desktop_environment)}"
+  if [ "$de" = "cinnamon" ]; then
+    echo "paleorange"
+  else
+    echo "$DEFAULT_FOLDER_COLOR"
+  fi
+}
+
 _apply_papirus_folders_color() {
+  local de="${1:-$(get_desktop_environment)}"
+  local color
+  color="$(_resolve_folder_color "$de")"
+
   if ! command -v papirus-folders > /dev/null 2>&1; then
     return 0
   fi
 
-  echo "Applying '$FOLDER_COLOR' folder color via papirus-folders..."
+  echo "Applying '$color' folder color via papirus-folders..."
   if [ -d "/usr/share/icons/Papirus" ] && [ ! -w "/usr/share/icons/Papirus" ] \
     && command -v sudo > /dev/null 2>&1 && sudo -n true 2> /dev/null; then
-    sudo papirus-folders -C "$FOLDER_COLOR" 2> /dev/null || true
+    sudo papirus-folders -C "$color" 2> /dev/null || true
   else
-    papirus-folders -C "$FOLDER_COLOR" 2> /dev/null || true
+    papirus-folders -C "$color" 2> /dev/null || true
   fi
 }
 
@@ -143,11 +161,21 @@ _configure_gnome_icon_theme() {
   fi
 }
 
+_configure_cinnamon_icon_theme() {
+  echo "Configuring Cinnamon icon theme..."
+  if command -v gsettings > /dev/null 2>&1; then
+    gsettings_exec set org.cinnamon.desktop.interface icon-theme "$THEME_NAME" 2> /dev/null || true
+  fi
+}
+
 _configure_icon_theme() {
   local de="$1"
   case "$de" in
     gnome)
       _configure_gnome_icon_theme
+      ;;
+    cinnamon)
+      _configure_cinnamon_icon_theme
       ;;
     *)
       return 0
@@ -159,7 +187,7 @@ main() {
   local de
   de="$(get_desktop_environment)"
 
-  if [ "$de" != "gnome" ]; then
+  if [ "$de" != "gnome" ] && [ "$de" != "cinnamon" ]; then
     echo "Desktop Environment is '$de' (unsupported or unrecognized). Skipping icon theme setup."
     return 0
   fi
@@ -169,7 +197,7 @@ main() {
   _ensure_icon_theme
 
   _ensure_papirus_folders
-  _apply_papirus_folders_color
+  _apply_papirus_folders_color "$de"
   _configure_icon_theme "$de"
 
   echo "Icon theme setup completed successfully."

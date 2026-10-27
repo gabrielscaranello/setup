@@ -59,6 +59,17 @@ COMMON_PLASMA_DEBLOAT_PACKAGES=(
   skanlite
 )
 
+COMMON_CINNAMON_DEBLOAT_PACKAGES=(
+  celluloid
+  hypnotix
+  mintchat
+  rhythmbox
+  simple-scan
+  sticky
+  thingy
+  thunderbird
+)
+
 OPEN_SUSE_COMMON_DEBLOAT_PACKAGES=(
   libreoffice
   transmission

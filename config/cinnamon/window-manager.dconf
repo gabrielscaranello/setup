@@ -1,0 +1,60 @@
+[org/cinnamon/desktop/wm/preferences]
+action-middle-click-titlebar='minimize'
+button-layout=':close'
+min-window-opacity=30
+mouse-button-modifier='<Super>'
+theme='Mint-Y-Dark-Aqua'
+titlebar-font='Ubuntu Bold 10'
+visual-bell=false
+
+[org/cinnamon/desktop/keybindings]
+custom-list=['__dummy__', 'custom0']
+looking-glass-keybinding=@as []
+
+[org/cinnamon/desktop/keybindings/custom-keybindings/custom0]
+binding=['<Primary><Super>s', '<Shift><Super>s', 'Print']
+command='flameshot gui'
+name='flameshot'
+
+[org/cinnamon/desktop/keybindings/media-keys]
+screensaver=['<Control><Alt>l', '<Super>l']
+screenshot=@as []
+
+[org/cinnamon/desktop/keybindings/wm]
+maximize=@as []
+move-to-workspace-left=['<Control><Shift><Alt>Left', '<Shift><Super>Page_Up']
+move-to-workspace-right=['<Control><Shift><Alt>Right', '<Shift><Super>Page_Down']
+switch-to-workspace-left=['<Control><Alt>Left', '<Super>Page_Up']
+switch-to-workspace-right=['<Control><Alt>Right', '<Super>Page_Down']
+toggle-maximized=['<Alt>F10', '<Super>m']
+
+[org/cinnamon/muffin]
+attach-modal-dialogs=true
+draggable-border-width=10
+placement-mode='center'
+tile-maximize=true
+unredirect-fullscreen-windows=true
+workspace-cycle=false
+workspaces-only-on-primary=true
+
+[org/gnome/desktop/wm/preferences]
+action-double-click-titlebar='toggle-maximize'
+action-middle-click-titlebar='minimize'
+action-right-click-titlebar='menu'
+audible-bell=false
+auto-raise=false
+auto-raise-delay=500
+button-layout=':close'
+disable-workarounds=false
+focus-mode='click'
+focus-new-windows='smart'
+mouse-button-modifier='<Super>'
+num-workspaces=4
+raise-on-click=true
+resize-with-right-button=true
+theme='Mint-Y-Dark-Aqua'
+titlebar-font='Ubuntu Bold 10'
+titlebar-uses-system-font=false
+visual-bell=false
+visual-bell-type='fullscreen-flash'
+workspace-names=@as []

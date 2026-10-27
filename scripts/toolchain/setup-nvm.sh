@@ -137,7 +137,7 @@ _install_nvm() {
       echo "Detected pacman; installing nvm package from repo..."
       install_packages nvm
       ;;
-    debian | fedora | opensuse*)
+    debian | fedora | opensuse* | linuxmint)
       _install_nvm_script
       ;;
   esac
