@@ -47,22 +47,22 @@ Before starting the implementation for each distribution, consult the author's r
 
 > **Objective**: Bridge the existing Debian base with the Mint/Cinnamon ecosystem developed in Phase 1.
 
-- [ ] **Discovery & Specification**:
-  - [ ] Inspect LMDE branches in `gabrielscaranello/mint-setup`.
-  - [ ] Author OpenSpec specification in `openspec/specs/system/lmde.md`.
-- [ ] **System Detection & Architectural Reuse**:
-  - [ ] Update `scripts/utils/_system.sh` (`get_distro_id` detecting `ID=linuxmint` with `ID_LIKE=debian` or LMDE identifier).
-  - [ ] Direct package resolution to the `DEBIAN` column (`apt|2`) in `scripts/utils/_packages.sh`.
-  - [ ] Reuse `scripts/desktop/setup-cinnamon.sh` created in Phase 1.
-- [ ] **System Repositories**:
-  - [ ] Configure official Debian repositories (`deb.debian.org`) combined with the Mint Debian suite (`packages.linuxmint.com`).
-- [ ] **Orchestration & Runners**:
-  - [ ] Create `runners/lmde.sh`.
-  - [ ] Register `lmde|LMDE|lmde.sh` in `DISTRO_RUNNERS` (`runners/main.sh`).
-- [ ] **Testing & Quality Assurance**:
-  - [ ] Create `tests/docker/lmde.Dockerfile`.
-  - [ ] Update `tests/run-tests.sh` to support `--distro=lmde`.
-  - [ ] Create Bats unit tests and validate integration inside Docker.
+- [x] **Discovery & Specification**:
+  - [x] Inspect LMDE branches in `gabrielscaranello/mint-setup`.
+  - [x] Author OpenSpec specification in `openspec/specs/system/lmde.md`.
+- [x] **System Detection & Architectural Reuse**:
+  - [x] Update `scripts/utils/_system.sh` (`get_distro_id` detecting `ID=linuxmint` with `ID_LIKE=debian` or LMDE identifier).
+  - [x] Direct package resolution to the `DEBIAN` column (`apt|2`) in `scripts/utils/_packages.sh`.
+  - [x] Reuse `scripts/desktop/setup-cinnamon.sh` created in Phase 1.
+- [x] **System Repositories**:
+  - [x] Configure official Debian repositories (`deb.debian.org`) combined with the Mint Debian suite (`packages.linuxmint.com`).
+- [x] **Orchestration & Runners**:
+  - [x] Create `runners/lmde.sh`.
+  - [x] Register `lmde|LMDE|lmde.sh` in `DISTRO_RUNNERS` (`runners/main.sh`).
+- [x] **Testing & Quality Assurance**:
+  - [x] Create `tests/docker/lmde.Dockerfile`.
+  - [x] Update `tests/run-tests.sh` to support `--distro=lmde`.
+  - [x] Create Bats unit tests and validate integration inside Docker.
 
 ---
 

@@ -61,13 +61,15 @@ COMMON_PLASMA_DEBLOAT_PACKAGES=(
 
 COMMON_CINNAMON_DEBLOAT_PACKAGES=(
   celluloid
-  hypnotix
+  gnome-terminal
+  "hypnotix*"
   mintchat
+  "neovim*"
   rhythmbox
   simple-scan
   sticky
   thingy
-  thunderbird
+  "thunderbird*"
 )
 
 OPEN_SUSE_COMMON_DEBLOAT_PACKAGES=(

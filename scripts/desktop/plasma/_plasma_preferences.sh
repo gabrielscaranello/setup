@@ -75,7 +75,7 @@ _setup_plasma_start_icon() {
     arch)
       src_icon="${assets_dir}/arch.svg"
       ;;
-    debian | linuxmint | mint)
+    debian | linuxmint | mint | lmde)
       src_icon="${assets_dir}/debian.svg"
       ;;
     fedora)

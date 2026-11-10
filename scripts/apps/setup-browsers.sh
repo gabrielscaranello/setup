@@ -39,7 +39,7 @@ _install_firefox() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    fedora | arch | linuxmint)
+    fedora | arch | linuxmint | lmde)
       _install_firefox_repo
       ;;
     debian)
@@ -64,7 +64,7 @@ _install_chromium() {
       echo "Installing Chromium from distribution repository..."
       install_packages chromium
       ;;
-    debian | linuxmint)
+    debian | linuxmint | lmde)
       echo "Installing Chromium with flatpak..."
       install_flatpak_app "org.chromium.Chromium" "Chromium"
       ;;

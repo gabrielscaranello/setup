@@ -105,6 +105,8 @@ setup() {
     [[ "$args" =~ "celluloid" ]]
     [[ "$args" =~ "hypnotix" ]]
     [[ "$args" =~ "mintchat" ]]
+    [[ "$args" =~ "gnome-terminal" ]]
+    [[ "$args" =~ "neovim" ]]
     echo "rhythmbox celluloid hypnotix mintchat"
   }
   sudo() {
@@ -303,6 +305,16 @@ setup() {
 
 @test "main delegates to _debloat_debian on linuxmint" {
   get_distro_id() { echo "linuxmint"; }
+  _debloat_debian() { echo "called debloat debian"; return 0; }
+
+  run main
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called debloat debian" ]]
+  [[ "$output" =~ "setup-debloat complete" ]]
+}
+
+@test "main delegates to _debloat_debian on lmde" {
+  get_distro_id() { echo "lmde"; }
   _debloat_debian() { echo "called debloat debian"; return 0; }
 
   run main

@@ -25,8 +25,8 @@ _format_cinnamon_app_id() {
     fi
   done
 
-  # Fallback for known Flatpak installs on Linux Mint/Debian when running before app installation
-  if [ "$distro" = "linuxmint" ] || [ "$distro" = "debian" ]; then
+  # Fallback for known Flatpak installs on Linux Mint/Debian/LMDE when running before app installation
+  if [ "$distro" = "linuxmint" ] || [ "$distro" = "debian" ] || [ "$distro" = "lmde" ]; then
     case "$clean_app" in
       org.chromium.Chromium.desktop | \
         io.dbeaver.DBeaverCommunity.desktop | \
@@ -83,7 +83,7 @@ get_favorite_apps() {
       chat="$(_resolve_desktop_app "com.discordapp.Discord.desktop" "discord.desktop")"
       steam="$(_resolve_desktop_app "com.valvesoftware.Steam.desktop" "steam.desktop")"
       ;;
-    linuxmint)
+    linuxmint | lmde)
       editor="$(_resolve_desktop_app "codium.desktop" "com.visualstudio.CodeOSS.desktop" "code-oss.desktop")"
       firefox="$(_resolve_desktop_app "firefox.desktop" "org.mozilla.firefox.desktop")"
       browser="$(_resolve_desktop_app "org.chromium.Chromium.desktop" "chromium.desktop" "chromium-browser.desktop")"

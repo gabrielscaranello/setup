@@ -53,6 +53,26 @@
   [ "$gsettings_called" -eq 2 ]
 }
 
+@test "_set_default_terminal_cinnamon sets gsettings when gsettings command is available" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local gsettings_called=0
+  gsettings() {
+    if [ "${1:-}" = "set" ] && [ "${2:-}" = "org.cinnamon.desktop.default-applications.terminal" ]; then
+      gsettings_called=$((gsettings_called + 1))
+      return 0
+    fi
+    return 0
+  }
+
+  command() {
+    if [ "${2:-}" = "gsettings" ]; then return 0; fi
+    builtin command "$@"
+  }
+
+  _set_default_terminal_cinnamon
+  [ "$gsettings_called" -eq 1 ]
+}
+
 @test "_set_default_terminal_plasma uses kwriteconfig6 when available" {
   source /setup/scripts/apps/setup-default-apps.sh
   local kwrite_called=0
@@ -144,19 +164,40 @@
   [ "$plasma_called" -eq 1 ]
 }
 
+@test "_set_default_terminal routes only to cinnamon when de is cinnamon" {
+  source /setup/scripts/apps/setup-default-apps.sh
+  local gnome_called=0
+  local plasma_called=0
+  local cinnamon_called=0
+  _set_default_terminal_xdg() { return 0; }
+  _set_default_terminal_gnome() { gnome_called=1; }
+  _set_default_terminal_plasma() { plasma_called=1; }
+  _set_default_terminal_cinnamon() { cinnamon_called=1; }
+  get_desktop_environment() { echo "cinnamon"; }
+
+  _set_default_terminal
+
+  [ "$gnome_called" -eq 0 ]
+  [ "$plasma_called" -eq 0 ]
+  [ "$cinnamon_called" -eq 1 ]
+}
+
 @test "_set_default_terminal does not configure gnome or plasma when de is unknown" {
   source /setup/scripts/apps/setup-default-apps.sh
   local gnome_called=0
   local plasma_called=0
+  local cinnamon_called=0
   _set_default_terminal_xdg() { return 0; }
   _set_default_terminal_gnome() { gnome_called=1; }
   _set_default_terminal_plasma() { plasma_called=1; }
+  _set_default_terminal_cinnamon() { cinnamon_called=1; }
   get_desktop_environment() { echo "unknown"; }
 
   _set_default_terminal
 
   [ "$gnome_called" -eq 0 ]
   [ "$plasma_called" -eq 0 ]
+  [ "$cinnamon_called" -eq 0 ]
 }
 
 @test "_set_default_video_player creates mimeapps.list and sets vlc.desktop" {
@@ -299,6 +340,10 @@ EOF
   HOME="$test_home" _set_default_file_manager
   grep -q "^inode/directory=org.gnome.Nautilus.desktop;" "$test_home/.config/mimeapps.list"
 
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_file_manager
+  grep -q "^inode/directory=nemo.desktop;" "$test_home/.config/mimeapps.list"
+
   rm -rf "$test_home"
 }
 
@@ -316,6 +361,10 @@ EOF
   get_desktop_environment() { echo "plasma"; }
   HOME="$test_home" _set_default_pdf_viewer
   grep -q "^application/pdf=org.kde.okular.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_pdf_viewer
+  grep -q "^application/pdf=xreader.desktop;" "$test_home/.config/mimeapps.list"
 
   rm -rf "$test_home"
 }
@@ -357,6 +406,10 @@ EOF
   HOME="$test_home" _set_default_image_viewer
   grep -q "^image/png=org.kde.gwenview.desktop;" "$test_home/.config/mimeapps.list"
 
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_image_viewer
+  grep -q "^image/png=xviewer.desktop;" "$test_home/.config/mimeapps.list"
+
   rm -rf "$test_home"
 }
 
@@ -374,6 +427,10 @@ EOF
   get_desktop_environment() { echo "plasma"; }
   HOME="$test_home" _set_default_text_editor
   grep -q "^text/plain=org.kde.ghostwriter.desktop;" "$test_home/.config/mimeapps.list"
+
+  get_desktop_environment() { echo "cinnamon"; }
+  HOME="$test_home" _set_default_text_editor
+  grep -q "^text/plain=xed.desktop;" "$test_home/.config/mimeapps.list"
 
   rm -rf "$test_home"
 }

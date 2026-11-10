@@ -129,7 +129,7 @@ _install_amd_packages() {
 
   case "$distro" in
     linuxmint) _install_linuxmint_amd_packages ;;
-    debian) _install_debian_amd_packages ;;
+    debian | lmde) _install_debian_amd_packages ;;
     fedora) _install_fedora_amd_packages ;;
     arch) _install_arch_amd_packages ;;
     opensuse*) _install_opensuse_amd_packages ;;

@@ -59,7 +59,7 @@ configure_gpu_repositories() {
     linuxmint)
       echo "Linux Mint has GPU repositories configured out of the box."
       ;;
-    debian)
+    debian | lmde)
       local backports_mock=""
       if declare -f add_debian_backports_repo > /dev/null 2>&1; then
         backports_mock="$(declare -f add_debian_backports_repo)"

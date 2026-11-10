@@ -14,11 +14,11 @@ _install_gimp() {
       echo "Installing GIMP from distribution repository..."
       install_packages gimp
       ;;
-    debian | opensuse | opensuse-leap | linuxmint)
+    debian | opensuse | opensuse-leap | linuxmint | lmde)
       echo "Installing GIMP with flatpak..."
       install_flatpak_app "org.gimp.GIMP" "GIMP"
 
-      if [ "$distro" = "debian" ] || [ "$distro" = "linuxmint" ]; then
+      if [ "$distro" = "debian" ] || [ "$distro" = "linuxmint" ] || [ "$distro" = "lmde" ]; then
         if is_package_installed gimp; then
           echo "Removing native GIMP to prevent duplicate launchers..."
           remove_packages gimp 2> /dev/null || true

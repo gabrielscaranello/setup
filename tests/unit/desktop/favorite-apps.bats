@@ -246,6 +246,28 @@ EOF
   [ "${lines[11]}" = "com.discordapp.Discord.desktop:flatpak" ]
 }
 
+@test "get_favorite_apps on lmde maintains identical order to linuxmint" {
+  get_distro_id() { echo "lmde"; }
+
+  run get_favorite_apps "cinnamon"
+  [ "$status" -eq 0 ]
+
+  # Check line-by-line canonical order
+  local -a lines=("${lines[@]}")
+  [ "${lines[0]}" = "nemo.desktop" ]
+  [ "${lines[1]}" = "kitty.desktop" ]
+  [ "${lines[2]}" = "codium.desktop" ]
+  [ "${lines[3]}" = "firefox.desktop" ]
+  [ "${lines[4]}" = "org.chromium.Chromium.desktop:flatpak" ]
+  [ "${lines[5]}" = "io.dbeaver.DBeaverCommunity.desktop:flatpak" ]
+  [ "${lines[6]}" = "org.onlyoffice.desktopeditors.desktop:flatpak" ]
+  [ "${lines[7]}" = "md.obsidian.Obsidian.desktop:flatpak" ]
+  [ "${lines[8]}" = "org.gimp.GIMP.desktop:flatpak" ]
+  [ "${lines[9]}" = "org.telegram.desktop.desktop" ]
+  [ "${lines[10]}" = "com.valvesoftware.Steam.desktop:flatpak" ]
+  [ "${lines[11]}" = "com.discordapp.Discord.desktop:flatpak" ]
+}
+
 @test "get_plasma_launchers formats applications list for Plasma taskbar" {
   get_distro_id() { echo "arch"; }
 

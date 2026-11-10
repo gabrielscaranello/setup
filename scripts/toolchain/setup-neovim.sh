@@ -129,7 +129,7 @@ _install_neovim() {
       echo "Installing Neovim from distribution repository..."
       install_packages neovim
       ;;
-    debian | linuxmint)
+    debian | linuxmint | lmde)
       _install_build_deps
       _install_neovim_from_source "deb"
       ;;
@@ -153,7 +153,7 @@ _install_runtime_deps() {
 
   # Distro-specific independent dependencies
   case "$distro" in
-    debian | linuxmint)
+    debian | linuxmint | lmde)
       install_packages luarocks python3 python-venv libicu-dev
       ;;
     fedora)

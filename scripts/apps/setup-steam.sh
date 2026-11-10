@@ -15,6 +15,10 @@ _install_proton_manager() {
       echo "Desktop environment is GNOME: installing ProtonPlus (GTK4/Libadwaita)..."
       install_flatpak_app "com.vysp3r.ProtonPlus" "ProtonPlus"
       ;;
+    cinnamon)
+      echo "Desktop environment is Cinnamon: installing ProtonPlus (GTK4/Libadwaita)..."
+      install_flatpak_app "com.vysp3r.ProtonPlus" "ProtonPlus"
+      ;;
     plasma)
       echo "Desktop environment is KDE Plasma: installing ProtonUp-Qt (Qt)..."
       install_flatpak_app "net.davidotek.pupgui2" "ProtonUp-Qt"
@@ -141,7 +145,7 @@ _install_steam_packages() {
   local distro="$1"
 
   case "$distro" in
-    debian | linuxmint) _install_debian_steam ;;
+    debian | linuxmint | lmde) _install_debian_steam ;;
     fedora) _install_fedora_steam ;;
     arch) _install_arch_steam ;;
     opensuse-tumbleweed) _install_tumbleweed_steam ;;

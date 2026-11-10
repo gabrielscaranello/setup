@@ -47,6 +47,7 @@ DISTRO_RUNNERS=(
   "opensuse-leap|openSUSE|opensuse.sh"
   "opensuse-tumbleweed|openSUSE|opensuse.sh"
   "linuxmint|Linux Mint|linuxmint.sh"
+  "lmde|LMDE|lmde.sh"
 )
 
 run_all() {
@@ -73,9 +74,9 @@ run_all() {
   done
 
   if [ -n "$distro" ] && [ "$distro" != "unknown" ]; then
-    echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', 'opensuse', and 'linuxmint' are currently supported." >&2
+    echo "Unsupported distribution: '$distro'. Only 'debian', 'fedora', 'arch', 'opensuse', 'linuxmint', and 'lmde' are currently supported." >&2
   else
-    echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, opensuse, linuxmint)." >&2
+    echo "Unsupported distribution: Unable to detect a supported distribution (debian, fedora, arch, opensuse, linuxmint, lmde)." >&2
   fi
   return 1
 }

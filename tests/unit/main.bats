@@ -160,6 +160,17 @@ setup() {
   [[ "$output" =~ "linuxmint.sh" ]]
 }
 
+@test "run_all dispatches to lmde runner when distribution is lmde" {
+  is_wsl() { return 1; }
+  get_distro_id() { echo "lmde"; }
+  bash() { echo "executed: $*"; return 0; }
+
+  run run_all
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Delegating complete setup to LMDE runner..." ]]
+  [[ "$output" =~ "lmde.sh" ]]
+}
+
 @test "run_all dispatches to wsl runner when running inside WSL on debian" {
   is_wsl() { return 0; }
   get_distro_id() { echo "debian"; }

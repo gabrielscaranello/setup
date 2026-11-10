@@ -62,6 +62,24 @@ EOF
   [ "$output" = "forky" ]
 }
 
+@test "get_debian_codename retrieves DEBIAN_CODENAME on LMDE even when VERSION_CODENAME is gigi" {
+  local os_release_file
+  os_release_file="$(mktemp)"
+  cat << 'EOF' > "$os_release_file"
+NAME="LMDE"
+VERSION="7 (gigi)"
+ID=linuxmint
+ID_LIKE=debian
+VERSION_CODENAME=gigi
+DEBIAN_CODENAME=trixie
+EOF
+
+  OS_RELEASE_PATH="$os_release_file" run get_debian_codename
+  rm -f "$os_release_file"
+  [ "$status" -eq 0 ]
+  [ "$output" = "trixie" ]
+}
+
 @test "is_debian_testing detects testing and unstable codenames" {
   run is_debian_testing "forky"
   [ "$status" -eq 0 ]
@@ -167,6 +185,7 @@ EOF
 }
 
 @test "add_debian_mozilla_repo skips when repository files exist" {
+  is_distro() { [ "$1" = "debian" ]; }
   local test_dir="/tmp/test-mozilla-apt-repo-$$"
   mkdir -p "$test_dir"
   touch "$test_dir/mozilla.sources" "$test_dir/packages.mozilla.org.asc"
@@ -180,6 +199,7 @@ EOF
 }
 
 @test "add_debian_mozilla_repo configures repository using fetch_url when missing" {
+  is_distro() { [ "$1" = "debian" ]; }
   local test_dir="/tmp/test-mozilla-missing-$$"
   mkdir -p "$test_dir"
   export APT_MOZILLA_KEYRING="$test_dir/packages.mozilla.org.asc"
@@ -193,6 +213,13 @@ EOF
   rm -rf "$test_dir"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "Configuring Mozilla repository" ]]
+}
+
+@test "add_debian_mozilla_repo skips on non-Debian distros like LMDE" {
+  is_distro() { return 1; }
+  run add_debian_mozilla_repo
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "Current distribution is not Debian, skipping Debian Mozilla repo." ]]
 }
 
 @test "add_debian_nonfree_repo ensures contrib, non-free and non-free-firmware on deb822 sources" {
@@ -226,5 +253,24 @@ EOF
   [ "$status" -eq 0 ]
   grep -q "contrib non-free non-free-firmware" "$APT_SOURCES_LIST"
   rm -f "$APT_SOURCES_LIST"
+}
+
+@test "add_debian_nonfree_repo ensures components on LMDE" {
+  is_distro() { [ "$1" = "lmde" ]; }
+  export APT_DEBIAN_SOURCES="/tmp/test_lmde_nonfree_$$.sources"
+  cat << 'EOF' > "$APT_DEBIAN_SOURCES"
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: trixie
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+  sudo() { "$@"; }
+  apt() { return 0; }
+
+  run add_debian_nonfree_repo
+  [ "$status" -eq 0 ]
+  grep -q "contrib non-free non-free-firmware" "$APT_DEBIAN_SOURCES"
+  rm -f "$APT_DEBIAN_SOURCES"
 }
 

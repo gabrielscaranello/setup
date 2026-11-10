@@ -54,6 +54,11 @@ setup() {
   [[ "$output" =~ "called nonfree" ]]
   [[ "$output" =~ "called backports" ]]
 
+  run configure_gpu_repositories "lmde"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called nonfree" ]]
+  [[ "$output" =~ "called backports" ]]
+
   run configure_gpu_repositories "fedora"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "called rpmfusion" ]]
@@ -114,6 +119,17 @@ setup() {
   [[ "$output" =~ "sudo: apt install -y -t trixie-backports firmware-amd-graphics" ]]
   [[ "$output" =~ "mesa-vulkan-drivers" ]]
   [[ "$output" =~ "installed: libvulkan1 vainfo vulkan-tools" ]]
+}
+
+@test "_install_amd_packages delegates to _install_debian_amd_packages on lmde" {
+  _install_debian_amd_packages() {
+    echo "called _install_debian_amd_packages"
+    return 0
+  }
+
+  run _install_amd_packages "lmde"
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called _install_debian_amd_packages" ]]
 }
 
 @test "_install_arch_32bit_packages installs 32-bit graphics packages" {

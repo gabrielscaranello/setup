@@ -30,8 +30,8 @@ _setup_debian_kernel() {
     return 1
   }
 
-  if [ "$distro" != "debian" ]; then
-    echo "Debian backports kernel is only applicable to Debian. Skipping on '$distro'."
+  if [ "$distro" != "debian" ] && [ "$distro" != "lmde" ]; then
+    echo "Debian backports kernel is only applicable to Debian and LMDE. Skipping on '$distro'."
     return 0
   fi
 

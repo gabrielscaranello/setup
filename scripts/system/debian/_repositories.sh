@@ -5,9 +5,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../_utils.sh" 2> /dev/null || source "
 
 get_debian_codename() {
   local codename
-  codename="$(get_os_release_field VERSION_CODENAME)"
+  codename="$(get_os_release_field DEBIAN_CODENAME)"
   if [ -z "$codename" ]; then
-    codename="$(get_os_release_field DEBIAN_CODENAME)"
+    codename="$(get_os_release_field VERSION_CODENAME)"
   fi
   if [ -n "$codename" ]; then
     echo "$codename"
@@ -51,8 +51,8 @@ _is_debian_backports_configured() {
 }
 
 add_debian_backports_repo() {
-  if ! is_distro debian; then
-    echo "Current distribution is not Debian, skipping Debian backports."
+  if ! is_distro debian && ! is_distro lmde; then
+    echo "Current distribution is not Debian/LMDE, skipping Debian backports."
     return 0
   fi
 
@@ -155,8 +155,8 @@ EOF_PIN
 }
 
 add_debian_nonfree_repo() {
-  if ! is_distro debian; then
-    echo "Current distribution is not Debian, skipping Debian non-free repo."
+  if ! is_distro debian && ! is_distro lmde; then
+    echo "Current distribution is not Debian/LMDE, skipping Debian non-free repo."
     return 0
   fi
 

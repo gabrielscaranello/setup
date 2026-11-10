@@ -20,7 +20,7 @@ _show_help() {
   echo "  --integration         Run container integration test suite only"
   echo "  --coverage            Generate code coverage reports with kcov"
   echo "  --parallel            Run integration test containers concurrently"
-  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse|tumbleweed|linuxmint)"
+  echo "  --distro=<name>       Run integration tests only on specific distro (archlinux|debian|fedora|opensuse|tumbleweed|linuxmint|lmde)"
   echo "  --filter=<pattern>    Run only tests matching pattern (e.g. nvm, neovim, utils)"
   echo "  -h, --help            Show this help message"
   echo ""
@@ -149,6 +149,9 @@ _get_distro_cache_flags() {
     linuxmint | mint)
       flags+=(-v "setup-pkg-cache-linuxmint:/var/cache/apt/archives")
       ;;
+    lmde)
+      flags+=(-v "setup-pkg-cache-lmde:/var/cache/apt/archives")
+      ;;
   esac
   echo "${flags[@]}"
 }
@@ -166,6 +169,7 @@ _find_test_files() {
           */system/arch/*) [[ "$target_distro" == "archlinux" || "$target_distro" == "arch" ]] || continue ;;
           */system/opensuse/*) [[ "$target_distro" == "opensuse" || "$target_distro" == "tumbleweed" || "$target_distro" == "leap" ]] || continue ;;
           */system/linuxmint/*) [[ "$target_distro" == "linuxmint" || "$target_distro" == "mint" ]] || continue ;;
+          */system/lmde/*) [[ "$target_distro" == "lmde" ]] || continue ;;
         esac
       fi
 
@@ -267,7 +271,7 @@ _run_integration_distro() {
 }
 
 _run_all_integration_parallel() {
-  local distros=("archlinux" "debian" "fedora" "opensuse" "tumbleweed" "linuxmint")
+  local distros=("archlinux" "debian" "fedora" "opensuse" "tumbleweed" "linuxmint" "lmde")
   local log_dir
   log_dir="$(mktemp -d "${TMPDIR:-/tmp}/setup-tests-parallel.XXXXXX")"
   local pids=()
@@ -318,7 +322,7 @@ _merge_coverage() {
       "$image" \
       bash -c '
         dirs_to_merge=()
-        for d in unit archlinux debian fedora opensuse tumbleweed linuxmint; do
+        for d in unit archlinux debian fedora opensuse tumbleweed linuxmint lmde; do
           if [[ -d "/setup/coverage/$d" ]]; then
             while IFS= read -r cov_db_dir; do
               dirs_to_merge+=("$cov_db_dir")
@@ -361,8 +365,9 @@ main() {
         opensuse | leap | suse) _run_integration_distro "opensuse" ;;
         tumbleweed) _run_integration_distro "tumbleweed" ;;
         linuxmint | mint) _run_integration_distro "linuxmint" ;;
+        lmde) _run_integration_distro "lmde" ;;
         *)
-          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, opensuse, tumbleweed, linuxmint" >&2
+          echo "Unknown distro '$SELECTED_DISTRO'. Supported: archlinux, debian, fedora, opensuse, tumbleweed, linuxmint, lmde" >&2
           exit 1
           ;;
       esac

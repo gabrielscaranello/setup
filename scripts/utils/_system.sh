@@ -87,10 +87,13 @@ is_distro() {
       *) return 1 ;;
     esac
   fi
+  if [ "$target" = "lmde" ]; then
+    [ "$current" = "lmde" ] && return 0
+  fi
   [ "$current" = "$target" ]
 }
 
-# Validates and returns the current distro if it is one of: debian, fedora, arch, opensuse (leap/tumbleweed), linuxmint.
+# Validates and returns the current distro if it is one of: debian, fedora, arch, opensuse (leap/tumbleweed), linuxmint, lmde.
 # Prints the distro ID to stdout on success; prints error and returns 1 on failure.
 # Usage: distro="$(require_supported_distro)" || return 1
 require_supported_distro() {
@@ -100,7 +103,7 @@ require_supported_distro() {
     return 1
   }
   case "$distro" in
-    debian | fedora | arch | opensuse | opensuse-leap | opensuse-tumbleweed | linuxmint)
+    debian | fedora | arch | opensuse | opensuse-leap | opensuse-tumbleweed | linuxmint | lmde)
       echo "$distro"
       return 0
       ;;
@@ -252,7 +255,7 @@ enable_cron_service() {
 
   local service="${1:-}"
   if [ -z "$service" ]; then
-    if is_distro debian || is_distro opensuse || is_distro linuxmint; then
+    if is_distro debian || is_distro opensuse || is_distro linuxmint || is_distro lmde; then
       service="cron"
     elif is_distro fedora; then
       service="crond"

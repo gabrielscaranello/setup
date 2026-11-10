@@ -26,6 +26,23 @@
   [[ "$output" =~ "called repo install" ]]
 }
 
+@test "_install_firefox delegates to repo install on Linux Mint and LMDE" {
+  source /setup/scripts/apps/setup-browsers.sh
+  _install_firefox_repo() {
+    echo "called repo install"
+    return 0
+  }
+  get_distro_id() { echo "linuxmint"; }
+  run _install_firefox
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called repo install" ]]
+
+  get_distro_id() { echo "lmde"; }
+  run _install_firefox
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "called repo install" ]]
+}
+
 @test "_install_firefox delegates to apt flow on Debian/APT" {
   source /setup/scripts/apps/setup-browsers.sh
   get_distro_id() { echo "debian"; }

@@ -36,7 +36,7 @@ _configure_gui_frontend() {
   case "$de" in
     gnome | cinnamon)
       case "$distro" in
-        debian | arch | linuxmint)
+        debian | arch | linuxmint | lmde)
           echo "Installing GUFW for $de..."
           install_packages gufw
           ;;
@@ -63,7 +63,7 @@ main() {
   distro="$(require_supported_distro)" || return 1
 
   case "$distro" in
-    debian | arch | linuxmint)
+    debian | arch | linuxmint | lmde)
       _configure_ufw
       ;;
 

@@ -30,7 +30,7 @@ prompt_desktop_environment() {
   local prompt_label="${1:-Selecione o Desktop Environment:}"
   local default_de="${2:-plasma}"
 
-  if is_distro "linuxmint"; then
+  if is_distro "linuxmint" || is_distro "lmde"; then
     default_de="cinnamon"
   fi
 

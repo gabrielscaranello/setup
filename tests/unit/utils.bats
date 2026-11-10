@@ -445,6 +445,11 @@ EOF
   run prompt_desktop_environment "Test prompt"
   [ "$status" -eq 0 ]
   [ "$output" = "cinnamon" ]
+
+  get_distro_id() { echo "lmde"; }
+  run prompt_desktop_environment "Test prompt"
+  [ "$status" -eq 0 ]
+  [ "$output" = "cinnamon" ]
 }
 
 @test "ensure_desktop_environment resolves and saves DE" {
@@ -510,6 +515,11 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "lmde" ]
 
+  echo -e 'ID=lmde' > "$test_os_release"
+  OS_RELEASE_PATH="$test_os_release" run get_distro_id
+  [ "$status" -eq 0 ]
+  [ "$output" = "lmde" ]
+
   rm -f "$test_os_release"
 }
 
@@ -556,6 +566,13 @@ EOF
 
   run is_distro "debian"
   [ "$status" -eq 1 ]
+
+  get_distro_id() { echo "lmde"; }
+  run is_distro "lmde"
+  [ "$status" -eq 0 ]
+
+  run is_distro "debian"
+  [ "$status" -eq 1 ]
 }
 
 @test "require_supported_distro validates supported distributions" {
@@ -589,6 +606,11 @@ EOF
   [ "$status" -eq 0 ]
   [ "$output" = "linuxmint" ]
 
+  get_distro_id() { echo "lmde"; }
+  run require_supported_distro
+  [ "$status" -eq 0 ]
+  [ "$output" = "lmde" ]
+
   get_distro_id() { echo "ubuntu"; }
   run require_supported_distro
   [ "$status" -eq 1 ]
@@ -604,36 +626,43 @@ EOF
   [ "$(_get_package_name "golang" "fedora")" = "golang" ]
   [ "$(_get_package_name "golang" "arch")" = "go" ]
   [ "$(_get_package_name "golang" "linuxmint")" = "golang" ]
+  [ "$(_get_package_name "golang" "lmde")" = "golang" ]
 
   [ "$(_get_package_name "build-tools" "debian")" = "build-essential" ]
   [ "$(_get_package_name "build-tools" "fedora")" = "@development-tools" ]
   [ "$(_get_package_name "build-tools" "arch")" = "base-devel" ]
   [ "$(_get_package_name "build-tools" "linuxmint")" = "build-essential" ]
+  [ "$(_get_package_name "build-tools" "lmde")" = "build-essential" ]
 
   [ "$(_get_package_name "nvidia-driver" "debian")" = "nvidia-driver" ]
   [ "$(_get_package_name "nvidia-driver" "fedora")" = "akmod-nvidia" ]
   [ "$(_get_package_name "nvidia-driver" "arch")" = "nvidia-open-dkms nvidia-utils" ]
   [ "$(_get_package_name "nvidia-driver" "linuxmint")" = "nvidia-driver" ]
+  [ "$(_get_package_name "nvidia-driver" "lmde")" = "nvidia-driver" ]
 
   [ "$(_get_package_name "power-profiles-daemon" "debian")" = "power-profiles-daemon" ]
   [ "$(_get_package_name "power-profiles-daemon" "fedora")" = "tuned-ppd" ]
   [ "$(_get_package_name "power-profiles-daemon" "arch")" = "power-profiles-daemon" ]
   [ "$(_get_package_name "power-profiles-daemon" "linuxmint")" = "power-profiles-daemon" ]
+  [ "$(_get_package_name "power-profiles-daemon" "lmde")" = "power-profiles-daemon" ]
 
   [ "$(_get_package_name "bluez" "debian")" = "bluez" ]
   [ "$(_get_package_name "bluez" "fedora")" = "bluez" ]
   [ "$(_get_package_name "bluez" "arch")" = "bluez bluez-utils" ]
   [ "$(_get_package_name "bluez" "linuxmint")" = "bluez" ]
+  [ "$(_get_package_name "bluez" "lmde")" = "bluez" ]
 
   [ "$(_get_package_name "cron" "debian")" = "cron" ]
   [ "$(_get_package_name "cron" "fedora")" = "cronie" ]
   [ "$(_get_package_name "cron" "arch")" = "cronie" ]
   [ "$(_get_package_name "cron" "linuxmint")" = "cron" ]
+  [ "$(_get_package_name "cron" "lmde")" = "cron" ]
 
   [ "$(_get_package_name "extension-manager" "debian")" = "" ]
   [ "$(_get_package_name "extension-manager" "fedora")" = "" ]
   [ "$(_get_package_name "extension-manager" "arch")" = "extension-manager" ]
   [ "$(_get_package_name "extension-manager" "linuxmint")" = "" ]
+  [ "$(_get_package_name "extension-manager" "lmde")" = "" ]
 }
 
 @test "get_gpu_vendor honors GPU_VENDOR environment override" {

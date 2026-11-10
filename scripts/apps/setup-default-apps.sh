@@ -68,6 +68,12 @@ _set_default_terminal_plasma() {
   plasma_write_config "kdeglobals" "General" "TerminalService" "kitty.desktop"
 }
 
+_set_default_terminal_cinnamon() {
+  if command -v gsettings > /dev/null 2>&1; then
+    gsettings set org.cinnamon.desktop.default-applications.terminal exec 'kitty' 2> /dev/null || true
+  fi
+}
+
 _set_default_terminal() {
   local de
   de="$(get_desktop_environment)"
@@ -81,6 +87,9 @@ _set_default_terminal() {
       ;;
     plasma)
       _set_default_terminal_plasma
+      ;;
+    cinnamon)
+      _set_default_terminal_cinnamon
       ;;
     *)
       # For unrecognized desktop environments, do not apply DE-specific configurations
@@ -188,12 +197,16 @@ _set_default_office_suite() {
   echo "Default office suite configured successfully."
 }
 
-# Resolves a desktop launcher prioritizing Plasma or GNOME candidates based on active DE.
-# Usage: _resolve_de_desktop_app "<plasma_candidates>" "<default_candidates>"
+# Resolves a desktop launcher prioritizing Plasma, Cinnamon, or GNOME candidates based on active DE.
+# Usage: _resolve_de_desktop_app "<plasma_candidates>" "<default_candidates>" ["<cinnamon_candidates>"]
 _resolve_de_desktop_app() {
   local -a candidates
-  if [ "$(get_desktop_environment)" = "plasma" ]; then
+  local de
+  de="$(get_desktop_environment)"
+  if [ "$de" = "plasma" ]; then
     read -r -a candidates <<< "$1"
+  elif [ "$de" = "cinnamon" ]; then
+    read -r -a candidates <<< "${3:-$2}"
   else
     read -r -a candidates <<< "$2"
   fi
@@ -204,7 +217,8 @@ _set_default_file_manager() {
   local desktop_file
   desktop_file="$(_resolve_de_desktop_app \
     "org.kde.dolphin.desktop dolphin.desktop org.gnome.Nautilus.desktop nautilus.desktop" \
-    "org.gnome.Nautilus.desktop nautilus.desktop org.kde.dolphin.desktop dolphin.desktop")"
+    "org.gnome.Nautilus.desktop nautilus.desktop org.kde.dolphin.desktop dolphin.desktop" \
+    "nemo.desktop org.gnome.Nautilus.desktop nautilus.desktop org.kde.dolphin.desktop dolphin.desktop")"
 
   echo "Setting $desktop_file as the default file manager..."
   _set_mime_default "$desktop_file" "inode/directory"
@@ -215,7 +229,8 @@ _set_default_pdf_viewer() {
   local desktop_file
   desktop_file="$(_resolve_de_desktop_app \
     "org.kde.okular.desktop okular.desktop org.gnome.Papers.desktop papers.desktop org.gnome.Evince.desktop evince.desktop" \
-    "org.gnome.Papers.desktop papers.desktop org.gnome.Evince.desktop evince.desktop org.kde.okular.desktop okular.desktop")"
+    "org.gnome.Papers.desktop papers.desktop org.gnome.Evince.desktop evince.desktop org.kde.okular.desktop okular.desktop" \
+    "xreader.desktop org.gnome.Papers.desktop papers.desktop org.gnome.Evince.desktop evince.desktop org.kde.okular.desktop okular.desktop")"
 
   echo "Setting $desktop_file as the default PDF viewer..."
   _set_mime_default "$desktop_file" "application/pdf" "application/x-pdf"
@@ -226,7 +241,8 @@ _set_default_image_viewer() {
   local desktop_file
   desktop_file="$(_resolve_de_desktop_app \
     "org.kde.gwenview.desktop gwenview.desktop org.gnome.Loupe.desktop eog.desktop" \
-    "org.gnome.Loupe.desktop eog.desktop org.kde.gwenview.desktop gwenview.desktop")"
+    "org.gnome.Loupe.desktop eog.desktop org.kde.gwenview.desktop gwenview.desktop" \
+    "xviewer.desktop org.gnome.Loupe.desktop eog.desktop org.kde.gwenview.desktop gwenview.desktop")"
 
   local image_mimes=(
     "image/jpeg" "image/png" "image/gif" "image/webp"
@@ -242,7 +258,8 @@ _set_default_text_editor() {
   local desktop_file
   desktop_file="$(_resolve_de_desktop_app \
     "org.kde.ghostwriter.desktop ghostwriter.desktop org.gnome.TextEditor.desktop gedit.desktop" \
-    "org.gnome.TextEditor.desktop gedit.desktop org.kde.ghostwriter.desktop ghostwriter.desktop")"
+    "org.gnome.TextEditor.desktop gedit.desktop org.kde.ghostwriter.desktop ghostwriter.desktop" \
+    "xed.desktop org.gnome.TextEditor.desktop gedit.desktop org.kde.ghostwriter.desktop ghostwriter.desktop")"
 
   echo "Setting $desktop_file as the default text editor..."
   _set_mime_default "$desktop_file" "text/plain" "text/markdown"

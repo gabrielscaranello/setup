@@ -61,6 +61,8 @@ _debloat_debian() {
   local targets=(
     "${COMMON_DEBLOAT_PACKAGES[@]}"
     libreoffice-common
+    "libreoffice*"
+    "transmission*"
     gimp
   )
 
@@ -189,7 +191,7 @@ main() {
   distro="$(get_distro_id)"
 
   case "$distro" in
-    debian | linuxmint)
+    debian | linuxmint | lmde)
       _debloat_debian
       ;;
     fedora)
